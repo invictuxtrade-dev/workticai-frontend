@@ -110,7 +110,21 @@ function LoginScreen({ onAuth }) {
 
   return (
     <div className="auth-shell auth-shell-pro">
-      <div className="auth-backdrop" />
+      {/* Fondo animado con partículas IA */}
+      <div className="animated-bg"></div>
+      <div className="particles">
+        {[...Array(30)].map((_, i) => (
+          <div key={i} className="particle" style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 8}s`,
+            width: `${Math.random() * 6 + 2}px`,
+            height: `${Math.random() * 6 + 2}px`,
+            opacity: Math.random() * 0.5 + 0.2
+          }} />
+        ))}
+      </div>
+
       <div className="auth-card auth-card-pro">
         <div className="auth-brand">
           <div className="eyebrow">Worktic AI</div>
@@ -653,74 +667,115 @@ export default function App() {
           width: 220px;
         }
 
-        /* Login Styles Pro (mejorados) */
+        /* ========== NUEVO LOGIN CON FONDO CLARO ANIMADO ========== */
         .auth-shell {
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: 100vh;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          background: linear-gradient(135deg, #f5f7fe 0%, #e9eef5 100%);
         }
 
         .auth-shell-pro {
           position: relative;
-          background: radial-gradient(circle at 10% 30%, #0a0f1c, #03060f);
           overflow: hidden;
         }
 
-        .auth-backdrop {
+        /* Fondo animado con gradiente en movimiento */
+        .animated-bg {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at 70% 20%, rgba(59,130,246,0.12) 0%, rgba(0,0,0,0) 60%);
-          pointer-events: none;
+          background: linear-gradient(125deg, #ffffff, #f0f4ff, #e6edfa);
+          background-size: 300% 300%;
+          animation: gradientShift 12s ease infinite;
+          z-index: 0;
         }
 
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        /* Partículas flotantes */
+        .particles {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          z-index: 0;
+        }
+
+        .particle {
+          position: absolute;
+          background: rgba(59, 130, 246, 0.4);
+          border-radius: 50%;
+          pointer-events: none;
+          animation: floatParticle 12s infinite linear;
+          filter: blur(1px);
+        }
+
+        @keyframes floatParticle {
+          0% {
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 0;
+          }
+          20% {
+            opacity: 0.8;
+          }
+          80% {
+            opacity: 0.6;
+          }
+          100% {
+            transform: translateY(-80vh) translateX(40px) rotate(360deg);
+            opacity: 0;
+          }
+        }
+
+        /* Tarjeta de login clara (glassmorphism) */
         .auth-card {
-          background: white;
-          padding: 2rem;
-          border-radius: 1.5rem;
-          width: 420px;
-          box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(12px);
+          padding: 2.2rem;
+          border-radius: 2rem;
+          width: 460px;
+          box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          transition: transform 0.3s ease;
+          z-index: 2;
         }
 
         .auth-card-pro {
-          background: rgba(18, 25, 45, 0.85);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(59,130,246,0.25);
-          border-radius: 2rem;
-          box-shadow: 0 30px 50px -15px rgba(0,0,0,0.5);
-          transition: transform 0.3s ease;
-          animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          animation: slideUpFade 0.5s ease-out;
         }
 
         @keyframes slideUpFade {
           0% {
             opacity: 0;
-            transform: translateY(20px) scale(0.98);
+            transform: translateY(20px);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
           }
         }
 
         .auth-brand {
           text-align: center;
-          margin-bottom: 1.75rem;
+          margin-bottom: 2rem;
         }
 
         .auth-brand h1 {
-          font-size: 1.8rem;
+          font-size: 1.9rem;
           font-weight: 700;
           margin: 0.5rem 0 0.25rem;
-          background: linear-gradient(135deg, #ffffff, #a5f3fc);
+          background: linear-gradient(135deg, #1e293b, #3b82f6);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
         }
 
         .auth-brand .muted {
-          color: #cbd5e6;
+          color: #475569;
           font-size: 0.9rem;
         }
 
@@ -732,9 +787,9 @@ export default function App() {
         }
 
         .role-chip {
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #e2e8f0;
+          background: white;
+          border: 1px solid #cbd5e1;
+          color: #1e293b;
           padding: 0.6rem 1.2rem;
           border-radius: 60px;
           font-weight: 500;
@@ -745,7 +800,7 @@ export default function App() {
           transition: all 0.2s ease;
           flex: 1;
           justify-content: center;
-          backdrop-filter: blur(4px);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .role-chip i {
@@ -753,8 +808,8 @@ export default function App() {
         }
 
         .role-chip:hover {
-          background: rgba(59,130,246,0.2);
-          border-color: #3b82f6;
+          background: #f1f5f9;
+          border-color: #94a3b8;
           transform: translateY(-2px);
         }
 
@@ -776,17 +831,17 @@ export default function App() {
         }
 
         .field-group label {
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          color: #94a3b8;
+          color: #475569;
         }
 
         .auth-form-pro input {
-          background: rgba(15, 23, 42, 0.7);
-          border: 1px solid #334155;
-          color: #f1f5f9;
+          background: white;
+          border: 1px solid #cbd5e1;
+          color: #0f172a;
           padding: 0.8rem 1rem;
           border-radius: 0.75rem;
           transition: all 0.2s;
@@ -794,12 +849,12 @@ export default function App() {
 
         .auth-form-pro input:focus {
           border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-          background: #0f172a;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+          outline: none;
         }
 
         .auth-form-pro input::placeholder {
-          color: #64748b;
+          color: #94a3b8;
         }
 
         .auth-submit-btn {
@@ -833,24 +888,25 @@ export default function App() {
         .auth-footnote {
           margin-top: 2rem;
           text-align: center;
-          border-top: 1px solid rgba(255,255,255,0.08);
+          border-top: 1px solid #e2e8f0;
           padding-top: 1.2rem;
         }
 
         .auth-footnote span {
-          color: #94a3b8;
+          color: #64748b;
         }
 
         .error {
-          color: #f87171;
+          color: #dc2626;
           font-size: 0.85rem;
           margin-top: 0.5rem;
           text-align: center;
-          background: rgba(239,68,68,0.1);
+          background: rgba(220,38,38,0.05);
           padding: 0.6rem;
           border-radius: 0.75rem;
         }
 
+        /* Resto de estilos existentes (no modificados) */
         .muted {
           color: #64748b;
           font-size: 0.85rem;
