@@ -85,7 +85,7 @@ function LoginScreen({ onAuth }) {
     confirm_password: '',
     company_name: '',
     phone: '',
-    access_role: 'admin'
+    access_role: 'client'
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -357,12 +357,6 @@ function LoginScreen({ onAuth }) {
 
           {error ? <div className="error">{error}</div> : null}
         </form>
-
-        <div className="auth-footnote">
-          <span className="muted tiny">
-            El acceso es asignado por Worktic. Si no tienes credenciales, solicita acceso al administrador.
-          </span>
-        </div>
       </div>
     </div>
   )
@@ -953,7 +947,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 140px;
+          max-width: 300px;
           width: 100%;
           height: auto;
           object-fit: contain;
