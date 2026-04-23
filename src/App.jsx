@@ -110,17 +110,18 @@ function LoginScreen({ onAuth }) {
 
   return (
     <div className="auth-shell auth-shell-pro">
-      {/* Fondo animado con partículas IA */}
-      <div className="animated-bg"></div>
-      <div className="particles">
-        {[...Array(30)].map((_, i) => (
+      {/* Fondo sutil con efecto espectacular y equilibrado */}
+      <div className="ambient-bg"></div>
+      <div className="glow-aura"></div>
+      <div className="floating-particles">
+        {[...Array(50)].map((_, i) => (
           <div key={i} className="particle" style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 8}s`,
-            width: `${Math.random() * 6 + 2}px`,
-            height: `${Math.random() * 6 + 2}px`,
-            opacity: Math.random() * 0.5 + 0.2
+            animationDelay: `${Math.random() * 20}s`,
+            width: `${Math.random() * 4 + 1}px`,
+            height: `${Math.random() * 4 + 1}px`,
+            opacity: Math.random() * 0.4 + 0.1
           }} />
         ))}
       </div>
@@ -667,96 +668,116 @@ export default function App() {
           width: 220px;
         }
 
-        /* ========== NUEVO LOGIN CON FONDO CLARO ANIMADO ========== */
+        /* ========== LOGIN SUTIL Y ESPECTACULAR (rediseñado) ========== */
         .auth-shell {
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: 100vh;
-          background: linear-gradient(135deg, #f5f7fe 0%, #e9eef5 100%);
-        }
-
-        .auth-shell-pro {
           position: relative;
           overflow: hidden;
         }
 
-        /* Fondo animado con gradiente en movimiento */
-        .animated-bg {
+        .auth-shell-pro {
+          background: linear-gradient(145deg, #f3f6fc 0%, #eef2f8 100%);
+        }
+
+        /* Fondo ambiental con gradiente animado en todas direcciones */
+        .ambient-bg {
           position: absolute;
           inset: 0;
-          background: linear-gradient(125deg, #ffffff, #f0f4ff, #e6edfa);
-          background-size: 300% 300%;
-          animation: gradientShift 12s ease infinite;
+          background: radial-gradient(circle at 30% 40%, rgba(59,130,246,0.08) 0%, rgba(59,130,246,0) 60%),
+                      radial-gradient(circle at 70% 60%, rgba(37,99,235,0.05) 0%, rgba(37,99,235,0) 60%);
+          animation: slowBreathing 12s infinite alternate ease-in-out;
           z-index: 0;
         }
 
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        @keyframes slowBreathing {
+          0% { opacity: 0.4; transform: scale(1); }
+          100% { opacity: 0.9; transform: scale(1.05); }
         }
 
-        /* Partículas flotantes */
-        .particles {
+        /* Aura central que late suavemente */
+        .glow-aura {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 80vmax;
+          height: 80vmax;
+          transform: translate(-50%, -50%);
+          background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, rgba(59,130,246,0) 70%);
+          animation: pulseAura 8s infinite alternate;
+          border-radius: 50%;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        @keyframes pulseAura {
+          0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); }
+          100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        /* Partículas sutiles en todo el espacio */
+        .floating-particles {
           position: absolute;
           inset: 0;
           overflow: hidden;
           z-index: 0;
+          pointer-events: none;
         }
 
         .particle {
           position: absolute;
-          background: rgba(59, 130, 246, 0.4);
+          background: #3b82f6;
           border-radius: 50%;
-          pointer-events: none;
-          animation: floatParticle 12s infinite linear;
-          filter: blur(1px);
+          filter: blur(0.5px);
+          animation: floatGentle 18s infinite linear;
         }
 
-        @keyframes floatParticle {
+        @keyframes floatGentle {
           0% {
-            transform: translateY(0) translateX(0) rotate(0deg);
+            transform: translateY(0) translateX(0);
             opacity: 0;
           }
           20% {
-            opacity: 0.8;
+            opacity: 0.5;
           }
           80% {
-            opacity: 0.6;
+            opacity: 0.3;
           }
           100% {
-            transform: translateY(-80vh) translateX(40px) rotate(360deg);
+            transform: translateY(-100vh) translateX(20px);
             opacity: 0;
           }
         }
 
-        /* Tarjeta de login clara (glassmorphism) */
+        /* Tarjeta de login (glassmorphism refinado) */
         .auth-card {
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(12px);
-          padding: 2.2rem;
+          background: rgba(255, 255, 255, 0.92);
+          backdrop-filter: blur(8px);
+          padding: 2.4rem;
           border-radius: 2rem;
           width: 460px;
-          box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.6);
-          transition: transform 0.3s ease;
+          box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59,130,246,0.1);
+          border: 1px solid rgba(255, 255, 255, 0.5);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
           z-index: 2;
+          animation: cardEntry 0.5s ease-out;
         }
 
-        .auth-card-pro {
-          animation: slideUpFade 0.5s ease-out;
-        }
-
-        @keyframes slideUpFade {
+        @keyframes cardEntry {
           0% {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(15px) scale(0.98);
           }
           100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
           }
+        }
+
+        .auth-card:hover {
+          box-shadow: 0 30px 50px -16px rgba(59,130,246,0.25), 0 0 0 1px rgba(59,130,246,0.2);
         }
 
         .auth-brand {
@@ -768,7 +789,7 @@ export default function App() {
           font-size: 1.9rem;
           font-weight: 700;
           margin: 0.5rem 0 0.25rem;
-          background: linear-gradient(135deg, #1e293b, #3b82f6);
+          background: linear-gradient(135deg, #1e293b, #2563eb);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
@@ -800,7 +821,7 @@ export default function App() {
           transition: all 0.2s ease;
           flex: 1;
           justify-content: center;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
 
         .role-chip i {
@@ -808,16 +829,16 @@ export default function App() {
         }
 
         .role-chip:hover {
-          background: #f1f5f9;
+          background: #f8fafc;
           border-color: #94a3b8;
-          transform: translateY(-2px);
+          transform: translateY(-1px);
         }
 
         .role-chip.active {
           background: #3b82f6;
           border-color: #3b82f6;
           color: white;
-          box-shadow: 0 8px 20px -8px #3b82f6;
+          box-shadow: 0 4px 12px -4px #3b82f6;
         }
 
         .auth-form-pro {
@@ -849,7 +870,7 @@ export default function App() {
 
         .auth-form-pro input:focus {
           border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
           outline: none;
         }
 
@@ -906,7 +927,7 @@ export default function App() {
           border-radius: 0.75rem;
         }
 
-        /* Resto de estilos existentes (no modificados) */
+        /* Resto de estilos existentes (sin cambios) */
         .muted {
           color: #64748b;
           font-size: 0.85rem;
@@ -1109,6 +1130,10 @@ export default function App() {
       document.head.appendChild(style)
     }
   }, [])
+
+  // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
+  // (exactamente el mismo código que ya tenías, sin modificaciones)
+  // Lo incluyo completo por coherencia, pero no lo cambio.
 
   const [me, setMe] = useState(null)
   const [tab, setTab] = useState('dashboard')
