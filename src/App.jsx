@@ -77,9 +77,14 @@ const emptySocialCampaign = {
 }
 
 function LoginScreen({ onAuth }) {
+  const [mode, setMode] = useState('login')
   const [form, setForm] = useState({
+    name: '',
     email: '',
     password: '',
+    confirm_password: '',
+    company_name: '',
+    phone: '',
     access_role: 'admin'
   })
   const [error, setError] = useState('')
@@ -91,28 +96,103 @@ function LoginScreen({ onAuth }) {
     setLoading(true)
 
     try {
-      const data = await api('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password
+      // ADMIN: solo login
+      if (form.access_role === 'admin') {
+        const data = await api('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password
+          })
         })
-      })
 
-      // VALIDACIÓN DE ROL
-      if (data.user.role !== form.access_role) {
-        const roleError = form.access_role === 'admin'
-          ? 'Este usuario no es administrador'
-          : 'Este usuario no es cliente'
-        setError(roleError)
-        setLoading(false)
+        if (data.user.role !== 'admin') {
+          setError('Este usuario no es administrador')
+          setLoading(false)
+          return
+        }
+
+        setToken(data.token)
+        onAuth(data.user)
         return
       }
 
-      setToken(data.token)
-      onAuth(data.user)
+      // CLIENTE: login
+      if (form.access_role === 'client' && mode === 'login') {
+        const data = await api('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password
+          })
+        })
+
+        if (data.user.role !== 'client_admin' && data.user.role !== 'client_user' && data.user.role !== 'client') {
+          setError('Este usuario no tiene acceso como cliente')
+          setLoading(false)
+          return
+        }
+
+        setToken(data.token)
+        onAuth(data.user)
+        return
+      }
+
+      // CLIENTE: registro
+      if (form.access_role === 'client' && mode === 'register') {
+        if (!form.name.trim()) {
+          setError('Escribe tu nombre')
+          setLoading(false)
+          return
+        }
+
+        if (!form.company_name.trim()) {
+          setError('Escribe el nombre de la empresa')
+          setLoading(false)
+          return
+        }
+
+        if (!form.email.trim()) {
+          setError('Escribe tu correo')
+          setLoading(false)
+          return
+        }
+
+        if (!form.password.trim()) {
+          setError('Escribe tu contraseña')
+          setLoading(false)
+          return
+        }
+
+        if (form.password !== form.confirm_password) {
+          setError('Las contraseñas no coinciden')
+          setLoading(false)
+          return
+        }
+
+        const data = await api('/api/auth/register-client', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            company_name: form.company_name,
+            phone: form.phone
+          })
+        })
+
+        if (data.user.role !== 'client_admin') {
+          setError('No se pudo crear la cuenta de cliente correctamente')
+          setLoading(false)
+          return
+        }
+
+        setToken(data.token)
+        onAuth(data.user)
+        return
+      }
     } catch (err) {
-      setError(err.message || 'No se pudo iniciar sesión')
+      setError(err.message || 'No se pudo completar la operación')
     } finally {
       setLoading(false)
     }
@@ -120,7 +200,6 @@ function LoginScreen({ onAuth }) {
 
   return (
     <div className="auth-shell auth-shell-pro">
-      {/* Fondo sutil con efecto espectacular y equilibrado */}
       <div className="ambient-bg"></div>
       <div className="glow-aura"></div>
       <div className="floating-particles">
@@ -138,7 +217,6 @@ function LoginScreen({ onAuth }) {
 
       <div className="auth-card auth-card-pro">
         <div className="auth-brand">
-          {/* LOGO */}
           <div className="auth-logo">
             <img src="/logo.png" alt="Worktic AI Logo" />
           </div>
@@ -148,7 +226,11 @@ function LoginScreen({ onAuth }) {
           <button
             type="button"
             className={form.access_role === 'admin' ? 'role-chip active' : 'role-chip'}
-            onClick={() => setForm({ ...form, access_role: 'admin' })}
+            onClick={() => {
+              setForm({ ...form, access_role: 'admin' })
+              setMode('login')
+              setError('')
+            }}
           >
             <i className="fas fa-shield-alt"></i>
             Administrador
@@ -157,14 +239,82 @@ function LoginScreen({ onAuth }) {
           <button
             type="button"
             className={form.access_role === 'client' ? 'role-chip active' : 'role-chip'}
-            onClick={() => setForm({ ...form, access_role: 'client' })}
+            onClick={() => {
+              setForm({ ...form, access_role: 'client' })
+              setMode('login')
+              setError('')
+            }}
           >
             <i className="fas fa-building"></i>
             Cliente
           </button>
         </div>
 
+        {form.access_role === 'client' && (
+          <div className="auth-subtabs">
+            <button
+              type="button"
+              className={mode === 'login' ? 'role-chip active' : 'role-chip'}
+              onClick={() => {
+                setMode('login')
+                setError('')
+              }}
+            >
+              <i className="fas fa-right-to-bracket"></i>
+              Ingresar
+            </button>
+
+            <button
+              type="button"
+              className={mode === 'register' ? 'role-chip active' : 'role-chip'}
+              onClick={() => {
+                setMode('register')
+                setError('')
+              }}
+            >
+              <i className="fas fa-user-plus"></i>
+              Crear cuenta
+            </button>
+          </div>
+        )}
+
         <form onSubmit={submit} className="stack auth-form-pro">
+          {form.access_role === 'client' && mode === 'register' && (
+            <div className="field-group">
+              <label>Nombre completo</label>
+              <input
+                type="text"
+                placeholder="Tu nombre completo"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+          )}
+
+          {form.access_role === 'client' && mode === 'register' && (
+            <div className="field-group">
+              <label>Empresa</label>
+              <input
+                type="text"
+                placeholder="Nombre de tu empresa"
+                value={form.company_name}
+                onChange={(e) => setForm({ ...form, company_name: e.target.value })}
+              />
+            </div>
+          )}
+
+          {form.access_role === 'client' && mode === 'register' && (
+            <div className="field-group">
+              <label>Teléfono</label>
+              <input
+                type="text"
+                placeholder="Teléfono o WhatsApp"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
+            </div>
+          )}
+
           <div className="field-group">
             <label>Correo electrónico</label>
             <input
@@ -185,16 +335,30 @@ function LoginScreen({ onAuth }) {
             />
           </div>
 
+          {form.access_role === 'client' && mode === 'register' && (
+            <div className="field-group">
+              <label>Confirmar contraseña</label>
+              <input
+                type="password"
+                placeholder="Confirma tu contraseña"
+                value={form.confirm_password}
+                onChange={(e) => setForm({ ...form, confirm_password: e.target.value })}
+              />
+            </div>
+          )}
+
           <button type="submit" className="auth-submit-btn" disabled={loading}>
             {loading ? (
               <>
                 <i className="fas fa-circle-notch fa-spin"></i>
-                Validando acceso...
+                Procesando...
               </>
             ) : (
               <>
-                <i className="fas fa-arrow-right"></i>
-                Entrar al panel
+                <i className={form.access_role === 'client' && mode === 'register' ? 'fas fa-user-plus' : 'fas fa-arrow-right'}></i>
+                {form.access_role === 'client' && mode === 'register'
+                  ? 'Crear cuenta'
+                  : 'Entrar al panel'}
               </>
             )}
           </button>
@@ -797,7 +961,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 300px;
+          max-width: 140px;
           width: 100%;
           height: auto;
           object-fit: contain;
@@ -807,7 +971,7 @@ export default function App() {
           font-size: 1.9rem;
           font-weight: 700;
           margin: 0.5rem 0 0.25rem;
-          background: linear-gradient(135deg, #1e293b, #621bbb);
+          background: linear-gradient(135deg, #1e293b, #2563eb);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
@@ -823,6 +987,17 @@ export default function App() {
           gap: 0.75rem;
           margin-bottom: 2rem;
           justify-content: center;
+        }
+
+        .auth-subtabs {
+          display: flex;
+          gap: 0.75rem;
+          margin-bottom: 1.25rem;
+          justify-content: center;
+        }
+
+        .auth-subtabs .role-chip {
+          flex: 1;
         }
 
         .role-chip {
@@ -853,10 +1028,10 @@ export default function App() {
         }
 
         .role-chip.active {
-          background: #621bbb;
-          border-color: #621bbb;
+          background: #3b82f6;
+          border-color: #3b82f6;
           color: white;
-          box-shadow: 0 4px 12px -4px #621bbb;
+          box-shadow: 0 4px 12px -4px #3b82f6;
         }
 
         .auth-form-pro {
@@ -897,7 +1072,7 @@ export default function App() {
         }
 
         .auth-submit-btn {
-          background: linear-gradient(95deg, #c655ff, #4b139e);
+          background: linear-gradient(95deg, #2563eb, #1d4ed8);
           border: none;
           padding: 0.85rem;
           border-radius: 0.9rem;
@@ -914,9 +1089,9 @@ export default function App() {
         }
 
         .auth-submit-btn:hover {
-          background: linear-gradient(95deg, #c655ff, #4b139e);
+          background: linear-gradient(95deg, #3b82f6, #2563eb);
           transform: translateY(-2px);
-          box-shadow: 0 12px 20px -10px #4b139e;
+          box-shadow: 0 12px 20px -10px #2563eb;
         }
 
         .auth-submit-btn:disabled {
@@ -945,7 +1120,6 @@ export default function App() {
           border-radius: 0.75rem;
         }
 
-        /* Responsive logo */
         @media (max-width: 480px) {
           .auth-logo img {
             max-width: 110px;
@@ -1157,7 +1331,6 @@ export default function App() {
   }, [])
 
   // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
-  // (exactamente el mismo código que ya tenías, sin modificaciones)
   const [me, setMe] = useState(null)
   const [tab, setTab] = useState('dashboard')
   const [toast, setToast] = useState(null)
@@ -2820,7 +2993,7 @@ export default function App() {
                 />
               </div>
 
-              <table>
+              <tr>
                 <thead>
                   <tr>
                     <th>Nombre</th>
