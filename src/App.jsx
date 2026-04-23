@@ -142,6 +142,7 @@ function LoginScreen({ onAuth }) {
           <div className="auth-logo">
             <img src="/logo.png" alt="Worktic AI Logo" />
           </div>
+          <h1>Bienvenido de nuevo</h1>
           <p className="muted">
             Accede a tu panel de automatización, clientes, bots y campañas.
           </p>
