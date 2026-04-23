@@ -947,7 +947,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 300px;
+          max-width: 250px;
           width: 100%;
           height: auto;
           object-fit: contain;
@@ -2438,7 +2438,7 @@ export default function App() {
         <div className="user-profile">
           <div className="user-avatar"><i className="fas fa-user-circle"></i></div>
           <div className="user-name">{me.name}</div>
-          <div className="user-role">{me.role === 'admin' ? 'Administrador' : 'Cliente'}</div>
+          <div className="user-role">{me.role === 'admin' ? 'Cliente' : 'Colaborador'}</div>
           <div className="user-email">{me.email}</div>
         </div>
         <nav className="menu">
