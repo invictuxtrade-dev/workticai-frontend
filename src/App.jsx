@@ -1586,6 +1586,15 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
 
+  // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
+  useEffect(() => {
+    if (!me) return
+    const adminOnlyTabs = ['clients', 'users']
+    if (me.role !== 'admin' && adminOnlyTabs.includes(tab)) {
+      setTab('dashboard')
+    }
+  }, [me, tab])
+
   const [clients, setClients] = useState([])
   const [users, setUsers] = useState([])
   const [bots, setBots] = useState([])
@@ -2319,14 +2328,23 @@ export default function App() {
     loadSocialLogs()
   }, [selectedClientId])
 
+  // ========== INTERVALO MEJORADO: refresca clientes y usuarios si es admin ==========
   useEffect(() => {
     const t = setInterval(async () => {
       if (!me) return
+
       await loadMetrics()
+
+      if (me.role === 'admin') {
+        await loadClients()
+        await loadUsers()
+      }
+
       if (selectedClientId) await loadBots(selectedClientId)
       await loadInboxLeads()
       if (selectedBotId) await loadQr(selectedBotId)
     }, 7000)
+
     return () => clearInterval(t)
   }, [me, selectedClientId, selectedBotId])
 
@@ -2727,25 +2745,25 @@ export default function App() {
           <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
             <i className="fas fa-share-alt"></i> Social IA
           </button>
+          {/* ========== NUEVO MENÚ: solo admin ve Clientes y Usuarios ========== */}
           {me.role === 'admin' && (
-        <>
-          <button
-            className={tab === 'clients' ? 'menu-item active' : 'menu-item'}
-            onClick={() => setTab('clients')}
-            type="button"
-          >
-            <i className="fas fa-building"></i> Clientes
-          </button>
-
-          <button
-            className={tab === 'users' ? 'menu-item active' : 'menu-item'}
-            onClick={() => setTab('users')}
-            type="button"
-          >
-            <i className="fas fa-users"></i> Usuarios
-          </button>
-        </>
-      )}
+            <>
+              <button
+                className={tab === 'clients' ? 'menu-item active' : 'menu-item'}
+                onClick={() => setTab('clients')}
+                type="button"
+              >
+                <i className="fas fa-building"></i> Clientes
+              </button>
+              <button
+                className={tab === 'users' ? 'menu-item active' : 'menu-item'}
+                onClick={() => setTab('users')}
+                type="button"
+              >
+                <i className="fas fa-users"></i> Usuarios
+              </button>
+            </>
+          )}
         </nav>
         <button className="secondary" onClick={logout} type="button">
           <i className="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -3300,7 +3318,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CLIENTS */}
+        {/* CLIENTS (solo visible para admin, pero ya está protegido en el menú y en el efecto) */}
         {tab === 'clients' && me.role === 'admin' && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-building"></i> Nuevo cliente</div><form onSubmit={createClient} className="form-grid"><input value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} placeholder="Nombre" /><input value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} placeholder="Email" /><input value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} placeholder="Teléfono" /><input value={newClient.plan} onChange={e => setNewClient({...newClient, plan: e.target.value})} placeholder="Plan" /><button className="full" disabled={busy}>Crear cliente</button></form></section>
@@ -3319,8 +3337,8 @@ export default function App() {
           </section>
         )}
 
-        {/* USERS */}
-        {tab === 'users' && (me.role === 'admin' || me.role === 'client_admin') && (
+        {/* USERS (solo visible para admin) */}
+        {tab === 'users' && me.role === 'admin' && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">
               {me.role === 'admin' && <select value={newUser.client_id || selectedClientId} onChange={e => setNewUser({...newUser, client_id: e.target.value})}><option value="">Cliente</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>}
