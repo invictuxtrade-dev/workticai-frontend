@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import QRCode from 'qrcode'
 import { api, API_BASE, setToken, getToken } from './api'
 
@@ -114,6 +114,32 @@ function LoginScreen({ onAuth }) {
   const [captchaError, setCaptchaError] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Estados para el selector de país con búsqueda
+  const [countrySearch, setCountrySearch] = useState('')
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false)
+  const dropdownRef = useRef(null)
+
+  const filteredCountries = useMemo(() => {
+    if (!countrySearch.trim()) return countries
+    const searchLower = countrySearch.toLowerCase()
+    return countries.filter(c => 
+      c.name.toLowerCase().includes(searchLower) || 
+      c.dialCode.includes(searchLower) ||
+      c.code.toLowerCase().includes(searchLower)
+    )
+  }, [countrySearch])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowCountryDropdown(false)
+        setCountrySearch('')
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const generateCaptcha = () => {
     const num1 = Math.floor(Math.random() * 10) + 1
@@ -304,20 +330,56 @@ function LoginScreen({ onAuth }) {
           {form.access_role === 'client' && mode === 'register' && (
             <div className="field-group">
               <label>Teléfono / WhatsApp</label>
-              <div className="phone-input-group">
-                <select
-                  className="country-select"
-                  value={selectedCountry.code}
-                  onChange={(e) => {
-                    const country = countries.find(c => c.code === e.target.value)
-                    setSelectedCountry(country)
-                  }}
-                >
-                  {countries.map(c => (
-                    <option key={c.code} value={c.code}>{c.flag} {c.name} (+{c.dialCode})</option>
-                  ))}
-                </select>
-                <input type="tel" placeholder="Ej: 3118777641" value={localPhone} onChange={(e) => setLocalPhone(e.target.value)} />
+              <div className="phone-input-group" ref={dropdownRef}>
+                <div className="country-selector">
+                  <div 
+                    className="country-selector-trigger"
+                    onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                  >
+                    <span className="country-flag">{selectedCountry.flag}</span>
+                    <span className="country-name">{selectedCountry.name}</span>
+                    <span className="country-dial">+{selectedCountry.dialCode}</span>
+                    <i className={`fas fa-chevron-down ${showCountryDropdown ? 'rotate' : ''}`}></i>
+                  </div>
+                  {showCountryDropdown && (
+                    <div className="country-dropdown">
+                      <input
+                        type="text"
+                        className="country-search"
+                        placeholder="Buscar país..."
+                        value={countrySearch}
+                        onChange={(e) => setCountrySearch(e.target.value)}
+                        autoFocus
+                      />
+                      <div className="country-list">
+                        {filteredCountries.map(country => (
+                          <div
+                            key={country.code}
+                            className="country-option"
+                            onClick={() => {
+                              setSelectedCountry(country)
+                              setShowCountryDropdown(false)
+                              setCountrySearch('')
+                            }}
+                          >
+                            <span className="country-flag">{country.flag}</span>
+                            <span className="country-name">{country.name}</span>
+                            <span className="country-dial">+{country.dialCode}</span>
+                          </div>
+                        ))}
+                        {filteredCountries.length === 0 && (
+                          <div className="country-no-results">No se encontraron países</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <input 
+                  type="tel" 
+                  placeholder="Ej: 3118777641" 
+                  value={localPhone} 
+                  onChange={(e) => setLocalPhone(e.target.value)} 
+                />
               </div>
               <div className="field-hint">Se almacenará con el código de país (+{selectedCountry.dialCode})</div>
             </div>
@@ -1108,27 +1170,102 @@ export default function App() {
           color: #94a3b8;
         }
 
-        /* Estilos para teléfono y captcha */
+        /* Estilos para el selector de país con búsqueda */
         .phone-input-group {
           display: flex;
           gap: 0.75rem;
-          align-items: center;
+          align-items: flex-start;
+          flex-wrap: wrap;
         }
-        .country-select {
-          width: 140px;
-          padding: 0.8rem 0.5rem;
-          border-radius: 0.75rem;
-          border: 1px solid #cbd5e1;
+        .country-selector {
+          position: relative;
+          min-width: 220px;
+          flex: 1;
+        }
+        .country-selector-trigger {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 0.8rem 0.8rem;
           background: white;
-          font-family: inherit;
-          font-size: 0.9rem;
+          border: 1px solid #cbd5e1;
+          border-radius: 0.75rem;
           cursor: pointer;
+          transition: all 0.2s;
+        }
+        .country-selector-trigger:hover {
+          border-color: #621bbb;
+        }
+        .country-flag {
+          font-size: 1.2rem;
+        }
+        .country-name {
+          flex: 1;
+          font-size: 0.9rem;
+          color: #1e293b;
+        }
+        .country-dial {
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+        .country-selector-trigger i {
+          transition: transform 0.2s;
+          color: #94a3b8;
+        }
+        .country-selector-trigger i.rotate {
+          transform: rotate(180deg);
+        }
+        .country-dropdown {
+          position: absolute;
+          top: calc(100% + 4px);
+          left: 0;
+          right: 0;
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 0.75rem;
+          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+          z-index: 10;
+          max-height: 260px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .country-search {
+          padding: 0.6rem 0.8rem;
+          border: none;
+          border-bottom: 1px solid #e2e8f0;
+          outline: none;
+          font-size: 0.85rem;
+        }
+        .country-list {
+          overflow-y: auto;
+          max-height: 200px;
+        }
+        .country-option {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 0.6rem 0.8rem;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .country-option:hover {
+          background: #f8fafc;
+        }
+        .country-no-results {
+          padding: 0.6rem 0.8rem;
+          text-align: center;
+          color: #64748b;
+          font-size: 0.8rem;
         }
         .field-hint {
           font-size: 0.7rem;
           color: #64748b;
           margin-top: 0.25rem;
+          width: 100%;
         }
+
+        /* Estilos para captcha */
         .captcha-container {
           background: #f8fafc;
           border-radius: 0.75rem;
@@ -1234,7 +1371,7 @@ export default function App() {
             flex-direction: column;
             align-items: stretch;
           }
-          .country-select {
+          .country-selector {
             width: 100%;
           }
         }
