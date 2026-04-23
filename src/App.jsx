@@ -801,7 +801,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 350px;
+          max-width: 300px;
           width: 100%;
           height: auto;
           object-fit: contain;
@@ -811,7 +811,7 @@ export default function App() {
           font-size: 1.9rem;
           font-weight: 700;
           margin: 0.5rem 0 0.25rem;
-          background: linear-gradient(135deg, #1e293b, #2563eb);
+          background: linear-gradient(135deg, #1e293b, #621bbb);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
@@ -857,10 +857,10 @@ export default function App() {
         }
 
         .role-chip.active {
-          background: #3b82f6;
-          border-color: #3b82f6;
+          background: #621bbb;
+          border-color: #621bbb;
           color: white;
-          box-shadow: 0 4px 12px -4px #3b82f6;
+          box-shadow: 0 4px 12px -4px #621bbb;
         }
 
         .auth-form-pro {
