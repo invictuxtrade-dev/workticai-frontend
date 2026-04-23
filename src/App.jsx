@@ -142,7 +142,6 @@ function LoginScreen({ onAuth }) {
           <div className="auth-logo">
             <img src="/logo.png" alt="Worktic AI Logo" />
           </div>
-          <div className="eyebrow">Worktic AI</div>
           <h1>Bienvenido de nuevo</h1>
           <p className="muted">
             Accede a tu panel de automatización, clientes, bots y campañas.
@@ -802,7 +801,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 250px;
+          max-width: 350px;
           width: 100%;
           height: auto;
           object-fit: contain;
