@@ -2728,15 +2728,24 @@ export default function App() {
             <i className="fas fa-share-alt"></i> Social IA
           </button>
           {me.role === 'admin' && (
-            <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
-              <i className="fas fa-building"></i> Clientes
-            </button>
-          )}
-          {(me.role === 'admin' || me.role === 'client_admin') && (
-            <button className={tab === 'users' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('users')} type="button">
-              <i className="fas fa-users"></i> Usuarios
-            </button>
-          )}
+        <>
+          <button
+            className={tab === 'clients' ? 'menu-item active' : 'menu-item'}
+            onClick={() => setTab('clients')}
+            type="button"
+          >
+            <i className="fas fa-building"></i> Clientes
+          </button>
+
+          <button
+            className={tab === 'users' ? 'menu-item active' : 'menu-item'}
+            onClick={() => setTab('users')}
+            type="button"
+          >
+            <i className="fas fa-users"></i> Usuarios
+          </button>
+        </>
+      )}
         </nav>
         <button className="secondary" onClick={logout} type="button">
           <i className="fas fa-sign-out-alt"></i> Cerrar sesión
