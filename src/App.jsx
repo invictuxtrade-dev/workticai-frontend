@@ -76,6 +76,26 @@ const emptySocialCampaign = {
   image_prompt: ''
 }
 
+// Lista de países para el selector (bandera + código)
+const countries = [
+  { code: 'CO', dialCode: '57', flag: '🇨🇴', name: 'Colombia' },
+  { code: 'AR', dialCode: '54', flag: '🇦🇷', name: 'Argentina' },
+  { code: 'MX', dialCode: '52', flag: '🇲🇽', name: 'México' },
+  { code: 'ES', dialCode: '34', flag: '🇪🇸', name: 'España' },
+  { code: 'US', dialCode: '1', flag: '🇺🇸', name: 'Estados Unidos' },
+  { code: 'PE', dialCode: '51', flag: '🇵🇪', name: 'Perú' },
+  { code: 'CL', dialCode: '56', flag: '🇨🇱', name: 'Chile' },
+  { code: 'VE', dialCode: '58', flag: '🇻🇪', name: 'Venezuela' },
+  { code: 'EC', dialCode: '593', flag: '🇪🇨', name: 'Ecuador' },
+  { code: 'UY', dialCode: '598', flag: '🇺🇾', name: 'Uruguay' },
+  { code: 'PY', dialCode: '595', flag: '🇵🇾', name: 'Paraguay' },
+  { code: 'BO', dialCode: '591', flag: '🇧🇴', name: 'Bolivia' },
+  { code: 'CR', dialCode: '506', flag: '🇨🇷', name: 'Costa Rica' },
+  { code: 'PA', dialCode: '507', flag: '🇵🇦', name: 'Panamá' },
+  { code: 'DO', dialCode: '1', flag: '🇩🇴', name: 'República Dominicana' },
+  { code: 'PR', dialCode: '1', flag: '🇵🇷', name: 'Puerto Rico' },
+]
+
 function LoginScreen({ onAuth }) {
   const [mode, setMode] = useState('login')
   const [form, setForm] = useState({
@@ -87,84 +107,83 @@ function LoginScreen({ onAuth }) {
     phone: '',
     access_role: 'client'
   })
+  const [selectedCountry, setSelectedCountry] = useState(countries[0])
+  const [localPhone, setLocalPhone] = useState('')
+  const [captchaQuestion, setCaptchaQuestion] = useState({ num1: 0, num2: 0, answer: 0 })
+  const [captchaUserInput, setCaptchaUserInput] = useState('')
+  const [captchaError, setCaptchaError] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1
+    const num2 = Math.floor(Math.random() * 10) + 1
+    setCaptchaQuestion({ num1, num2, answer: num1 + num2 })
+    setCaptchaUserInput('')
+    setCaptchaError('')
+  }
+
+  useEffect(() => {
+    generateCaptcha()
+  }, [])
 
   async function submit(e) {
     e.preventDefault()
     setError('')
+    setCaptchaError('')
     setLoading(true)
 
+    if (form.access_role === 'client' && mode === 'register') {
+      const userAnswer = parseInt(captchaUserInput, 10)
+      if (isNaN(userAnswer) || userAnswer !== captchaQuestion.answer) {
+        setCaptchaError('Respuesta de seguridad incorrecta. Inténtalo de nuevo.')
+        setLoading(false)
+        generateCaptcha()
+        return
+      }
+    }
+
     try {
-      // ADMIN: solo login
       if (form.access_role === 'admin') {
         const data = await api('/api/auth/login', {
           method: 'POST',
-          body: JSON.stringify({
-            email: form.email,
-            password: form.password
-          })
+          body: JSON.stringify({ email: form.email, password: form.password })
         })
-
         if (data.user.role !== 'admin') {
           setError('Este usuario no es administrador')
           setLoading(false)
           return
         }
-
         setToken(data.token)
         onAuth(data.user)
         return
       }
 
-      // CLIENTE: login
       if (form.access_role === 'client' && mode === 'login') {
         const data = await api('/api/auth/login', {
           method: 'POST',
-          body: JSON.stringify({
-            email: form.email,
-            password: form.password
-          })
+          body: JSON.stringify({ email: form.email, password: form.password })
         })
-
-        if (data.user.role !== 'client_admin' && data.user.role !== 'client_user' && data.user.role !== 'client') {
+        if (!['client_admin', 'client_user', 'client'].includes(data.user.role)) {
           setError('Este usuario no tiene acceso como cliente')
           setLoading(false)
           return
         }
-
         setToken(data.token)
         onAuth(data.user)
         return
       }
 
-      // CLIENTE: registro
       if (form.access_role === 'client' && mode === 'register') {
-        if (!form.name.trim()) {
-          setError('Escribe tu nombre')
-          setLoading(false)
-          return
-        }
-        if (!form.company_name.trim()) {
-          setError('Escribe el nombre de la empresa')
-          setLoading(false)
-          return
-        }
-        if (!form.email.trim()) {
-          setError('Escribe tu correo')
-          setLoading(false)
-          return
-        }
-        if (!form.password.trim()) {
-          setError('Escribe tu contraseña')
-          setLoading(false)
-          return
-        }
-        if (form.password !== form.confirm_password) {
-          setError('Las contraseñas no coinciden')
-          setLoading(false)
-          return
-        }
+        if (!form.name.trim()) { setError('Escribe tu nombre'); setLoading(false); return }
+        if (!form.company_name.trim()) { setError('Escribe el nombre de la empresa'); setLoading(false); return }
+        if (!form.email.trim()) { setError('Escribe tu correo'); setLoading(false); return }
+        if (!form.password.trim()) { setError('Escribe tu contraseña'); setLoading(false); return }
+        if (form.password !== form.confirm_password) { setError('Las contraseñas no coinciden'); setLoading(false); return }
+        if (!localPhone.trim()) { setError('Ingresa tu número de teléfono'); setLoading(false); return }
+
+        const cleanLocal = localPhone.replace(/\D/g, '')
+        const fullPhone = `${selectedCountry.dialCode}${cleanLocal}`
 
         const data = await api('/api/auth/register-client', {
           method: 'POST',
@@ -173,16 +192,14 @@ function LoginScreen({ onAuth }) {
             email: form.email,
             password: form.password,
             company_name: form.company_name,
-            phone: form.phone
+            phone: fullPhone
           })
         })
-
         if (data.user.role !== 'client_admin') {
           setError('No se pudo crear la cuenta de cliente correctamente')
           setLoading(false)
           return
         }
-
         setToken(data.token)
         onAuth(data.user)
         return
@@ -228,8 +245,7 @@ function LoginScreen({ onAuth }) {
               setError('')
             }}
           >
-            <i className="fas fa-building"></i>
-            Cliente
+            <i className="fas fa-building"></i> Cliente
           </button>
           <button
             type="button"
@@ -240,8 +256,7 @@ function LoginScreen({ onAuth }) {
               setError('')
             }}
           >
-            <i className="fas fa-shield-alt"></i>
-            Colaborador
+            <i className="fas fa-shield-alt"></i> Colaborador
           </button>
         </div>
 
@@ -255,8 +270,7 @@ function LoginScreen({ onAuth }) {
                 setError('')
               }}
             >
-              <i className="fas fa-right-to-bracket"></i>
-              Ingresar
+              <i className="fas fa-right-to-bracket"></i> Ingresar
             </button>
             <button
               type="button"
@@ -264,10 +278,10 @@ function LoginScreen({ onAuth }) {
               onClick={() => {
                 setMode('register')
                 setError('')
+                generateCaptcha()
               }}
             >
-              <i className="fas fa-user-plus"></i>
-              Crear cuenta
+              <i className="fas fa-user-plus"></i> Crear cuenta
             </button>
           </div>
         )}
@@ -276,77 +290,72 @@ function LoginScreen({ onAuth }) {
           {form.access_role === 'client' && mode === 'register' && (
             <div className="field-group">
               <label>Nombre completo</label>
-              <input
-                type="text"
-                placeholder="Tu nombre completo"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
+              <input type="text" placeholder="Tu nombre completo" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </div>
           )}
 
           {form.access_role === 'client' && mode === 'register' && (
             <div className="field-group">
               <label>Empresa</label>
-              <input
-                type="text"
-                placeholder="Nombre de tu empresa"
-                value={form.company_name}
-                onChange={(e) => setForm({ ...form, company_name: e.target.value })}
-              />
+              <input type="text" placeholder="Nombre de tu empresa" value={form.company_name} onChange={(e) => setForm({ ...form, company_name: e.target.value })} />
             </div>
           )}
 
           {form.access_role === 'client' && mode === 'register' && (
             <div className="field-group">
-              <label>Teléfono</label>
-              <input
-                type="text"
-                placeholder="Teléfono o WhatsApp"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
+              <label>Teléfono / WhatsApp</label>
+              <div className="phone-input-group">
+                <select
+                  className="country-select"
+                  value={selectedCountry.code}
+                  onChange={(e) => {
+                    const country = countries.find(c => c.code === e.target.value)
+                    setSelectedCountry(country)
+                  }}
+                >
+                  {countries.map(c => (
+                    <option key={c.code} value={c.code}>{c.flag} {c.name} (+{c.dialCode})</option>
+                  ))}
+                </select>
+                <input type="tel" placeholder="Ej: 3118777641" value={localPhone} onChange={(e) => setLocalPhone(e.target.value)} />
+              </div>
+              <div className="field-hint">Se almacenará con el código de país (+{selectedCountry.dialCode})</div>
             </div>
           )}
 
           <div className="field-group">
             <label>Correo electrónico</label>
-            <input
-              type="email"
-              placeholder={form.access_role === 'admin' ? 'admin@empresa.com' : 'cliente@empresa.com'}
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
+            <input type="email" placeholder={form.access_role === 'admin' ? 'admin@empresa.com' : 'cliente@empresa.com'} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           </div>
 
           <div className="field-group">
             <label>Contraseña</label>
-            <input
-              type="password"
-              placeholder="Ingresa tu contraseña"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
+            <input type="password" placeholder="Ingresa tu contraseña" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
           </div>
 
           {form.access_role === 'client' && mode === 'register' && (
             <div className="field-group">
               <label>Confirmar contraseña</label>
-              <input
-                type="password"
-                placeholder="Confirma tu contraseña"
-                value={form.confirm_password}
-                onChange={(e) => setForm({ ...form, confirm_password: e.target.value })}
-              />
+              <input type="password" placeholder="Confirma tu contraseña" value={form.confirm_password} onChange={(e) => setForm({ ...form, confirm_password: e.target.value })} />
+            </div>
+          )}
+
+          {form.access_role === 'client' && mode === 'register' && (
+            <div className="captcha-container">
+              <div className="captcha-question">
+                <span className="captcha-text">¿Cuánto es {captchaQuestion.num1} + {captchaQuestion.num2}?</span>
+                <button type="button" className="captcha-refresh" onClick={generateCaptcha} title="Nueva operación">
+                  <i className="fas fa-sync-alt"></i>
+                </button>
+              </div>
+              <input type="number" placeholder="Escribe el resultado" value={captchaUserInput} onChange={(e) => setCaptchaUserInput(e.target.value)} className="captcha-input" />
+              {captchaError && <div className="captcha-error">{captchaError}</div>}
             </div>
           )}
 
           <button type="submit" className="auth-submit-btn" disabled={loading}>
             {loading ? (
-              <>
-                <i className="fas fa-circle-notch fa-spin"></i>
-                Procesando...
-              </>
+              <><i className="fas fa-circle-notch fa-spin"></i> Procesando...</>
             ) : (
               <>
                 <i className={form.access_role === 'client' && mode === 'register' ? 'fas fa-user-plus' : 'fas fa-arrow-right'}></i>
@@ -355,7 +364,7 @@ function LoginScreen({ onAuth }) {
             )}
           </button>
 
-          {error ? <div className="error">{error}</div> : null}
+          {error && <div className="error">{error}</div>}
         </form>
       </div>
     </div>
@@ -1009,7 +1018,6 @@ export default function App() {
           box-shadow: 0 4px 12px -4px #621bbb;
         }
 
-        /* Estilos para los subtabs (tabs de cliente) */
         .auth-subtabs {
           display: flex;
           gap: 0.5rem;
@@ -1100,6 +1108,71 @@ export default function App() {
           color: #94a3b8;
         }
 
+        /* Estilos para teléfono y captcha */
+        .phone-input-group {
+          display: flex;
+          gap: 0.75rem;
+          align-items: center;
+        }
+        .country-select {
+          width: 140px;
+          padding: 0.8rem 0.5rem;
+          border-radius: 0.75rem;
+          border: 1px solid #cbd5e1;
+          background: white;
+          font-family: inherit;
+          font-size: 0.9rem;
+          cursor: pointer;
+        }
+        .field-hint {
+          font-size: 0.7rem;
+          color: #64748b;
+          margin-top: 0.25rem;
+        }
+        .captcha-container {
+          background: #f8fafc;
+          border-radius: 0.75rem;
+          padding: 0.75rem;
+          border: 1px solid #e2e8f0;
+          margin-top: 0.5rem;
+        }
+        .captcha-question {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 0.75rem;
+        }
+        .captcha-text {
+          font-weight: 500;
+          color: #1e293b;
+          font-size: 0.9rem;
+        }
+        .captcha-refresh {
+          background: transparent;
+          border: none;
+          color: #621bbb;
+          cursor: pointer;
+          padding: 0.25rem;
+          font-size: 1rem;
+          transition: transform 0.2s;
+        }
+        .captcha-refresh:hover {
+          transform: rotate(15deg);
+          background: transparent;
+        }
+        .captcha-input {
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          border-radius: 0.5rem;
+          border: 1px solid #cbd5e1;
+          background: white;
+        }
+        .captcha-error {
+          color: #dc2626;
+          font-size: 0.75rem;
+          margin-top: 0.5rem;
+        }
+
         .auth-submit-btn {
           background: linear-gradient(95deg, #c655ff, #4b139e);
           border: none;
@@ -1156,6 +1229,13 @@ export default function App() {
           .tab-btn {
             padding: 0.4rem 0.6rem;
             font-size: 0.8rem;
+          }
+          .phone-input-group {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .country-select {
+            width: 100%;
           }
         }
 
@@ -2542,7 +2622,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* DASHBOARD (sin cambios) */}
+        {/* DASHBOARD */}
         {tab === 'dashboard' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
@@ -2688,7 +2768,7 @@ export default function App() {
           </section>
         )}
 
-        {/* INBOX (sin cambios) */}
+        {/* INBOX */}
         {tab === 'inbox' && (
           <section className="inbox-layout">
             <section className="stripe-card inbox-list">
@@ -2754,7 +2834,7 @@ export default function App() {
           </section>
         )}
 
-        {/* BOTS (sin cambios) */}
+        {/* BOTS */}
         {tab === 'bots' && (
           <section className="panel-grid">
             <section className="stripe-card stack">
@@ -2793,7 +2873,7 @@ export default function App() {
           </section>
         )}
 
-        {/* TEMPLATES (sin cambios) */}
+        {/* TEMPLATES */}
         {tab === 'templates' && (
           <section className="panel-grid">
             <section className="stripe-card stack">
@@ -2816,7 +2896,7 @@ export default function App() {
           </section>
         )}
 
-        {/* LANDING (sin cambios) */}
+        {/* LANDING */}
         {tab === 'landing' && (
           <section className="stripe-card stack gap-lg">
             <div className="row between center">
@@ -2885,7 +2965,7 @@ export default function App() {
           </section>
         )}
 
-        {/* FUNNEL (sin cambios) */}
+        {/* FUNNEL */}
         {tab === 'funnel' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
@@ -2955,7 +3035,7 @@ export default function App() {
           </section>
         )}
 
-        {/* SOCIAL IA COMPLETO (con preview estilo Facebook) */}
+        {/* SOCIAL IA */}
         {tab === 'social' && (
           <section className="stack gap-lg">
             <div className="panel-grid">
@@ -3049,7 +3129,13 @@ export default function App() {
                   <thead><tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr></thead>
                   <tbody>
                     {socialPosts.map(post => (
-                      <tr key={post.id}><td>{post.platform}</td><td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td><td>{post.publish_mode}</td><td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td><td>{(post.content || '').slice(0, 120)}</td></tr>
+                      <tr key={post.id}>
+                        <td>{post.platform}</td>
+                        <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
+                        <td>{post.publish_mode}</td>
+                        <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
+                        <td>{(post.content || '').slice(0, 120)}</td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
@@ -3068,7 +3154,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CLIENTS (sin cambios) */}
+        {/* CLIENTS */}
         {tab === 'clients' && me.role === 'admin' && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-building"></i> Nuevo cliente</div><form onSubmit={createClient} className="form-grid"><input value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} placeholder="Nombre" /><input value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} placeholder="Email" /><input value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} placeholder="Teléfono" /><input value={newClient.plan} onChange={e => setNewClient({...newClient, plan: e.target.value})} placeholder="Plan" /><button className="full" disabled={busy}>Crear cliente</button></form></section>
@@ -3087,7 +3173,7 @@ export default function App() {
           </section>
         )}
 
-        {/* USERS (sin cambios) */}
+        {/* USERS */}
         {tab === 'users' && (me.role === 'admin' || me.role === 'client_admin') && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">
