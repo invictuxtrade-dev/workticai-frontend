@@ -77,7 +77,7 @@ const emptySocialCampaign = {
 }
 
 function LoginScreen({ onAuth }) {
-  const [mode, setMode] = useState('login')
+  const [mode, setMode] = useState('login') // 'login' o 'register'
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -145,25 +145,21 @@ function LoginScreen({ onAuth }) {
           setLoading(false)
           return
         }
-
         if (!form.company_name.trim()) {
           setError('Escribe el nombre de la empresa')
           setLoading(false)
           return
         }
-
         if (!form.email.trim()) {
           setError('Escribe tu correo')
           setLoading(false)
           return
         }
-
         if (!form.password.trim()) {
           setError('Escribe tu contraseña')
           setLoading(false)
           return
         }
-
         if (form.password !== form.confirm_password) {
           setError('Las contraseñas no coinciden')
           setLoading(false)
@@ -235,7 +231,6 @@ function LoginScreen({ onAuth }) {
             <i className="fas fa-shield-alt"></i>
             Administrador
           </button>
-
           <button
             type="button"
             className={form.access_role === 'client' ? 'role-chip active' : 'role-chip'}
@@ -263,7 +258,6 @@ function LoginScreen({ onAuth }) {
               <i className="fas fa-right-to-bracket"></i>
               Ingresar
             </button>
-
             <button
               type="button"
               className={mode === 'register' ? 'role-chip active' : 'role-chip'}
@@ -356,9 +350,7 @@ function LoginScreen({ onAuth }) {
             ) : (
               <>
                 <i className={form.access_role === 'client' && mode === 'register' ? 'fas fa-user-plus' : 'fas fa-arrow-right'}></i>
-                {form.access_role === 'client' && mode === 'register'
-                  ? 'Crear cuenta'
-                  : 'Entrar al panel'}
+                {form.access_role === 'client' && mode === 'register' ? 'Crear cuenta' : 'Entrar al panel'}
               </>
             )}
           </button>
@@ -971,7 +963,7 @@ export default function App() {
           font-size: 1.9rem;
           font-weight: 700;
           margin: 0.5rem 0 0.25rem;
-          background: linear-gradient(135deg, #1e293b, #2563eb);
+          background: linear-gradient(135deg, #1e293b, #621bbb);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
@@ -1028,10 +1020,10 @@ export default function App() {
         }
 
         .role-chip.active {
-          background: #3b82f6;
-          border-color: #3b82f6;
+          background: #621bbb;
+          border-color: #621bbb;
           color: white;
-          box-shadow: 0 4px 12px -4px #3b82f6;
+          box-shadow: 0 4px 12px -4px #621bbb;
         }
 
         .auth-form-pro {
@@ -1072,7 +1064,7 @@ export default function App() {
         }
 
         .auth-submit-btn {
-          background: linear-gradient(95deg, #2563eb, #1d4ed8);
+          background: linear-gradient(95deg, #c655ff, #4b139e);
           border: none;
           padding: 0.85rem;
           border-radius: 0.9rem;
@@ -1089,9 +1081,9 @@ export default function App() {
         }
 
         .auth-submit-btn:hover {
-          background: linear-gradient(95deg, #3b82f6, #2563eb);
+          background: linear-gradient(95deg, #c655ff, #4b139e);
           transform: translateY(-2px);
-          box-shadow: 0 12px 20px -10px #2563eb;
+          box-shadow: 0 12px 20px -10px #4b139e;
         }
 
         .auth-submit-btn:disabled {
@@ -2388,7 +2380,6 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {/* Overlay de carga para Landing IA */}
       {landingLoading && (
         <div className="loading-overlay">
           <div className="loading-card">
@@ -2405,7 +2396,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Overlay de carga para Social IA (contenido) */}
       {socialLoading && (
         <div className="loading-overlay">
           <div className="loading-card">
@@ -2422,7 +2412,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Overlay para imagen o publicación */}
       {(socialImageLoading || socialActionLoading) && (
         <div className="loading-overlay">
           <div className="loading-card">
@@ -2458,7 +2447,6 @@ export default function App() {
           <div className="user-role">{me.role === 'admin' ? 'Administrador' : 'Cliente'}</div>
           <div className="user-email">{me.email}</div>
         </div>
-
         <nav className="menu">
           <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
             <i className="fas fa-tachometer-alt"></i> Dashboard
@@ -2492,7 +2480,6 @@ export default function App() {
             </button>
           )}
         </nav>
-
         <button className="secondary" onClick={logout} type="button">
           <i className="fas fa-sign-out-alt"></i> Cerrar sesión
         </button>
@@ -2528,7 +2515,6 @@ export default function App() {
                 </div>
               ))}
             </div>
-
             <div className="stripe-card">
               <div className="chart-container">
                 <div className="chart">
@@ -2557,7 +2543,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-
             <div className="panel-grid">
               <section className="stripe-card stack">
                 <div className="row between center">
@@ -2618,7 +2603,6 @@ export default function App() {
                 </div>
               </section>
             </div>
-
             <section className="stripe-card stack">
               <div className="row between center">
                 <div>
@@ -2993,7 +2977,7 @@ export default function App() {
                 />
               </div>
 
-              <tr>
+              <table>
                 <thead>
                   <tr>
                     <th>Nombre</th>
