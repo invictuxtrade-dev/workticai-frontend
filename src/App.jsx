@@ -221,18 +221,6 @@ function LoginScreen({ onAuth }) {
         <div className="auth-role-switch">
           <button
             type="button"
-            className={form.access_role === 'admin' ? 'role-chip active' : 'role-chip'}
-            onClick={() => {
-              setForm({ ...form, access_role: 'admin' })
-              setMode('login')
-              setError('')
-            }}
-          >
-            <i className="fas fa-shield-alt"></i>
-            Administrador
-          </button>
-          <button
-            type="button"
             className={form.access_role === 'client' ? 'role-chip active' : 'role-chip'}
             onClick={() => {
               setForm({ ...form, access_role: 'client' })
@@ -243,6 +231,19 @@ function LoginScreen({ onAuth }) {
             <i className="fas fa-building"></i>
             Cliente
           </button>
+          <button
+            type="button"
+            className={form.access_role === 'admin' ? 'role-chip active' : 'role-chip'}
+            onClick={() => {
+              setForm({ ...form, access_role: 'admin' })
+              setMode('login')
+              setError('')
+            }}
+          >
+            <i className="fas fa-shield-alt"></i>
+            Colaborador
+          </button>
+          
         </div>
 
         {form.access_role === 'client' && (
@@ -947,7 +948,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 250px;
+          max-width: 300px;
           width: 100%;
           height: auto;
           object-fit: contain;
@@ -2438,7 +2439,7 @@ export default function App() {
         <div className="user-profile">
           <div className="user-avatar"><i className="fas fa-user-circle"></i></div>
           <div className="user-name">{me.name}</div>
-          <div className="user-role">{me.role === 'admin' ? 'Cliente' : 'Colaborador'}</div>
+          <div className="user-role">{me.role === 'admin' ? 'Administrador' : 'Cliente'}</div>
           <div className="user-email">{me.email}</div>
         </div>
         <nav className="menu">
