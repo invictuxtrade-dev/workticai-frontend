@@ -99,6 +99,16 @@ function LoginScreen({ onAuth }) {
         })
       })
 
+      // VALIDACIÓN DE ROL
+      if (data.user.role !== form.access_role) {
+        const roleError = form.access_role === 'admin'
+          ? 'Este usuario no es administrador'
+          : 'Este usuario no es cliente'
+        setError(roleError)
+        setLoading(false)
+        return
+      }
+
       setToken(data.token)
       onAuth(data.user)
     } catch (err) {
@@ -128,6 +138,10 @@ function LoginScreen({ onAuth }) {
 
       <div className="auth-card auth-card-pro">
         <div className="auth-brand">
+          {/* LOGO */}
+          <div className="auth-logo">
+            <img src="/logo.png" alt="Worktic AI Logo" />
+          </div>
           <div className="eyebrow">Worktic AI</div>
           <h1>Bienvenido de nuevo</h1>
           <p className="muted">
@@ -192,6 +206,12 @@ function LoginScreen({ onAuth }) {
 
           {error ? <div className="error">{error}</div> : null}
         </form>
+
+        <div className="auth-footnote">
+          <span className="muted tiny">
+            El acceso es asignado por Worktic. Si no tienes credenciales, solicita acceso al administrador.
+          </span>
+        </div>
       </div>
     </div>
   )
@@ -662,7 +682,7 @@ export default function App() {
           width: 220px;
         }
 
-        /* ========== LOGIN SUTIL Y ESPECTACULAR (rediseñado) ========== */
+        /* ========== LOGIN SUTIL Y ESPECTACULAR ========== */
         .auth-shell {
           display: flex;
           justify-content: center;
@@ -676,7 +696,6 @@ export default function App() {
           background: linear-gradient(145deg, #f3f6fc 0%, #eef2f8 100%);
         }
 
-        /* Fondo ambiental con gradiente animado en todas direcciones */
         .ambient-bg {
           position: absolute;
           inset: 0;
@@ -691,7 +710,6 @@ export default function App() {
           100% { opacity: 0.9; transform: scale(1.05); }
         }
 
-        /* Aura central que late suavemente */
         .glow-aura {
           position: absolute;
           top: 50%;
@@ -711,7 +729,6 @@ export default function App() {
           100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
         }
 
-        /* Partículas sutiles en todo el espacio */
         .floating-particles {
           position: absolute;
           inset: 0;
@@ -745,7 +762,6 @@ export default function App() {
           }
         }
 
-        /* Tarjeta de login (glassmorphism refinado) */
         .auth-card {
           background: rgba(255, 255, 255, 0.92);
           backdrop-filter: blur(8px);
@@ -777,6 +793,19 @@ export default function App() {
         .auth-brand {
           text-align: center;
           margin-bottom: 2rem;
+        }
+
+        .auth-logo {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+
+        .auth-logo img {
+          max-width: 140px;
+          width: 100%;
+          height: auto;
+          object-fit: contain;
         }
 
         .auth-brand h1 {
@@ -921,7 +950,14 @@ export default function App() {
           border-radius: 0.75rem;
         }
 
-        /* Resto de estilos existentes (sin cambios) */
+        /* Responsive logo */
+        @media (max-width: 480px) {
+          .auth-logo img {
+            max-width: 110px;
+          }
+        }
+
+        /* Resto de estilos existentes */
         .muted {
           color: #64748b;
           font-size: 0.85rem;
@@ -1127,8 +1163,6 @@ export default function App() {
 
   // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
   // (exactamente el mismo código que ya tenías, sin modificaciones)
-  // Lo incluyo completo por coherencia, pero no lo cambio.
-
   const [me, setMe] = useState(null)
   const [tab, setTab] = useState('dashboard')
   const [toast, setToast] = useState(null)
@@ -1166,7 +1200,6 @@ export default function App() {
   const [landingLoadingText, setLandingLoadingText] = useState('')
   const [landingLoadingStep, setLandingLoadingStep] = useState(0)
 
-  // Estados para Social IA
   const [socialCredential, setSocialCredential] = useState(emptySocialCredential)
   const [socialCampaign, setSocialCampaign] = useState(emptySocialCampaign)
   const [socialPosts, setSocialPosts] = useState([])
@@ -1179,8 +1212,6 @@ export default function App() {
   const [socialImagePrompt, setSocialImagePrompt] = useState('')
   const [socialImageLoading, setSocialImageLoading] = useState(false)
   const [socialUploadLoading, setSocialUploadLoading] = useState(false)
-
-  // Nuevos estados para loading de publicación
   const [socialActionLoading, setSocialActionLoading] = useState(false)
   const [socialActionText, setSocialActionText] = useState('')
   const [socialActionStep, setSocialActionStep] = useState(0)
@@ -1281,7 +1312,6 @@ export default function App() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  // Función para resolver URLs (absolutas vs relativas)
   function resolveMediaURL(url) {
     if (!url) return ''
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
@@ -1290,7 +1320,6 @@ export default function App() {
     return `${API_BASE}${url.startsWith('/') ? '' : '/'}${url}`
   }
 
-  // 1) Función para convertir HTML a texto plano
   function htmlToPlainText(input) {
     if (!input) return ''
     const div = document.createElement('div')
@@ -1334,7 +1363,6 @@ export default function App() {
       showNotice('Describe el contenido de la landing (campo prompt)')
       return
     }
-
     if (landingForm.tracking_mode === 'external') {
       if (!landingForm.tracking_base_url.trim()) {
         showNotice('Debes indicar la URL base del backend para el tracking externo')
@@ -1375,16 +1403,13 @@ export default function App() {
           ...landingForm
         })
       })
-
       clearInterval(interval)
       setLandingLoadingStep(100)
       setLandingLoadingText('Landing generada correctamente')
-
       setLandingHTML(res.html || '')
       setEditingLandingId(res.id || '')
       await loadLandings()
       showNotice('Landing generada correctamente')
-
       setTimeout(() => {
         const previewElement = document.getElementById('landing-preview')
         if (previewElement) {
@@ -1409,7 +1434,6 @@ export default function App() {
       showNotice('No hay landing seleccionada para editar')
       return
     }
-
     if (landingForm.tracking_mode === 'external') {
       if (!landingForm.tracking_base_url.trim()) {
         showNotice('Debes indicar la URL base del backend para el tracking externo')
@@ -1420,7 +1444,6 @@ export default function App() {
         return
       }
     }
-
     setBusy(true)
     try {
       await api(`/api/landings/${editingLandingId}`, {
@@ -1494,7 +1517,7 @@ export default function App() {
     URL.revokeObjectURL(url)
   }
 
-  // ======================== FUNCIONES SOCIAL IA (MEJORADAS) ========================
+  // ======================== FUNCIONES SOCIAL IA ========================
   async function loadSocialCredential() {
     try {
       const data = await api(`/api/social/credentials${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
@@ -1542,42 +1565,36 @@ export default function App() {
   }
 
   async function createSocialCampaign() {
-  if (!socialCampaign.name.trim()) {
-    showNotice('Escribe un nombre para la campaña')
-    return null
-  }
-
-  if (!socialCampaign.prompt.trim()) {
-    showNotice('Describe la campaña en el prompt')
-    return null
-  }
-
-  const payload = {
-    ...socialCampaign,
-    client_id: selectedClientId,
-    recurring_minutes: Number(socialCampaign.recurring_minutes || 0),
-    scheduled_at:
-      socialCampaign.publish_mode === 'scheduled' && socialCampaign.scheduled_at
+    if (!socialCampaign.name.trim()) {
+      showNotice('Escribe un nombre para la campaña')
+      return null
+    }
+    if (!socialCampaign.prompt.trim()) {
+      showNotice('Describe la campaña en el prompt')
+      return null
+    }
+    const payload = {
+      ...socialCampaign,
+      client_id: selectedClientId,
+      recurring_minutes: Number(socialCampaign.recurring_minutes || 0),
+      scheduled_at: socialCampaign.publish_mode === 'scheduled' && socialCampaign.scheduled_at
         ? new Date(socialCampaign.scheduled_at).toISOString()
         : null
+    }
+    try {
+      const created = await api('/api/social/campaigns', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      setSocialCampaign({ ...emptySocialCampaign, bot_id: selectedBotId || '' })
+      showNotice('Campaña creada')
+      return created
+    } catch (err) {
+      showNotice(err.message || 'Error creando campaña')
+      return null
+    }
   }
 
-  try {
-    const created = await api('/api/social/campaigns', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    })
-
-    setSocialCampaign({ ...emptySocialCampaign, bot_id: selectedBotId || '' })
-    showNotice('Campaña creada')
-    return created
-  } catch (err) {
-    showNotice(err.message || 'Error creando campaña')
-    return null
-  }
-}
-
-  // 2) publishSocialNow con loading, pasos, validaciones y texto plano
   async function publishSocialNow() {
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
@@ -1607,23 +1624,19 @@ export default function App() {
     const campaign = await createSocialCampaign()
     if (!campaign) return
 
-    const finalImageURL =
-      socialCampaign.image_mode === 'manual'
-        ? socialCampaign.manual_image_url
-        : socialCampaign.image_mode === 'ai'
-          ? socialImageURL
-          : ''
-
+    const finalImageURL = socialCampaign.image_mode === 'manual'
+      ? socialCampaign.manual_image_url
+      : socialCampaign.image_mode === 'ai'
+        ? socialImageURL
+        : ''
     const finalContent = htmlToPlainText(socialContent)
 
     setSocialActionLoading(true)
     setSocialActionStep(20)
     setSocialActionText('Preparando contenido y assets...')
-
     try {
       setSocialActionStep(45)
       setSocialActionText('Conectando con Facebook...')
-
       await api(`/api/social/publish-now${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -1638,7 +1651,6 @@ export default function App() {
           manual_link: socialCampaign.manual_link_url
         })
       })
-
       setSocialActionStep(100)
       setSocialActionText('Publicación enviada correctamente')
       showNotice('Publicación enviada a Facebook')
@@ -1655,7 +1667,6 @@ export default function App() {
     }
   }
 
-  // 2) scheduleSocialPost con loading, pasos, validaciones y texto plano
   async function scheduleSocialPost() {
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
@@ -1689,29 +1700,24 @@ export default function App() {
       showNotice('Debes indicar fecha y hora de publicación')
       return
     }
-
     if (socialCampaign.publish_mode === 'recurring' && !socialCampaign.recurring_minutes) {
       showNotice('Debes indicar cada cuántos minutos publicar')
       return
     }
 
-    const finalImageURL =
-      socialCampaign.image_mode === 'manual'
-        ? socialCampaign.manual_image_url
-        : socialCampaign.image_mode === 'ai'
-          ? socialImageURL
-          : ''
-
+    const finalImageURL = socialCampaign.image_mode === 'manual'
+      ? socialCampaign.manual_image_url
+      : socialCampaign.image_mode === 'ai'
+        ? socialImageURL
+        : ''
     const finalContent = htmlToPlainText(socialContent)
 
     setSocialActionLoading(true)
     setSocialActionStep(20)
     setSocialActionText('Preparando programación...')
-
     try {
       setSocialActionStep(50)
       setSocialActionText('Guardando job y publicación...')
-
       await api(`/api/social/schedule${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -1730,7 +1736,6 @@ export default function App() {
           days_of_week: socialCampaign.days_of_week
         })
       })
-
       setSocialActionStep(100)
       setSocialActionText('Programación creada correctamente')
       showNotice('Publicación programada correctamente')
@@ -1752,18 +1757,15 @@ export default function App() {
       showNotice('Describe la campaña primero')
       return
     }
-
     setSocialLoading(true)
     setSocialLoadingStep(10)
     setSocialLoadingText('Analizando campaña social...')
-
     const progress = [
       { step: 25, text: 'Definiendo copy y propuesta de valor...' },
       { step: 45, text: 'Construyendo CTA y estructura de publicación...' },
       { step: 65, text: 'Preparando versión lista para Facebook...' },
       { step: 85, text: 'Finalizando contenido...' }
     ]
-
     let idx = 0
     const interval = setInterval(() => {
       if (idx < progress.length) {
@@ -1772,7 +1774,6 @@ export default function App() {
         idx++
       }
     }, 1300)
-
     try {
       const res = await api('/api/social/generate', {
         method: 'POST',
@@ -1784,7 +1785,6 @@ export default function App() {
           objective: socialCampaign.objective
         })
       })
-
       clearInterval(interval)
       setSocialContent(res.content || '')
       setSocialLoadingStep(100)
@@ -1807,14 +1807,12 @@ export default function App() {
       showNotice('Describe la imagen que quieres generar')
       return
     }
-
     setSocialImageLoading(true)
     try {
       const res = await api('/api/social/generate-image', {
         method: 'POST',
         body: JSON.stringify({ prompt: socialImagePrompt })
       })
-
       const imageURL = res.image_url || ''
       const resolvedURL = resolveMediaURL(imageURL)
       setSocialImageURL(resolvedURL)
@@ -1833,20 +1831,16 @@ export default function App() {
 
   async function uploadSocialImage(file) {
     if (!file) return
-
     setSocialUploadLoading(true)
     try {
       const form = new FormData()
       form.append('image', file)
-
       const res = await api('/api/social/upload-image', {
         method: 'POST',
         body: form
       })
-
       const imageURL = res.image_url || ''
       const resolvedURL = resolveMediaURL(imageURL)
-
       setSocialImageURL(resolvedURL)
       setSocialCampaign(prev => ({
         ...prev,
