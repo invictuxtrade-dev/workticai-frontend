@@ -802,7 +802,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 140px;
+          max-width: 250px;
           width: 100%;
           height: auto;
           object-fit: contain;
