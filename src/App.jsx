@@ -77,55 +77,112 @@ const emptySocialCampaign = {
 }
 
 function LoginScreen({ onAuth }) {
-  const [mode, setMode] = useState('login')
   const [form, setForm] = useState({
-    name: 'Administrador',
-    email: 'admin@demo.com',
-    password: 'admin123'
+    email: '',
+    password: '',
+    access_role: 'admin'
   })
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function submit(e) {
     e.preventDefault()
     setError('')
+    setLoading(true)
+
     try {
-      const data = await api(
-        mode === 'bootstrap' ? '/api/auth/bootstrap' : '/api/auth/login',
-        {
-          method: 'POST',
-          body: JSON.stringify(form)
-        }
-      )
+      const data = await api('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password
+        })
+      })
+
       setToken(data.token)
       onAuth(data.user)
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'No se pudo iniciar sesión')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <div className="eyebrow">WhatsApp Sales OS Enterprise</div>
-        <h1>Acceso</h1>
-        <p className="muted">Administra clientes, bots, leads e IA.</p>
+    <div className="auth-shell auth-shell-pro">
+      <div className="auth-backdrop" />
+      <div className="auth-card auth-card-pro">
+        <div className="auth-brand">
+          <div className="eyebrow">Worktic AI</div>
+          <h1>Bienvenido de nuevo</h1>
+          <p className="muted">
+            Accede a tu panel de automatización, clientes, bots y campañas.
+          </p>
+        </div>
 
-        <div className="auth-tabs">
-          <button className={mode === 'login' ? 'tab active' : 'tab'} onClick={() => setMode('login')} type="button">
-            Ingresar
+        <div className="auth-role-switch">
+          <button
+            type="button"
+            className={form.access_role === 'admin' ? 'role-chip active' : 'role-chip'}
+            onClick={() => setForm({ ...form, access_role: 'admin' })}
+          >
+            <i className="fas fa-shield-alt"></i>
+            Administrador
           </button>
-          <button className={mode === 'bootstrap' ? 'tab active' : 'tab'} onClick={() => setMode('bootstrap')} type="button">
-            Crear admin inicial
+
+          <button
+            type="button"
+            className={form.access_role === 'client' ? 'role-chip active' : 'role-chip'}
+            onClick={() => setForm({ ...form, access_role: 'client' })}
+          >
+            <i className="fas fa-building"></i>
+            Cliente
           </button>
         </div>
 
-        <form onSubmit={submit} className="stack">
-          <input placeholder="Nombre" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} disabled={mode === 'login'} />
-          <input placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          <input placeholder="Password" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-          <button>{mode === 'login' ? 'Entrar' : 'Crear admin'}</button>
+        <form onSubmit={submit} className="stack auth-form-pro">
+          <div className="field-group">
+            <label>Correo electrónico</label>
+            <input
+              type="email"
+              placeholder={form.access_role === 'admin' ? 'admin@empresa.com' : 'cliente@empresa.com'}
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </div>
+
+          <div className="field-group">
+            <label>Contraseña</label>
+            <input
+              type="password"
+              placeholder="Ingresa tu contraseña"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+            />
+          </div>
+
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? (
+              <>
+                <i className="fas fa-circle-notch fa-spin"></i>
+                Validando acceso...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-arrow-right"></i>
+                Entrar al panel
+              </>
+            )}
+          </button>
+
           {error ? <div className="error">{error}</div> : null}
         </form>
+
+        <div className="auth-footnote">
+          <span className="muted tiny">
+            El acceso es asignado por Worktic. Si no tienes credenciales, solicita acceso al administrador.
+          </span>
+        </div>
       </div>
     </div>
   )
@@ -596,12 +653,26 @@ export default function App() {
           width: 220px;
         }
 
+        /* Login Styles Pro (mejorados) */
         .auth-shell {
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: 100vh;
           background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .auth-shell-pro {
+          position: relative;
+          background: radial-gradient(circle at 10% 30%, #0a0f1c, #03060f);
+          overflow: hidden;
+        }
+
+        .auth-backdrop {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 70% 20%, rgba(59,130,246,0.12) 0%, rgba(0,0,0,0) 60%);
+          pointer-events: none;
         }
 
         .auth-card {
@@ -612,27 +683,172 @@ export default function App() {
           box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
         }
 
-        .auth-tabs {
+        .auth-card-pro {
+          background: rgba(18, 25, 45, 0.85);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(59,130,246,0.25);
+          border-radius: 2rem;
+          box-shadow: 0 30px 50px -15px rgba(0,0,0,0.5);
+          transition: transform 0.3s ease;
+          animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUpFade {
+          0% {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .auth-brand {
+          text-align: center;
+          margin-bottom: 1.75rem;
+        }
+
+        .auth-brand h1 {
+          font-size: 1.8rem;
+          font-weight: 700;
+          margin: 0.5rem 0 0.25rem;
+          background: linear-gradient(135deg, #ffffff, #a5f3fc);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        .auth-brand .muted {
+          color: #cbd5e6;
+          font-size: 0.9rem;
+        }
+
+        .auth-role-switch {
           display: flex;
-          gap: 0.5rem;
-          margin: 1rem 0;
+          gap: 0.75rem;
+          margin-bottom: 2rem;
+          justify-content: center;
         }
 
-        .tab {
-          background: #f1f5f9;
-          color: #334155;
+        .role-chip {
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.1);
+          color: #e2e8f0;
+          padding: 0.6rem 1.2rem;
+          border-radius: 60px;
+          font-weight: 500;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
           flex: 1;
+          justify-content: center;
+          backdrop-filter: blur(4px);
         }
 
-        .tab.active {
+        .role-chip i {
+          font-size: 1rem;
+        }
+
+        .role-chip:hover {
+          background: rgba(59,130,246,0.2);
+          border-color: #3b82f6;
+          transform: translateY(-2px);
+        }
+
+        .role-chip.active {
           background: #3b82f6;
+          border-color: #3b82f6;
           color: white;
+          box-shadow: 0 8px 20px -8px #3b82f6;
+        }
+
+        .auth-form-pro {
+          gap: 1.25rem;
+        }
+
+        .field-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .field-group label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #94a3b8;
+        }
+
+        .auth-form-pro input {
+          background: rgba(15, 23, 42, 0.7);
+          border: 1px solid #334155;
+          color: #f1f5f9;
+          padding: 0.8rem 1rem;
+          border-radius: 0.75rem;
+          transition: all 0.2s;
+        }
+
+        .auth-form-pro input:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+          background: #0f172a;
+        }
+
+        .auth-form-pro input::placeholder {
+          color: #64748b;
+        }
+
+        .auth-submit-btn {
+          background: linear-gradient(95deg, #2563eb, #1d4ed8);
+          border: none;
+          padding: 0.85rem;
+          border-radius: 0.9rem;
+          font-weight: 600;
+          font-size: 1rem;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-top: 0.5rem;
+        }
+
+        .auth-submit-btn:hover {
+          background: linear-gradient(95deg, #3b82f6, #2563eb);
+          transform: translateY(-2px);
+          box-shadow: 0 12px 20px -10px #2563eb;
+        }
+
+        .auth-submit-btn:disabled {
+          opacity: 0.7;
+          transform: none;
+        }
+
+        .auth-footnote {
+          margin-top: 2rem;
+          text-align: center;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          padding-top: 1.2rem;
+        }
+
+        .auth-footnote span {
+          color: #94a3b8;
         }
 
         .error {
-          color: #dc2626;
+          color: #f87171;
           font-size: 0.85rem;
           margin-top: 0.5rem;
+          text-align: center;
+          background: rgba(239,68,68,0.1);
+          padding: 0.6rem;
+          border-radius: 0.75rem;
         }
 
         .muted {
@@ -2874,7 +3090,7 @@ export default function App() {
             <div className="panel-grid">
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
-                <tr>
+                <table>
                   <thead>
                     <tr>
                       <th>Plataforma</th>
@@ -2895,7 +3111,7 @@ export default function App() {
                       </tr>
                     ))}
                   </tbody>
-                </tr>
+                </table>
                 {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
               </section>
 
