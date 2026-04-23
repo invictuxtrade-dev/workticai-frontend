@@ -110,40 +110,28 @@ function LoginScreen({ onAuth }) {
 
   return (
     <div className="auth-shell auth-shell-pro">
-      {/* Fondo con ondas y partículas IA (mejorado) */}
-      <div className="ai-background">
-        <div className="gradient-orb"></div>
-        <svg className="ai-waves" viewBox="0 0 1200 800" preserveAspectRatio="none">
-          <path d="M0,200 C150,150 350,300 600,200 C850,100 1050,250 1200,150 L1200,800 L0,800 Z" fill="rgba(59,130,246,0.08)" />
-          <path d="M0,300 C200,400 400,200 700,300 C1000,400 1100,250 1200,300 L1200,800 L0,800 Z" fill="rgba(59,130,246,0.12)" />
-          <path d="M0,400 C300,300 500,500 800,400 C1100,300 1150,450 1200,400 L1200,800 L0,800 Z" fill="rgba(59,130,246,0.18)" />
-        </svg>
-        <div className="particles-ia">
-          {[...Array(80)].map((_, i) => (
-            <div key={i} className="particle-ia" style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 15}s`,
-              width: `${Math.random() * 8 + 2}px`,
-              height: `${Math.random() * 8 + 2}px`,
-              opacity: Math.random() * 0.7 + 0.3,
-              boxShadow: `0 0 ${Math.random() * 12 + 6}px rgba(59,130,246,0.9)`
-            }} />
-          ))}
-        </div>
-        <div className="floating-code">
-          <span>∫ AI · neural net</span>
-          <span>{'<worktic/>'}</span>
-          <span>0x1F4A9</span>
-          <span>~ deep learning</span>
-        </div>
+      {/* Fondo animado con partículas IA */}
+      <div className="animated-bg"></div>
+      <div className="particles">
+        {[...Array(30)].map((_, i) => (
+          <div key={i} className="particle" style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 8}s`,
+            width: `${Math.random() * 6 + 2}px`,
+            height: `${Math.random() * 6 + 2}px`,
+            opacity: Math.random() * 0.5 + 0.2
+          }} />
+        ))}
       </div>
 
       <div className="auth-card auth-card-pro">
         <div className="auth-brand">
-          <div className="eyebrow">⚡ Worktic AI Platform</div>
+          <div className="eyebrow">Worktic AI</div>
           <h1>Bienvenido de nuevo</h1>
-          <p className="muted">Accede a tu panel de automatización inteligente</p>
+          <p className="muted">
+            Accede a tu panel de automatización, clientes, bots y campañas.
+          </p>
         </div>
 
         <div className="auth-role-switch">
@@ -155,6 +143,7 @@ function LoginScreen({ onAuth }) {
             <i className="fas fa-shield-alt"></i>
             Administrador
           </button>
+
           <button
             type="button"
             className={form.access_role === 'client' ? 'role-chip active' : 'role-chip'}
@@ -175,6 +164,7 @@ function LoginScreen({ onAuth }) {
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
           </div>
+
           <div className="field-group">
             <label>Contraseña</label>
             <input
@@ -184,6 +174,7 @@ function LoginScreen({ onAuth }) {
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
           </div>
+
           <button type="submit" className="auth-submit-btn" disabled={loading}>
             {loading ? (
               <>
@@ -197,10 +188,14 @@ function LoginScreen({ onAuth }) {
               </>
             )}
           </button>
+
           {error ? <div className="error">{error}</div> : null}
         </form>
+
         <div className="auth-footnote">
-          <span className="muted tiny">El acceso es asignado por Worktic. Solicita credenciales a tu administrador.</span>
+          <span className="muted tiny">
+            El acceso es asignado por Worktic. Si no tienes credenciales, solicita acceso al administrador.
+          </span>
         </div>
       </div>
     </div>
@@ -672,133 +667,96 @@ export default function App() {
           width: 220px;
         }
 
-        /* ========== LOGIN IA IMPACTANTE (totalmente renovado) ========== */
+        /* ========== NUEVO LOGIN CON FONDO CLARO ANIMADO ========== */
         .auth-shell {
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: 100vh;
+          background: linear-gradient(135deg, #f5f7fe 0%, #e9eef5 100%);
+        }
+
+        .auth-shell-pro {
           position: relative;
           overflow: hidden;
         }
 
-        .auth-shell-pro {
-          background: radial-gradient(circle at 20% 30%, #f0f5ff, #e9effa);
-        }
-
-        .ai-background {
+        /* Fondo animado con gradiente en movimiento */
+        .animated-bg {
           position: absolute;
           inset: 0;
+          background: linear-gradient(125deg, #ffffff, #f0f4ff, #e6edfa);
+          background-size: 300% 300%;
+          animation: gradientShift 12s ease infinite;
           z-index: 0;
-          overflow: hidden;
         }
 
-        .gradient-orb {
-          position: absolute;
-          width: 80vmax;
-          height: 80vmax;
-          background: radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0) 70%);
-          top: -20%;
-          left: -20%;
-          animation: orbPulse 6s infinite alternate;
-          border-radius: 50%;
-          filter: blur(40px);
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
 
-        @keyframes orbPulse {
-          0% { transform: scale(1); opacity: 0.4; }
-          100% { transform: scale(1.4); opacity: 0.9; }
-        }
-
-        .ai-waves {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 1;
-          animation: waveMove 12s infinite linear;
-        }
-
-        @keyframes waveMove {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-10%); }
-        }
-
-        .particles-ia {
+        /* Partículas flotantes */
+        .particles {
           position: absolute;
           inset: 0;
-          z-index: 2;
-          pointer-events: none;
+          overflow: hidden;
+          z-index: 0;
         }
 
-        .particle-ia {
+        .particle {
           position: absolute;
-          background: #3b82f6;
+          background: rgba(59, 130, 246, 0.4);
           border-radius: 50%;
-          animation: floatParticleIA 12s infinite linear;
-          filter: blur(1.5px);
-        }
-
-        @keyframes floatParticleIA {
-          0% {
-            transform: translateY(0) translateX(0);
-            opacity: 0;
-          }
-          20% { opacity: 0.9; transform: scale(1.2); }
-          80% { opacity: 0.6; }
-          100% {
-            transform: translateY(-80vh) translateX(80px);
-            opacity: 0;
-          }
-        }
-
-        .floating-code {
-          position: absolute;
-          bottom: 30px;
-          left: 30px;
-          font-family: monospace;
-          font-size: 13px;
-          color: rgba(59,130,246,0.6);
-          background: rgba(255,255,255,0.4);
-          backdrop-filter: blur(6px);
-          padding: 8px 16px;
-          border-radius: 30px;
-          z-index: 3;
-          display: flex;
-          gap: 20px;
           pointer-events: none;
-          font-weight: 500;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          animation: floatParticle 12s infinite linear;
+          filter: blur(1px);
         }
 
-        .floating-code span {
-          animation: codeFlicker 2.5s infinite;
+        @keyframes floatParticle {
+          0% {
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 0;
+          }
+          20% {
+            opacity: 0.8;
+          }
+          80% {
+            opacity: 0.6;
+          }
+          100% {
+            transform: translateY(-80vh) translateX(40px) rotate(360deg);
+            opacity: 0;
+          }
         }
 
-        @keyframes codeFlicker {
-          0%, 100% { opacity: 0.5; text-shadow: 0 0 2px #3b82f6; }
-          50% { opacity: 1; text-shadow: 0 0 8px #3b82f6; }
-        }
-
-        /* Tarjeta premium con borde neón */
+        /* Tarjeta de login clara (glassmorphism) */
         .auth-card {
-          background: rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(4px);
-          padding: 2.5rem;
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(12px);
+          padding: 2.2rem;
           border-radius: 2rem;
-          width: 480px;
-          box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(59,130,246,0.3);
-          border: 1px solid rgba(59,130,246,0.5);
-          transition: box-shadow 0.3s ease, transform 0.2s;
-          animation: cardGlow 3s infinite alternate;
-          z-index: 10;
+          width: 460px;
+          box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          transition: transform 0.3s ease;
+          z-index: 2;
         }
 
-        @keyframes cardGlow {
-          0% { box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(59,130,246,0.3); border-color: rgba(59,130,246,0.4); }
-          100% { box-shadow: 0 30px 50px -15px rgba(59,130,246,0.5), 0 0 0 2px rgba(59,130,246,0.9); border-color: #3b82f6; }
+        .auth-card-pro {
+          animation: slideUpFade 0.5s ease-out;
+        }
+
+        @keyframes slideUpFade {
+          0% {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         .auth-brand {
@@ -807,43 +765,41 @@ export default function App() {
         }
 
         .auth-brand h1 {
-          font-size: 2rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #1e293b, #2563eb);
+          font-size: 1.9rem;
+          font-weight: 700;
+          margin: 0.5rem 0 0.25rem;
+          background: linear-gradient(135deg, #1e293b, #3b82f6);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
-          margin-bottom: 0.5rem;
         }
 
-        .eyebrow {
-          font-size: 0.8rem;
-          letter-spacing: 2px;
-          font-weight: 700;
-          color: #3b82f6;
-          text-transform: uppercase;
+        .auth-brand .muted {
+          color: #475569;
+          font-size: 0.9rem;
         }
 
         .auth-role-switch {
           display: flex;
-          gap: 1rem;
-          margin: 2rem 0 1.5rem;
+          gap: 0.75rem;
+          margin-bottom: 2rem;
+          justify-content: center;
         }
 
         .role-chip {
           background: white;
           border: 1px solid #cbd5e1;
           color: #1e293b;
-          padding: 0.7rem;
+          padding: 0.6rem 1.2rem;
           border-radius: 60px;
-          font-weight: 600;
-          transition: 0.2s;
-          flex: 1;
-          display: flex;
+          font-weight: 500;
+          display: inline-flex;
           align-items: center;
-          justify-content: center;
           gap: 8px;
           cursor: pointer;
+          transition: all 0.2s ease;
+          flex: 1;
+          justify-content: center;
           box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
@@ -852,77 +808,81 @@ export default function App() {
         }
 
         .role-chip:hover {
-          background: #eef2ff;
-          border-color: #3b82f6;
+          background: #f1f5f9;
+          border-color: #94a3b8;
           transform: translateY(-2px);
-          box-shadow: 0 8px 20px -8px #3b82f6;
         }
 
         .role-chip.active {
           background: #3b82f6;
           border-color: #3b82f6;
           color: white;
-          box-shadow: 0 8px 20px -4px #3b82f6;
+          box-shadow: 0 8px 20px -8px #3b82f6;
+        }
+
+        .auth-form-pro {
+          gap: 1.25rem;
         }
 
         .field-group {
           display: flex;
           flex-direction: column;
           gap: 0.4rem;
-          margin-bottom: 1rem;
         }
 
         .field-group label {
           font-size: 0.75rem;
-          font-weight: 700;
+          font-weight: 600;
           text-transform: uppercase;
-          color: #334155;
           letter-spacing: 0.5px;
+          color: #475569;
         }
 
         .auth-form-pro input {
-          background: #ffffff;
+          background: white;
           border: 1px solid #cbd5e1;
-          padding: 0.9rem 1rem;
-          border-radius: 1rem;
-          font-size: 0.95rem;
-          transition: 0.2s;
+          color: #0f172a;
+          padding: 0.8rem 1rem;
+          border-radius: 0.75rem;
+          transition: all 0.2s;
         }
 
         .auth-form-pro input:focus {
           border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59,130,246,0.2), 0 0 0 1px #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
           outline: none;
+        }
+
+        .auth-form-pro input::placeholder {
+          color: #94a3b8;
         }
 
         .auth-submit-btn {
           background: linear-gradient(95deg, #2563eb, #1d4ed8);
           border: none;
-          padding: 1rem;
-          border-radius: 1rem;
-          font-weight: 700;
+          padding: 0.85rem;
+          border-radius: 0.9rem;
+          font-weight: 600;
           font-size: 1rem;
           color: white;
-          width: 100%;
-          transition: 0.2s;
-          margin-top: 0.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
+          gap: 8px;
           cursor: pointer;
+          transition: all 0.2s;
+          margin-top: 0.5rem;
         }
 
         .auth-submit-btn:hover {
           background: linear-gradient(95deg, #3b82f6, #2563eb);
           transform: translateY(-2px);
-          box-shadow: 0 15px 25px -12px #2563eb;
+          box-shadow: 0 12px 20px -10px #2563eb;
         }
 
-        .error {
-          color: #dc2626;
-          margin-top: 1rem;
-          text-align: center;
+        .auth-submit-btn:disabled {
+          opacity: 0.7;
+          transform: none;
         }
 
         .auth-footnote {
@@ -932,7 +892,21 @@ export default function App() {
           padding-top: 1.2rem;
         }
 
-        /* Resto de estilos existentes (sin cambios) */
+        .auth-footnote span {
+          color: #64748b;
+        }
+
+        .error {
+          color: #dc2626;
+          font-size: 0.85rem;
+          margin-top: 0.5rem;
+          text-align: center;
+          background: rgba(220,38,38,0.05);
+          padding: 0.6rem;
+          border-radius: 0.75rem;
+        }
+
+        /* Resto de estilos existentes (no modificados) */
         .muted {
           color: #64748b;
           font-size: 0.85rem;
@@ -1136,10 +1110,6 @@ export default function App() {
     }
   }, [])
 
-  // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
-  // (desde aquí hasta el final, el código es exactamente el mismo que tenías)
-  // Lo incluyo completo para que no falte nada, pero no lo modifico.
-
   const [me, setMe] = useState(null)
   const [tab, setTab] = useState('dashboard')
   const [toast, setToast] = useState(null)
@@ -1177,6 +1147,7 @@ export default function App() {
   const [landingLoadingText, setLandingLoadingText] = useState('')
   const [landingLoadingStep, setLandingLoadingStep] = useState(0)
 
+  // Estados para Social IA
   const [socialCredential, setSocialCredential] = useState(emptySocialCredential)
   const [socialCampaign, setSocialCampaign] = useState(emptySocialCampaign)
   const [socialPosts, setSocialPosts] = useState([])
@@ -1189,6 +1160,8 @@ export default function App() {
   const [socialImagePrompt, setSocialImagePrompt] = useState('')
   const [socialImageLoading, setSocialImageLoading] = useState(false)
   const [socialUploadLoading, setSocialUploadLoading] = useState(false)
+
+  // Nuevos estados para loading de publicación
   const [socialActionLoading, setSocialActionLoading] = useState(false)
   const [socialActionText, setSocialActionText] = useState('')
   const [socialActionStep, setSocialActionStep] = useState(0)
@@ -1289,6 +1262,7 @@ export default function App() {
     setTimeout(() => setToast(null), 3000)
   }
 
+  // Función para resolver URLs (absolutas vs relativas)
   function resolveMediaURL(url) {
     if (!url) return ''
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
@@ -1297,6 +1271,7 @@ export default function App() {
     return `${API_BASE}${url.startsWith('/') ? '' : '/'}${url}`
   }
 
+  // 1) Función para convertir HTML a texto plano
   function htmlToPlainText(input) {
     if (!input) return ''
     const div = document.createElement('div')
@@ -1500,7 +1475,7 @@ export default function App() {
     URL.revokeObjectURL(url)
   }
 
-  // ======================== FUNCIONES SOCIAL IA ========================
+  // ======================== FUNCIONES SOCIAL IA (MEJORADAS) ========================
   async function loadSocialCredential() {
     try {
       const data = await api(`/api/social/credentials${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
@@ -1548,36 +1523,42 @@ export default function App() {
   }
 
   async function createSocialCampaign() {
-    if (!socialCampaign.name.trim()) {
-      showNotice('Escribe un nombre para la campaña')
-      return null
-    }
-    if (!socialCampaign.prompt.trim()) {
-      showNotice('Describe la campaña en el prompt')
-      return null
-    }
-    const payload = {
-      ...socialCampaign,
-      client_id: selectedClientId,
-      recurring_minutes: Number(socialCampaign.recurring_minutes || 0),
-      scheduled_at: socialCampaign.publish_mode === 'scheduled' && socialCampaign.scheduled_at
-        ? new Date(socialCampaign.scheduled_at).toISOString()
-        : null
-    }
-    try {
-      const created = await api('/api/social/campaigns', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      setSocialCampaign({ ...emptySocialCampaign, bot_id: selectedBotId || '' })
-      showNotice('Campaña creada')
-      return created
-    } catch (err) {
-      showNotice(err.message || 'Error creando campaña')
-      return null
-    }
+  if (!socialCampaign.name.trim()) {
+    showNotice('Escribe un nombre para la campaña')
+    return null
   }
 
+  if (!socialCampaign.prompt.trim()) {
+    showNotice('Describe la campaña en el prompt')
+    return null
+  }
+
+  const payload = {
+    ...socialCampaign,
+    client_id: selectedClientId,
+    recurring_minutes: Number(socialCampaign.recurring_minutes || 0),
+    scheduled_at:
+      socialCampaign.publish_mode === 'scheduled' && socialCampaign.scheduled_at
+        ? new Date(socialCampaign.scheduled_at).toISOString()
+        : null
+  }
+
+  try {
+    const created = await api('/api/social/campaigns', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+
+    setSocialCampaign({ ...emptySocialCampaign, bot_id: selectedBotId || '' })
+    showNotice('Campaña creada')
+    return created
+  } catch (err) {
+    showNotice(err.message || 'Error creando campaña')
+    return null
+  }
+}
+
+  // 2) publishSocialNow con loading, pasos, validaciones y texto plano
   async function publishSocialNow() {
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
@@ -1607,19 +1588,23 @@ export default function App() {
     const campaign = await createSocialCampaign()
     if (!campaign) return
 
-    const finalImageURL = socialCampaign.image_mode === 'manual'
-      ? socialCampaign.manual_image_url
-      : socialCampaign.image_mode === 'ai'
-        ? socialImageURL
-        : ''
+    const finalImageURL =
+      socialCampaign.image_mode === 'manual'
+        ? socialCampaign.manual_image_url
+        : socialCampaign.image_mode === 'ai'
+          ? socialImageURL
+          : ''
+
     const finalContent = htmlToPlainText(socialContent)
 
     setSocialActionLoading(true)
     setSocialActionStep(20)
     setSocialActionText('Preparando contenido y assets...')
+
     try {
       setSocialActionStep(45)
       setSocialActionText('Conectando con Facebook...')
+
       await api(`/api/social/publish-now${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -1634,6 +1619,7 @@ export default function App() {
           manual_link: socialCampaign.manual_link_url
         })
       })
+
       setSocialActionStep(100)
       setSocialActionText('Publicación enviada correctamente')
       showNotice('Publicación enviada a Facebook')
@@ -1650,6 +1636,7 @@ export default function App() {
     }
   }
 
+  // 2) scheduleSocialPost con loading, pasos, validaciones y texto plano
   async function scheduleSocialPost() {
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
@@ -1683,24 +1670,29 @@ export default function App() {
       showNotice('Debes indicar fecha y hora de publicación')
       return
     }
+
     if (socialCampaign.publish_mode === 'recurring' && !socialCampaign.recurring_minutes) {
       showNotice('Debes indicar cada cuántos minutos publicar')
       return
     }
 
-    const finalImageURL = socialCampaign.image_mode === 'manual'
-      ? socialCampaign.manual_image_url
-      : socialCampaign.image_mode === 'ai'
-        ? socialImageURL
-        : ''
+    const finalImageURL =
+      socialCampaign.image_mode === 'manual'
+        ? socialCampaign.manual_image_url
+        : socialCampaign.image_mode === 'ai'
+          ? socialImageURL
+          : ''
+
     const finalContent = htmlToPlainText(socialContent)
 
     setSocialActionLoading(true)
     setSocialActionStep(20)
     setSocialActionText('Preparando programación...')
+
     try {
       setSocialActionStep(50)
       setSocialActionText('Guardando job y publicación...')
+
       await api(`/api/social/schedule${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -1719,6 +1711,7 @@ export default function App() {
           days_of_week: socialCampaign.days_of_week
         })
       })
+
       setSocialActionStep(100)
       setSocialActionText('Programación creada correctamente')
       showNotice('Publicación programada correctamente')
@@ -1740,15 +1733,18 @@ export default function App() {
       showNotice('Describe la campaña primero')
       return
     }
+
     setSocialLoading(true)
     setSocialLoadingStep(10)
     setSocialLoadingText('Analizando campaña social...')
+
     const progress = [
       { step: 25, text: 'Definiendo copy y propuesta de valor...' },
       { step: 45, text: 'Construyendo CTA y estructura de publicación...' },
       { step: 65, text: 'Preparando versión lista para Facebook...' },
       { step: 85, text: 'Finalizando contenido...' }
     ]
+
     let idx = 0
     const interval = setInterval(() => {
       if (idx < progress.length) {
@@ -1757,6 +1753,7 @@ export default function App() {
         idx++
       }
     }, 1300)
+
     try {
       const res = await api('/api/social/generate', {
         method: 'POST',
@@ -1768,6 +1765,7 @@ export default function App() {
           objective: socialCampaign.objective
         })
       })
+
       clearInterval(interval)
       setSocialContent(res.content || '')
       setSocialLoadingStep(100)
@@ -1790,12 +1788,14 @@ export default function App() {
       showNotice('Describe la imagen que quieres generar')
       return
     }
+
     setSocialImageLoading(true)
     try {
       const res = await api('/api/social/generate-image', {
         method: 'POST',
         body: JSON.stringify({ prompt: socialImagePrompt })
       })
+
       const imageURL = res.image_url || ''
       const resolvedURL = resolveMediaURL(imageURL)
       setSocialImageURL(resolvedURL)
@@ -1814,16 +1814,20 @@ export default function App() {
 
   async function uploadSocialImage(file) {
     if (!file) return
+
     setSocialUploadLoading(true)
     try {
       const form = new FormData()
       form.append('image', file)
+
       const res = await api('/api/social/upload-image', {
         method: 'POST',
         body: form
       })
+
       const imageURL = res.image_url || ''
       const resolvedURL = resolveMediaURL(imageURL)
+
       setSocialImageURL(resolvedURL)
       setSocialCampaign(prev => ({
         ...prev,
