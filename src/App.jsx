@@ -77,7 +77,7 @@ const emptySocialCampaign = {
 }
 
 function LoginScreen({ onAuth }) {
-  const [mode, setMode] = useState('login') // 'login' o 'register'
+  const [mode, setMode] = useState('login')
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -243,14 +243,13 @@ function LoginScreen({ onAuth }) {
             <i className="fas fa-shield-alt"></i>
             Colaborador
           </button>
-          
         </div>
 
         {form.access_role === 'client' && (
           <div className="auth-subtabs">
             <button
               type="button"
-              className={mode === 'login' ? 'role-chip active' : 'role-chip'}
+              className={mode === 'login' ? 'tab-btn active' : 'tab-btn'}
               onClick={() => {
                 setMode('login')
                 setError('')
@@ -261,7 +260,7 @@ function LoginScreen({ onAuth }) {
             </button>
             <button
               type="button"
-              className={mode === 'register' ? 'role-chip active' : 'role-chip'}
+              className={mode === 'register' ? 'tab-btn active' : 'tab-btn'}
               onClick={() => {
                 setMode('register')
                 setError('')
@@ -976,17 +975,6 @@ export default function App() {
           justify-content: center;
         }
 
-        .auth-subtabs {
-          display: flex;
-          gap: 0.75rem;
-          margin-bottom: 1.25rem;
-          justify-content: center;
-        }
-
-        .auth-subtabs .role-chip {
-          flex: 1;
-        }
-
         .role-chip {
           background: white;
           border: 1px solid #cbd5e1;
@@ -1019,6 +1007,60 @@ export default function App() {
           border-color: #621bbb;
           color: white;
           box-shadow: 0 4px 12px -4px #621bbb;
+        }
+
+        /* Estilos para los subtabs (tabs de cliente) */
+        .auth-subtabs {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1.75rem;
+          justify-content: center;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+          background: transparent;
+          border: none;
+          color: #64748b;
+          padding: 0.5rem 1rem;
+          font-weight: 500;
+          font-size: 0.9rem;
+          border-radius: 0;
+          cursor: pointer;
+          transition: all 0.2s;
+          position: relative;
+          flex: 1;
+          justify-content: center;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .tab-btn i {
+          font-size: 0.9rem;
+        }
+
+        .tab-btn:hover {
+          color: #621bbb;
+          background: transparent;
+          transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+          color: #621bbb;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        .tab-btn.active::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: #621bbb;
+          border-radius: 2px;
         }
 
         .auth-form-pro {
@@ -1110,6 +1152,10 @@ export default function App() {
         @media (max-width: 480px) {
           .auth-logo img {
             max-width: 110px;
+          }
+          .tab-btn {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
           }
         }
 
@@ -2649,7 +2695,7 @@ export default function App() {
               <div className="row between center">
                 <div className="section-title"><i className="fas fa-envelope"></i> Inbox</div>
                 <div className="row gap-sm">
-                  <input type="text" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} className="search-input" />
+                  <input type="text" placeholder="Buscar lead..." className="search-input" value={searchLead} onChange={e => setSearchLead(e.target.value)} />
                   <select value={selectedClientId || ''} onChange={e => setSelectedClientId(e.target.value)}>
                     <option value="">Cliente</option>
                     {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -2777,14 +2823,10 @@ export default function App() {
               <h3><i className="fas fa-brain"></i> Generador de Landing Pages IA</h3>
               <button type="button" onClick={resetLandingForm} className="secondary">+ Nueva</button>
             </div>
-
             <select value={selectedBotId} onChange={e => setSelectedBotId(e.target.value)}>
               <option value="">Selecciona un bot</option>
-              {bots.map(b => (
-                <option key={b.id} value={b.id}>{b.name}</option>
-              ))}
+              {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
             </select>
-
             <div className="form-grid">
               <input placeholder="Nombre de la landing *" value={landingForm.name} onChange={(e) => setLandingForm({ ...landingForm, name: e.target.value })} />
               <select value={landingForm.style_preset} onChange={(e) => setLandingForm({ ...landingForm, style_preset: e.target.value })}>
@@ -2800,75 +2842,34 @@ export default function App() {
               <input placeholder="URL video de YouTube" value={landingForm.youtube_url} onChange={(e) => setLandingForm({ ...landingForm, youtube_url: e.target.value })} />
               <input placeholder="Facebook Pixel ID (opcional)" value={landingForm.facebook_pixel_id} onChange={(e) => setLandingForm({ ...landingForm, facebook_pixel_id: e.target.value })} />
               <input placeholder="Google Analytics ID (opcional)" value={landingForm.google_analytics} onChange={(e) => setLandingForm({ ...landingForm, google_analytics: e.target.value })} />
-
-              <select
-                value={landingForm.tracking_mode}
-                onChange={(e) => setLandingForm({ ...landingForm, tracking_mode: e.target.value })}
-              >
+              <select value={landingForm.tracking_mode} onChange={(e) => setLandingForm({ ...landingForm, tracking_mode: e.target.value })}>
                 <option value="auto">Tracking automático (mismo dominio)</option>
                 <option value="external">Tracking con URL externa</option>
               </select>
-
               {landingForm.tracking_mode === 'external' && (
-                <input
-                  placeholder="URL base del backend tracking (ej: http://localhost:8080 o https://panel.midominio.com)"
-                  value={landingForm.tracking_base_url}
-                  onChange={(e) => setLandingForm({ ...landingForm, tracking_base_url: e.target.value })}
-                />
+                <input placeholder="URL base del backend tracking (ej: http://localhost:8080 o https://panel.midominio.com)" value={landingForm.tracking_base_url} onChange={(e) => setLandingForm({ ...landingForm, tracking_base_url: e.target.value })} />
               )}
-
               <input type="color" value={landingForm.primary_color} onChange={(e) => setLandingForm({ ...landingForm, primary_color: e.target.value })} />
               <input type="color" value={landingForm.secondary_color} onChange={(e) => setLandingForm({ ...landingForm, secondary_color: e.target.value })} />
             </div>
-
             <div className="row gap-sm">
-              <label className="toggle">
-                <input type="checkbox" checked={!!landingForm.show_video} onChange={(e) => setLandingForm({ ...landingForm, show_video: e.target.checked })} />
-                Incluir video principal
-              </label>
-              <label className="toggle">
-                <input type="checkbox" checked={!!landingForm.show_image} onChange={(e) => setLandingForm({ ...landingForm, show_image: e.target.checked })} />
-                Incluir imagen destacada
-              </label>
+              <label className="toggle"><input type="checkbox" checked={!!landingForm.show_video} onChange={(e) => setLandingForm({ ...landingForm, show_video: e.target.checked })} /> Incluir video principal</label>
+              <label className="toggle"><input type="checkbox" checked={!!landingForm.show_image} onChange={(e) => setLandingForm({ ...landingForm, show_image: e.target.checked })} /> Incluir imagen destacada</label>
             </div>
-
             <textarea rows={5} placeholder="Describe la landing en detalle (producto, beneficios, llamado a la acción...)" value={landingForm.prompt} onChange={(e) => setLandingForm({ ...landingForm, prompt: e.target.value })} />
-
             <div className="row gap-sm">
-              <button type="button" onClick={generateLanding} disabled={busy || landingLoading}>
-                {landingLoading ? 'Generando...' : 'Generar con IA'}
-              </button>
-              {editingLandingId && (
-                <button type="button" onClick={saveLandingChanges} disabled={busy} className="secondary">
-                  Guardar cambios
-                </button>
-              )}
-              {landingHTML && (
-                <button type="button" onClick={downloadHTML} className="secondary">
-                  Descargar HTML
-                </button>
-              )}
+              <button type="button" onClick={generateLanding} disabled={busy || landingLoading}>{landingLoading ? 'Generando...' : 'Generar con IA'}</button>
+              {editingLandingId && <button type="button" onClick={saveLandingChanges} disabled={busy} className="secondary">Guardar cambios</button>}
+              {landingHTML && <button type="button" onClick={downloadHTML} className="secondary">Descargar HTML</button>}
             </div>
-
-            {landingHTML && (
-              <iframe
-                id="landing-preview"
-                title="Landing Preview"
-                style={{ width: "100%", height: "600px", border: "1px solid #ccc", borderRadius: "0.75rem" }}
-                srcDoc={landingHTML}
-              />
-            )}
-
+            {landingHTML && <iframe id="landing-preview" title="Landing Preview" style={{ width: "100%", height: "600px", border: "1px solid #ccc", borderRadius: "0.75rem" }} srcDoc={landingHTML} />}
             {landings.length > 0 && (
               <div>
                 <div className="section-title">Landings guardadas</div>
                 <div className="template-list">
                   {landings.map((land) => (
                     <div key={land.id} className="template-card">
-                      <div className="row between">
-                        <strong>{land.name}</strong>
-                        <span className="pill">{land.style_preset || 'default'}</span>
-                      </div>
+                      <div className="row between"><strong>{land.name}</strong><span className="pill">{land.style_preset || 'default'}</span></div>
                       <div className="muted tiny">{land.created_at ? new Date(land.created_at).toLocaleString() : 'Sin fecha'}</div>
                       <div className="muted tiny">Estado: {land.status || 'generated'}</div>
                       <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
@@ -2888,36 +2889,13 @@ export default function App() {
         {tab === 'funnel' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
-              <div className="stripe-card metric">
-                <div className="metric-label">Visitas landing</div>
-                <div className="metric-value">{funnelMetrics.landing_views || 0}</div>
-              </div>
-              <div className="stripe-card metric">
-                <div className="metric-label">Clicks WhatsApp</div>
-                <div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div>
-              </div>
-              <div className="stripe-card metric">
-                <div className="metric-label">Leads</div>
-                <div className="metric-value">{metrics.leads || 0}</div>
-              </div>
-              <div className="stripe-card metric">
-                <div className="metric-label">Cerrados</div>
-                <div className="metric-value">{metrics.closed_leads || 0}</div>
-              </div>
-              <div className="stripe-card metric">
-                <div className="metric-label">CTR</div>
-                <div className="metric-value">
-                  {Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%
-                </div>
-              </div>
-              <div className="stripe-card metric">
-                <div className="metric-label">Conversión</div>
-                <div className="metric-value">
-                  {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%
-                </div>
-              </div>
+              <div className="stripe-card metric"><div className="metric-label">Visitas landing</div><div className="metric-value">{funnelMetrics.landing_views || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Clicks WhatsApp</div><div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Leads</div><div className="metric-value">{metrics.leads || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Cerrados</div><div className="metric-value">{metrics.closed_leads || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">CTR</div><div className="metric-value">{Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Conversión</div><div className="metric-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</div></div>
             </div>
-
             <div className="stripe-card">
               <div className="section-title">Embudo de conversión</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1rem' }}>
@@ -2929,22 +2907,12 @@ export default function App() {
                   ['Hot', leads.filter(l => l.stage === 'hot').length],
                   ['Cerrados', metrics.closed_leads]
                 ].map(([label, val], i) => (
-                  <div key={label} style={{
-                    width: `${100 - i * 10}%`,
-                    margin: '0 auto',
-                    background: '#3b82f6',
-                    color: 'white',
-                    padding: '10px',
-                    borderRadius: '10px',
-                    textAlign: 'center',
-                    fontWeight: '600'
-                  }}>
+                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#3b82f6', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
                     {label}: {val || 0}
                   </div>
                 ))}
               </div>
             </div>
-
             <div className="stripe-card">
               <div className="chart-title">Leads por etapa</div>
               <div className="bar-container">
@@ -2960,28 +2928,14 @@ export default function App() {
                 })}
               </div>
             </div>
-
             <div className="stripe-card">
               <div className="row between">
                 <div className="section-title">Leads y conversaciones</div>
-                <input
-                  className="search-input"
-                  placeholder="Buscar lead..."
-                  value={searchLead}
-                  onChange={e => setSearchLead(e.target.value)}
-                />
+                <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
               </div>
-
               <table>
                 <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Stage</th>
-                    <th>Bot</th>
-                    <th>Último mensaje</th>
-                    <th>Acción</th>
-                  </tr>
+                  <tr><th>Nombre</th><th>Teléfono</th><th>Stage</th><th>Bot</th><th>Último mensaje</th><th>Acción</th></tr>
                 </thead>
                 <tbody>
                   {filteredLeads.map(lead => (
@@ -2994,9 +2948,7 @@ export default function App() {
                       <td><button type="button" onClick={() => setSelectedLeadId(lead.id)}>Ver chat</button></td>
                     </tr>
                   ))}
-                  {filteredLeads.length === 0 && (
-                    <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No hay leads</td></tr>
-                  )}
+                  {filteredLeads.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No hay leads</td></tr>}
                 </tbody>
               </table>
             </div>
@@ -3010,129 +2962,39 @@ export default function App() {
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-key"></i> Credenciales Facebook</div>
                 <div className="form-grid">
-                  <input
-                    value={socialCredential.page_name}
-                    onChange={e => setSocialCredential({ ...socialCredential, page_name: e.target.value })}
-                    placeholder="Nombre de la página"
-                  />
-                  <input
-                    value={socialCredential.page_id}
-                    onChange={e => setSocialCredential({ ...socialCredential, page_id: e.target.value })}
-                    placeholder="Page ID"
-                  />
-                  <input
-                    className="full"
-                    value={socialCredential.access_token}
-                    onChange={e => setSocialCredential({ ...socialCredential, access_token: e.target.value })}
-                    placeholder="Page Access Token"
-                  />
-                  <input
-                    value={socialCredential.ad_account_id}
-                    onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })}
-                    placeholder="Ad Account ID (opcional)"
-                  />
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={!!socialCredential.enabled}
-                      onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })}
-                    />
-                    Facebook habilitado
-                  </label>
+                  <input value={socialCredential.page_name} onChange={e => setSocialCredential({ ...socialCredential, page_name: e.target.value })} placeholder="Nombre de la página" />
+                  <input value={socialCredential.page_id} onChange={e => setSocialCredential({ ...socialCredential, page_id: e.target.value })} placeholder="Page ID" />
+                  <input className="full" value={socialCredential.access_token} onChange={e => setSocialCredential({ ...socialCredential, access_token: e.target.value })} placeholder="Page Access Token" />
+                  <input value={socialCredential.ad_account_id} onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })} placeholder="Ad Account ID (opcional)" />
+                  <label className="toggle"><input type="checkbox" checked={!!socialCredential.enabled} onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })} /> Facebook habilitado</label>
                 </div>
                 <button type="button" onClick={saveSocialCredential}>Guardar credenciales</button>
               </section>
-
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-bullhorn"></i> Configuración campaña</div>
                 <div className="form-grid">
-                  <input
-                    value={socialCampaign.name}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })}
-                    placeholder="Nombre de campaña"
-                  />
-                  <select
-                    value={socialCampaign.objective}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}
-                  >
+                  <input value={socialCampaign.name} onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })} placeholder="Nombre de campaña" />
+                  <select value={socialCampaign.objective} onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}>
                     <option value="whatsapp">Enviar a WhatsApp</option>
                     <option value="landing">Enviar a Landing</option>
                     <option value="manual_link">Link manual</option>
                     <option value="no_link">Sin link</option>
                   </select>
-                  <select
-                    value={socialCampaign.bot_id}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}
-                  >
-                    <option value="">Selecciona bot</option>
-                    {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                  <select value={socialCampaign.bot_id} onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}><option value="">Selecciona bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
+                  <select value={socialCampaign.landing_id} onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}><option value="">Selecciona landing</option>{landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}</select>
+                  <select value={socialCampaign.image_mode} onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}>
+                    <option value="ai">Imagen IA</option><option value="manual">Imagen manual</option><option value="none">Sin imagen</option>
                   </select>
-                  <select
-                    value={socialCampaign.landing_id}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}
-                  >
-                    <option value="">Selecciona landing</option>
-                    {landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                  <input value={socialCampaign.manual_image_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} placeholder="URL imagen manual" />
+                  <input value={socialCampaign.manual_link_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })} placeholder="Link manual" />
+                  <input value={socialCampaign.call_to_action} onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })} placeholder="Call to action" />
+                  <select value={socialCampaign.publish_mode} onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}>
+                    <option value="now">Publicar ahora</option><option value="scheduled">Fecha y hora exacta</option><option value="recurring">Repetir cada X minutos</option>
                   </select>
-                  <select
-                    value={socialCampaign.image_mode}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}
-                  >
-                    <option value="ai">Imagen IA</option>
-                    <option value="manual">Imagen manual</option>
-                    <option value="none">Sin imagen</option>
-                  </select>
-                  <input
-                    value={socialCampaign.manual_image_url}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })}
-                    placeholder="URL imagen manual"
-                  />
-                  <input
-                    value={socialCampaign.manual_link_url}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })}
-                    placeholder="Link manual"
-                  />
-                  <input
-                    value={socialCampaign.call_to_action}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })}
-                    placeholder="Call to action"
-                  />
-                  <select
-                    value={socialCampaign.publish_mode}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}
-                  >
-                    <option value="now">Publicar ahora</option>
-                    <option value="scheduled">Fecha y hora exacta</option>
-                    <option value="recurring">Repetir cada X minutos</option>
-                  </select>
-                  {socialCampaign.publish_mode === 'scheduled' && (
-                    <input
-                      type="datetime-local"
-                      value={socialCampaign.scheduled_at}
-                      onChange={e => setSocialCampaign({ ...socialCampaign, scheduled_at: e.target.value })}
-                    />
-                  )}
-                  {socialCampaign.publish_mode === 'recurring' && (
-                    <input
-                      type="number"
-                      value={socialCampaign.recurring_minutes}
-                      onChange={e => setSocialCampaign({ ...socialCampaign, recurring_minutes: e.target.value })}
-                      placeholder="Cada cuántos minutos"
-                    />
-                  )}
-                  <input
-                    className="full"
-                    value={socialCampaign.days_of_week}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, days_of_week: e.target.value })}
-                    placeholder="Días de publicación (ej: mon,tue,wed)"
-                  />
-                  <textarea
-                    className="full"
-                    rows={5}
-                    value={socialCampaign.prompt}
-                    onChange={e => setSocialCampaign({ ...socialCampaign, prompt: e.target.value })}
-                    placeholder="Describe la campaña que quieres generar con IA..."
-                  />
+                  {socialCampaign.publish_mode === 'scheduled' && <input type="datetime-local" value={socialCampaign.scheduled_at} onChange={e => setSocialCampaign({ ...socialCampaign, scheduled_at: e.target.value })} />}
+                  {socialCampaign.publish_mode === 'recurring' && <input type="number" value={socialCampaign.recurring_minutes} onChange={e => setSocialCampaign({ ...socialCampaign, recurring_minutes: e.target.value })} placeholder="Cada cuántos minutos" />}
+                  <input className="full" value={socialCampaign.days_of_week} onChange={e => setSocialCampaign({ ...socialCampaign, days_of_week: e.target.value })} placeholder="Días de publicación (ej: mon,tue,wed)" />
+                  <textarea className="full" rows={5} value={socialCampaign.prompt} onChange={e => setSocialCampaign({ ...socialCampaign, prompt: e.target.value })} placeholder="Describe la campaña que quieres generar con IA..." />
                 </div>
                 <div className="row gap-sm">
                   <button type="button" onClick={generateSocial}>Generar contenido IA</button>
@@ -3141,149 +3003,33 @@ export default function App() {
                 </div>
               </section>
             </div>
-
-            {/* UI DE IMAGEN IA/MANUAL */}
             <section className="stripe-card stack">
               <div className="section-title"><i className="fas fa-image"></i> Imagen IA</div>
-
-              <textarea
-                className="full"
-                rows={3}
-                value={socialImagePrompt}
-                onChange={e => {
-                  setSocialImagePrompt(e.target.value)
-                  setSocialCampaign(prev => ({
-                    ...prev,
-                    image_prompt: e.target.value
-                  }))
-                }}
-                placeholder="Describe la imagen que quieres generar para la publicación..."
-              />
-
+              <textarea className="full" rows={3} value={socialImagePrompt} onChange={e => { setSocialImagePrompt(e.target.value); setSocialCampaign(prev => ({ ...prev, image_prompt: e.target.value })) }} placeholder="Describe la imagen que quieres generar para la publicación..." />
               <div className="row gap-sm">
-                <button type="button" onClick={generateSocialImage} disabled={socialImageLoading}>
-                  {socialImageLoading ? 'Generando imagen...' : 'Generar imagen IA'}
-                </button>
-
-                <label className="secondary" style={{ cursor: 'pointer' }}>
-                  {socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={e => uploadSocialImage(e.target.files?.[0])}
-                  />
-                </label>
-
-                <button
-                  type="button"
-                  className="secondary"
-                  onClick={() => {
-                    setSocialImageURL('')
-                    setSocialImagePrompt('')
-                    setSocialCampaign(prev => ({
-                      ...prev,
-                      image_mode: 'none',
-                      manual_image_url: '',
-                      image_prompt: ''
-                    }))
-                  }}
-                >
-                  Sin imagen
-                </button>
+                <button type="button" onClick={generateSocialImage} disabled={socialImageLoading}>{socialImageLoading ? 'Generando imagen...' : 'Generar imagen IA'}</button>
+                <label className="secondary" style={{ cursor: 'pointer' }}>{socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}<input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => uploadSocialImage(e.target.files?.[0])} /></label>
+                <button type="button" className="secondary" onClick={() => { setSocialImageURL(''); setSocialImagePrompt(''); setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', image_prompt: '' })) }}>Sin imagen</button>
               </div>
-
               {(socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                <img
-                  src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
-                  alt="Preview social"
-                  style={{
-                    maxWidth: '320px',
-                    width: '100%',
-                    borderRadius: '1rem',
-                    border: '1px solid #e2e8f0',
-                    marginTop: '1rem',
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    e.currentTarget.style.opacity = '0.4'
-                    showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.')
-                  }}
-                />
+                <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ maxWidth: '320px', width: '100%', borderRadius: '1rem', border: '1px solid #e2e8f0', marginTop: '1rem', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.opacity = '0.4'; showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.') }} />
               )}
             </section>
-
-            {/* 3) Preview de publicación estilo Facebook */}
             <section className="stripe-card stack">
               <div className="section-title"><i className="fas fa-eye"></i> Preview de publicación</div>
-
-              <div style={{
-                border: '1px solid #e2e8f0',
-                borderRadius: '18px',
-                background: '#ffffff',
-                overflow: 'hidden',
-                maxWidth: '640px'
-              }}>
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '18px', background: '#ffffff', overflow: 'hidden', maxWidth: '640px' }}>
                 <div style={{ padding: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                    <div style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '9999px',
-                      background: '#2563eb',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: '18px'
-                    }}>
-                      {(socialCredential.page_name || selectedClient?.name || 'P').slice(0, 1).toUpperCase()}
-                    </div>
-
-                    <div>
-                      <div style={{ fontWeight: 700, color: '#0f172a' }}>
-                        {socialCredential.page_name || selectedClient?.name || 'Tu página'}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#64748b' }}>
-                        Publicidad · Ahora
-                      </div>
-                    </div>
+                    <div style={{ width: '46px', height: '46px', borderRadius: '9999px', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '18px' }}>{(socialCredential.page_name || selectedClient?.name || 'P').slice(0, 1).toUpperCase()}</div>
+                    <div><div style={{ fontWeight: 700, color: '#0f172a' }}>{socialCredential.page_name || selectedClient?.name || 'Tu página'}</div><div style={{ fontSize: '12px', color: '#64748b' }}>Publicidad · Ahora</div></div>
                   </div>
-
-                  <div style={{
-                    whiteSpace: 'pre-line',
-                    color: '#0f172a',
-                    fontSize: '15px',
-                    lineHeight: 1.5
-                  }}>
-                    {htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}
-                  </div>
+                  <div style={{ whiteSpace: 'pre-line', color: '#0f172a', fontSize: '15px', lineHeight: 1.5 }}>{htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}</div>
                 </div>
-
                 {(socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                  <img
-                    src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
-                    alt="Preview social"
-                    style={{
-                      width: '100%',
-                      maxHeight: '520px',
-                      objectFit: 'cover',
-                      display: 'block',
-                      borderTop: '1px solid #e2e8f0',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}
-                  />
+                  <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ width: '100%', maxHeight: '520px', objectFit: 'cover', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
                 )}
-
-                <div style={{
-                  padding: '12px 16px',
-                  background: '#f8fafc',
-                  borderTop: '1px solid #e2e8f0'
-                }}>
-                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>
-                    Destino del clic
-                  </div>
+                <div style={{ padding: '12px 16px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Destino del clic</div>
                   <div style={{ fontWeight: 600, color: '#0f172a' }}>
                     {socialCampaign.objective === 'whatsapp' && 'WhatsApp'}
                     {socialCampaign.objective === 'landing' && 'Landing page'}
@@ -3291,57 +3037,29 @@ export default function App() {
                     {socialCampaign.objective === 'none' && 'Sin enlace'}
                   </div>
                   <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
-                    {socialCampaign.objective === 'manual_link'
-                      ? socialCampaign.manual_link_url || 'Escribe un link manual'
-                      : socialCampaign.objective === 'whatsapp'
-                        ? 'Abrirá conversación con el bot seleccionado'
-                        : socialCampaign.objective === 'landing'
-                          ? 'Abrirá la landing seleccionada'
-                          : 'La publicación no llevará enlace'}
+                    {socialCampaign.objective === 'manual_link' ? socialCampaign.manual_link_url || 'Escribe un link manual' : socialCampaign.objective === 'whatsapp' ? 'Abrirá conversación con el bot seleccionado' : socialCampaign.objective === 'landing' ? 'Abrirá la landing seleccionada' : 'La publicación no llevará enlace'}
                   </div>
                 </div>
               </div>
             </section>
-
             <div className="panel-grid">
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
                 <table>
-                  <thead>
-                    <tr>
-                      <th>Plataforma</th>
-                      <th>Estado</th>
-                      <th>Modo</th>
-                      <th>Fecha</th>
-                      <th>Contenido</th>
-                    </tr>
-                  </thead>
+                  <thead><tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr></thead>
                   <tbody>
                     {socialPosts.map(post => (
-                      <tr key={post.id}>
-                        <td>{post.platform}</td>
-                        <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
-                        <td>{post.publish_mode}</td>
-                        <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
-                        <td>{(post.content || '').slice(0, 120)}</td>
-                      </tr>
+                      <tr key={post.id}><td>{post.platform}</td><td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td><td>{post.publish_mode}</td><td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td><td>{(post.content || '').slice(0, 120)}</td></tr>
                     ))}
                   </tbody>
                 </table>
                 {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
               </section>
-
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-file-alt"></i> Logs sociales</div>
                 <div className="stack gap-sm">
                   {socialLogs.map(log => (
-                    <div key={log.id} className="bot-card">
-                      <div className="row between">
-                        <strong>{log.level}</strong>
-                        <span className="tiny">{log.created_at ? new Date(log.created_at).toLocaleString() : ''}</span>
-                      </div>
-                      <div className="muted">{log.message}</div>
-                    </div>
+                    <div key={log.id} className="bot-card"><div className="row between"><strong>{log.level}</strong><span className="tiny">{log.created_at ? new Date(log.created_at).toLocaleString() : ''}</span></div><div className="muted">{log.message}</div></div>
                   ))}
                   {socialLogs.length === 0 && <div className="empty-box">Sin logs aún</div>}
                 </div>
@@ -3359,11 +3077,7 @@ export default function App() {
               <div className="template-list">
                 {paginatedClients.map(c => (
                   <button key={c.id} className={selectedClientId === c.id ? 'template-card active-outline' : 'template-card'} onClick={() => setSelectedClientId(c.id)} type="button">
-                    <div className="row between">
-                      <i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#3b82f6' }}></i>
-                      <strong>{c.name}</strong>
-                      <span className="pill">{c.plan}</span>
-                    </div>
+                    <div className="row between"><i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#3b82f6' }}></i><strong>{c.name}</strong><span className="pill">{c.plan}</span></div>
                     <div className="muted" style={{ color: '#1e293b' }}>{c.email}</div>
                   </button>
                 ))}
@@ -3376,8 +3090,18 @@ export default function App() {
         {/* USERS (sin cambios) */}
         {tab === 'users' && (me.role === 'admin' || me.role === 'client_admin') && (
           <section className="panel-grid">
-            <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">{me.role === 'admin' && <select value={newUser.client_id || selectedClientId} onChange={e => setNewUser({...newUser, client_id: e.target.value})}><option value="">Cliente</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>}<input value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} placeholder="Nombre" /><input value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} placeholder="Email" /><input type="password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} placeholder="Password" /><select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}><option value="client_admin">client_admin</option><option value="client_user">client_user</option>{me.role === 'admin' && <option value="admin">admin</option>}</select><button className="full" disabled={busy}>Crear usuario</button></form></section>
-            <section className="stripe-card stack"><div className="row between center"><div className="section-title">Usuarios</div><input type="text" placeholder="Buscar usuario..." value={searchUser} onChange={e => setSearchUser(e.target.value)} className="search-input" /></div><div className="template-list">{paginatedUsers.map(u => <div key={u.id} className="template-card"><div className="row between"><strong>{u.name}</strong><span className="pill">{u.role}</span></div><div className="muted tiny">{u.email}</div><button className="danger tiny-btn" onClick={() => deleteUser(u.id)}>Eliminar</button></div>)}</div><div className="pagination"><button type="button" onClick={() => setUserPage(p => Math.max(1, p-1))} disabled={userPage === 1}>Anterior</button><span>Página {userPage}</span><button type="button" onClick={() => setUserPage(p => p+1)} disabled={userPage * pageSize >= filteredUsers.length}>Siguiente</button></div></section>
+            <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">
+              {me.role === 'admin' && <select value={newUser.client_id || selectedClientId} onChange={e => setNewUser({...newUser, client_id: e.target.value})}><option value="">Cliente</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>}
+              <input value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} placeholder="Nombre" />
+              <input value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} placeholder="Email" />
+              <input type="password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} placeholder="Password" />
+              <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}><option value="client_admin">client_admin</option><option value="client_user">client_user</option>{me.role === 'admin' && <option value="admin">admin</option>}</select>
+              <button className="full" disabled={busy}>Crear usuario</button>
+            </form></section>
+            <section className="stripe-card stack"><div className="row between center"><div className="section-title">Usuarios</div><input type="text" placeholder="Buscar usuario..." value={searchUser} onChange={e => setSearchUser(e.target.value)} className="search-input" /></div>
+              <div className="template-list">{paginatedUsers.map(u => <div key={u.id} className="template-card"><div className="row between"><strong>{u.name}</strong><span className="pill">{u.role}</span></div><div className="muted tiny">{u.email}</div><button className="danger tiny-btn" onClick={() => deleteUser(u.id)}>Eliminar</button></div>)}</div>
+              <div className="pagination"><button type="button" onClick={() => setUserPage(p => Math.max(1, p-1))} disabled={userPage === 1}>Anterior</button><span>Página {userPage}</span><button type="button" onClick={() => setUserPage(p => p+1)} disabled={userPage * pageSize >= filteredUsers.length}>Siguiente</button></div>
+            </section>
           </section>
         )}
       </main>
