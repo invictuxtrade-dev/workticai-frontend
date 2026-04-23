@@ -901,7 +901,7 @@ export default function App() {
         }
 
         .auth-submit-btn {
-          background: linear-gradient(95deg, #2563eb, #1d4ed8);
+          background: linear-gradient(95deg, #c655ff, #4b139e);
           border: none;
           padding: 0.85rem;
           border-radius: 0.9rem;
@@ -918,9 +918,9 @@ export default function App() {
         }
 
         .auth-submit-btn:hover {
-          background: linear-gradient(95deg, #3b82f6, #2563eb);
+          background: linear-gradient(95deg, #c655ff, #4b139e);
           transform: translateY(-2px);
-          box-shadow: 0 12px 20px -10px #2563eb;
+          box-shadow: 0 12px 20px -10px #4b139e;
         }
 
         .auth-submit-btn:disabled {
