@@ -1575,6 +1575,185 @@ export default function App() {
           .inbox-layout { grid-template-columns: 1fr; height: auto; gap: 1rem; }
           .left-rail { width: 240px; }
         }
+
+        /* ========== ESTILOS NUEVOS PARA PlanGate (OpenAI style) ========== */
+        .plan-page {
+          min-height: 100vh;
+          padding: 4rem 2rem;
+          background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+        }
+
+        .plan-hero {
+          max-width: 1180px;
+          margin: 0 auto 2.5rem;
+          display: flex;
+          justify-content: space-between;
+          gap: 2rem;
+          align-items: flex-end;
+        }
+
+        .plan-hero h1 {
+          font-size: 2.6rem;
+          line-height: 1.05;
+          color: #0f172a;
+          margin: 0.4rem 0;
+        }
+
+        .plan-hero p {
+          max-width: 650px;
+          color: #64748b;
+          font-size: 1rem;
+        }
+
+        .billing-toggle {
+          background: #e2e8f0;
+          padding: 0.35rem;
+          border-radius: 999px;
+          display: flex;
+          gap: 0.35rem;
+        }
+
+        .billing-toggle button {
+          background: transparent;
+          color: #334155;
+          border-radius: 999px;
+          padding: 0.75rem 1rem;
+        }
+
+        .billing-toggle button.active {
+          background: white;
+          color: #0f172a;
+          box-shadow: 0 8px 20px rgba(15,23,42,0.12);
+        }
+
+        .billing-toggle span {
+          margin-left: 0.35rem;
+          background: #dcfce7;
+          color: #166534;
+          padding: 0.1rem 0.35rem;
+          border-radius: 999px;
+          font-size: 0.7rem;
+        }
+
+        .plans-grid {
+          max-width: 1180px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 1.25rem;
+        }
+
+        .plan-card {
+          position: relative;
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 1.5rem;
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          box-shadow: 0 18px 35px rgba(15,23,42,0.06);
+        }
+
+        .plan-card.featured {
+          border-color: #621bbb;
+          box-shadow: 0 24px 45px rgba(98,27,187,0.18);
+          transform: translateY(-8px);
+        }
+
+        .popular-badge {
+          position: absolute;
+          top: -14px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #621bbb;
+          color: white;
+          padding: 0.35rem 0.8rem;
+          border-radius: 999px;
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+
+        .plan-card h3 {
+          font-size: 1.25rem;
+          color: #0f172a;
+        }
+
+        .plan-price span {
+          font-size: 2.4rem;
+          font-weight: 800;
+          color: #0f172a;
+        }
+
+        .plan-price small {
+          color: #64748b;
+          margin-left: 0.35rem;
+        }
+
+        .yearly-note {
+          color: #16a34a;
+          font-size: 0.8rem;
+          margin-top: 0.3rem;
+        }
+
+        .features-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.7rem;
+        }
+
+        .feature-row {
+          display: flex;
+          gap: 0.65rem;
+          align-items: flex-start;
+          color: #334155;
+          font-size: 0.9rem;
+        }
+
+        .feature-row i {
+          color: #16a34a;
+          margin-top: 0.2rem;
+        }
+
+        .payment-box {
+          max-width: 760px;
+          margin: 2rem auto 0;
+          background: white;
+          border-radius: 1.5rem;
+          padding: 1.5rem;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 18px 35px rgba(15,23,42,0.08);
+        }
+
+        .payment-line {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          margin: 1rem 0;
+        }
+
+        .payment-line code {
+          background: #f1f5f9;
+          padding: 0.8rem;
+          border-radius: 0.75rem;
+          word-break: break-all;
+          color: #0f172a;
+        }
+
+        @media (max-width: 768px) {
+          .plan-hero {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .plan-hero h1 {
+            font-size: 2rem;
+          }
+
+          .plan-card.featured {
+            transform: none;
+          }
+        }
       `
       document.head.appendChild(style)
     }
@@ -1801,6 +1980,7 @@ export default function App() {
   }
 
   async function loadBillingConfig() {
+    // solo admin puede llamar a esta ruta, pero la llamamos solo cuando role === 'admin'
     try {
       const data = await api('/api/billing/config')
       setBillingConfig(data || billingConfig)
@@ -1944,11 +2124,15 @@ export default function App() {
 
   useEffect(() => {
     if (!me) return
+    loadPlans()
     loadCurrentSubscription()
-    if (me.role === 'admin') loadBillingConfig()
+
+    if (me.role === 'admin') {
+      loadBillingConfig()
+    }
   }, [me])
 
-  // ======================== FUNCIONES EXISTENTES ========================
+  // ======================== FUNCIONES EXISTENTES (sin cambios) ========================
   async function generateLanding() {
     if (!selectedBotId) {
       showNotice('Selecciona un bot primero')
@@ -2840,95 +3024,131 @@ export default function App() {
     return { days, counts }
   }, [])
 
-  // ======================== COMPONENTE PLAN GATE ========================
+  // ======================== COMPONENTE PLAN GATE (OpenAI style) ========================
   function PlanGate() {
     return (
-      <div className="main-pane">
-        <div className="stripe-card stack gap-lg" style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div className="row between">
-            <div>
-              <h2>Selecciona tu plan</h2>
-              <p className="muted">Debes elegir un plan para continuar usando la plataforma.</p>
-            </div>
-            <div className="row">
-              <button
-                type="button"
-                className={billingCycle === 'monthly' ? '' : 'secondary'}
-                onClick={() => setBillingCycle('monthly')}
-              >
-                Mensual
-              </button>
-              <button
-                type="button"
-                className={billingCycle === 'yearly' ? '' : 'secondary'}
-                onClick={() => setBillingCycle('yearly')}
-              >
-                Anual
-              </button>
-            </div>
+      <div className="plan-page">
+        <div className="plan-hero">
+          <div>
+            <div className="eyebrow">Worktic AI</div>
+            <h1>Elige el plan ideal para tu negocio</h1>
+            <p>
+              Automatiza WhatsApp, landings, embudos, contenido, campañas e IA comercial desde un solo lugar.
+            </p>
           </div>
 
-          <div className="list two-col">
-            {plans.map((plan) => {
-              let features = []
-              try { features = JSON.parse(plan.features || '[]') } catch {}
-              const price = billingCycle === 'yearly' ? plan.price_yearly : plan.price_monthly
-
-              return (
-                <div key={plan.id} className="stripe-card stack">
-                  <div className="row between">
-                    <div>
-                      <h3>{plan.name}</h3>
-                      <div className="muted">{plan.description}</div>
-                    </div>
-                    <div style={{ fontWeight: 700, fontSize: '1.2rem' }}>
-                      {price === 0 ? 'Gratis' : `$${price} USD`}
-                      <div className="muted tiny">{billingCycle === 'yearly' ? '/año' : '/mes'}</div>
-                    </div>
-                  </div>
-
-                  <div className="stack gap-sm">
-                    {features.map((f, i) => (
-                      <div key={i} className="row">
-                        <i className="fas fa-check-circle"></i>
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button type="button" onClick={() => selectPlan(plan.slug)}>
-                    {plan.is_free ? 'Activar Free' : 'Seleccionar plan'}
-                  </button>
-                </div>
-              )
-            })}
+          <div className="billing-toggle">
+            <button
+              type="button"
+              className={billingCycle === 'monthly' ? 'active' : ''}
+              onClick={() => setBillingCycle('monthly')}
+            >
+              Mensual
+            </button>
+            <button
+              type="button"
+              className={billingCycle === 'yearly' ? 'active' : ''}
+              onClick={() => setBillingCycle('yearly')}
+            >
+              Anual
+              <span>Ahorra</span>
+            </button>
           </div>
-
-          {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
-            <div className="stripe-card stack">
-              <h3>Completa tu pago</h3>
-              <div className="muted">Método disponible por ahora: USDT BEP20</div>
-              <div><strong>Wallet destino:</strong> {billingConfig.usdt_bep20_wallet || 'Configúrala en admin'}</div>
-              <div><strong>Monto:</strong> ${subscription.amount} USD</div>
-              <div><strong>Ciclo:</strong> {subscription.billing_cycle}</div>
-
-              <input
-                type="text"
-                placeholder="Pega aquí el hash de tu transacción"
-                value={paymentTxHash}
-                onChange={(e) => setPaymentTxHash(e.target.value)}
-              />
-
-              <button type="button" onClick={submitPlanPayment}>
-                Reportar pago
-              </button>
-
-              <div className="muted tiny">
-                Próximamente: tarjeta de crédito y débito.
-              </div>
-            </div>
-          )}
         </div>
+
+        {plans.length === 0 && (
+          <div className="stripe-card" style={{ maxWidth: 400, margin: '0 auto 2rem auto' }}>
+            <div className="loader">Cargando planes disponibles...</div>
+          </div>
+        )}
+
+        <div className="plans-grid">
+          {plans.length > 0 && plans.map((plan) => {
+            let features = []
+            try {
+              features = JSON.parse(plan.features || '[]')
+            } catch {}
+
+            const price = billingCycle === 'yearly'
+              ? plan.price_yearly
+              : plan.price_monthly
+
+            const monthlyEquivalent = billingCycle === 'yearly' && price > 0
+              ? Math.round(price / 12)
+              : price
+
+            return (
+              <div key={plan.id} className={`plan-card ${plan.slug === 'pro' ? 'featured' : ''}`}>
+                {plan.slug === 'pro' && <div className="popular-badge">Más recomendado</div>}
+
+                <div>
+                  <h3>{plan.name}</h3>
+                  <p className="muted">{plan.description}</p>
+                </div>
+
+                <div className="plan-price">
+                  {price === 0 ? (
+                    <span>Gratis</span>
+                  ) : (
+                    <>
+                      <span>${billingCycle === 'yearly' ? monthlyEquivalent : price}</span>
+                      <small>USD / mes</small>
+                    </>
+                  )}
+
+                  {billingCycle === 'yearly' && price > 0 && (
+                    <div className="yearly-note">
+                      Facturado anual: ${price} USD/año
+                    </div>
+                  )}
+                </div>
+
+                <button type="button" onClick={() => selectPlan(plan.slug)}>
+                  {plan.is_free ? 'Comenzar gratis' : 'Seleccionar plan'}
+                </button>
+
+                <div className="features-list">
+                  {features.map((f, i) => (
+                    <div key={i} className="feature-row">
+                      <i className="fas fa-check"></i>
+                      <span>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
+          <div className="payment-box">
+            <h2>Completa tu pago</h2>
+            <p className="muted">Método disponible: USDT BEP20</p>
+
+            <div className="payment-line">
+              <strong>Wallet:</strong>
+              <code>{subscription?.wallet_address || 'Pendiente por configurar'}</code>
+            </div>
+
+            <div className="payment-line">
+              <strong>Monto:</strong>
+              <span>${subscription.amount} USD</span>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Pega aquí el hash de la transacción"
+              value={paymentTxHash}
+              onChange={(e) => setPaymentTxHash(e.target.value)}
+            />
+
+            <button type="button" onClick={submitPlanPayment}>
+              Reportar pago
+            </button>
+
+            <small>Próximamente pagos con tarjeta crédito y débito.</small>
+          </div>
+        )}
       </div>
     )
   }
@@ -3046,28 +3266,15 @@ export default function App() {
           <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
             <i className="fas fa-share-alt"></i> Social IA
           </button>
-          {/* ========== MENÚ ADMIN ========== */}
           {me.role === 'admin' && (
             <>
-              <button
-                className={tab === 'clients' ? 'menu-item active' : 'menu-item'}
-                onClick={() => setTab('clients')}
-                type="button"
-              >
+              <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
                 <i className="fas fa-building"></i> Clientes
               </button>
-              <button
-                className={tab === 'users' ? 'menu-item active' : 'menu-item'}
-                onClick={() => setTab('users')}
-                type="button"
-              >
+              <button className={tab === 'users' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('users')} type="button">
                 <i className="fas fa-users"></i> Usuarios
               </button>
-              <button
-                className={tab === 'billing' ? 'menu-item active' : 'menu-item'}
-                onClick={() => { setTab('billing'); loadPendingSubscriptions(); }}
-                type="button"
-              >
+              <button className={tab === 'billing' ? 'menu-item active' : 'menu-item'} onClick={() => { setTab('billing'); loadPendingSubscriptions(); }} type="button">
                 <i className="fas fa-credit-card"></i> Billing
               </button>
             </>
@@ -3094,7 +3301,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* DASHBOARD */}
+        {/* ======================== DASHBOARD ======================== */}
         {tab === 'dashboard' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
@@ -3240,7 +3447,7 @@ export default function App() {
           </section>
         )}
 
-        {/* INBOX */}
+        {/* ======================== INBOX ======================== */}
         {tab === 'inbox' && (
           <section className="inbox-layout">
             <section className="stripe-card inbox-list">
@@ -3306,7 +3513,7 @@ export default function App() {
           </section>
         )}
 
-        {/* BOTS */}
+        {/* ======================== BOTS ======================== */}
         {tab === 'bots' && (
           <section className="panel-grid">
             <section className="stripe-card stack">
@@ -3345,7 +3552,7 @@ export default function App() {
           </section>
         )}
 
-        {/* TEMPLATES */}
+        {/* ======================== TEMPLATES ======================== */}
         {tab === 'templates' && (
           <section className="panel-grid">
             <section className="stripe-card stack">
@@ -3368,7 +3575,7 @@ export default function App() {
           </section>
         )}
 
-        {/* LANDING */}
+        {/* ======================== LANDING IA ======================== */}
         {tab === 'landing' && (
           <section className="stripe-card stack gap-lg">
             <div className="row between center">
@@ -3437,7 +3644,7 @@ export default function App() {
           </section>
         )}
 
-        {/* FUNNEL */}
+        {/* ======================== FUNNEL ======================== */}
         {tab === 'funnel' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
@@ -3507,7 +3714,7 @@ export default function App() {
           </section>
         )}
 
-        {/* SOCIAL IA */}
+        {/* ======================== SOCIAL IA ======================== */}
         {tab === 'social' && (
           <section className="stack gap-lg">
             <div className="panel-grid">
@@ -3628,7 +3835,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CLIENTS (solo visible para admin) */}
+        {/* ======================== CLIENTS (admin only) ======================== */}
         {tab === 'clients' && me.role === 'admin' && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-building"></i> Nuevo cliente</div><form onSubmit={createClient} className="form-grid"><input value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} placeholder="Nombre" /><input value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} placeholder="Email" /><input value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} placeholder="Teléfono" /><input value={newClient.plan} onChange={e => setNewClient({...newClient, plan: e.target.value})} placeholder="Plan" /><button className="full" disabled={busy}>Crear cliente</button></form></section>
@@ -3647,7 +3854,7 @@ export default function App() {
           </section>
         )}
 
-        {/* USERS (solo visible para admin) */}
+        {/* ======================== USERS (admin only) ======================== */}
         {tab === 'users' && me.role === 'admin' && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">
@@ -3665,7 +3872,7 @@ export default function App() {
           </section>
         )}
 
-        {/* BILLING (solo admin) */}
+        {/* ======================== BILLING (admin only) ======================== */}
         {tab === 'billing' && me.role === 'admin' && (
           <div className="stack gap-lg">
             <div className="stripe-card stack">
