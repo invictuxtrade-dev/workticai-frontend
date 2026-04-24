@@ -1724,78 +1724,16 @@ export default function App() {
           margin-top: 0.2rem;
         }
 
-        /* Estilos mejorados para la factura y modal - SIN ANIMACIONES */
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(15, 23, 42, 0.85);
-          backdrop-filter: blur(12px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 3000;
-          padding: 1rem;
-        }
-
-        .modal-container {
-          max-width: 960px;
-          width: 100%;
-          max-height: 90vh;
-          overflow-y: auto;
-          background: transparent;
-          border-radius: 2rem;
-          position: relative;
-        }
-
-        .modal-container::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .modal-container::-webkit-scrollbar-track {
-          background: #e2e8f0;
-          border-radius: 10px;
-        }
-
-        .modal-container::-webkit-scrollbar-thumb {
-          background: #94a3b8;
-          border-radius: 10px;
-        }
-
-        .modal-close {
-          position: sticky;
-          top: 1rem;
-          right: 1rem;
-          float: right;
-          background: white;
-          border-radius: 999px;
-          width: 40px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-          z-index: 20;
-          transition: all 0.2s;
-          margin-bottom: 1rem;
-        }
-
-        .modal-close:hover {
-          background: #f1f5f9;
-          transform: scale(1.05);
-        }
-
+        /* Estilos mejorados para la factura (inline, sin animaciones) */
         .invoice-card {
           background: white;
           border-radius: 2rem;
           padding: 2rem;
-          margin: 1rem 0 2rem 0;
+          margin: 2rem auto;
           border: 1px solid #e2e8f0;
           box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
           position: relative;
-          overflow: hidden;
-          clear: both;
+          max-width: 960px;
         }
 
         .invoice-card::before {
@@ -1806,32 +1744,6 @@ export default function App() {
           right: 0;
           height: 6px;
           background: linear-gradient(90deg, #3b82f6, #06b6d4, #3b82f6);
-        }
-
-        .invoice-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2rem;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .invoice-logo {
-          font-weight: 800;
-          font-size: 1.5rem;
-          background: linear-gradient(135deg, #1e293b, #3b82f6);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-
-        .invoice-id {
-          background: #f1f5f9;
-          padding: 0.3rem 0.8rem;
-          border-radius: 999px;
-          font-size: 0.8rem;
-          color: #475569;
         }
 
         .invoice-details {
@@ -1857,12 +1769,6 @@ export default function App() {
           color: #64748b;
         }
 
-        .detail-value {
-          font-weight: 600;
-          color: #0f172a;
-          word-break: break-all;
-        }
-
         .qr-section {
           display: flex;
           align-items: center;
@@ -1870,7 +1776,7 @@ export default function App() {
           flex-wrap: wrap;
           gap: 1.5rem;
           margin: 1.5rem 0;
-          background: #ffffff;
+          background: #fff;
           border: 1px solid #e2e8f0;
           border-radius: 1rem;
           padding: 1.5rem;
@@ -1881,18 +1787,6 @@ export default function App() {
           padding: 0.75rem;
           border-radius: 1rem;
           box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .qr-code img {
-          display: block;
-        }
-
-        .wallet-info {
-          flex: 1;
-          min-width: 200px;
         }
 
         .copy-btn {
@@ -1903,27 +1797,6 @@ export default function App() {
           font-size: 0.7rem;
           cursor: pointer;
           margin-left: 0.5rem;
-          color: #1e293b;
-        }
-
-        .copy-btn:hover {
-          background: #e2e8f0;
-        }
-
-        .payment-method {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: #f1f5f9;
-          padding: 0.4rem 0.8rem;
-          border-radius: 999px;
-          width: fit-content;
-        }
-
-        .total-amount {
-          font-size: 2rem;
-          font-weight: 800;
-          color: #0f172a;
         }
 
         .step-progress {
@@ -1958,39 +1831,19 @@ export default function App() {
           color: white;
         }
 
-        .step-text {
-          font-size: 0.85rem;
-          font-weight: 500;
+        .total-amount {
+          font-size: 2rem;
+          font-weight: 800;
+          color: #0f172a;
         }
 
         @media (max-width: 768px) {
-          .plan-hero {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-
-          .plan-hero h1 {
-            font-size: 2rem;
-          }
-
-          .plan-card.featured {
-            transform: none;
-          }
-
-          .invoice-details {
-            grid-template-columns: 1fr;
-          }
-
-          .qr-section {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-          }
-
-          .step-progress {
-            flex-direction: column;
-            align-items: flex-start;
-          }
+          .plan-hero { flex-direction: column; align-items: flex-start; }
+          .plan-hero h1 { font-size: 2rem; }
+          .plan-card.featured { transform: none; }
+          .invoice-details { grid-template-columns: 1fr; }
+          .qr-section { flex-direction: column; align-items: center; text-align: center; }
+          .step-progress { flex-direction: column; align-items: flex-start; }
         }
       `
       document.head.appendChild(style)
@@ -2017,20 +1870,11 @@ export default function App() {
   const [paymentTxHash, setPaymentTxHash] = useState('')
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [pendingSubscriptions, setPendingSubscriptions] = useState([])
-  const [paymentQR, setPaymentQR] = useState('')
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
 
-  // Generación del QR solo cuando se abre la modal y existe wallet (sin animaciones extra)
-  useEffect(() => {
-    if (showPaymentModal && subscription?.wallet_address && subscription?.status === 'pending') {
-      QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 220 }, (err, url) => {
-        if (!err) setPaymentQR(url)
-        else setPaymentQR('')
-      })
-    } else {
-      setPaymentQR('')
-    }
-  }, [showPaymentModal, subscription?.wallet_address, subscription?.status])
+  // NUEVOS ESTADOS PARA VISTA INLINE DE FACTURA (sin modal)
+  const [showInvoice, setShowInvoice] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState(null)
+  const [paymentQR, setPaymentQR] = useState('')
 
   // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
   useEffect(() => {
@@ -2202,7 +2046,7 @@ export default function App() {
       .trim()
   }
 
-  // ======================== NUEVAS FUNCIONES DE PLANES Y FACTURACIÓN ========================
+  // ======================== FUNCIONES DE PLANES Y FACTURACIÓN (MODIFICADAS) ========================
   async function loadPlans() {
     try {
       const data = await api('/api/plans')
@@ -2273,8 +2117,18 @@ export default function App() {
       }
 
       setSelectedPlanSlug(planSlug)
-      setShowPaymentModal(true)
-      showNotice('Plan seleccionado. Completa el pago en la ventana emergente.')
+      // Mostramos la factura inline
+      const selected = plans.find(p => p.slug === planSlug)
+      setSelectedPlan(selected)
+      setShowInvoice(true)
+      // Generamos el QR para la wallet de la suscripción
+      if (sub.wallet_address) {
+        QRCode.toDataURL(sub.wallet_address, { margin: 1, width: 220 }, (err, url) => {
+          if (!err) setPaymentQR(url)
+          else setPaymentQR('')
+        })
+      }
+      showNotice('Plan seleccionado. Completa el pago en la factura.')
     } catch (err) {
       showNotice(err.message || 'Error seleccionando plan')
     }
@@ -2301,10 +2155,18 @@ export default function App() {
       showNotice('Pago reportado. Espera validación del administrador.')
       await loadCurrentSubscription()
       setPaymentTxHash('')
-      setShowPaymentModal(false)
+      setShowInvoice(false)      // volvemos a la lista de planes
+      setSelectedPlan(null)
     } catch (err) {
       showNotice(err.message || 'Error reportando pago')
     }
+  }
+
+  async function cancelInvoice() {
+    setShowInvoice(false)
+    setSelectedPlan(null)
+    setPaymentTxHash('')
+    setPaymentQR('')
   }
 
   async function loadPendingSubscriptions() {
@@ -2389,11 +2251,7 @@ export default function App() {
     }
   }, [me])
 
-  // Funciones de landing y social (sin cambios relevantes, pero se respetan las guardias en las llamadas)
-  // ... (todas las demás funciones como generateLanding, saveLandingChanges, deleteLanding, loadLandingForEdit, resetLandingForm, downloadHTML, etc. se mantienen idénticas a tu código original)
-  // Como son muy extensas, aquí las incluyo tal cual estaban (no es necesario modificarlas porque ya usan loadLandings que tiene guardia)
-  // Incluyo las versiones completas para que no falte nada.
-
+  // ======================== FUNCIONES DE LANDING (iguales a las originales) ========================
   async function generateLanding() {
     if (!selectedBotId) {
       showNotice('Selecciona un bot primero')
@@ -3281,7 +3139,8 @@ export default function App() {
     setToken('')
     setMe(null)
     setForcePlanScreen(false)
-    setShowPaymentModal(false)
+    setShowInvoice(false)
+    setSelectedPlan(null)
   }
 
   const leadsByStageGlobal = useMemo(() => {
@@ -3296,7 +3155,7 @@ export default function App() {
     return { days, counts }
   }, [])
 
-  // ======================== COMPONENTE PLAN GATE (OpenAI style) ========================
+  // ======================== COMPONENTE PLAN GATE (MODIFICADO: SIN MODAL, CON VISTA INLINE) ========================
   function PlanGate({ onLogout }) {
     const [copied, setCopied] = useState(false)
 
@@ -3306,8 +3165,80 @@ export default function App() {
       setTimeout(() => setCopied(false), 2000)
     }
 
-    const closePaymentModal = () => setShowPaymentModal(false)
+    // Si estamos en modo factura, mostramos la factura en lugar de los planes
+    if (showInvoice && selectedPlan && subscription) {
+      return (
+        <div className="plan-page">
+          <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="auth-logo" style={{ margin: 0 }}>
+              <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
+            </div>
+            <button className="secondary" onClick={onLogout} style={{ background: '#1e293b', color: 'white' }}>
+              <i className="fas fa-sign-out-alt"></i> Cerrar sesión
+            </button>
+          </div>
+          <div className="invoice-card">
+            <div className="invoice-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div className="invoice-logo">WORKTIC AI</div>
+              <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
+            </div>
+            <div className="invoice-details">
+              <div className="detail-line"><div className="detail-label">Cliente</div><div className="detail-value">{me?.name || me?.email}</div></div>
+              <div className="detail-line"><div className="detail-label">Plan</div><div className="detail-value">{selectedPlan.name} · {billingCycle}</div></div>
+              <div className="detail-line"><div className="detail-label">Estado</div><div className="detail-value"><span className="pill warning">Pendiente de pago</span></div></div>
+              <div className="detail-line"><div className="detail-label">Fecha emisión</div><div className="detail-value">{new Date().toLocaleDateString()}</div></div>
+            </div>
+            <div className="qr-section">
+              <div className="qr-code">
+                {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="160" height="160" /> : <div className="loader" style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
+              </div>
+              <div className="wallet-info">
+                <div className="detail-label">Dirección de la wallet (BEP20)</div>
+                <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                  {subscription.wallet_address || 'No configurada'}
+                  <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
+                    {copied ? 'Copiado' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="payment-method" style={{ marginTop: '1rem' }}>
+                  <i className="fab fa-bitcoin"></i> USDT (BEP20)
+                </div>
+              </div>
+            </div>
+            <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+              <div className="detail-label">Monto a pagar</div>
+              <div className="total-amount">${subscription.amount} USD</div>
+            </div>
+            <div className="step-progress">
+              <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
+              <i className="fas fa-arrow-right"></i>
+              <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
+              <i className="fas fa-arrow-right"></i>
+              <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
+              <i className="fas fa-arrow-right"></i>
+              <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
+            </div>
+            <input
+              type="text"
+              placeholder="Pega aquí el hash de la transacción"
+              value={paymentTxHash}
+              onChange={(e) => setPaymentTxHash(e.target.value)}
+              style={{ marginTop: '1rem', width: '100%' }}
+            />
+            <div className="row" style={{ marginTop: '1rem', gap: '1rem' }}>
+              <button type="button" onClick={submitPlanPayment} style={{ flex: 1 }}>Reportar pago</button>
+              <button type="button" onClick={cancelInvoice} className="secondary" style={{ flex: 1 }}>Volver a planes</button>
+            </div>
+            <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
+              El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.<br/>
+              Puedes volver a la lista de planes para seleccionar otro si lo deseas.
+            </div>
+          </div>
+        </div>
+      )
+    }
 
+    // Vista normal: lista de planes
     return (
       <div className="plan-page">
         <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
@@ -3411,97 +3342,12 @@ export default function App() {
           })}
         </div>
 
-        {/* Botón para mostrar modal si hay suscripción pendiente */}
+        {/* Botón para mostrar factura pendiente si existe */}
         {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-            <button type="button" onClick={() => setShowPaymentModal(true)} className="secondary">
+            <button type="button" onClick={() => { const p = plans.find(pl => pl.slug === subscription.plan_slug); setSelectedPlan(p); setShowInvoice(true); }} className="secondary">
               <i className="fas fa-receipt"></i> Ver factura pendiente
             </button>
-          </div>
-        )}
-
-        {/* MODAL DE PAGO PROFESIONAL - CORREGIDO: más grande y sin parpadeos */}
-        {showPaymentModal && subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
-          <div className="modal-overlay" onClick={closePaymentModal}>
-            <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-close" onClick={closePaymentModal}>
-                <i className="fas fa-times"></i>
-              </div>
-              <div className="invoice-card">
-                <div className="invoice-header">
-                  <div className="invoice-logo">WORKTIC AI</div>
-                  <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
-                </div>
-
-                <div className="invoice-details">
-                  <div className="detail-line">
-                    <div className="detail-label">Cliente</div>
-                    <div className="detail-value">{me?.name || me?.email}</div>
-                  </div>
-                  <div className="detail-line">
-                    <div className="detail-label">Plan</div>
-                    <div className="detail-value">{subscription.plan_slug} · {subscription.billing_cycle}</div>
-                  </div>
-                  <div className="detail-line">
-                    <div className="detail-label">Estado</div>
-                    <div className="detail-value"><span className="pill warning">Pendiente de pago</span></div>
-                  </div>
-                  <div className="detail-line">
-                    <div className="detail-label">Fecha emisión</div>
-                    <div className="detail-value">{new Date().toLocaleDateString()}</div>
-                  </div>
-                </div>
-
-                <div className="qr-section">
-                  <div className="qr-code">
-                    {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="160" height="160" /> : <div className="loader" style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
-                  </div>
-                  <div className="wallet-info">
-                    <div className="detail-label">Dirección de la wallet (BEP20)</div>
-                    <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                      {subscription.wallet_address || 'No configurada'}
-                      <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
-                        {copied ? 'Copiado' : 'Copiar'}
-                      </button>
-                    </div>
-                    <div className="payment-method" style={{ marginTop: '1rem' }}>
-                      <i className="fab fa-bitcoin"></i> USDT (BEP20)
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ margin: '1rem 0', textAlign: 'center' }}>
-                  <div className="detail-label">Monto a pagar</div>
-                  <div className="total-amount">${subscription.amount} USD</div>
-                </div>
-
-                <div className="step-progress">
-                  <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
-                  <i className="fas fa-arrow-right"></i>
-                  <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
-                  <i className="fas fa-arrow-right"></i>
-                  <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
-                  <i className="fas fa-arrow-right"></i>
-                  <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
-                </div>
-
-                <input
-                  type="text"
-                  placeholder="Pega aquí el hash de la transacción"
-                  value={paymentTxHash}
-                  onChange={(e) => setPaymentTxHash(e.target.value)}
-                  style={{ marginTop: '1rem', width: '100%' }}
-                />
-
-                <button type="button" onClick={submitPlanPayment} style={{ marginTop: '1rem', width: '100%' }}>
-                  Reportar pago
-                </button>
-
-                <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
-                  El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.
-                </div>
-              </div>
-            </div>
           </div>
         )}
       </div>
