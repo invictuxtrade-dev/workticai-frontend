@@ -1639,26 +1639,33 @@ export default function App() {
           max-width: 1180px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 1.25rem;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 2rem;
         }
 
         .plan-card {
           position: relative;
           background: white;
-          border: 1px solid #e2e8f0;
           border-radius: 1.5rem;
-          padding: 1.5rem;
+          padding: 1.8rem;
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
-          box-shadow: 0 18px 35px rgba(15,23,42,0.06);
+          box-shadow: 0 20px 35px -10px rgba(0,0,0,0.08);
+          transition: all 0.3s ease;
+          border: 1px solid #e2e8f0;
+        }
+
+        .plan-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 30px 45px -12px rgba(0,0,0,0.15);
+          border-color: #cbd5e1;
         }
 
         .plan-card.featured {
-          border-color: #621bbb;
-          box-shadow: 0 24px 45px rgba(98,27,187,0.18);
-          transform: translateY(-8px);
+          border: 2px solid #621bbb;
+          box-shadow: 0 24px 45px rgba(98,27,187,0.12);
+          transform: scale(1.02);
         }
 
         .popular-badge {
@@ -1672,15 +1679,16 @@ export default function App() {
           border-radius: 999px;
           font-size: 0.75rem;
           font-weight: 700;
+          white-space: nowrap;
         }
 
         .plan-card h3 {
-          font-size: 1.25rem;
+          font-size: 1.5rem;
           color: #0f172a;
         }
 
         .plan-price span {
-          font-size: 2.4rem;
+          font-size: 2.8rem;
           font-weight: 800;
           color: #0f172a;
         }
@@ -1700,6 +1708,7 @@ export default function App() {
           display: flex;
           flex-direction: column;
           gap: 0.7rem;
+          margin: 0.5rem 0;
         }
 
         .feature-row {
@@ -1715,29 +1724,174 @@ export default function App() {
           margin-top: 0.2rem;
         }
 
-        .payment-box {
-          max-width: 760px;
-          margin: 2rem auto 0;
+        /* Nuevo estilo para la factura pro */
+        .invoice-card {
           background: white;
           border-radius: 1.5rem;
-          padding: 1.5rem;
+          padding: 2rem;
+          margin-top: 3rem;
+          max-width: 720px;
+          margin-left: auto;
+          margin-right: auto;
           border: 1px solid #e2e8f0;
-          box-shadow: 0 18px 35px rgba(15,23,42,0.08);
+          box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+          position: relative;
+          overflow: hidden;
         }
 
-        .payment-line {
+        .invoice-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 6px;
+          background: linear-gradient(90deg, #3b82f6, #06b6d4, #3b82f6);
+        }
+
+        .invoice-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .invoice-logo {
+          font-weight: 800;
+          font-size: 1.5rem;
+          background: linear-gradient(135deg, #1e293b, #3b82f6);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        .invoice-id {
+          background: #f1f5f9;
+          padding: 0.3rem 0.8rem;
+          border-radius: 999px;
+          font-size: 0.8rem;
+          color: #475569;
+        }
+
+        .invoice-details {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          background: #f8fafc;
+          padding: 1.2rem;
+          border-radius: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .detail-line {
           display: flex;
           flex-direction: column;
-          gap: 0.35rem;
-          margin: 1rem 0;
+          gap: 0.2rem;
         }
 
-        .payment-line code {
-          background: #f1f5f9;
-          padding: 0.8rem;
-          border-radius: 0.75rem;
-          word-break: break-all;
+        .detail-label {
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          font-weight: 600;
+          color: #64748b;
+        }
+
+        .detail-value {
+          font-weight: 600;
           color: #0f172a;
+          word-break: break-all;
+        }
+
+        .qr-section {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1.5rem;
+          margin: 1.5rem 0;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 1rem;
+          padding: 1rem;
+        }
+
+        .qr-code {
+          background: white;
+          padding: 0.5rem;
+          border-radius: 1rem;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .wallet-info {
+          flex: 1;
+        }
+
+        .copy-btn {
+          background: #f1f5f9;
+          border: none;
+          padding: 0.25rem 0.6rem;
+          border-radius: 0.5rem;
+          font-size: 0.7rem;
+          cursor: pointer;
+          margin-left: 0.5rem;
+          color: #1e293b;
+        }
+
+        .payment-method {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #f1f5f9;
+          padding: 0.4rem 0.8rem;
+          border-radius: 999px;
+          width: fit-content;
+        }
+
+        .payment-method i {
+          font-size: 1.2rem;
+        }
+
+        .total-amount {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #0f172a;
+        }
+
+        .step-progress {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin: 2rem 0 1rem;
+        }
+
+        .step {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .step-number {
+          width: 28px;
+          height: 28px;
+          background: #e2e8f0;
+          border-radius: 999px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.8rem;
+          font-weight: bold;
+          color: #475569;
+        }
+
+        .step.active .step-number {
+          background: #3b82f6;
+          color: white;
+        }
+
+        .step-text {
+          font-size: 0.85rem;
         }
 
         @media (max-width: 768px) {
@@ -1752,6 +1906,10 @@ export default function App() {
 
           .plan-card.featured {
             transform: none;
+          }
+
+          .invoice-details {
+            grid-template-columns: 1fr;
           }
         }
       `
@@ -1779,6 +1937,17 @@ export default function App() {
   const [paymentTxHash, setPaymentTxHash] = useState('')
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [pendingSubscriptions, setPendingSubscriptions] = useState([])
+  const [paymentQR, setPaymentQR] = useState('')
+
+  useEffect(() => {
+    if (subscription && subscription.wallet_address && subscription.status === 'pending') {
+      QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 180 }, (err, url) => {
+        if (!err) setPaymentQR(url)
+      })
+    } else {
+      setPaymentQR('')
+    }
+  }, [subscription])
 
   // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
   useEffect(() => {
@@ -2047,6 +2216,7 @@ export default function App() {
       })
       showNotice('Pago reportado. Espera validación del administrador.')
       await loadCurrentSubscription()
+      setPaymentTxHash('')
     } catch (err) {
       showNotice(err.message || 'Error reportando pago')
     }
@@ -3010,6 +3180,7 @@ export default function App() {
   async function logout() {
     setToken('')
     setMe(null)
+    setForcePlanScreen(false)
   }
 
   const leadsByStageGlobal = useMemo(() => {
@@ -3025,9 +3196,25 @@ export default function App() {
   }, [])
 
   // ======================== COMPONENTE PLAN GATE (OpenAI style) ========================
-  function PlanGate() {
+  function PlanGate({ onLogout }) {
+    const [copied, setCopied] = useState(false)
+    const copyToClipboard = (text) => {
+      navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+
     return (
       <div className="plan-page">
+        <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="auth-logo" style={{ margin: 0 }}>
+            <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
+          </div>
+          <button className="secondary" onClick={onLogout} style={{ background: '#1e293b', color: 'white' }}>
+            <i className="fas fa-sign-out-alt"></i> Cerrar sesión
+          </button>
+        </div>
+
         <div className="plan-hero">
           <div>
             <div className="eyebrow">Worktic AI</div>
@@ -3110,7 +3297,7 @@ export default function App() {
                 <div className="features-list">
                   {features.map((f, i) => (
                     <div key={i} className="feature-row">
-                      <i className="fas fa-check"></i>
+                      <i className="fas fa-check-circle"></i>
                       <span>{f}</span>
                     </div>
                   ))}
@@ -3121,18 +3308,62 @@ export default function App() {
         </div>
 
         {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
-          <div className="payment-box">
-            <h2>Completa tu pago</h2>
-            <p className="muted">Método disponible: USDT BEP20</p>
-
-            <div className="payment-line">
-              <strong>Wallet:</strong>
-              <code>{subscription?.wallet_address || 'Pendiente por configurar'}</code>
+          <div className="invoice-card">
+            <div className="invoice-header">
+              <div className="invoice-logo">WORKTIC AI</div>
+              <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
             </div>
 
-            <div className="payment-line">
-              <strong>Monto:</strong>
-              <span>${subscription.amount} USD</span>
+            <div className="invoice-details">
+              <div className="detail-line">
+                <div className="detail-label">Cliente</div>
+                <div className="detail-value">{me?.name || me?.email}</div>
+              </div>
+              <div className="detail-line">
+                <div className="detail-label">Plan</div>
+                <div className="detail-value">{subscription.plan_slug} · {subscription.billing_cycle}</div>
+              </div>
+              <div className="detail-line">
+                <div className="detail-label">Estado</div>
+                <div className="detail-value"><span className="pill warning">Pendiente de pago</span></div>
+              </div>
+              <div className="detail-line">
+                <div className="detail-label">Fecha emisión</div>
+                <div className="detail-value">{new Date().toLocaleDateString()}</div>
+              </div>
+            </div>
+
+            <div className="qr-section">
+              <div className="qr-code">
+                {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="140" height="140" /> : <div className="loader" style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
+              </div>
+              <div className="wallet-info">
+                <div className="detail-label">Dirección de la wallet (BEP20)</div>
+                <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                  {subscription.wallet_address || 'No configurada'}
+                  <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
+                    {copied ? 'Copiado' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="payment-method" style={{ marginTop: '1rem' }}>
+                  <i className="fab fa-bitcoin"></i> USDT (BEP20)
+                </div>
+              </div>
+            </div>
+
+            <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+              <div className="detail-label">Monto a pagar</div>
+              <div className="total-amount">${subscription.amount} USD</div>
+            </div>
+
+            <div className="step-progress">
+              <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
+              <i className="fas fa-arrow-right"></i>
+              <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
+              <i className="fas fa-arrow-right"></i>
+              <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
+              <i className="fas fa-arrow-right"></i>
+              <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
             </div>
 
             <input
@@ -3140,13 +3371,16 @@ export default function App() {
               placeholder="Pega aquí el hash de la transacción"
               value={paymentTxHash}
               onChange={(e) => setPaymentTxHash(e.target.value)}
+              style={{ marginTop: '1rem', width: '100%' }}
             />
 
-            <button type="button" onClick={submitPlanPayment}>
+            <button type="button" onClick={submitPlanPayment} style={{ marginTop: '1rem', width: '100%' }}>
               Reportar pago
             </button>
 
-            <small>Próximamente pagos con tarjeta crédito y débito.</small>
+            <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
+              El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.
+            </div>
           </div>
         )}
       </div>
@@ -3160,7 +3394,7 @@ export default function App() {
   }} />
 
   if (forcePlanScreen && me.role !== 'admin') {
-    return <PlanGate />
+    return <PlanGate onLogout={logout} />
   }
 
   return (
