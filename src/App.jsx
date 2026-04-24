@@ -1724,7 +1724,7 @@ export default function App() {
           margin-top: 0.2rem;
         }
 
-        /* Estilos mejorados para la factura y modal */
+        /* Estilos mejorados para la factura y modal - SIN ANIMACIONES */
         .modal-overlay {
           position: fixed;
           inset: 0;
@@ -1747,7 +1747,6 @@ export default function App() {
           position: relative;
         }
 
-        /* Ocultar scrollbar pero mantener funcionalidad */
         .modal-container::-webkit-scrollbar {
           width: 6px;
         }
@@ -2021,20 +2020,9 @@ export default function App() {
   const [paymentQR, setPaymentQR] = useState('')
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
-  // Estabilizar la generación del QR con useMemo
-  const qrDataUrl = useMemo(() => {
-    if (!subscription || !subscription.wallet_address || subscription.status !== 'pending') return ''
-    let cancelled = false
-    QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 220 }, (err, url) => {
-      if (!cancelled && !err) setPaymentQR(url)
-      else if (!cancelled && err) setPaymentQR('')
-    })
-    return () => { cancelled = true }
-  }, [subscription?.wallet_address, subscription?.status])
-
+  // Generación del QR solo cuando se abre la modal y existe wallet (sin animaciones extra)
   useEffect(() => {
-    if (subscription && subscription.wallet_address && subscription.status === 'pending') {
-      // Forzar regeneración si es necesario
+    if (showPaymentModal && subscription?.wallet_address && subscription?.status === 'pending') {
       QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 220 }, (err, url) => {
         if (!err) setPaymentQR(url)
         else setPaymentQR('')
@@ -2042,7 +2030,7 @@ export default function App() {
     } else {
       setPaymentQR('')
     }
-  }, [subscription])
+  }, [showPaymentModal, subscription?.wallet_address, subscription?.status])
 
   // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
   useEffect(() => {
@@ -2226,6 +2214,7 @@ export default function App() {
   }
 
   async function loadCurrentSubscription() {
+    if (forcePlanScreen) return
     try {
       const data = await api('/api/subscriptions/current')
       setSubscription(data || null)
@@ -2341,8 +2330,9 @@ export default function App() {
     }
   }
 
-  // ======================== FUNCIONES EXISTENTES MODIFICADAS PARA DETECTAR 402 ========================
+  // ======================== FUNCIONES EXISTENTES CON GUARDIA PLAN ========================
   async function loadLandings() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/landings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setLandings(data || [])
@@ -2354,6 +2344,7 @@ export default function App() {
   }
 
   async function loadFunnelMetrics() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/funnel${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setFunnelMetrics(data || {})
@@ -2398,7 +2389,11 @@ export default function App() {
     }
   }, [me])
 
-  // ======================== FUNCIONES EXISTENTES (sin cambios) ========================
+  // Funciones de landing y social (sin cambios relevantes, pero se respetan las guardias en las llamadas)
+  // ... (todas las demás funciones como generateLanding, saveLandingChanges, deleteLanding, loadLandingForEdit, resetLandingForm, downloadHTML, etc. se mantienen idénticas a tu código original)
+  // Como son muy extensas, aquí las incluyo tal cual estaban (no es necesario modificarlas porque ya usan loadLandings que tiene guardia)
+  // Incluyo las versiones completas para que no falte nada.
+
   async function generateLanding() {
     if (!selectedBotId) {
       showNotice('Selecciona un bot primero')
@@ -2568,6 +2563,7 @@ export default function App() {
 
   // ======================== FUNCIONES SOCIAL IA ========================
   async function loadSocialCredential() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/social/credentials${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setSocialCredential({ ...emptySocialCredential, ...(data || {}) })
@@ -2595,6 +2591,7 @@ export default function App() {
   }
 
   async function loadSocialPosts() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/social/posts${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setSocialPosts(data || [])
@@ -2606,6 +2603,7 @@ export default function App() {
   }
 
   async function loadSocialLogs() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/social/logs${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setSocialLogs(data || [])
@@ -2926,11 +2924,11 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (me) loadInitial()
-  }, [me])
+    if (me && !forcePlanScreen) loadInitial()
+  }, [me, forcePlanScreen])
 
   useEffect(() => {
-    if (!me || !selectedClientId) return
+    if (!me || !selectedClientId || forcePlanScreen) return
     loadMetrics()
     loadBots(selectedClientId)
     loadTemplates()
@@ -2941,12 +2939,12 @@ export default function App() {
     loadSocialCredential()
     loadSocialPosts()
     loadSocialLogs()
-  }, [selectedClientId])
+  }, [selectedClientId, forcePlanScreen])
 
   // ========== INTERVALO MEJORADO: refresca clientes y usuarios si es admin ==========
   useEffect(() => {
     const t = setInterval(async () => {
-      if (!me) return
+      if (!me || forcePlanScreen) return
 
       await loadMetrics()
 
@@ -2961,7 +2959,7 @@ export default function App() {
     }, 7000)
 
     return () => clearInterval(t)
-  }, [me, selectedClientId, selectedBotId])
+  }, [me, selectedClientId, selectedBotId, forcePlanScreen])
 
   useEffect(() => {
     if (!selectedBotId) {
@@ -2992,6 +2990,7 @@ export default function App() {
   }
 
   async function loadMetrics() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/dashboard/metrics${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setMetrics(data)
@@ -3002,6 +3001,7 @@ export default function App() {
   }
 
   async function loadClients() {
+    if (forcePlanScreen) return
     try {
       if (me?.role === 'admin') {
         const data = await api('/api/clients')
@@ -3027,6 +3027,7 @@ export default function App() {
   }
 
   async function loadUsers() {
+    if (forcePlanScreen) return
     try {
       const path = me?.role === 'admin' ? '/api/users' : `/api/users?client_id=${me?.client_id || ''}`
       const data = await api(path)
@@ -3038,6 +3039,7 @@ export default function App() {
   }
 
   async function loadBots(clientId) {
+    if (forcePlanScreen) return
     const cid = clientId || selectedClientId
     if (!cid) { setBots([]); return }
     try {
@@ -3055,6 +3057,7 @@ export default function App() {
   }
 
   async function loadTemplates() {
+    if (forcePlanScreen) return
     try {
       const data = await api(`/api/templates${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setTemplates(data)
@@ -3081,6 +3084,7 @@ export default function App() {
   }
 
   async function loadInboxLeads() {
+    if (forcePlanScreen) return
     try {
       const params = new URLSearchParams()
       if (selectedClientId) params.set('client_id', selectedClientId)
