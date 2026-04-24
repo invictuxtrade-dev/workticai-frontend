@@ -1589,6 +1589,7 @@ export default function App() {
           justify-content: space-between;
           gap: 2rem;
           align-items: flex-end;
+          flex-wrap: wrap;
         }
 
         .plan-hero h1 {
@@ -1723,19 +1724,79 @@ export default function App() {
           margin-top: 0.2rem;
         }
 
-        /* Nuevo estilo para la factura pro */
+        /* Estilos mejorados para la factura y modal */
+        .modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.85);
+          backdrop-filter: blur(12px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 3000;
+          padding: 1rem;
+        }
+
+        .modal-container {
+          max-width: 960px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          background: transparent;
+          border-radius: 2rem;
+          position: relative;
+        }
+
+        /* Ocultar scrollbar pero mantener funcionalidad */
+        .modal-container::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .modal-container::-webkit-scrollbar-track {
+          background: #e2e8f0;
+          border-radius: 10px;
+        }
+
+        .modal-container::-webkit-scrollbar-thumb {
+          background: #94a3b8;
+          border-radius: 10px;
+        }
+
+        .modal-close {
+          position: sticky;
+          top: 1rem;
+          right: 1rem;
+          float: right;
+          background: white;
+          border-radius: 999px;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+          z-index: 20;
+          transition: all 0.2s;
+          margin-bottom: 1rem;
+        }
+
+        .modal-close:hover {
+          background: #f1f5f9;
+          transform: scale(1.05);
+        }
+
         .invoice-card {
           background: white;
-          border-radius: 1.5rem;
+          border-radius: 2rem;
           padding: 2rem;
-          margin-top: 3rem;
-          max-width: 720px;
-          margin-left: auto;
-          margin-right: auto;
+          margin: 1rem 0 2rem 0;
           border: 1px solid #e2e8f0;
-          box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+          box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
           position: relative;
           overflow: hidden;
+          clear: both;
         }
 
         .invoice-card::before {
@@ -1776,7 +1837,7 @@ export default function App() {
 
         .invoice-details {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
           gap: 1rem;
           background: #f8fafc;
           padding: 1.2rem;
@@ -1813,18 +1874,26 @@ export default function App() {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           border-radius: 1rem;
-          padding: 1rem;
+          padding: 1.5rem;
         }
 
         .qr-code {
           background: white;
-          padding: 0.5rem;
+          padding: 0.75rem;
           border-radius: 1rem;
           box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .qr-code img {
+          display: block;
         }
 
         .wallet-info {
           flex: 1;
+          min-width: 200px;
         }
 
         .copy-btn {
@@ -1838,6 +1907,10 @@ export default function App() {
           color: #1e293b;
         }
 
+        .copy-btn:hover {
+          background: #e2e8f0;
+        }
+
         .payment-method {
           display: flex;
           align-items: center;
@@ -1848,12 +1921,8 @@ export default function App() {
           width: fit-content;
         }
 
-        .payment-method i {
-          font-size: 1.2rem;
-        }
-
         .total-amount {
-          font-size: 1.8rem;
+          font-size: 2rem;
           font-weight: 800;
           color: #0f172a;
         }
@@ -1861,8 +1930,9 @@ export default function App() {
         .step-progress {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          margin: 2rem 0 1rem;
+          gap: 0.75rem;
+          margin: 2rem 0 1.5rem;
+          flex-wrap: wrap;
         }
 
         .step {
@@ -1872,14 +1942,14 @@ export default function App() {
         }
 
         .step-number {
-          width: 28px;
-          height: 28px;
+          width: 32px;
+          height: 32px;
           background: #e2e8f0;
           border-radius: 999px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.8rem;
+          font-size: 0.85rem;
           font-weight: bold;
           color: #475569;
         }
@@ -1891,54 +1961,7 @@ export default function App() {
 
         .step-text {
           font-size: 0.85rem;
-        }
-
-        /* Estilos para el modal de pago */
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(15, 23, 42, 0.8);
-          backdrop-filter: blur(8px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 3000;
-          padding: 1rem;
-          animation: fadeIn 0.2s ease;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .modal-container {
-          max-width: 760px;
-          width: 100%;
-          max-height: 90vh;
-          overflow-y: auto;
-          background: transparent;
-          border-radius: 2rem;
-          position: relative;
-        }
-        .modal-close {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: white;
-          border-radius: 999px;
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-          z-index: 10;
-          transition: all 0.2s;
-        }
-        .modal-close:hover {
-          background: #f1f5f9;
-          transform: scale(1.05);
+          font-weight: 500;
         }
 
         @media (max-width: 768px) {
@@ -1957,6 +1980,17 @@ export default function App() {
 
           .invoice-details {
             grid-template-columns: 1fr;
+          }
+
+          .qr-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+          }
+
+          .step-progress {
+            flex-direction: column;
+            align-items: flex-start;
           }
         }
       `
@@ -1987,9 +2021,21 @@ export default function App() {
   const [paymentQR, setPaymentQR] = useState('')
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
+  // Estabilizar la generación del QR con useMemo
+  const qrDataUrl = useMemo(() => {
+    if (!subscription || !subscription.wallet_address || subscription.status !== 'pending') return ''
+    let cancelled = false
+    QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 220 }, (err, url) => {
+      if (!cancelled && !err) setPaymentQR(url)
+      else if (!cancelled && err) setPaymentQR('')
+    })
+    return () => { cancelled = true }
+  }, [subscription?.wallet_address, subscription?.status])
+
   useEffect(() => {
     if (subscription && subscription.wallet_address && subscription.status === 'pending') {
-      QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 180 }, (err, url) => {
+      // Forzar regeneración si es necesario
+      QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 220 }, (err, url) => {
         if (!err) setPaymentQR(url)
         else setPaymentQR('')
       })
@@ -2018,7 +2064,7 @@ export default function App() {
   const [selectedBotId, setSelectedBotId] = useState('')
   const [selectedLeadId, setSelectedLeadId] = useState(null)
 
-  const [qrDataUrl, setQrDataUrl] = useState('')
+  const [qrDataUrlBot, setQrDataUrlBot] = useState('')
   const [leads, setLeads] = useState([])
   const [messages, setMessages] = useState([])
   const [config, setConfig] = useState(emptyConfig)
@@ -2238,7 +2284,7 @@ export default function App() {
       }
 
       setSelectedPlanSlug(planSlug)
-      setShowPaymentModal(true) // Abrir modal de pago automáticamente
+      setShowPaymentModal(true)
       showNotice('Plan seleccionado. Completa el pago en la ventana emergente.')
     } catch (err) {
       showNotice(err.message || 'Error seleccionando plan')
@@ -2266,7 +2312,7 @@ export default function App() {
       showNotice('Pago reportado. Espera validación del administrador.')
       await loadCurrentSubscription()
       setPaymentTxHash('')
-      setShowPaymentModal(false) // cerrar modal tras éxito
+      setShowPaymentModal(false)
     } catch (err) {
       showNotice(err.message || 'Error reportando pago')
     }
@@ -2919,7 +2965,7 @@ export default function App() {
 
   useEffect(() => {
     if (!selectedBotId) {
-      setQrDataUrl('')
+      setQrDataUrlBot('')
       setConfig(emptyConfig)
       return
     }
@@ -2999,7 +3045,7 @@ export default function App() {
       setBots(data)
       if (selectedBotId && !data.find(x => x.id === selectedBotId)) {
         setSelectedBotId('')
-        setQrDataUrl('')
+        setQrDataUrlBot('')
         setConfig(emptyConfig)
       }
     } catch (err) { 
@@ -3027,11 +3073,11 @@ export default function App() {
   }
 
   async function loadQr(botId) {
-    if (!botId) { setQrDataUrl(''); return }
+    if (!botId) { setQrDataUrlBot(''); return }
     try {
       const data = await api(`/api/bots/${botId}/qr`)
-      setQrDataUrl(data.qr ? await QRCode.toDataURL(data.qr) : '')
-    } catch (err) { setQrDataUrl('') }
+      setQrDataUrlBot(data.qr ? await QRCode.toDataURL(data.qr) : '')
+    } catch (err) { setQrDataUrlBot('') }
   }
 
   async function loadInboxLeads() {
@@ -3126,7 +3172,7 @@ export default function App() {
     setBusy(true)
     try {
       await api(`/api/bots/${botId}/stop`, { method: 'POST' })
-      if (selectedBotId === botId) setQrDataUrl('')
+      if (selectedBotId === botId) setQrDataUrlBot('')
       await loadBots(selectedClientId)
       showNotice('Bot apagado')
     } catch (err) { showNotice(err.message || 'Error') }
@@ -3152,7 +3198,7 @@ export default function App() {
       await api(`/api/bots/${bot.id}`, { method: 'DELETE' })
       if (selectedBotId === bot.id) {
         setSelectedBotId('')
-        setQrDataUrl('')
+        setQrDataUrlBot('')
         setConfig(emptyConfig)
       }
       await loadBots(selectedClientId)
@@ -3260,7 +3306,7 @@ export default function App() {
 
     return (
       <div className="plan-page">
-        <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div className="auth-logo" style={{ margin: 0 }}>
             <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
           </div>
@@ -3370,7 +3416,7 @@ export default function App() {
           </div>
         )}
 
-        {/* MODAL DE PAGO PROFESIONAL */}
+        {/* MODAL DE PAGO PROFESIONAL - CORREGIDO: más grande y sin parpadeos */}
         {showPaymentModal && subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
           <div className="modal-overlay" onClick={closePaymentModal}>
             <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -3404,7 +3450,7 @@ export default function App() {
 
                 <div className="qr-section">
                   <div className="qr-code">
-                    {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="140" height="140" /> : <div className="loader" style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
+                    {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="160" height="160" /> : <div className="loader" style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
                   </div>
                   <div className="wallet-info">
                     <div className="detail-label">Dirección de la wallet (BEP20)</div>
@@ -3599,7 +3645,7 @@ export default function App() {
           </div>
           <div className="top-actions">
             {me.role === 'admin' && (
-              <select value={selectedClientId || ''} onChange={(e) => { setSelectedClientId(e.target.value); setSelectedBotId(''); setSelectedLeadId(null); setMessages([]); setQrDataUrl('') }}>
+              <select value={selectedClientId || ''} onChange={(e) => { setSelectedClientId(e.target.value); setSelectedBotId(''); setSelectedLeadId(null); setMessages([]); setQrDataUrlBot('') }}>
                 <option value="">Selecciona un cliente</option>
                 {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
@@ -3729,7 +3775,7 @@ export default function App() {
               {selectedBot ? (
                 <>
                   <div className="status-row"><strong>{selectedBot.name}</strong> <span className={`pill ${selectedBot.status}`}>{selectedBot.status}</span></div>
-                  {qrDataUrl ? <img className="qr" src={qrDataUrl} alt="QR" /> : <div className="empty-box">Sin QR pendiente</div>}
+                  {qrDataUrlBot ? <img className="qr" src={qrDataUrlBot} alt="QR" /> : <div className="empty-box">Sin QR pendiente</div>}
                   <div className="metric-grid" style={{ marginTop: '1rem' }}>
                     <div className="metric"><div className="metric-label">Total leads</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</div></div>
                     <div className="metric"><div className="metric-label">Conversaciones activas</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</div></div>
