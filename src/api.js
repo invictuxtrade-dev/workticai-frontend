@@ -30,6 +30,11 @@ export async function api(path, options = {}) {
     data = { raw: text }
   }
 
-  if (!res.ok) throw new Error(data?.error || 'Error de API')
+  if (!res.ok) {
+  const err = new Error(data?.error || 'Error de API')
+  err.status = res.status
+  err.data = data
+  throw err
+}
   return data
 }

@@ -181,7 +181,7 @@ function LoginScreen({ onAuth }) {
           return
         }
         setToken(data.token)
-        onAuth(data.user)
+        onAuth(data.user)  // admin
         return
       }
 
@@ -196,7 +196,7 @@ function LoginScreen({ onAuth }) {
           return
         }
         setToken(data.token)
-        onAuth(data.user)
+        onAuth(data.user)  // cliente
         return
       }
 
@@ -227,7 +227,7 @@ function LoginScreen({ onAuth }) {
           return
         }
         setToken(data.token)
-        onAuth(data.user)
+        onAuth(data.user)  // cliente
         return
       }
     } catch (err) {
@@ -1586,10 +1586,25 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
 
+  // ========== NUEVOS ESTADOS PARA PLANES Y SUSCRIPCIONES ==========
+  const [plans, setPlans] = useState([])
+  const [subscription, setSubscription] = useState(null)
+  const [billingConfig, setBillingConfig] = useState({
+    usdt_bep20_wallet: '',
+    card_payments_enabled: false,
+    default_free_plan_slug: 'free',
+    require_plan_selection: true
+  })
+  const [billingCycle, setBillingCycle] = useState('monthly')
+  const [selectedPlanSlug, setSelectedPlanSlug] = useState('')
+  const [paymentTxHash, setPaymentTxHash] = useState('')
+  const [forcePlanScreen, setForcePlanScreen] = useState(false)
+  const [pendingSubscriptions, setPendingSubscriptions] = useState([])
+
   // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
   useEffect(() => {
     if (!me) return
-    const adminOnlyTabs = ['clients', 'users']
+    const adminOnlyTabs = ['clients', 'users', 'billing']
     if (me.role !== 'admin' && adminOnlyTabs.includes(tab)) {
       setTab('dashboard')
     }
@@ -1756,13 +1771,138 @@ export default function App() {
       .trim()
   }
 
-  // ======================== FUNCIONES EXISTENTES ========================
+  // ======================== NUEVAS FUNCIONES DE PLANES Y FACTURACIÓN ========================
+  async function loadPlans() {
+    try {
+      const data = await api('/api/plans')
+      setPlans(data || [])
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402 && err.message === 'plan_required') setForcePlanScreen(true)
+    }
+  }
+
+  async function loadCurrentSubscription() {
+    try {
+      const data = await api('/api/subscriptions/current')
+      setSubscription(data || null)
+      if (me && me.role !== 'admin') {
+        if (!data || data.status !== 'active') {
+          setForcePlanScreen(true)
+        } else {
+          setForcePlanScreen(false)
+        }
+      }
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402 && err.message === 'plan_required') setForcePlanScreen(true)
+      setSubscription(null)
+    }
+  }
+
+  async function loadBillingConfig() {
+    try {
+      const data = await api('/api/billing/config')
+      setBillingConfig(data || billingConfig)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function saveBillingConfig() {
+    try {
+      await api('/api/billing/config', {
+        method: 'PUT',
+        body: JSON.stringify(billingConfig)
+      })
+      showNotice('Configuración de billing guardada')
+    } catch (err) {
+      showNotice(err.message || 'Error guardando billing')
+    }
+  }
+
+  async function selectPlan(planSlug) {
+    try {
+      const sub = await api('/api/subscriptions/select', {
+        method: 'POST',
+        body: JSON.stringify({
+          plan_slug: planSlug,
+          billing_cycle: billingCycle
+        })
+      })
+      setSubscription(sub)
+
+      if (planSlug === 'free') {
+        setForcePlanScreen(false)
+        await bootstrap()
+        await loadInitial()
+        showNotice('Plan Free activado')
+        return
+      }
+
+      setSelectedPlanSlug(planSlug)
+      showNotice('Plan seleccionado. Completa el pago para continuar.')
+    } catch (err) {
+      showNotice(err.message || 'Error seleccionando plan')
+    }
+  }
+
+  async function submitPlanPayment() {
+    if (!subscription?.id) {
+      showNotice('Primero selecciona un plan')
+      return
+    }
+    if (!paymentTxHash.trim()) {
+      showNotice('Ingresa el hash de la transacción')
+      return
+    }
+
+    try {
+      await api('/api/subscriptions/pay', {
+        method: 'POST',
+        body: JSON.stringify({
+          subscription_id: subscription.id,
+          tx_hash: paymentTxHash
+        })
+      })
+      showNotice('Pago reportado. Espera validación del administrador.')
+      await loadCurrentSubscription()
+    } catch (err) {
+      showNotice(err.message || 'Error reportando pago')
+    }
+  }
+
+  async function loadPendingSubscriptions() {
+    try {
+      const data = await api('/api/subscriptions/pending')
+      setPendingSubscriptions(data || [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function approveSubscription(id) {
+    try {
+      await api(`/api/subscriptions/${id}/approve`, {
+        method: 'POST',
+        body: JSON.stringify({ notes: 'Validado por admin' })
+      })
+      showNotice('Suscripción aprobada')
+      await loadPendingSubscriptions()
+      await loadClients()
+    } catch (err) {
+      showNotice(err.message || 'Error aprobando suscripción')
+    }
+  }
+
+  // ======================== FUNCIONES EXISTENTES MODIFICADAS PARA DETECTAR 402 ========================
   async function loadLandings() {
     try {
       const data = await api(`/api/landings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setLandings(data || [])
     } catch (err) {
       console.error('loadLandings', err)
+      if (err.status === 402) setForcePlanScreen(true)
       setLandings([])
     }
   }
@@ -1773,10 +1913,42 @@ export default function App() {
       setFunnelMetrics(data || {})
     } catch (err) {
       console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
       setFunnelMetrics({})
     }
   }
 
+  async function bootstrap() {
+    if (!getToken()) return
+    try {
+      const user = await api('/api/auth/me')
+      setMe(user)
+      setForcePlanScreen(false)
+    } catch (err) {
+      if (err.status === 402 && err.message === 'plan_required') {
+        setForcePlanScreen(true)
+        try {
+          const user = await api('/api/auth/me')
+          setMe(user)
+        } catch {}
+        return
+      }
+      setToken('')
+    }
+  }
+
+  useEffect(() => {
+    bootstrap()
+    loadPlans()
+  }, [])
+
+  useEffect(() => {
+    if (!me) return
+    loadCurrentSubscription()
+    if (me.role === 'admin') loadBillingConfig()
+  }, [me])
+
+  // ======================== FUNCIONES EXISTENTES ========================
   async function generateLanding() {
     if (!selectedBotId) {
       showNotice('Selecciona un bot primero')
@@ -1951,6 +2123,7 @@ export default function App() {
       setSocialCredential({ ...emptySocialCredential, ...(data || {}) })
     } catch (err) {
       console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
       setSocialCredential(emptySocialCredential)
     }
   }
@@ -1977,6 +2150,7 @@ export default function App() {
       setSocialPosts(data || [])
     } catch (err) {
       console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
       setSocialPosts([])
     }
   }
@@ -1987,6 +2161,7 @@ export default function App() {
       setSocialLogs(data || [])
     } catch (err) {
       console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
       setSocialLogs([])
     }
   }
@@ -2296,16 +2471,6 @@ export default function App() {
   useEffect(() => setClientPage(1), [searchClient])
   useEffect(() => setUserPage(1), [searchUser])
 
-  async function bootstrap() {
-    if (!getToken()) return
-    try {
-      const user = await api('/api/auth/me')
-      setMe(user)
-    } catch {
-      setToken('')
-    }
-  }
-
   useEffect(() => {
     bootstrap()
   }, [])
@@ -2380,7 +2545,10 @@ export default function App() {
     try {
       const data = await api(`/api/dashboard/metrics${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setMetrics(data)
-    } catch (err) { console.error(err) }
+    } catch (err) { 
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+    }
   }
 
   async function loadClients() {
@@ -2394,10 +2562,18 @@ export default function App() {
       } else {
         const cid = me.client_id
         setSelectedClientId(cid)
-        setClients([{ id: cid, name: 'Mi cuenta', plan: 'pro', status: 'active' }])
+        setClients([{
+          id: cid,
+          name: 'Mi cuenta',
+          plan: subscription?.plan_slug || '',
+          status: subscription?.status || 'pending'
+        }])
         if (cid) await loadBots(cid)
       }
-    } catch (err) { console.error(err) }
+    } catch (err) { 
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+    }
   }
 
   async function loadUsers() {
@@ -2405,7 +2581,10 @@ export default function App() {
       const path = me?.role === 'admin' ? '/api/users' : `/api/users?client_id=${me?.client_id || ''}`
       const data = await api(path)
       setUsers(data)
-    } catch (err) { console.error(err) }
+    } catch (err) { 
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+    }
   }
 
   async function loadBots(clientId) {
@@ -2419,14 +2598,20 @@ export default function App() {
         setQrDataUrl('')
         setConfig(emptyConfig)
       }
-    } catch (err) { console.error(err) }
+    } catch (err) { 
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+    }
   }
 
   async function loadTemplates() {
     try {
       const data = await api(`/api/templates${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setTemplates(data)
-    } catch (err) { console.error(err) }
+    } catch (err) { 
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+    }
   }
 
   async function loadConfig(botId) {
@@ -2456,7 +2641,10 @@ export default function App() {
         setSelectedLeadId(null)
         setMessages([])
       }
-    } catch (err) { console.error(err) }
+    } catch (err) { 
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+    }
   }
 
   async function loadMessages(botId, leadId) {
@@ -2652,7 +2840,108 @@ export default function App() {
     return { days, counts }
   }, [])
 
-  if (!me) return <LoginScreen onAuth={setMe} />
+  // ======================== COMPONENTE PLAN GATE ========================
+  function PlanGate() {
+    return (
+      <div className="main-pane">
+        <div className="stripe-card stack gap-lg" style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div className="row between">
+            <div>
+              <h2>Selecciona tu plan</h2>
+              <p className="muted">Debes elegir un plan para continuar usando la plataforma.</p>
+            </div>
+            <div className="row">
+              <button
+                type="button"
+                className={billingCycle === 'monthly' ? '' : 'secondary'}
+                onClick={() => setBillingCycle('monthly')}
+              >
+                Mensual
+              </button>
+              <button
+                type="button"
+                className={billingCycle === 'yearly' ? '' : 'secondary'}
+                onClick={() => setBillingCycle('yearly')}
+              >
+                Anual
+              </button>
+            </div>
+          </div>
+
+          <div className="list two-col">
+            {plans.map((plan) => {
+              let features = []
+              try { features = JSON.parse(plan.features || '[]') } catch {}
+              const price = billingCycle === 'yearly' ? plan.price_yearly : plan.price_monthly
+
+              return (
+                <div key={plan.id} className="stripe-card stack">
+                  <div className="row between">
+                    <div>
+                      <h3>{plan.name}</h3>
+                      <div className="muted">{plan.description}</div>
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '1.2rem' }}>
+                      {price === 0 ? 'Gratis' : `$${price} USD`}
+                      <div className="muted tiny">{billingCycle === 'yearly' ? '/año' : '/mes'}</div>
+                    </div>
+                  </div>
+
+                  <div className="stack gap-sm">
+                    {features.map((f, i) => (
+                      <div key={i} className="row">
+                        <i className="fas fa-check-circle"></i>
+                        <span>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button type="button" onClick={() => selectPlan(plan.slug)}>
+                    {plan.is_free ? 'Activar Free' : 'Seleccionar plan'}
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+
+          {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
+            <div className="stripe-card stack">
+              <h3>Completa tu pago</h3>
+              <div className="muted">Método disponible por ahora: USDT BEP20</div>
+              <div><strong>Wallet destino:</strong> {billingConfig.usdt_bep20_wallet || 'Configúrala en admin'}</div>
+              <div><strong>Monto:</strong> ${subscription.amount} USD</div>
+              <div><strong>Ciclo:</strong> {subscription.billing_cycle}</div>
+
+              <input
+                type="text"
+                placeholder="Pega aquí el hash de tu transacción"
+                value={paymentTxHash}
+                onChange={(e) => setPaymentTxHash(e.target.value)}
+              />
+
+              <button type="button" onClick={submitPlanPayment}>
+                Reportar pago
+              </button>
+
+              <div className="muted tiny">
+                Próximamente: tarjeta de crédito y débito.
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ========== RENDER PRINCIPAL ==========
+  if (!me) return <LoginScreen onAuth={(user) => {
+    setMe(user)
+    if (user.role !== 'admin') setForcePlanScreen(true)
+  }} />
+
+  if (forcePlanScreen && me.role !== 'admin') {
+    return <PlanGate />
+  }
 
   return (
     <div className="app-shell">
@@ -2723,6 +3012,18 @@ export default function App() {
           <div className="user-role">{me.role === 'admin' ? 'Administrador' : 'Cliente'}</div>
           <div className="user-email">{me.email}</div>
         </div>
+
+        {/* Información del plan actual */}
+        {me?.role !== 'admin' && (
+          <div className="stripe-card" style={{ marginBottom: '1rem', background: 'rgba(255,255,255,0.05)', padding: '0.75rem' }}>
+            <div><strong>Plan actual:</strong> {subscription?.plan_slug || 'Sin plan'}</div>
+            <div className="muted">Estado: {subscription?.status || 'pendiente'}</div>
+            <button type="button" onClick={() => setForcePlanScreen(true)} style={{ marginTop: '0.75rem' }}>
+              Mejorar plan
+            </button>
+          </div>
+        )}
+
         <nav className="menu">
           <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
             <i className="fas fa-tachometer-alt"></i> Dashboard
@@ -2745,7 +3046,7 @@ export default function App() {
           <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
             <i className="fas fa-share-alt"></i> Social IA
           </button>
-          {/* ========== NUEVO MENÚ: solo admin ve Clientes y Usuarios ========== */}
+          {/* ========== MENÚ ADMIN ========== */}
           {me.role === 'admin' && (
             <>
               <button
@@ -2761,6 +3062,13 @@ export default function App() {
                 type="button"
               >
                 <i className="fas fa-users"></i> Usuarios
+              </button>
+              <button
+                className={tab === 'billing' ? 'menu-item active' : 'menu-item'}
+                onClick={() => { setTab('billing'); loadPendingSubscriptions(); }}
+                type="button"
+              >
+                <i className="fas fa-credit-card"></i> Billing
               </button>
             </>
           )}
@@ -3290,7 +3598,9 @@ export default function App() {
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
                 <table>
-                  <thead><tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr></thead>
+                  <thead>
+                    <tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr>
+                  </thead>
                   <tbody>
                     {socialPosts.map(post => (
                       <tr key={post.id}>
@@ -3318,7 +3628,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CLIENTS (solo visible para admin, pero ya está protegido en el menú y en el efecto) */}
+        {/* CLIENTS (solo visible para admin) */}
         {tab === 'clients' && me.role === 'admin' && (
           <section className="panel-grid">
             <section className="stripe-card stack"><div className="section-title"><i className="fas fa-building"></i> Nuevo cliente</div><form onSubmit={createClient} className="form-grid"><input value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} placeholder="Nombre" /><input value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} placeholder="Email" /><input value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} placeholder="Teléfono" /><input value={newClient.plan} onChange={e => setNewClient({...newClient, plan: e.target.value})} placeholder="Plan" /><button className="full" disabled={busy}>Crear cliente</button></form></section>
@@ -3353,6 +3663,54 @@ export default function App() {
               <div className="pagination"><button type="button" onClick={() => setUserPage(p => Math.max(1, p-1))} disabled={userPage === 1}>Anterior</button><span>Página {userPage}</span><button type="button" onClick={() => setUserPage(p => p+1)} disabled={userPage * pageSize >= filteredUsers.length}>Siguiente</button></div>
             </section>
           </section>
+        )}
+
+        {/* BILLING (solo admin) */}
+        {tab === 'billing' && me.role === 'admin' && (
+          <div className="stack gap-lg">
+            <div className="stripe-card stack">
+              <h2>Configuración de billing</h2>
+              <input
+                type="text"
+                placeholder="Wallet USDT BEP20"
+                value={billingConfig.usdt_bep20_wallet}
+                onChange={(e) => setBillingConfig({ ...billingConfig, usdt_bep20_wallet: e.target.value })}
+              />
+              <label className="toggle">
+                <input
+                  type="checkbox"
+                  checked={billingConfig.card_payments_enabled}
+                  onChange={(e) => setBillingConfig({ ...billingConfig, card_payments_enabled: e.target.checked })}
+                />
+                Próximamente habilitar tarjeta
+              </label>
+              <button type="button" onClick={saveBillingConfig}>Guardar billing</button>
+            </div>
+
+            <div className="stripe-card stack">
+              <div className="row between">
+                <h2>Pagos pendientes</h2>
+                <button type="button" onClick={loadPendingSubscriptions}>Recargar</button>
+              </div>
+
+              {pendingSubscriptions.length === 0 ? (
+                <div className="empty-box">No hay pagos pendientes</div>
+              ) : (
+                pendingSubscriptions.map((sub) => (
+                  <div key={sub.id} className="bot-card stack">
+                    <div><strong>Cliente:</strong> {sub.client_name || sub.client_id}</div>
+                    <div><strong>Plan:</strong> {sub.plan_slug}</div>
+                    <div><strong>Ciclo:</strong> {sub.billing_cycle}</div>
+                    <div><strong>Monto:</strong> ${sub.amount}</div>
+                    <div><strong>Hash:</strong> {sub.tx_hash || 'Sin hash'}</div>
+                    <button type="button" onClick={() => approveSubscription(sub.id)}>
+                      Aprobar
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         )}
       </main>
     </div>
