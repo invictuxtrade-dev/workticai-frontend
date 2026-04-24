@@ -115,7 +115,6 @@ function LoginScreen({ onAuth }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Estados para el selector de país con búsqueda
   const [countrySearch, setCountrySearch] = useState('')
   const [showCountryDropdown, setShowCountryDropdown] = useState(false)
   const dropdownRef = useRef(null)
@@ -181,7 +180,7 @@ function LoginScreen({ onAuth }) {
           return
         }
         setToken(data.token)
-        onAuth(data.user)  // admin
+        onAuth(data.user)
         return
       }
 
@@ -196,7 +195,7 @@ function LoginScreen({ onAuth }) {
           return
         }
         setToken(data.token)
-        onAuth(data.user)  // cliente
+        onAuth(data.user)
         return
       }
 
@@ -227,7 +226,7 @@ function LoginScreen({ onAuth }) {
           return
         }
         setToken(data.token)
-        onAuth(data.user)  // cliente
+        onAuth(data.user)
         return
       }
     } catch (err) {
@@ -1894,6 +1893,54 @@ export default function App() {
           font-size: 0.85rem;
         }
 
+        /* Estilos para el modal de pago */
+        .modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.8);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 3000;
+          padding: 1rem;
+          animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .modal-container {
+          max-width: 760px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          background: transparent;
+          border-radius: 2rem;
+          position: relative;
+        }
+        .modal-close {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: white;
+          border-radius: 999px;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          z-index: 10;
+          transition: all 0.2s;
+        }
+        .modal-close:hover {
+          background: #f1f5f9;
+          transform: scale(1.05);
+        }
+
         @media (max-width: 768px) {
           .plan-hero {
             flex-direction: column;
@@ -1938,11 +1985,13 @@ export default function App() {
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [pendingSubscriptions, setPendingSubscriptions] = useState([])
   const [paymentQR, setPaymentQR] = useState('')
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
 
   useEffect(() => {
     if (subscription && subscription.wallet_address && subscription.status === 'pending') {
       QRCode.toDataURL(subscription.wallet_address, { margin: 1, width: 180 }, (err, url) => {
         if (!err) setPaymentQR(url)
+        else setPaymentQR('')
       })
     } else {
       setPaymentQR('')
@@ -2149,7 +2198,6 @@ export default function App() {
   }
 
   async function loadBillingConfig() {
-    // solo admin puede llamar a esta ruta, pero la llamamos solo cuando role === 'admin'
     try {
       const data = await api('/api/billing/config')
       setBillingConfig(data || billingConfig)
@@ -2190,7 +2238,8 @@ export default function App() {
       }
 
       setSelectedPlanSlug(planSlug)
-      showNotice('Plan seleccionado. Completa el pago para continuar.')
+      setShowPaymentModal(true) // Abrir modal de pago automáticamente
+      showNotice('Plan seleccionado. Completa el pago en la ventana emergente.')
     } catch (err) {
       showNotice(err.message || 'Error seleccionando plan')
     }
@@ -2217,6 +2266,7 @@ export default function App() {
       showNotice('Pago reportado. Espera validación del administrador.')
       await loadCurrentSubscription()
       setPaymentTxHash('')
+      setShowPaymentModal(false) // cerrar modal tras éxito
     } catch (err) {
       showNotice(err.message || 'Error reportando pago')
     }
@@ -3181,6 +3231,7 @@ export default function App() {
     setToken('')
     setMe(null)
     setForcePlanScreen(false)
+    setShowPaymentModal(false)
   }
 
   const leadsByStageGlobal = useMemo(() => {
@@ -3198,11 +3249,14 @@ export default function App() {
   // ======================== COMPONENTE PLAN GATE (OpenAI style) ========================
   function PlanGate({ onLogout }) {
     const [copied, setCopied] = useState(false)
+
     const copyToClipboard = (text) => {
       navigator.clipboard.writeText(text)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
+
+    const closePaymentModal = () => setShowPaymentModal(false)
 
     return (
       <div className="plan-page">
@@ -3307,79 +3361,96 @@ export default function App() {
           })}
         </div>
 
+        {/* Botón para mostrar modal si hay suscripción pendiente */}
         {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
-          <div className="invoice-card">
-            <div className="invoice-header">
-              <div className="invoice-logo">WORKTIC AI</div>
-              <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
-            </div>
-
-            <div className="invoice-details">
-              <div className="detail-line">
-                <div className="detail-label">Cliente</div>
-                <div className="detail-value">{me?.name || me?.email}</div>
-              </div>
-              <div className="detail-line">
-                <div className="detail-label">Plan</div>
-                <div className="detail-value">{subscription.plan_slug} · {subscription.billing_cycle}</div>
-              </div>
-              <div className="detail-line">
-                <div className="detail-label">Estado</div>
-                <div className="detail-value"><span className="pill warning">Pendiente de pago</span></div>
-              </div>
-              <div className="detail-line">
-                <div className="detail-label">Fecha emisión</div>
-                <div className="detail-value">{new Date().toLocaleDateString()}</div>
-              </div>
-            </div>
-
-            <div className="qr-section">
-              <div className="qr-code">
-                {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="140" height="140" /> : <div className="loader" style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
-              </div>
-              <div className="wallet-info">
-                <div className="detail-label">Dirección de la wallet (BEP20)</div>
-                <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                  {subscription.wallet_address || 'No configurada'}
-                  <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
-                    {copied ? 'Copiado' : 'Copiar'}
-                  </button>
-                </div>
-                <div className="payment-method" style={{ marginTop: '1rem' }}>
-                  <i className="fab fa-bitcoin"></i> USDT (BEP20)
-                </div>
-              </div>
-            </div>
-
-            <div style={{ margin: '1rem 0', textAlign: 'center' }}>
-              <div className="detail-label">Monto a pagar</div>
-              <div className="total-amount">${subscription.amount} USD</div>
-            </div>
-
-            <div className="step-progress">
-              <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
-              <i className="fas fa-arrow-right"></i>
-              <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
-              <i className="fas fa-arrow-right"></i>
-              <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
-              <i className="fas fa-arrow-right"></i>
-              <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Pega aquí el hash de la transacción"
-              value={paymentTxHash}
-              onChange={(e) => setPaymentTxHash(e.target.value)}
-              style={{ marginTop: '1rem', width: '100%' }}
-            />
-
-            <button type="button" onClick={submitPlanPayment} style={{ marginTop: '1rem', width: '100%' }}>
-              Reportar pago
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <button type="button" onClick={() => setShowPaymentModal(true)} className="secondary">
+              <i className="fas fa-receipt"></i> Ver factura pendiente
             </button>
+          </div>
+        )}
 
-            <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
-              El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.
+        {/* MODAL DE PAGO PROFESIONAL */}
+        {showPaymentModal && subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
+          <div className="modal-overlay" onClick={closePaymentModal}>
+            <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-close" onClick={closePaymentModal}>
+                <i className="fas fa-times"></i>
+              </div>
+              <div className="invoice-card">
+                <div className="invoice-header">
+                  <div className="invoice-logo">WORKTIC AI</div>
+                  <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
+                </div>
+
+                <div className="invoice-details">
+                  <div className="detail-line">
+                    <div className="detail-label">Cliente</div>
+                    <div className="detail-value">{me?.name || me?.email}</div>
+                  </div>
+                  <div className="detail-line">
+                    <div className="detail-label">Plan</div>
+                    <div className="detail-value">{subscription.plan_slug} · {subscription.billing_cycle}</div>
+                  </div>
+                  <div className="detail-line">
+                    <div className="detail-label">Estado</div>
+                    <div className="detail-value"><span className="pill warning">Pendiente de pago</span></div>
+                  </div>
+                  <div className="detail-line">
+                    <div className="detail-label">Fecha emisión</div>
+                    <div className="detail-value">{new Date().toLocaleDateString()}</div>
+                  </div>
+                </div>
+
+                <div className="qr-section">
+                  <div className="qr-code">
+                    {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="140" height="140" /> : <div className="loader" style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
+                  </div>
+                  <div className="wallet-info">
+                    <div className="detail-label">Dirección de la wallet (BEP20)</div>
+                    <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                      {subscription.wallet_address || 'No configurada'}
+                      <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
+                        {copied ? 'Copiado' : 'Copiar'}
+                      </button>
+                    </div>
+                    <div className="payment-method" style={{ marginTop: '1rem' }}>
+                      <i className="fab fa-bitcoin"></i> USDT (BEP20)
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+                  <div className="detail-label">Monto a pagar</div>
+                  <div className="total-amount">${subscription.amount} USD</div>
+                </div>
+
+                <div className="step-progress">
+                  <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
+                  <i className="fas fa-arrow-right"></i>
+                  <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
+                  <i className="fas fa-arrow-right"></i>
+                  <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
+                  <i className="fas fa-arrow-right"></i>
+                  <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Pega aquí el hash de la transacción"
+                  value={paymentTxHash}
+                  onChange={(e) => setPaymentTxHash(e.target.value)}
+                  style={{ marginTop: '1rem', width: '100%' }}
+                />
+
+                <button type="button" onClick={submitPlanPayment} style={{ marginTop: '1rem', width: '100%' }}>
+                  Reportar pago
+                </button>
+
+                <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
+                  El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -3397,6 +3468,7 @@ export default function App() {
     return <PlanGate onLogout={logout} />
   }
 
+  // ========== PANEL PRINCIPAL (con todas las pestañas) ==========
   return (
     <div className="app-shell">
       {landingLoading && (
