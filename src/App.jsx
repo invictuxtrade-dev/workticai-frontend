@@ -1845,6 +1845,130 @@ export default function App() {
           .qr-section { flex-direction: column; align-items: center; text-align: center; }
           .step-progress { flex-direction: column; align-items: flex-start; }
         }
+
+        /* ========== ESTILOS NUEVOS PARA ADS IA (Pro) ========== */
+        .ads-page {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 1rem 0;
+        }
+        .ads-hero {
+          text-align: center;
+          margin-bottom: 2.5rem;
+        }
+        .ads-hero h1 {
+          font-size: 2.4rem;
+          font-weight: 800;
+          background: linear-gradient(135deg, #0f172a, #3b82f6);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          margin-bottom: 0.5rem;
+        }
+        .ads-hero p {
+          color: #475569;
+          font-size: 1.1rem;
+        }
+        .ads-form {
+          background: white;
+          border-radius: 1.5rem;
+          padding: 2rem;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+          border: 1px solid #eef2f6;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 1.25rem;
+          margin-bottom: 2rem;
+        }
+        .ads-form input, .ads-form select {
+          width: 100%;
+          padding: 0.8rem 1rem;
+          border-radius: 0.75rem;
+          border: 1px solid #cbd5e1;
+          font-size: 0.9rem;
+          transition: all 0.2s;
+        }
+        .ads-form input:focus, .ads-form select:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+          outline: none;
+        }
+        .ads-form button {
+          grid-column: span 2;
+          background: linear-gradient(95deg, #621bbb, #3b82f6);
+          border: none;
+          padding: 0.9rem;
+          font-size: 1rem;
+          font-weight: 600;
+          border-radius: 0.9rem;
+          color: white;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .ads-form button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 20px -8px #3b82f6;
+        }
+        .ads-result {
+          background: white;
+          border-radius: 1.5rem;
+          padding: 2rem;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+        }
+        .ads-result h2 {
+          font-size: 1.8rem;
+          margin-bottom: 1.5rem;
+          color: #0f172a;
+          border-left: 6px solid #3b82f6;
+          padding-left: 1rem;
+        }
+        .ads-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 1rem;
+          margin-bottom: 2rem;
+        }
+        .stat-card {
+          background: #f8fafc;
+          border-radius: 1rem;
+          padding: 1rem;
+          text-align: center;
+        }
+        .stat-card .stat-value {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #0f172a;
+        }
+        .stat-card .stat-label {
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          color: #64748b;
+        }
+        .ads-block {
+          margin-bottom: 1.5rem;
+          background: #f9f9ff;
+          padding: 1.2rem;
+          border-radius: 1rem;
+          border-left: 4px solid #3b82f6;
+        }
+        .ads-block h3 {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+          color: #1e293b;
+        }
+        .ads-block p {
+          color: #334155;
+          line-height: 1.5;
+        }
+        @media (max-width: 640px) {
+          .ads-form button { grid-column: span 1; }
+          .ads-hero h1 { font-size: 1.8rem; }
+        }
       `
       document.head.appendChild(style)
     }
@@ -1875,6 +1999,20 @@ export default function App() {
   const [showInvoice, setShowInvoice] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [paymentQR, setPaymentQR] = useState('')
+
+  // ========== ADS IA NUEVO ESTADO ==========
+  const [adsPlans, setAdsPlans] = useState([]) // reservado para futuros planes de anuncios
+  const [adsForm, setAdsForm] = useState({
+    business_name: '',
+    product: '',
+    offer: '',
+    target: '',
+    country: '',
+    budget_daily: 10,
+    ticket_average: 50
+  })
+  const [adsResult, setAdsResult] = useState(null)
+  const [adsLoading, setAdsLoading] = useState(false)
 
   // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
   useEffect(() => {
@@ -2046,7 +2184,7 @@ export default function App() {
       .trim()
   }
 
-  // ======================== FUNCIONES DE PLANES Y FACTURACIÓN (MODIFICADAS) ========================
+  // ======================== FUNCIONES DE PLANES Y FACTURACIÓN ========================
   async function loadPlans() {
     try {
       const data = await api('/api/plans')
@@ -2117,11 +2255,9 @@ export default function App() {
       }
 
       setSelectedPlanSlug(planSlug)
-      // Mostramos la factura inline
       const selected = plans.find(p => p.slug === planSlug)
       setSelectedPlan(selected)
       setShowInvoice(true)
-      // Generamos el QR para la wallet de la suscripción
       if (sub.wallet_address) {
         QRCode.toDataURL(sub.wallet_address, { margin: 1, width: 220 }, (err, url) => {
           if (!err) setPaymentQR(url)
@@ -2155,7 +2291,7 @@ export default function App() {
       showNotice('Pago reportado. Espera validación del administrador.')
       await loadCurrentSubscription()
       setPaymentTxHash('')
-      setShowInvoice(false)      // volvemos a la lista de planes
+      setShowInvoice(false)
       setSelectedPlan(null)
     } catch (err) {
       showNotice(err.message || 'Error reportando pago')
@@ -2189,6 +2325,28 @@ export default function App() {
       await loadClients()
     } catch (err) {
       showNotice(err.message || 'Error aprobando suscripción')
+    }
+  }
+
+  // ========== ADS IA FUNCIÓN ==========
+  async function generateAdsCampaign() {
+    try {
+      setAdsLoading(true)
+
+      const res = await api('/api/ads/generate-campaign', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...adsForm,
+          save: false
+        })
+      })
+
+      setAdsResult(res.plan)
+      showNotice('Campaña generada con éxito')
+    } catch (err) {
+      showNotice(err.message || 'Error generando campaña')
+    } finally {
+      setAdsLoading(false)
     }
   }
 
@@ -2251,7 +2409,7 @@ export default function App() {
     }
   }, [me])
 
-  // ======================== FUNCIONES DE LANDING (iguales a las originales) ========================
+  // ======================== FUNCIONES DE LANDING ========================
   async function generateLanding() {
     if (!selectedBotId) {
       showNotice('Selecciona un bot primero')
@@ -2799,7 +2957,6 @@ export default function App() {
     loadSocialLogs()
   }, [selectedClientId, forcePlanScreen])
 
-  // ========== INTERVALO MEJORADO: refresca clientes y usuarios si es admin ==========
   useEffect(() => {
     const t = setInterval(async () => {
       if (!me || forcePlanScreen) return
@@ -3155,7 +3312,7 @@ export default function App() {
     return { days, counts }
   }, [])
 
-  // ======================== COMPONENTE PLAN GATE (MODIFICADO: SIN MODAL, CON VISTA INLINE) ========================
+  // ======================== COMPONENTE PLAN GATE ========================
   function PlanGate({ onLogout }) {
     const [copied, setCopied] = useState(false)
 
@@ -3165,7 +3322,6 @@ export default function App() {
       setTimeout(() => setCopied(false), 2000)
     }
 
-    // Si estamos en modo factura, mostramos la factura en lugar de los planes
     if (showInvoice && selectedPlan && subscription) {
       return (
         <div className="plan-page">
@@ -3238,7 +3394,6 @@ export default function App() {
       )
     }
 
-    // Vista normal: lista de planes
     return (
       <div className="plan-page">
         <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
@@ -3342,12 +3497,125 @@ export default function App() {
           })}
         </div>
 
-        {/* Botón para mostrar factura pendiente si existe */}
         {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
             <button type="button" onClick={() => { const p = plans.find(pl => pl.slug === subscription.plan_slug); setSelectedPlan(p); setShowInvoice(true); }} className="secondary">
               <i className="fas fa-receipt"></i> Ver factura pendiente
             </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // ======================== COMPONENTE ADS IA PANEL ========================
+  function AdsPanel() {
+    return (
+      <div className="ads-page">
+        <div className="ads-hero">
+          <h1>Motor de Clientes IA</h1>
+          <p>Genera campañas publicitarias optimizadas automáticamente con inteligencia artificial</p>
+        </div>
+
+        <div className="ads-form">
+          <input
+            type="text"
+            placeholder="¿Qué negocio tienes?"
+            value={adsForm.business_name}
+            onChange={(e) => setAdsForm({ ...adsForm, business_name: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Producto o servicio"
+            value={adsForm.product}
+            onChange={(e) => setAdsForm({ ...adsForm, product: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Oferta principal"
+            value={adsForm.offer}
+            onChange={(e) => setAdsForm({ ...adsForm, offer: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Público objetivo (ej: jóvenes, ejecutivos, dueños de negocio)"
+            value={adsForm.target}
+            onChange={(e) => setAdsForm({ ...adsForm, target: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="País / región"
+            value={adsForm.country}
+            onChange={(e) => setAdsForm({ ...adsForm, country: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Presupuesto diario (USD)"
+            value={adsForm.budget_daily}
+            onChange={(e) => setAdsForm({ ...adsForm, budget_daily: Number(e.target.value) })}
+          />
+          <input
+            type="number"
+            placeholder="Ticket promedio (USD)"
+            value={adsForm.ticket_average}
+            onChange={(e) => setAdsForm({ ...adsForm, ticket_average: Number(e.target.value) })}
+          />
+          <button onClick={generateAdsCampaign} disabled={adsLoading}>
+            {adsLoading ? (
+              <><i className="fas fa-circle-notch fa-spin"></i> Generando campaña...</>
+            ) : (
+              <><i className="fas fa-rocket"></i> Generar campaña con IA 🚀</>
+            )}
+          </button>
+        </div>
+
+        {adsResult && (
+          <div className="ads-result">
+            <h2>{adsResult.name}</h2>
+
+            <div className="ads-stats">
+              <div className="stat-card">
+                <div className="stat-value">{adsResult.estimated_leads}</div>
+                <div className="stat-label">Leads estimados</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-value">{adsResult.estimated_sales}</div>
+                <div className="stat-label">Ventas estimadas</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-value">${adsResult.estimated_revenue}</div>
+                <div className="stat-label">Ingresos estimados</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-value">{adsResult.estimated_roi}%</div>
+                <div className="stat-label">ROI estimado</div>
+              </div>
+            </div>
+
+            <div className="ads-block">
+              <h3>🎯 Público objetivo detallado</h3>
+              <p>{adsResult.target_audience}</p>
+            </div>
+
+            <div className="ads-block">
+              <h3>📝 Copy del anuncio</h3>
+              <p>{adsResult.primary_text}</p>
+            </div>
+
+            <div className="ads-block">
+              <h3>🔍 Headline + Descripción</h3>
+              <p><strong>{adsResult.headline}</strong><br />{adsResult.description}</p>
+            </div>
+
+            <div className="ads-block">
+              <h3>📱 Call To Action</h3>
+              <p>{adsResult.call_to_action}</p>
+            </div>
+
+            <div className="ads-block">
+              <h3>📊 Estrategia de puja</h3>
+              <p>{adsResult.bidding_strategy}</p>
+            </div>
           </div>
         )}
       </div>
@@ -3435,7 +3703,6 @@ export default function App() {
           <div className="user-email">{me.email}</div>
         </div>
 
-        {/* Información del plan actual */}
         {me?.role !== 'admin' && (
           <div className="stripe-card" style={{ marginBottom: '1rem', background: 'rgba(255,255,255,0.05)', padding: '0.75rem' }}>
             <div><strong>Plan actual:</strong> {subscription?.plan_slug || 'Sin plan'}</div>
@@ -3467,6 +3734,10 @@ export default function App() {
           </button>
           <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
             <i className="fas fa-share-alt"></i> Social IA
+          </button>
+          {/* Nuevo botón Ads IA */}
+          <button className={tab === 'ads' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('ads')} type="button">
+            <i className="fas fa-chart-line"></i> Ads IA
           </button>
           {me.role === 'admin' && (
             <>
@@ -4036,6 +4307,9 @@ export default function App() {
             </div>
           </section>
         )}
+
+        {/* ======================== ADS IA ======================== */}
+        {tab === 'ads' && <AdsPanel />}
 
         {/* ======================== CLIENTS (admin only) ======================== */}
         {tab === 'clients' && me.role === 'admin' && (
