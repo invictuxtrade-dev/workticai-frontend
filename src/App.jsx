@@ -1846,128 +1846,423 @@ export default function App() {
           .step-progress { flex-direction: column; align-items: flex-start; }
         }
 
-        /* ========== ESTILOS NUEVOS PARA ADS IA (Pro) ========== */
-        .ads-page {
-          max-width: 1280px;
+        /* ========== ADS ENGINE PRO (nuevo diseño) ========== */
+        .ads-pro-page {
+          max-width: 1380px;
           margin: 0 auto;
-          padding: 1rem 0;
+          padding: 1rem 0 3rem;
         }
-        .ads-hero {
-          text-align: center;
-          margin-bottom: 2.5rem;
-        }
-        .ads-hero h1 {
-          font-size: 2.4rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #0f172a, #3b82f6);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          margin-bottom: 0.5rem;
-        }
-        .ads-hero p {
-          color: #475569;
-          font-size: 1.1rem;
-        }
-        .ads-form {
-          background: white;
-          border-radius: 1.5rem;
-          padding: 2rem;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-          border: 1px solid #eef2f6;
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-          gap: 1.25rem;
-          margin-bottom: 2rem;
-        }
-        .ads-form input, .ads-form select {
-          width: 100%;
-          padding: 0.8rem 1rem;
-          border-radius: 0.75rem;
-          border: 1px solid #cbd5e1;
-          font-size: 0.9rem;
-          transition: all 0.2s;
-        }
-        .ads-form input:focus, .ads-form select:focus {
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-          outline: none;
-        }
-        .ads-form button {
-          grid-column: span 2;
-          background: linear-gradient(95deg, #621bbb, #3b82f6);
-          border: none;
-          padding: 0.9rem;
-          font-size: 1rem;
-          font-weight: 600;
-          border-radius: 0.9rem;
+
+        .ads-pro-hero {
+          background:
+            radial-gradient(circle at top left, rgba(98, 27, 187, 0.16), transparent 35%),
+            linear-gradient(135deg, #0f172a, #111827 60%, #1e1b4b);
           color: white;
-          cursor: pointer;
-          transition: all 0.2s;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-        .ads-form button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 20px -8px #3b82f6;
-        }
-        .ads-result {
-          background: white;
-          border-radius: 1.5rem;
+          border-radius: 2rem;
           padding: 2rem;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-        }
-        .ads-result h2 {
-          font-size: 1.8rem;
           margin-bottom: 1.5rem;
-          color: #0f172a;
-          border-left: 6px solid #3b82f6;
-          padding-left: 1rem;
+          display: flex;
+          justify-content: space-between;
+          gap: 1.5rem;
+          align-items: flex-end;
+          box-shadow: 0 25px 60px rgba(15,23,42,.25);
         }
-        .ads-stats {
+
+        .ads-pro-hero h1 {
+          font-size: clamp(2rem, 4vw, 3.4rem);
+          line-height: 1;
+          margin: .35rem 0;
+          letter-spacing: -0.04em;
+        }
+
+        .ads-pro-hero p {
+          max-width: 760px;
+          color: #cbd5e1;
+          font-size: 1rem;
+        }
+
+        .ads-pro-status {
+          background: rgba(255,255,255,.1);
+          border: 1px solid rgba(255,255,255,.16);
+          padding: .75rem 1rem;
+          border-radius: 999px;
+          display: flex;
+          gap: .5rem;
+          align-items: center;
+          white-space: nowrap;
+        }
+
+        .status-dot {
+          width: 10px;
+          height: 10px;
+          background: #22c55e;
+          border-radius: 999px;
+          box-shadow: 0 0 0 6px rgba(34,197,94,.15);
+        }
+
+        .ads-pro-layout {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 1rem;
-          margin-bottom: 2rem;
+          grid-template-columns: minmax(0, 1fr) 340px;
+          gap: 1.5rem;
+          align-items: start;
         }
-        .stat-card {
+
+        .ads-builder-card,
+        .ads-side-card,
+        .ads-output,
+        .ads-pro-card,
+        .adset-card,
+        .creative-card {
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 1.5rem;
+          box-shadow: 0 18px 35px rgba(15,23,42,.06);
+        }
+
+        .ads-builder-card {
+          padding: 1.5rem;
+        }
+
+        .ads-side-card {
+          padding: 1.5rem;
+          position: sticky;
+          top: 1rem;
+        }
+
+        .section-head {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          align-items: flex-start;
+          margin-bottom: 1.25rem;
+        }
+
+        .section-head h2,
+        .section-head h3 {
+          margin: 0;
+          color: #0f172a;
+        }
+
+        .section-head p {
+          color: #64748b;
+          font-size: .9rem;
+        }
+
+        .section-head > i {
+          font-size: 1.8rem;
+          color: #621bbb;
+        }
+
+        .section-head.compact {
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+        .section-head.compact span {
+          background: #f1f5f9;
+          color: #334155;
+          padding: .35rem .75rem;
+          border-radius: 999px;
+          font-size: .8rem;
+        }
+
+        .ads-pro-form {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1rem;
+        }
+
+        .ads-pro-form label {
+          display: flex;
+          flex-direction: column;
+          gap: .4rem;
+          font-size: .75rem;
+          text-transform: uppercase;
+          font-weight: 700;
+          letter-spacing: .04em;
+          color: #64748b;
+        }
+
+        .ads-pro-form input,
+        .ads-pro-form select {
+          text-transform: none;
+          font-weight: 500;
+          letter-spacing: normal;
+          color: #0f172a;
+          padding: .8rem .9rem;
+          border-radius: .9rem;
+        }
+
+        .ads-generate-btn {
+          width: 100%;
+          margin-top: 1.25rem;
+          justify-content: center;
+          padding: 1rem;
+          border-radius: 1rem;
+          background: linear-gradient(135deg, #621bbb, #3b82f6);
+          font-size: 1rem;
+          box-shadow: 0 14px 26px rgba(59,130,246,.22);
+        }
+
+        .ads-flow {
+          display: flex;
+          flex-direction: column;
+          gap: .6rem;
+          margin: 1rem 0;
+        }
+
+        .ads-flow div {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: .8rem;
+          border-radius: 1rem;
+          display: flex;
+          gap: .7rem;
+          align-items: center;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .ads-flow span {
+          height: 18px;
+          width: 2px;
+          background: #cbd5e1;
+          margin-left: 1.35rem;
+        }
+
+        .ads-output {
+          margin-top: 1.5rem;
+          padding: 1.5rem;
+        }
+
+        .ads-output-head {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          align-items: flex-start;
+          margin-bottom: 1.5rem;
+        }
+
+        .ads-output-head h2 {
+          font-size: 2rem;
+          color: #0f172a;
+          margin: .2rem 0;
+        }
+
+        .campaign-pill {
+          background: #eef2ff;
+          color: #3730a3;
+          padding: .45rem .85rem;
+          border-radius: 999px;
+          font-weight: 800;
+          font-size: .8rem;
+        }
+
+        .ads-kpi-grid {
+          display: grid;
+          grid-template-columns: repeat(6, minmax(140px, 1fr));
+          gap: .85rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .ads-kpi {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 1.2rem;
+          padding: 1rem;
+        }
+
+        .ads-kpi span {
+          display: block;
+          color: #64748b;
+          font-size: .72rem;
+          text-transform: uppercase;
+          font-weight: 800;
+          margin-bottom: .35rem;
+        }
+
+        .ads-kpi strong {
+          color: #0f172a;
+          font-size: 1.35rem;
+        }
+
+        .ads-kpi.positive {
+          background: #ecfdf5;
+          border-color: #bbf7d0;
+        }
+
+        .ads-kpi.negative {
+          background: #fef2f2;
+          border-color: #fecaca;
+        }
+
+        .ads-pro-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .ads-pro-card {
+          padding: 1.25rem;
+        }
+
+        .ads-pro-card h3 {
+          color: #0f172a;
+          margin-bottom: .8rem;
+        }
+
+        .ads-pro-card p,
+        .ads-pro-card li {
+          color: #334155;
+          font-size: .92rem;
+          line-height: 1.55;
+        }
+
+        .ads-pro-card ul {
+          padding-left: 1.1rem;
+          display: grid;
+          gap: .45rem;
+        }
+
+        .copy-preview {
+          margin-top: 1rem;
           background: #f8fafc;
           border-radius: 1rem;
           padding: 1rem;
-          text-align: center;
+          border: 1px solid #e2e8f0;
+          display: grid;
+          gap: .4rem;
         }
-        .stat-card .stat-value {
-          font-size: 1.8rem;
-          font-weight: 800;
-          color: #0f172a;
-        }
-        .stat-card .stat-label {
-          font-size: 0.8rem;
-          text-transform: uppercase;
+
+        .copy-preview span {
           color: #64748b;
         }
-        .ads-block {
-          margin-bottom: 1.5rem;
-          background: #f9f9ff;
-          padding: 1.2rem;
-          border-radius: 1rem;
-          border-left: 4px solid #3b82f6;
+
+        .copy-preview button {
+          width: fit-content;
+          margin-top: .5rem;
         }
-        .ads-block h3 {
-          font-size: 1.2rem;
-          margin-bottom: 0.5rem;
-          color: #1e293b;
+
+        .tag-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: .5rem;
         }
-        .ads-block p {
+
+        .tag-list span {
+          background: #eef2ff;
+          color: #3730a3;
+          padding: .35rem .65rem;
+          border-radius: 999px;
+          font-size: .78rem;
+          font-weight: 700;
+        }
+
+        .tag-list.mini span {
+          background: #f1f5f9;
           color: #334155;
-          line-height: 1.5;
         }
-        @media (max-width: 640px) {
-          .ads-form button { grid-column: span 1; }
-          .ads-hero h1 { font-size: 1.8rem; }
+
+        .ads-pro-card hr {
+          border: none;
+          border-top: 1px solid #e2e8f0;
+          margin: 1rem 0;
+        }
+
+        .ads-section {
+          margin-bottom: 1.5rem;
+        }
+
+        .ads-card-row {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 1rem;
+        }
+
+        .adset-card,
+        .creative-card {
+          padding: 1.15rem;
+        }
+
+        .adset-card h4,
+        .creative-card h4 {
+          color: #0f172a;
+          margin-bottom: .45rem;
+        }
+
+        .adset-card p,
+        .creative-card p {
+          color: #475569;
+          font-size: .9rem;
+          line-height: 1.5;
+          margin-bottom: .8rem;
+        }
+
+        .creative-thumb {
+          height: 120px;
+          border-radius: 1rem;
+          background:
+            radial-gradient(circle at 20% 20%, rgba(98,27,187,.35), transparent 35%),
+            linear-gradient(135deg, #e0e7ff, #f8fafc);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #621bbb;
+          font-size: 2rem;
+          margin-bottom: 1rem;
+        }
+
+        .creative-angle {
+          display: inline-block;
+          background: #fef3c7;
+          color: #92400e;
+          padding: .25rem .55rem;
+          border-radius: 999px;
+          font-size: .75rem;
+          font-weight: 800;
+          margin-bottom: .6rem;
+        }
+
+        .creative-card small {
+          display: block;
+          color: #64748b;
+          margin-top: .35rem;
+        }
+
+        .creative-card button {
+          margin-top: .85rem;
+        }
+
+        @media (max-width: 1100px) {
+          .ads-pro-layout {
+            grid-template-columns: 1fr;
+          }
+
+          .ads-side-card {
+            position: static;
+          }
+
+          .ads-kpi-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+
+        @media (max-width: 720px) {
+          .ads-pro-hero,
+          .ads-output-head {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .ads-pro-form,
+          .ads-pro-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .ads-kpi-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `
       document.head.appendChild(style)
@@ -2000,14 +2295,17 @@ export default function App() {
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [paymentQR, setPaymentQR] = useState('')
 
-  // ========== ADS IA NUEVO ESTADO ==========
-  const [adsPlans, setAdsPlans] = useState([]) // reservado para futuros planes de anuncios
+  // ========== ADS IA NUEVO ESTADO (PRO) ==========
+  const [adsPlans, setAdsPlans] = useState([])
   const [adsForm, setAdsForm] = useState({
     business_name: '',
     product: '',
     offer: '',
     target: '',
-    country: '',
+    country: 'Colombia',
+    currency: 'USD',
+    objective: 'lead_generation',
+    destination: 'whatsapp',
     budget_daily: 10,
     ticket_average: 50
   })
@@ -2328,21 +2626,41 @@ export default function App() {
     }
   }
 
-  // ========== ADS IA FUNCIÓN ==========
+  // ========== ADS IA FUNCIÓN (PRO) ==========
   async function generateAdsCampaign() {
+    if (!adsForm.business_name.trim()) {
+      showNotice('Escribe el nombre del negocio')
+      return
+    }
+    if (!adsForm.product.trim()) {
+      showNotice('Escribe el producto o servicio')
+      return
+    }
+    if (!adsForm.offer.trim()) {
+      showNotice('Escribe la oferta principal')
+      return
+    }
+    if (!adsForm.target.trim()) {
+      showNotice('Describe el público objetivo')
+      return
+    }
+
     try {
       setAdsLoading(true)
+      setAdsResult(null)
 
       const res = await api('/api/ads/generate-campaign', {
         method: 'POST',
         body: JSON.stringify({
           ...adsForm,
-          save: false
+          budget_daily: Number(adsForm.budget_daily || 10),
+          ticket_average: Number(adsForm.ticket_average || 50),
+          save: true
         })
       })
 
       setAdsResult(res.plan)
-      showNotice('Campaña generada con éxito')
+      showNotice('Campaña IA generada correctamente')
     } catch (err) {
       showNotice(err.message || 'Error generando campaña')
     } finally {
@@ -3508,115 +3826,333 @@ export default function App() {
     )
   }
 
-  // ======================== COMPONENTE ADS IA PANEL ========================
+  // ======================== COMPONENTE ADS IA PANEL (PRO) ========================
   function AdsPanel() {
+    const roi = adsResult?.roi || {}
+    const currency = adsResult?.currency || adsForm.currency || 'USD'
+    const adsets = adsResult?.adsets || []
+    const variants = adsResult?.creative_variants || []
+    const funnel = adsResult?.funnel || {}
+
     return (
-      <div className="ads-page">
-        <div className="ads-hero">
-          <h1>Motor de Clientes IA</h1>
-          <p>Genera campañas publicitarias optimizadas automáticamente con inteligencia artificial</p>
+      <div className="ads-pro-page">
+        <div className="ads-pro-hero">
+          <div>
+            <div className="eyebrow">Worktic AI Ads Engine</div>
+            <h1>Motor profesional de adquisición de clientes</h1>
+            <p>
+              Diseña campañas, segmentación, creativos, funnel, WhatsApp y proyección de ROI con IA.
+            </p>
+          </div>
+
+          <div className="ads-pro-status">
+            <span className="status-dot"></span>
+            Modo estrategia IA
+          </div>
         </div>
 
-        <div className="ads-form">
-          <input
-            type="text"
-            placeholder="¿Qué negocio tienes?"
-            value={adsForm.business_name}
-            onChange={(e) => setAdsForm({ ...adsForm, business_name: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Producto o servicio"
-            value={adsForm.product}
-            onChange={(e) => setAdsForm({ ...adsForm, product: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Oferta principal"
-            value={adsForm.offer}
-            onChange={(e) => setAdsForm({ ...adsForm, offer: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Público objetivo (ej: jóvenes, ejecutivos, dueños de negocio)"
-            value={adsForm.target}
-            onChange={(e) => setAdsForm({ ...adsForm, target: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="País / región"
-            value={adsForm.country}
-            onChange={(e) => setAdsForm({ ...adsForm, country: e.target.value })}
-          />
-          <input
-            type="number"
-            placeholder="Presupuesto diario (USD)"
-            value={adsForm.budget_daily}
-            onChange={(e) => setAdsForm({ ...adsForm, budget_daily: Number(e.target.value) })}
-          />
-          <input
-            type="number"
-            placeholder="Ticket promedio (USD)"
-            value={adsForm.ticket_average}
-            onChange={(e) => setAdsForm({ ...adsForm, ticket_average: Number(e.target.value) })}
-          />
-          <button onClick={generateAdsCampaign} disabled={adsLoading}>
-            {adsLoading ? (
-              <><i className="fas fa-circle-notch fa-spin"></i> Generando campaña...</>
-            ) : (
-              <><i className="fas fa-rocket"></i> Generar campaña con IA 🚀</>
-            )}
-          </button>
+        <div className="ads-pro-layout">
+          <section className="ads-builder-card">
+            <div className="section-head">
+              <div>
+                <h2>Crear campaña</h2>
+                <p>Completa los datos base para que la IA construya una campaña accionable.</p>
+              </div>
+              <i className="fas fa-wand-magic-sparkles"></i>
+            </div>
+
+            <div className="ads-pro-form">
+              <label>
+                Negocio
+                <input
+                  type="text"
+                  placeholder="Ej: CYO Digital"
+                  value={adsForm.business_name}
+                  onChange={(e) => setAdsForm({ ...adsForm, business_name: e.target.value })}
+                />
+              </label>
+
+              <label>
+                Producto o servicio
+                <input
+                  type="text"
+                  placeholder="Ej: Libros mandala para niños"
+                  value={adsForm.product}
+                  onChange={(e) => setAdsForm({ ...adsForm, product: e.target.value })}
+                />
+              </label>
+
+              <label>
+                Oferta principal
+                <input
+                  type="text"
+                  placeholder="Ej: Mejora concentración, creatividad y reduce ansiedad"
+                  value={adsForm.offer}
+                  onChange={(e) => setAdsForm({ ...adsForm, offer: e.target.value })}
+                />
+              </label>
+
+              <label>
+                Público objetivo
+                <input
+                  type="text"
+                  placeholder="Ej: Padres con hijos de 4 a 10 años"
+                  value={adsForm.target}
+                  onChange={(e) => setAdsForm({ ...adsForm, target: e.target.value })}
+                />
+              </label>
+
+              <label>
+                País / mercado
+                <input
+                  type="text"
+                  placeholder="Ej: Colombia"
+                  value={adsForm.country}
+                  onChange={(e) => setAdsForm({ ...adsForm, country: e.target.value })}
+                />
+              </label>
+
+              <label>
+                Moneda
+                <select
+                  value={adsForm.currency}
+                  onChange={(e) => setAdsForm({ ...adsForm, currency: e.target.value })}
+                >
+                  <option value="USD">USD</option>
+                  <option value="COP">COP</option>
+                  <option value="MXN">MXN</option>
+                  <option value="EUR">EUR</option>
+                  <option value="USDT">USDT</option>
+                </select>
+              </label>
+
+              <label>
+                Objetivo
+                <select
+                  value={adsForm.objective}
+                  onChange={(e) => setAdsForm({ ...adsForm, objective: e.target.value })}
+                >
+                  <option value="lead_generation">Generación de leads</option>
+                  <option value="messages">Mensajes WhatsApp</option>
+                  <option value="conversions">Conversiones</option>
+                  <option value="traffic">Tráfico a landing</option>
+                </select>
+              </label>
+
+              <label>
+                Destino
+                <select
+                  value={adsForm.destination}
+                  onChange={(e) => setAdsForm({ ...adsForm, destination: e.target.value })}
+                >
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="landing">Landing page</option>
+                  <option value="form">Formulario</option>
+                </select>
+              </label>
+
+              <label>
+                Presupuesto diario
+                <input
+                  type="number"
+                  min="1"
+                  value={adsForm.budget_daily}
+                  onChange={(e) => setAdsForm({ ...adsForm, budget_daily: Number(e.target.value) })}
+                />
+              </label>
+
+              <label>
+                Ticket promedio
+                <input
+                  type="number"
+                  min="1"
+                  value={adsForm.ticket_average}
+                  onChange={(e) => setAdsForm({ ...adsForm, ticket_average: Number(e.target.value) })}
+                />
+              </label>
+            </div>
+
+            <button className="ads-generate-btn" onClick={generateAdsCampaign} disabled={adsLoading}>
+              {adsLoading ? (
+                <>
+                  <i className="fas fa-circle-notch fa-spin"></i>
+                  Analizando mercado y construyendo campaña...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-rocket"></i>
+                  Generar campaña profesional
+                </>
+              )}
+            </button>
+          </section>
+
+          <aside className="ads-side-card">
+            <h3>Arquitectura de adquisición</h3>
+            <div className="ads-flow">
+              <div><i className="fas fa-bullhorn"></i> Anuncio</div>
+              <span></span>
+              <div><i className="fas fa-filter"></i> Funnel</div>
+              <span></span>
+              <div><i className="fab fa-whatsapp"></i> WhatsApp Bot</div>
+              <span></span>
+              <div><i className="fas fa-chart-line"></i> ROI</div>
+            </div>
+            <p>
+              La IA no solo genera texto: estructura oferta, público, creativos, seguimiento y medición.
+            </p>
+          </aside>
         </div>
 
         {adsResult && (
-          <div className="ads-result">
-            <h2>{adsResult.name}</h2>
-
-            <div className="ads-stats">
-              <div className="stat-card">
-                <div className="stat-value">{adsResult.estimated_leads}</div>
-                <div className="stat-label">Leads estimados</div>
+          <section className="ads-output">
+            <div className="ads-output-head">
+              <div>
+                <div className="eyebrow">Campaña generada</div>
+                <h2>{adsResult.name}</h2>
+                <p>{adsResult.campaign_summary}</p>
               </div>
-              <div className="stat-card">
-                <div className="stat-value">{adsResult.estimated_sales}</div>
-                <div className="stat-label">Ventas estimadas</div>
+              <div className="campaign-pill">{adsResult.objective}</div>
+            </div>
+
+            <div className="ads-kpi-grid">
+              <div className="ads-kpi">
+                <span>Presupuesto mensual</span>
+                <strong>{currency} {roi.budget_monthly || adsResult.budget_monthly}</strong>
               </div>
-              <div className="stat-card">
-                <div className="stat-value">${adsResult.estimated_revenue}</div>
-                <div className="stat-label">Ingresos estimados</div>
+              <div className="ads-kpi">
+                <span>CPL estimado</span>
+                <strong>{currency} {roi.estimated_cpl || adsResult.estimated_cpl}</strong>
               </div>
-              <div className="stat-card">
-                <div className="stat-value">{adsResult.estimated_roi}%</div>
-                <div className="stat-label">ROI estimado</div>
+              <div className="ads-kpi">
+                <span>Leads estimados</span>
+                <strong>{roi.estimated_leads || adsResult.estimated_leads}</strong>
+              </div>
+              <div className="ads-kpi">
+                <span>Ventas estimadas</span>
+                <strong>{roi.estimated_sales || adsResult.estimated_sales}</strong>
+              </div>
+              <div className="ads-kpi">
+                <span>Ingresos estimados</span>
+                <strong>{currency} {roi.estimated_revenue || adsResult.estimated_revenue}</strong>
+              </div>
+              <div className={`ads-kpi ${Number(roi.estimated_roi || adsResult.estimated_roi) >= 0 ? 'positive' : 'negative'}`}>
+                <span>ROI estimado</span>
+                <strong>{roi.estimated_roi || adsResult.estimated_roi}%</strong>
               </div>
             </div>
 
-            <div className="ads-block">
-              <h3>🎯 Público objetivo detallado</h3>
-              <p>{adsResult.target_audience}</p>
+            <div className="ads-pro-grid">
+              <div className="ads-pro-card">
+                <h3>🎯 Avatar y análisis</h3>
+                <p><strong>Avatar:</strong> {adsResult.customer_avatar || adsResult.target_audience}</p>
+                <p><strong>Mercado:</strong> {adsResult.market_analysis}</p>
+                <p><strong>Propuesta de valor:</strong> {adsResult.value_proposition}</p>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>💬 Copy principal</h3>
+                <p>{adsResult.primary_text}</p>
+                <div className="copy-preview">
+                  <strong>{adsResult.headline}</strong>
+                  <span>{adsResult.description}</span>
+                  <button type="button">{adsResult.cta || 'Enviar mensaje'}</button>
+                </div>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>🧠 Dolores y ángulos</h3>
+                <div className="tag-list">
+                  {(adsResult.pain_points || []).map((x, i) => <span key={`p-${i}`}>{x}</span>)}
+                </div>
+                <hr />
+                <div className="tag-list">
+                  {(adsResult.angles || []).map((x, i) => <span key={`a-${i}`}>{x}</span>)}
+                </div>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>🖼️ Prompt creativo IA</h3>
+                <p>{adsResult.creative_prompt}</p>
+              </div>
             </div>
 
-            <div className="ads-block">
-              <h3>📝 Copy del anuncio</h3>
-              <p>{adsResult.primary_text}</p>
+            <div className="ads-section">
+              <div className="section-head compact">
+                <h3>Segmentaciones recomendadas</h3>
+                <span>{adsets.length} adsets</span>
+              </div>
+              <div className="ads-card-row">
+                {adsets.map((set, i) => (
+                  <div className="adset-card" key={i}>
+                    <h4>{set.name}</h4>
+                    <p>{set.message}</p>
+                    <div><strong>Edad:</strong> {set.age_range}</div>
+                    <div><strong>Género:</strong> {set.gender}</div>
+                    <div><strong>Ubicación:</strong> {(set.locations || []).join(', ')}</div>
+                    <div className="tag-list mini">
+                      {(set.interests || []).map((x, idx) => <span key={idx}>{x}</span>)}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="ads-block">
-              <h3>🔍 Headline + Descripción</h3>
-              <p><strong>{adsResult.headline}</strong><br />{adsResult.description}</p>
+            <div className="ads-section">
+              <div className="section-head compact">
+                <h3>Variaciones de anuncios</h3>
+                <span>{variants.length} creativos</span>
+              </div>
+              <div className="ads-card-row">
+                {variants.map((ad, i) => (
+                  <div className="creative-card" key={i}>
+                    <div className="creative-thumb">
+                      <i className="fas fa-image"></i>
+                    </div>
+                    <h4>{ad.name}</h4>
+                    <div className="creative-angle">{ad.angle}</div>
+                    <p>{ad.primary_text}</p>
+                    <strong>{ad.headline}</strong>
+                    <small>{ad.description}</small>
+                    <button type="button">{ad.cta || 'Enviar mensaje'}</button>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="ads-block">
-              <h3>📱 Call To Action</h3>
-              <p>{adsResult.call_to_action}</p>
-            </div>
+            <div className="ads-pro-grid">
+              <div className="ads-pro-card">
+                <h3>🧲 Funnel recomendado</h3>
+                <p><strong>Destino:</strong> {funnel.destination}</p>
+                <p>{funnel.recommended_bot_flow}</p>
+                <ul>
+                  {(funnel.landing_structure || []).map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
 
-            <div className="ads-block">
-              <h3>📊 Estrategia de puja</h3>
-              <p>{adsResult.bidding_strategy}</p>
+              <div className="ads-pro-card">
+                <h3>📲 Secuencia WhatsApp</h3>
+                <p>{adsResult.whatsapp_script}</p>
+                <ul>
+                  {(funnel.follow_up_sequence || []).map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>📈 Optimización IA</h3>
+                <ul>
+                  {(adsResult.optimization_plan || adsResult.recommendations || []).map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>✅ Checklist de lanzamiento</h3>
+                <ul>
+                  {(adsResult.launch_checklist || adsResult.next_actions || []).map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
             </div>
-          </div>
+          </section>
         )}
       </div>
     )
