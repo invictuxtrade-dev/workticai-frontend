@@ -2649,15 +2649,25 @@ export default function App() {
       setAdsLoading(true)
       setAdsResult(null)
 
-      const res = await api('/api/ads/generate-campaign', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...adsForm,
-          budget_daily: Number(adsForm.budget_daily || 10),
-          ticket_average: Number(adsForm.ticket_average || 50),
-          save: true
-        })
+      const clientParam =
+      me?.role === 'admin' && selectedClientId
+        ? `?client_id=${selectedClientId}`
+        : ''
+
+    if (me?.role === 'admin' && !selectedClientId) {
+      showNotice('Selecciona un cliente antes de generar la campaña')
+      return
+    }
+
+    const res = await api(`/api/ads/generate-campaign${clientParam}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        ...adsForm,
+        budget_daily: Number(adsForm.budget_daily || 10),
+        ticket_average: Number(adsForm.ticket_average || 50),
+        save: true
       })
+    })
 
       setAdsResult(res.plan)
       showNotice('Campaña IA generada correctamente')
