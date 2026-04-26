@@ -2234,6 +2234,94 @@ export default function App() {
           margin-top: .85rem;
         }
 
+        /* Nuevos estilos para escenarios ROI y reglas */
+        .roi-scenarios-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+          gap: 1rem;
+        }
+
+        .roi-scenario-card {
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 1.5rem;
+          padding: 1.2rem;
+          box-shadow: 0 18px 35px rgba(15,23,42,.06);
+        }
+
+        .roi-scenario-card.positive {
+          border-color: #bbf7d0;
+          background: linear-gradient(180deg, #ecfdf5, #ffffff);
+        }
+
+        .roi-scenario-card.negative {
+          border-color: #fecaca;
+          background: linear-gradient(180deg, #fef2f2, #ffffff);
+        }
+
+        .scenario-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .scenario-label {
+          font-size: .7rem;
+          text-transform: uppercase;
+          color: #64748b;
+          font-weight: 800;
+        }
+
+        .scenario-head h4 {
+          margin: .15rem 0 0;
+          color: #0f172a;
+          font-size: 1.2rem;
+        }
+
+        .scenario-head strong {
+          font-size: 1.4rem;
+          color: #0f172a;
+        }
+
+        .scenario-metrics {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: .65rem;
+          margin-bottom: 1rem;
+        }
+
+        .scenario-metrics div {
+          background: rgba(255,255,255,.72);
+          border: 1px solid #e2e8f0;
+          border-radius: .9rem;
+          padding: .7rem;
+        }
+
+        .scenario-metrics span {
+          display: block;
+          font-size: .68rem;
+          text-transform: uppercase;
+          color: #64748b;
+          font-weight: 800;
+          margin-bottom: .2rem;
+        }
+
+        .scenario-metrics b {
+          color: #0f172a;
+          font-size: .95rem;
+        }
+
+        .scenario-note {
+          background: #f8fafc;
+          border-radius: .9rem;
+          padding: .7rem;
+          color: #334155;
+          font-size: .85rem;
+          margin-top: .5rem;
+        }
+
         @media (max-width: 1100px) {
           .ads-pro-layout {
             grid-template-columns: 1fr;
@@ -2256,11 +2344,16 @@ export default function App() {
           }
 
           .ads-pro-form,
-          .ads-pro-grid {
+          .ads-pro-grid,
+          .roi-scenarios-grid {
             grid-template-columns: 1fr;
           }
 
           .ads-kpi-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .scenario-metrics {
             grid-template-columns: 1fr;
           }
         }
@@ -2650,24 +2743,24 @@ export default function App() {
       setAdsResult(null)
 
       const clientParam =
-      me?.role === 'admin' && selectedClientId
-        ? `?client_id=${selectedClientId}`
-        : ''
+        me?.role === 'admin' && selectedClientId
+          ? `?client_id=${selectedClientId}`
+          : ''
 
-    if (me?.role === 'admin' && !selectedClientId) {
-      showNotice('Selecciona un cliente antes de generar la campaña')
-      return
-    }
+      if (me?.role === 'admin' && !selectedClientId) {
+        showNotice('Selecciona un cliente antes de generar la campaña')
+        return
+      }
 
-    const res = await api(`/api/ads/generate-campaign${clientParam}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        ...adsForm,
-        budget_daily: Number(adsForm.budget_daily || 10),
-        ticket_average: Number(adsForm.ticket_average || 50),
-        save: true
+      const res = await api(`/api/ads/generate-campaign${clientParam}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          ...adsForm,
+          budget_daily: Number(adsForm.budget_daily || 10),
+          ticket_average: Number(adsForm.ticket_average || 50),
+          save: true
+        })
       })
-    })
 
       setAdsResult(res.plan)
       showNotice('Campaña IA generada correctamente')
@@ -3843,6 +3936,10 @@ export default function App() {
     const adsets = adsResult?.adsets || []
     const variants = adsResult?.creative_variants || []
     const funnel = adsResult?.funnel || {}
+    const roiScenarios = adsResult?.roi_scenarios || []
+    const automationRules = adsResult?.automation_rules || []
+    const scaleRules = adsResult?.scale_rules || []
+    const killRules = adsResult?.kill_rules || []
 
     return (
       <div className="ads-pro-page">
@@ -4052,6 +4149,79 @@ export default function App() {
               </div>
             </div>
 
+            {roiScenarios.length > 0 && (
+              <div className="ads-section">
+                <div className="section-head compact">
+                  <h3>Motor matemático ROI</h3>
+                  <span>{roiScenarios.length} escenarios</span>
+                </div>
+
+                <div className="roi-scenarios-grid">
+                  {roiScenarios.map((scenario, i) => (
+                    <div
+                      className={`roi-scenario-card ${scenario.estimated_roi >= 0 ? 'positive' : 'negative'}`}
+                      key={i}
+                    >
+                      <div className="scenario-head">
+                        <div>
+                          <span className="scenario-label">Escenario</span>
+                          <h4>{scenario.name}</h4>
+                        </div>
+                        <strong>{scenario.estimated_roi}%</strong>
+                      </div>
+
+                      <div className="scenario-metrics">
+                        <div>
+                          <span>CPM</span>
+                          <b>{scenario.currency} {scenario.estimated_cpm}</b>
+                        </div>
+                        <div>
+                          <span>CTR</span>
+                          <b>{scenario.estimated_ctr}%</b>
+                        </div>
+                        <div>
+                          <span>CPC</span>
+                          <b>{scenario.currency} {scenario.estimated_cpc}</b>
+                        </div>
+                        <div>
+                          <span>CPL</span>
+                          <b>{scenario.currency} {scenario.estimated_cpl}</b>
+                        </div>
+                        <div>
+                          <span>Leads</span>
+                          <b>{scenario.estimated_leads}</b>
+                        </div>
+                        <div>
+                          <span>Ventas</span>
+                          <b>{scenario.estimated_sales}</b>
+                        </div>
+                        <div>
+                          <span>Ingresos</span>
+                          <b>{scenario.currency} {scenario.estimated_revenue}</b>
+                        </div>
+                        <div>
+                          <span>Profit</span>
+                          <b>{scenario.currency} {scenario.estimated_profit}</b>
+                        </div>
+                      </div>
+
+                      <div className="scenario-note">
+                        <strong>Decisión:</strong> {scenario.decision}
+                      </div>
+
+                      <div className="scenario-note">
+                        <strong>Escalado:</strong> {scenario.scale_signal}
+                      </div>
+
+                      <div className="scenario-note">
+                        <strong>Optimizar si:</strong> {scenario.optimization_trigger}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="ads-pro-grid">
               <div className="ads-pro-card">
                 <h3>🎯 Avatar y análisis</h3>
@@ -4159,6 +4329,27 @@ export default function App() {
                 <h3>✅ Checklist de lanzamiento</h3>
                 <ul>
                   {(adsResult.launch_checklist || adsResult.next_actions || []).map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>🤖 Reglas automáticas</h3>
+                <ul>
+                  {automationRules.map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>🚀 Reglas de escalado</h3>
+                <ul>
+                  {scaleRules.map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
+
+              <div className="ads-pro-card">
+                <h3>🛑 Reglas de pausa</h3>
+                <ul>
+                  {killRules.map((x, i) => <li key={i}>{x}</li>)}
                 </ul>
               </div>
             </div>
@@ -4711,24 +4902,41 @@ export default function App() {
                 <div className="section-title">Leads y conversaciones</div>
                 <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
               </div>
-              <table>
-                <thead>
-                  <tr><th>Nombre</th><th>Teléfono</th><th>Stage</th><th>Bot</th><th>Último mensaje</th><th>Acción</th></tr>
-                </thead>
-                <tbody>
-                  {filteredLeads.map(lead => (
-                    <tr key={lead.id}>
-                      <td>{lead.display_name || '—'}</td>
-                      <td>{lead.phone}</td>
-                      <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
-                      <td>{lead.bot_name}</td>
-                      <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                      <td><button type="button" onClick={() => setSelectedLeadId(lead.id)}>Ver chat</button></td>
-                    </tr>
-                  ))}
-                  {filteredLeads.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No hay leads</td></tr>}
-                </tbody>
-              </table>
+                      <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Stage</th>
+              <th>Bot</th>
+              <th>Último mensaje</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredLeads.map(lead => (
+              <tr key={lead.id}>
+                <td>{lead.display_name || '—'}</td>
+                <td>{lead.phone}</td>
+                <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
+                <td>{lead.bot_name}</td>
+                <td>{lead.last_inbound_text?.slice(0, 40)}</td>
+                <td>
+                  <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
+                    Ver chat
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {filteredLeads.length === 0 && (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                  No hay leads
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
             </div>
           </section>
         )}
@@ -4834,8 +5042,7 @@ export default function App() {
                         <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
                         <td>{post.publish_mode}</td>
                         <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
-                        <td>{(post.content || '').slice(0, 120)}</td>
-                      </tr>
+                        <td>{(post.content || '').slice(0, 120)}</td></tr>
                     ))}
                   </tbody>
                 </table>
