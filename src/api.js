@@ -14,7 +14,7 @@ export function clearSession() {
 }
 
 function isInvalidSession(res, data) {
-  const msg = String(data?.error || data?.message || '').toLowerCase()
+  const msg = String(data?.error || data?.message || data?.raw || '').toLowerCase()
 
   return (
     res.status === 401 ||
@@ -26,6 +26,8 @@ function isInvalidSession(res, data) {
   )
 }
 
+let sessionExpiredEmitted = false
+
 export async function api(path, options = {}) {
   const token = getToken()
   const isFormData =
@@ -36,9 +38,7 @@ export async function api(path, options = {}) {
     ...(options.headers || {})
   }
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
+  if (token) headers.Authorization = `Bearer ${token}`
 
   let res
   let text = ''
@@ -62,8 +62,9 @@ export async function api(path, options = {}) {
       if (isInvalidSession(res, data)) {
         clearSession()
 
-        if (!window.location.pathname.includes('/login')) {
-          window.location.reload()
+        if (!sessionExpiredEmitted) {
+          sessionExpiredEmitted = true
+          window.dispatchEvent(new CustomEvent('wsos:session-expired'))
         }
 
         const err = new Error('Sesión vencida. Inicia sesión nuevamente.')

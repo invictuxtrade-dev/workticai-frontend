@@ -2419,6 +2419,19 @@ export default function App() {
     }
   }, [])
 
+  useEffect(() => {
+  const onExpired = () => {
+    setToken('')
+    setUser(null)
+  }
+
+  window.addEventListener('wsos:session-expired', onExpired)
+
+  return () => {
+    window.removeEventListener('wsos:session-expired', onExpired)
+  }
+}, [])
+
   // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
   const [me, setMe] = useState(null)
   const [tab, setTab] = useState('dashboard')
