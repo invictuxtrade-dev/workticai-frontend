@@ -2419,10 +2419,10 @@ export default function App() {
     }
   }, [])
 
-  useEffect(() => {
+ useEffect(() => {
   const onExpired = () => {
     setToken('')
-    setUser(null)
+    setMe(null)
   }
 
   window.addEventListener('wsos:session-expired', onExpired)

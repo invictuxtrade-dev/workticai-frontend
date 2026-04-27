@@ -13,14 +13,12 @@ export function clearSession() {
   localStorage.removeItem('wsos_token')
 }
 
-function isInvalidSession(res, data) {
+function isAuthExpired(res, data) {
   const msg = String(data?.error || data?.message || data?.raw || '').toLowerCase()
 
   return (
     res.status === 401 ||
-    msg.includes('invalid session') ||
-    msg.includes('sesión inválida') ||
-    msg.includes('session expired') ||
+    res.status === 403 ||
     msg.includes('token expired') ||
     msg.includes('unauthorized')
   )
@@ -38,20 +36,19 @@ export async function api(path, options = {}) {
     ...(options.headers || {})
   }
 
-  if (token) headers.Authorization = `Bearer ${token}`
-
-  let res
-  let text = ''
-  let data = null
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
 
   try {
-    res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`${API_BASE}${path}`, {
       ...options,
       headers
     })
 
-    text = await res.text()
+    const text = await res.text()
 
+    let data = null
     try {
       data = text ? JSON.parse(text) : null
     } catch {
@@ -59,7 +56,7 @@ export async function api(path, options = {}) {
     }
 
     if (!res.ok) {
-      if (isInvalidSession(res, data)) {
+      if (isAuthExpired(res, data)) {
         clearSession()
 
         if (!sessionExpiredEmitted) {
@@ -79,7 +76,6 @@ export async function api(path, options = {}) {
         data?.raw ||
         'Error de API'
       )
-
       err.status = res.status
       err.data = data
       throw err
