@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react'
+import React, { useEffect, useMemo, useState, useRef, memo, useCallback } from 'react'
 import QRCode from 'qrcode'
 import { api, API_BASE, setToken, getToken } from './api'
 
@@ -431,6 +431,675 @@ function LoginScreen({ onAuth }) {
     </div>
   )
 }
+
+// ========== COMPONENTE ADS IA (MEMOIZADO) ==========
+const AdsPanel = memo(function AdsPanel({ 
+  adsForm, setAdsForm, 
+  adsResult, adsLoading, 
+  generateAdsCampaign, 
+  showNotice 
+}) {
+  const roi = adsResult?.roi || {}
+  const currency = adsResult?.currency || adsForm.currency || 'USD'
+  const adsets = adsResult?.adsets || []
+  const variants = adsResult?.creative_variants || []
+  const funnel = adsResult?.funnel || {}
+  const roiScenarios = adsResult?.roi_scenarios || []
+  const automationRules = adsResult?.automation_rules || []
+  const scaleRules = adsResult?.scale_rules || []
+  const killRules = adsResult?.kill_rules || []
+
+  return (
+    <div className="ads-pro-page">
+      <div className="ads-pro-hero">
+        <div>
+          <div className="eyebrow">Worktic AI Ads Engine</div>
+          <h1>Motor profesional de adquisición de clientes</h1>
+          <p>
+            Diseña campañas, segmentación, creativos, funnel, WhatsApp y proyección de ROI con IA.
+          </p>
+        </div>
+
+        <div className="ads-pro-status">
+          <span className="status-dot"></span>
+          Modo estrategia IA
+        </div>
+      </div>
+
+      <div className="ads-pro-layout">
+        <section className="ads-builder-card">
+          <div className="section-head">
+            <div>
+              <h2>Crear campaña</h2>
+              <p>Completa los datos base para que la IA construya una campaña accionable.</p>
+            </div>
+            <i className="fas fa-wand-magic-sparkles"></i>
+          </div>
+
+          <div className="ads-pro-form">
+            <label>
+              Negocio
+              <input
+                type="text"
+                placeholder="Ej: CYO Digital"
+                value={adsForm.business_name}
+                onChange={(e) => setAdsForm({ ...adsForm, business_name: e.target.value })}
+              />
+            </label>
+
+            <label>
+              Producto o servicio
+              <input
+                type="text"
+                placeholder="Ej: Libros mandala para niños"
+                value={adsForm.product}
+                onChange={(e) => setAdsForm({ ...adsForm, product: e.target.value })}
+              />
+            </label>
+
+            <label>
+              Oferta principal
+              <input
+                type="text"
+                placeholder="Ej: Mejora concentración, creatividad y reduce ansiedad"
+                value={adsForm.offer}
+                onChange={(e) => setAdsForm({ ...adsForm, offer: e.target.value })}
+              />
+            </label>
+
+            <label>
+              Público objetivo
+              <input
+                type="text"
+                placeholder="Ej: Padres con hijos de 4 a 10 años"
+                value={adsForm.target}
+                onChange={(e) => setAdsForm({ ...adsForm, target: e.target.value })}
+              />
+            </label>
+
+            <label>
+              País / mercado
+              <input
+                type="text"
+                placeholder="Ej: Colombia"
+                value={adsForm.country}
+                onChange={(e) => setAdsForm({ ...adsForm, country: e.target.value })}
+              />
+            </label>
+
+            <label>
+              Moneda
+              <select
+                value={adsForm.currency}
+                onChange={(e) => setAdsForm({ ...adsForm, currency: e.target.value })}
+              >
+                <option value="USD">USD</option>
+                <option value="COP">COP</option>
+                <option value="MXN">MXN</option>
+                <option value="EUR">EUR</option>
+                <option value="USDT">USDT</option>
+              </select>
+            </label>
+
+            <label>
+              Objetivo
+              <select
+                value={adsForm.objective}
+                onChange={(e) => setAdsForm({ ...adsForm, objective: e.target.value })}
+              >
+                <option value="lead_generation">Generación de leads</option>
+                <option value="messages">Mensajes WhatsApp</option>
+                <option value="conversions">Conversiones</option>
+                <option value="traffic">Tráfico a landing</option>
+              </select>
+            </label>
+
+            <label>
+              Destino
+              <select
+                value={adsForm.destination}
+                onChange={(e) => setAdsForm({ ...adsForm, destination: e.target.value })}
+              >
+                <option value="whatsapp">WhatsApp</option>
+                <option value="landing">Landing page</option>
+                <option value="form">Formulario</option>
+              </select>
+            </label>
+
+            <label>
+              Presupuesto diario
+              <input
+                type="number"
+                min="1"
+                value={adsForm.budget_daily}
+                onChange={(e) => setAdsForm({ ...adsForm, budget_daily: Number(e.target.value) })}
+              />
+            </label>
+
+            <label>
+              Ticket promedio
+              <input
+                type="number"
+                min="1"
+                value={adsForm.ticket_average}
+                onChange={(e) => setAdsForm({ ...adsForm, ticket_average: Number(e.target.value) })}
+              />
+            </label>
+          </div>
+
+          <button className="ads-generate-btn" onClick={generateAdsCampaign} disabled={adsLoading}>
+            {adsLoading ? (
+              <>
+                <i className="fas fa-circle-notch fa-spin"></i>
+                Analizando mercado y construyendo campaña...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-rocket"></i>
+                Generar campaña profesional
+              </>
+            )}
+          </button>
+        </section>
+
+        <aside className="ads-side-card">
+          <h3>Arquitectura de adquisición</h3>
+          <div className="ads-flow">
+            <div><i className="fas fa-bullhorn"></i> Anuncio</div>
+            <span></span>
+            <div><i className="fas fa-filter"></i> Funnel</div>
+            <span></span>
+            <div><i className="fab fa-whatsapp"></i> WhatsApp Bot</div>
+            <span></span>
+            <div><i className="fas fa-chart-line"></i> ROI</div>
+          </div>
+          <p>
+            La IA no solo genera texto: estructura oferta, público, creativos, seguimiento y medición.
+          </p>
+        </aside>
+      </div>
+
+      {adsResult && (
+        <section className="ads-output">
+          <div className="ads-output-head">
+            <div>
+              <div className="eyebrow">Campaña generada</div>
+              <h2>{adsResult.name}</h2>
+              <p>{adsResult.campaign_summary}</p>
+            </div>
+            <div className="campaign-pill">{adsResult.objective}</div>
+          </div>
+
+          <div className="ads-kpi-grid">
+            <div className="ads-kpi">
+              <span>Presupuesto mensual</span>
+              <strong>{currency} {roi.budget_monthly || adsResult.budget_monthly}</strong>
+            </div>
+            <div className="ads-kpi">
+              <span>CPL estimado</span>
+              <strong>{currency} {roi.estimated_cpl || adsResult.estimated_cpl}</strong>
+            </div>
+            <div className="ads-kpi">
+              <span>Leads estimados</span>
+              <strong>{roi.estimated_leads || adsResult.estimated_leads}</strong>
+            </div>
+            <div className="ads-kpi">
+              <span>Ventas estimadas</span>
+              <strong>{roi.estimated_sales || adsResult.estimated_sales}</strong>
+            </div>
+            <div className="ads-kpi">
+              <span>Ingresos estimados</span>
+              <strong>{currency} {roi.estimated_revenue || adsResult.estimated_revenue}</strong>
+            </div>
+            <div className={`ads-kpi ${Number(roi.estimated_roi || adsResult.estimated_roi) >= 0 ? 'positive' : 'negative'}`}>
+              <span>ROI estimado</span>
+              <strong>{roi.estimated_roi || adsResult.estimated_roi}%</strong>
+            </div>
+            <div className="ads-kpi">
+              <span>Break-even CPL</span>
+              <strong>{currency} {(roi.break_even_cpl || 0).toFixed(2)}</strong>
+            </div>
+            <div className="ads-kpi">
+              <span>Tasa cierre</span>
+              <strong>{(roi.conversion_rate || 0)}%</strong>
+            </div>
+          </div>
+
+          {/* NUEVA SECCIÓN DE DIAGNÓSTICO */}
+          <div className="ads-diagnosis-grid">
+            <div className="ads-diagnosis-card real">
+              <span>Score real</span>
+              <strong>{adsResult.campaign_score_real ?? 0}/100</strong>
+              <p>{adsResult.campaign_decision_real}</p>
+            </div>
+            <div className="ads-diagnosis-card optimized">
+              <span>Score optimizado</span>
+              <strong>{adsResult.campaign_score_optimized ?? 0}/100</strong>
+              <p>{adsResult.campaign_decision_optimized}</p>
+            </div>
+          </div>
+
+          {adsResult.campaign_issues?.length > 0 && (
+            <div className="ads-issues-card">
+              <h3>Alertas detectadas</h3>
+              <ul>
+                {adsResult.campaign_issues.map((issue, i) => (
+                  <li key={i}>{issue}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {roiScenarios.length > 0 && (
+            <div className="ads-section">
+              <div className="section-head compact">
+                <h3>Motor matemático ROI</h3>
+                <span>{roiScenarios.length} escenarios</span>
+              </div>
+
+              <div className="roi-scenarios-grid">
+                {roiScenarios.map((scenario, i) => (
+                  <div
+                    className={`roi-scenario-card ${scenario.estimated_roi >= 0 ? 'positive' : 'negative'}`}
+                    key={i}
+                  >
+                    <div className="scenario-head">
+                      <div>
+                        <span className="scenario-label">Escenario</span>
+                        <h4>{scenario.name}</h4>
+                      </div>
+                      <strong>{scenario.estimated_roi}%</strong>
+                    </div>
+
+                    <div className="scenario-metrics">
+                      <div>
+                        <span>CPM</span>
+                        <b>{scenario.currency} {scenario.estimated_cpm}</b>
+                      </div>
+                      <div>
+                        <span>CTR</span>
+                        <b>{scenario.estimated_ctr}%</b>
+                      </div>
+                      <div>
+                        <span>CPC</span>
+                        <b>{scenario.currency} {scenario.estimated_cpc}</b>
+                      </div>
+                      <div>
+                        <span>CPL</span>
+                        <b>{scenario.currency} {scenario.estimated_cpl}</b>
+                      </div>
+                      <div>
+                        <span>Leads</span>
+                        <b>{scenario.estimated_leads}</b>
+                      </div>
+                      <div>
+                        <span>Ventas</span>
+                        <b>{scenario.estimated_sales}</b>
+                      </div>
+                      <div>
+                        <span>Ingresos</span>
+                        <b>{scenario.currency} {scenario.estimated_revenue}</b>
+                      </div>
+                      <div>
+                        <span>Profit</span>
+                        <b>{scenario.currency} {scenario.estimated_profit}</b>
+                      </div>
+                    </div>
+
+                    <div className="scenario-note">
+                      <strong>Decisión:</strong> {scenario.decision}
+                    </div>
+
+                    <div className="scenario-note">
+                      <strong>Escalado:</strong> {scenario.scale_signal}
+                    </div>
+
+                    <div className="scenario-note">
+                      <strong>Optimizar si:</strong> {scenario.optimization_trigger}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="ads-pro-grid">
+            <div className="ads-pro-card">
+              <h3>🎯 Avatar y análisis</h3>
+              <p><strong>Avatar:</strong> {adsResult.customer_avatar || adsResult.target_audience}</p>
+              <p><strong>Mercado:</strong> {adsResult.market_analysis}</p>
+              <p><strong>Propuesta de valor:</strong> {adsResult.value_proposition}</p>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>💬 Copy principal</h3>
+              <p>{adsResult.primary_text}</p>
+              <div className="copy-preview">
+                <strong>{adsResult.headline}</strong>
+                <span>{adsResult.description}</span>
+                <button type="button">{adsResult.cta || 'Enviar mensaje'}</button>
+              </div>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>🧠 Dolores y ángulos</h3>
+              <div className="tag-list">
+                {(adsResult.pain_points || []).map((x, i) => <span key={`p-${i}`}>{x}</span>)}
+              </div>
+              <hr />
+              <div className="tag-list">
+                {(adsResult.angles || []).map((x, i) => <span key={`a-${i}`}>{x}</span>)}
+              </div>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>🖼️ Prompt creativo IA</h3>
+              <p>{adsResult.creative_prompt}</p>
+            </div>
+          </div>
+
+          <div className="ads-section">
+            <div className="section-head compact">
+              <h3>Segmentaciones recomendadas</h3>
+              <span>{adsets.length} adsets</span>
+            </div>
+            <div className="ads-card-row">
+              {adsets.map((set, i) => (
+                <div className="adset-card" key={i}>
+                  <h4>{set.name}</h4>
+                  <p>{set.message}</p>
+                  <div><strong>Edad:</strong> {set.age_range}</div>
+                  <div><strong>Género:</strong> {set.gender}</div>
+                  <div><strong>Ubicación:</strong> {(set.locations || []).join(', ')}</div>
+                  <div className="tag-list mini">
+                    {(set.interests || []).map((x, idx) => <span key={idx}>{x}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="ads-section">
+            <div className="section-head compact">
+              <h3>Variaciones de anuncios</h3>
+              <span>{variants.length} creativos</span>
+            </div>
+            <div className="ads-card-row">
+              {variants.map((ad, i) => (
+                <div className="creative-card" key={i}>
+                  <div className="creative-thumb">
+                    <i className="fas fa-image"></i>
+                  </div>
+                  <h4>{ad.name}</h4>
+                  <div className="creative-angle">{ad.angle}</div>
+                  <p>{ad.primary_text}</p>
+                  <strong>{ad.headline}</strong>
+                  <small>{ad.description}</small>
+                  <button type="button">{ad.cta || 'Enviar mensaje'}</button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="ads-pro-grid">
+            <div className="ads-pro-card">
+              <h3>🧲 Funnel recomendado</h3>
+              <p><strong>Destino:</strong> {funnel.destination}</p>
+              <p>{funnel.recommended_bot_flow}</p>
+              <ul>
+                {(funnel.landing_structure || []).map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>📲 Secuencia WhatsApp</h3>
+              <p>{adsResult.whatsapp_script}</p>
+              <ul>
+                {(funnel.follow_up_sequence || []).map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>📈 Optimización IA</h3>
+              <ul>
+                {(adsResult.optimization_plan || adsResult.recommendations || []).map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>✅ Checklist de lanzamiento</h3>
+              <ul>
+                {(adsResult.launch_checklist || adsResult.next_actions || []).map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>🤖 Reglas automáticas</h3>
+              <ul>
+                {automationRules.map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>🚀 Reglas de escalado</h3>
+              <ul>
+                {scaleRules.map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+
+            <div className="ads-pro-card">
+              <h3>🛑 Reglas de pausa</h3>
+              <ul>
+                {killRules.map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  )
+})
+
+// ========== COMPONENTE PLAN GATE (MEMOIZADO) ==========
+const PlanGate = memo(function PlanGate({ 
+  plans, billingCycle, setBillingCycle, selectPlan, 
+  showInvoice, selectedPlan, subscription, 
+  paymentTxHash, setPaymentTxHash, submitPlanPayment, 
+  cancelInvoice, paymentQR, me, onLogout 
+}) {
+  const [copied, setCopied] = useState(false)
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (showInvoice && selectedPlan && subscription) {
+    return (
+      <div className="plan-page">
+        <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div className="auth-logo" style={{ margin: 0 }}>
+            <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
+          </div>
+          <button className="secondary" onClick={onLogout} style={{ background: '#1e293b', color: 'white' }}>
+            <i className="fas fa-sign-out-alt"></i> Cerrar sesión
+          </button>
+        </div>
+        <div className="invoice-card">
+          <div className="invoice-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div className="invoice-logo">WORKTIC AI</div>
+            <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
+          </div>
+          <div className="invoice-details">
+            <div className="detail-line"><div className="detail-label">Cliente</div><div className="detail-value">{me?.name || me?.email}</div></div>
+            <div className="detail-line"><div className="detail-label">Plan</div><div className="detail-value">{selectedPlan.name} · {billingCycle}</div></div>
+            <div className="detail-line"><div className="detail-label">Estado</div><div className="detail-value"><span className="pill warning">Pendiente de pago</span></div></div>
+            <div className="detail-line"><div className="detail-label">Fecha emisión</div><div className="detail-value">{new Date().toLocaleDateString()}</div></div>
+          </div>
+          <div className="qr-section">
+            <div className="qr-code">
+              {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="160" height="160" /> : <div className="loader" style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
+            </div>
+            <div className="wallet-info">
+              <div className="detail-label">Dirección de la wallet (BEP20)</div>
+              <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                {subscription.wallet_address || 'No configurada'}
+                <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
+                  {copied ? 'Copiado' : 'Copiar'}
+                </button>
+              </div>
+              <div className="payment-method" style={{ marginTop: '1rem' }}>
+                <i className="fab fa-bitcoin"></i> USDT (BEP20)
+              </div>
+            </div>
+          </div>
+          <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+            <div className="detail-label">Monto a pagar</div>
+            <div className="total-amount">${subscription.amount} USD</div>
+          </div>
+          <div className="step-progress">
+            <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
+            <i className="fas fa-arrow-right"></i>
+            <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
+            <i className="fas fa-arrow-right"></i>
+            <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
+            <i className="fas fa-arrow-right"></i>
+            <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
+          </div>
+          <input
+            type="text"
+            placeholder="Pega aquí el hash de la transacción"
+            value={paymentTxHash}
+            onChange={(e) => setPaymentTxHash(e.target.value)}
+            style={{ marginTop: '1rem', width: '100%' }}
+          />
+          <div className="row" style={{ marginTop: '1rem', gap: '1rem' }}>
+            <button type="button" onClick={submitPlanPayment} style={{ flex: 1 }}>Reportar pago</button>
+            <button type="button" onClick={cancelInvoice} className="secondary" style={{ flex: 1 }}>Volver a planes</button>
+          </div>
+          <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
+            El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.<br/>
+            Puedes volver a la lista de planes para seleccionar otro si lo deseas.
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="plan-page">
+      <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="auth-logo" style={{ margin: 0 }}>
+          <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
+        </div>
+        <button className="secondary" onClick={onLogout} style={{ background: '#1e293b', color: 'white' }}>
+          <i className="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+      </div>
+
+      <div className="plan-hero">
+        <div>
+          <div className="eyebrow">Worktic AI</div>
+          <h1>Elige el plan ideal para tu negocio</h1>
+          <p>
+            Automatiza WhatsApp, landings, embudos, contenido, campañas e IA comercial desde un solo lugar.
+          </p>
+        </div>
+
+        <div className="billing-toggle">
+          <button
+            type="button"
+            className={billingCycle === 'monthly' ? 'active' : ''}
+            onClick={() => setBillingCycle('monthly')}
+          >
+            Mensual
+          </button>
+          <button
+            type="button"
+            className={billingCycle === 'yearly' ? 'active' : ''}
+            onClick={() => setBillingCycle('yearly')}
+          >
+            Anual
+            <span>Ahorra</span>
+          </button>
+        </div>
+      </div>
+
+      {plans.length === 0 && (
+        <div className="stripe-card" style={{ maxWidth: 400, margin: '0 auto 2rem auto' }}>
+          <div className="loader">Cargando planes disponibles...</div>
+        </div>
+      )}
+
+      <div className="plans-grid">
+        {plans.length > 0 && plans.map((plan) => {
+          let features = []
+          try {
+            features = JSON.parse(plan.features || '[]')
+          } catch {}
+
+          const price = billingCycle === 'yearly'
+            ? plan.price_yearly
+            : plan.price_monthly
+
+          const monthlyEquivalent = billingCycle === 'yearly' && price > 0
+            ? Math.round(price / 12)
+            : price
+
+          return (
+            <div key={plan.id} className={`plan-card ${plan.slug === 'pro' ? 'featured' : ''}`}>
+              {plan.slug === 'pro' && <div className="popular-badge">Más recomendado</div>}
+
+              <div>
+                <h3>{plan.name}</h3>
+                <p className="muted">{plan.description}</p>
+              </div>
+
+              <div className="plan-price">
+                {price === 0 ? (
+                  <span>Gratis</span>
+                ) : (
+                  <>
+                    <span>${billingCycle === 'yearly' ? monthlyEquivalent : price}</span>
+                    <small>USD / mes</small>
+                  </>
+                )}
+
+                {billingCycle === 'yearly' && price > 0 && (
+                  <div className="yearly-note">
+                    Facturado anual: ${price} USD/año
+                  </div>
+                )}
+              </div>
+
+              <button type="button" onClick={() => selectPlan(plan.slug)}>
+                {plan.is_free ? 'Comenzar gratis' : 'Seleccionar plan'}
+              </button>
+
+              <div className="features-list">
+                {features.map((f, i) => (
+                  <div key={i} className="feature-row">
+                    <i className="fas fa-check-circle"></i>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button type="button" onClick={() => { const p = plans.find(pl => pl.slug === subscription.plan_slug); setSelectedPlan(p); setShowInvoice(true); }} className="secondary">
+            <i className="fas fa-receipt"></i> Ver factura pendiente
+          </button>
+        </div>
+      )}
+    </div>
+  )
+})
 
 export default function App() {
   useEffect(() => {
@@ -2419,18 +3088,16 @@ export default function App() {
     }
   }, [])
 
- useEffect(() => {
-  const onExpired = () => {
-    setToken('')
-    setMe(null)
-  }
-
-  window.addEventListener('wsos:session-expired', onExpired)
-
-  return () => {
-    window.removeEventListener('wsos:session-expired', onExpired)
-  }
-}, [])
+  useEffect(() => {
+    const onExpired = () => {
+      setToken('')
+      setMe(null)
+    }
+    window.addEventListener('wsos:session-expired', onExpired)
+    return () => {
+      window.removeEventListener('wsos:session-expired', onExpired)
+    }
+  }, [])
 
   // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
   const [me, setMe] = useState(null)
@@ -2623,10 +3290,10 @@ export default function App() {
     return { stages, counts }
   }, [selectedBot, leads])
 
-  const showNotice = (msg) => {
+  const showNotice = useCallback((msg) => {
     setToast(msg)
     setTimeout(() => setToast(null), 3000)
-  }
+  }, [])
 
   function resolveMediaURL(url) {
     if (!url) return ''
@@ -2790,7 +3457,7 @@ export default function App() {
   }
 
   // ========== ADS IA FUNCIÓN (PRO) ==========
-  async function generateAdsCampaign() {
+  const generateAdsCampaign = useCallback(async () => {
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
       return
@@ -2840,7 +3507,7 @@ export default function App() {
     } finally {
       setAdsLoading(false)
     }
-  }
+  }, [adsForm, me, selectedClientId, showNotice])
 
   // ======================== FUNCIONES EXISTENTES CON GUARDIA PLAN ========================
   async function loadLandings() {
@@ -3449,23 +4116,19 @@ export default function App() {
     loadSocialLogs()
   }, [selectedClientId, forcePlanScreen])
 
- useEffect(() => {
-  const t = setInterval(async () => {
-    if (!me || forcePlanScreen) return
+  // Período de refresco automático (30s) – evita actualizaciones cuando estás en la pestaña Ads
+  useEffect(() => {
+    const t = setInterval(async () => {
+      if (!me || forcePlanScreen) return
 
-    try {
-      // Ads IA queda totalmente aislado:
-      // no refresca métricas, bots, inbox ni QR mientras escribes campaña.
       if (tab === 'ads') return
 
       if (tab === 'dashboard') {
         await loadMetrics()
-
         if (me.role === 'admin') {
           await loadClients()
           await loadUsers()
         }
-
         return
       }
 
@@ -3501,27 +4164,23 @@ export default function App() {
         await loadSocialLogs()
         return
       }
-    } catch (err) {
-      console.warn('Auto refresh error:', err.message)
+    }, 30000)
+
+    return () => clearInterval(t)
+  }, [me, tab, selectedClientId, selectedBotId, forcePlanScreen])
+
+  useEffect(() => {
+    if (!selectedBotId) {
+      setQrDataUrlBot('')
+      setConfig(emptyConfig)
+      return
     }
-  }, 30000)
 
-  return () => clearInterval(t)
-}, [me, tab, selectedClientId, selectedBotId, forcePlanScreen])
+    if (tab !== 'bots') return
 
- useEffect(() => {
-  if (!selectedBotId) {
-    setQrDataUrlBot('')
-    setConfig(emptyConfig)
-    return
-  }
-
-  // QR y config del bot solo se cargan dentro de la pantalla Bots.
-  if (tab !== 'bots') return
-
-  loadQr(selectedBotId)
-  loadConfig(selectedBotId)
-}, [selectedBotId, tab])
+    loadQr(selectedBotId)
+    loadConfig(selectedBotId)
+  }, [selectedBotId, tab])
 
   useEffect(() => {
     if (selectedLead?.bot_id && selectedLead?.id) {
@@ -3849,665 +4508,6 @@ export default function App() {
     return { days, counts }
   }, [])
 
-  // ======================== COMPONENTE PLAN GATE ========================
-  function PlanGate({ onLogout }) {
-    const [copied, setCopied] = useState(false)
-
-    const copyToClipboard = (text) => {
-      navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }
-
-    if (showInvoice && selectedPlan && subscription) {
-      return (
-        <div className="plan-page">
-          <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <div className="auth-logo" style={{ margin: 0 }}>
-              <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
-            </div>
-            <button className="secondary" onClick={onLogout} style={{ background: '#1e293b', color: 'white' }}>
-              <i className="fas fa-sign-out-alt"></i> Cerrar sesión
-            </button>
-          </div>
-          <div className="invoice-card">
-            <div className="invoice-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <div className="invoice-logo">WORKTIC AI</div>
-              <div className="invoice-id">Factura # {subscription.id.slice(0, 8)}</div>
-            </div>
-            <div className="invoice-details">
-              <div className="detail-line"><div className="detail-label">Cliente</div><div className="detail-value">{me?.name || me?.email}</div></div>
-              <div className="detail-line"><div className="detail-label">Plan</div><div className="detail-value">{selectedPlan.name} · {billingCycle}</div></div>
-              <div className="detail-line"><div className="detail-label">Estado</div><div className="detail-value"><span className="pill warning">Pendiente de pago</span></div></div>
-              <div className="detail-line"><div className="detail-label">Fecha emisión</div><div className="detail-value">{new Date().toLocaleDateString()}</div></div>
-            </div>
-            <div className="qr-section">
-              <div className="qr-code">
-                {paymentQR ? <img src={paymentQR} alt="QR Wallet" width="160" height="160" /> : <div className="loader" style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cargando QR...</div>}
-              </div>
-              <div className="wallet-info">
-                <div className="detail-label">Dirección de la wallet (BEP20)</div>
-                <div className="detail-value" style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                  {subscription.wallet_address || 'No configurada'}
-                  <button className="copy-btn" onClick={() => copyToClipboard(subscription.wallet_address)}>
-                    {copied ? 'Copiado' : 'Copiar'}
-                  </button>
-                </div>
-                <div className="payment-method" style={{ marginTop: '1rem' }}>
-                  <i className="fab fa-bitcoin"></i> USDT (BEP20)
-                </div>
-              </div>
-            </div>
-            <div style={{ margin: '1rem 0', textAlign: 'center' }}>
-              <div className="detail-label">Monto a pagar</div>
-              <div className="total-amount">${subscription.amount} USD</div>
-            </div>
-            <div className="step-progress">
-              <div className="step active"><span className="step-number">1</span><span className="step-text">Seleccionar plan</span></div>
-              <i className="fas fa-arrow-right"></i>
-              <div className="step active"><span className="step-number">2</span><span className="step-text">Transferir USDT</span></div>
-              <i className="fas fa-arrow-right"></i>
-              <div className="step"><span className="step-number">3</span><span className="step-text">Reportar hash</span></div>
-              <i className="fas fa-arrow-right"></i>
-              <div className="step"><span className="step-number">4</span><span className="step-text">Validación admin</span></div>
-            </div>
-            <input
-              type="text"
-              placeholder="Pega aquí el hash de la transacción"
-              value={paymentTxHash}
-              onChange={(e) => setPaymentTxHash(e.target.value)}
-              style={{ marginTop: '1rem', width: '100%' }}
-            />
-            <div className="row" style={{ marginTop: '1rem', gap: '1rem' }}>
-              <button type="button" onClick={submitPlanPayment} style={{ flex: 1 }}>Reportar pago</button>
-              <button type="button" onClick={cancelInvoice} className="secondary" style={{ flex: 1 }}>Volver a planes</button>
-            </div>
-            <div className="muted" style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '1rem' }}>
-              El administrador validará el pago y activará tu plan en <strong>24 horas hábiles</strong>.<br/>
-              Puedes volver a la lista de planes para seleccionar otro si lo deseas.
-            </div>
-          </div>
-        </div>
-      )
-    }
-
-    return (
-      <div className="plan-page">
-        <div style={{ maxWidth: '1180px', margin: '0 auto 1rem auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div className="auth-logo" style={{ margin: 0 }}>
-            <img src="/logo.png" alt="Worktic AI Logo" style={{ maxWidth: '180px' }} />
-          </div>
-          <button className="secondary" onClick={onLogout} style={{ background: '#1e293b', color: 'white' }}>
-            <i className="fas fa-sign-out-alt"></i> Cerrar sesión
-          </button>
-        </div>
-
-        <div className="plan-hero">
-          <div>
-            <div className="eyebrow">Worktic AI</div>
-            <h1>Elige el plan ideal para tu negocio</h1>
-            <p>
-              Automatiza WhatsApp, landings, embudos, contenido, campañas e IA comercial desde un solo lugar.
-            </p>
-          </div>
-
-          <div className="billing-toggle">
-            <button
-              type="button"
-              className={billingCycle === 'monthly' ? 'active' : ''}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Mensual
-            </button>
-            <button
-              type="button"
-              className={billingCycle === 'yearly' ? 'active' : ''}
-              onClick={() => setBillingCycle('yearly')}
-            >
-              Anual
-              <span>Ahorra</span>
-            </button>
-          </div>
-        </div>
-
-        {plans.length === 0 && (
-          <div className="stripe-card" style={{ maxWidth: 400, margin: '0 auto 2rem auto' }}>
-            <div className="loader">Cargando planes disponibles...</div>
-          </div>
-        )}
-
-        <div className="plans-grid">
-          {plans.length > 0 && plans.map((plan) => {
-            let features = []
-            try {
-              features = JSON.parse(plan.features || '[]')
-            } catch {}
-
-            const price = billingCycle === 'yearly'
-              ? plan.price_yearly
-              : plan.price_monthly
-
-            const monthlyEquivalent = billingCycle === 'yearly' && price > 0
-              ? Math.round(price / 12)
-              : price
-
-            return (
-              <div key={plan.id} className={`plan-card ${plan.slug === 'pro' ? 'featured' : ''}`}>
-                {plan.slug === 'pro' && <div className="popular-badge">Más recomendado</div>}
-
-                <div>
-                  <h3>{plan.name}</h3>
-                  <p className="muted">{plan.description}</p>
-                </div>
-
-                <div className="plan-price">
-                  {price === 0 ? (
-                    <span>Gratis</span>
-                  ) : (
-                    <>
-                      <span>${billingCycle === 'yearly' ? monthlyEquivalent : price}</span>
-                      <small>USD / mes</small>
-                    </>
-                  )}
-
-                  {billingCycle === 'yearly' && price > 0 && (
-                    <div className="yearly-note">
-                      Facturado anual: ${price} USD/año
-                    </div>
-                  )}
-                </div>
-
-                <button type="button" onClick={() => selectPlan(plan.slug)}>
-                  {plan.is_free ? 'Comenzar gratis' : 'Seleccionar plan'}
-                </button>
-
-                <div className="features-list">
-                  {features.map((f, i) => (
-                    <div key={i} className="feature-row">
-                      <i className="fas fa-check-circle"></i>
-                      <span>{f}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {subscription && subscription.status === 'pending' && subscription.plan_slug !== 'free' && (
-          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-            <button type="button" onClick={() => { const p = plans.find(pl => pl.slug === subscription.plan_slug); setSelectedPlan(p); setShowInvoice(true); }} className="secondary">
-              <i className="fas fa-receipt"></i> Ver factura pendiente
-            </button>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  // ======================== COMPONENTE ADS IA PANEL (PRO) ========================
-  function AdsPanel() {
-    const roi = adsResult?.roi || {}
-    const currency = adsResult?.currency || adsForm.currency || 'USD'
-    const adsets = adsResult?.adsets || []
-    const variants = adsResult?.creative_variants || []
-    const funnel = adsResult?.funnel || {}
-    const roiScenarios = adsResult?.roi_scenarios || []
-    const automationRules = adsResult?.automation_rules || []
-    const scaleRules = adsResult?.scale_rules || []
-    const killRules = adsResult?.kill_rules || []
-
-    return (
-      <div className="ads-pro-page">
-        <div className="ads-pro-hero">
-          <div>
-            <div className="eyebrow">Worktic AI Ads Engine</div>
-            <h1>Motor profesional de adquisición de clientes</h1>
-            <p>
-              Diseña campañas, segmentación, creativos, funnel, WhatsApp y proyección de ROI con IA.
-            </p>
-          </div>
-
-          <div className="ads-pro-status">
-            <span className="status-dot"></span>
-            Modo estrategia IA
-          </div>
-        </div>
-
-        <div className="ads-pro-layout">
-          <section className="ads-builder-card">
-            <div className="section-head">
-              <div>
-                <h2>Crear campaña</h2>
-                <p>Completa los datos base para que la IA construya una campaña accionable.</p>
-              </div>
-              <i className="fas fa-wand-magic-sparkles"></i>
-            </div>
-
-            <div className="ads-pro-form">
-              <label>
-                Negocio
-                <input
-                  type="text"
-                  placeholder="Ej: CYO Digital"
-                  value={adsForm.business_name}
-                  onChange={(e) => setAdsForm({ ...adsForm, business_name: e.target.value })}
-                />
-              </label>
-
-              <label>
-                Producto o servicio
-                <input
-                  type="text"
-                  placeholder="Ej: Libros mandala para niños"
-                  value={adsForm.product}
-                  onChange={(e) => setAdsForm({ ...adsForm, product: e.target.value })}
-                />
-              </label>
-
-              <label>
-                Oferta principal
-                <input
-                  type="text"
-                  placeholder="Ej: Mejora concentración, creatividad y reduce ansiedad"
-                  value={adsForm.offer}
-                  onChange={(e) => setAdsForm({ ...adsForm, offer: e.target.value })}
-                />
-              </label>
-
-              <label>
-                Público objetivo
-                <input
-                  type="text"
-                  placeholder="Ej: Padres con hijos de 4 a 10 años"
-                  value={adsForm.target}
-                  onChange={(e) => setAdsForm({ ...adsForm, target: e.target.value })}
-                />
-              </label>
-
-              <label>
-                País / mercado
-                <input
-                  type="text"
-                  placeholder="Ej: Colombia"
-                  value={adsForm.country}
-                  onChange={(e) => setAdsForm({ ...adsForm, country: e.target.value })}
-                />
-              </label>
-
-              <label>
-                Moneda
-                <select
-                  value={adsForm.currency}
-                  onChange={(e) => setAdsForm({ ...adsForm, currency: e.target.value })}
-                >
-                  <option value="USD">USD</option>
-                  <option value="COP">COP</option>
-                  <option value="MXN">MXN</option>
-                  <option value="EUR">EUR</option>
-                  <option value="USDT">USDT</option>
-                </select>
-              </label>
-
-              <label>
-                Objetivo
-                <select
-                  value={adsForm.objective}
-                  onChange={(e) => setAdsForm({ ...adsForm, objective: e.target.value })}
-                >
-                  <option value="lead_generation">Generación de leads</option>
-                  <option value="messages">Mensajes WhatsApp</option>
-                  <option value="conversions">Conversiones</option>
-                  <option value="traffic">Tráfico a landing</option>
-                </select>
-              </label>
-
-              <label>
-                Destino
-                <select
-                  value={adsForm.destination}
-                  onChange={(e) => setAdsForm({ ...adsForm, destination: e.target.value })}
-                >
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="landing">Landing page</option>
-                  <option value="form">Formulario</option>
-                </select>
-              </label>
-
-              <label>
-                Presupuesto diario
-                <input
-                  type="number"
-                  min="1"
-                  value={adsForm.budget_daily}
-                  onChange={(e) => setAdsForm({ ...adsForm, budget_daily: Number(e.target.value) })}
-                />
-              </label>
-
-              <label>
-                Ticket promedio
-                <input
-                  type="number"
-                  min="1"
-                  value={adsForm.ticket_average}
-                  onChange={(e) => setAdsForm({ ...adsForm, ticket_average: Number(e.target.value) })}
-                />
-              </label>
-            </div>
-
-            <button className="ads-generate-btn" onClick={generateAdsCampaign} disabled={adsLoading}>
-              {adsLoading ? (
-                <>
-                  <i className="fas fa-circle-notch fa-spin"></i>
-                  Analizando mercado y construyendo campaña...
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-rocket"></i>
-                  Generar campaña profesional
-                </>
-              )}
-            </button>
-          </section>
-
-          <aside className="ads-side-card">
-            <h3>Arquitectura de adquisición</h3>
-            <div className="ads-flow">
-              <div><i className="fas fa-bullhorn"></i> Anuncio</div>
-              <span></span>
-              <div><i className="fas fa-filter"></i> Funnel</div>
-              <span></span>
-              <div><i className="fab fa-whatsapp"></i> WhatsApp Bot</div>
-              <span></span>
-              <div><i className="fas fa-chart-line"></i> ROI</div>
-            </div>
-            <p>
-              La IA no solo genera texto: estructura oferta, público, creativos, seguimiento y medición.
-            </p>
-          </aside>
-        </div>
-
-        {adsResult && (
-          <section className="ads-output">
-            <div className="ads-output-head">
-              <div>
-                <div className="eyebrow">Campaña generada</div>
-                <h2>{adsResult.name}</h2>
-                <p>{adsResult.campaign_summary}</p>
-              </div>
-              <div className="campaign-pill">{adsResult.objective}</div>
-            </div>
-
-            <div className="ads-kpi-grid">
-              <div className="ads-kpi">
-                <span>Presupuesto mensual</span>
-                <strong>{currency} {roi.budget_monthly || adsResult.budget_monthly}</strong>
-              </div>
-              <div className="ads-kpi">
-                <span>CPL estimado</span>
-                <strong>{currency} {roi.estimated_cpl || adsResult.estimated_cpl}</strong>
-              </div>
-              <div className="ads-kpi">
-                <span>Leads estimados</span>
-                <strong>{roi.estimated_leads || adsResult.estimated_leads}</strong>
-              </div>
-              <div className="ads-kpi">
-                <span>Ventas estimadas</span>
-                <strong>{roi.estimated_sales || adsResult.estimated_sales}</strong>
-              </div>
-              <div className="ads-kpi">
-                <span>Ingresos estimados</span>
-                <strong>{currency} {roi.estimated_revenue || adsResult.estimated_revenue}</strong>
-              </div>
-              <div className={`ads-kpi ${Number(roi.estimated_roi || adsResult.estimated_roi) >= 0 ? 'positive' : 'negative'}`}>
-                <span>ROI estimado</span>
-                <strong>{roi.estimated_roi || adsResult.estimated_roi}%</strong>
-              </div>
-              <div className="ads-kpi">
-                <span>Break-even CPL</span>
-                <strong>{currency} {(roi.break_even_cpl || 0).toFixed(2)}</strong>
-              </div>
-              <div className="ads-kpi">
-                <span>Tasa cierre</span>
-                <strong>{(roi.conversion_rate || 0)}%</strong>
-              </div>
-            </div>
-
-            {/* NUEVA SECCIÓN DE DIAGNÓSTICO */}
-            <div className="ads-diagnosis-grid">
-              <div className="ads-diagnosis-card real">
-                <span>Score real</span>
-                <strong>{adsResult.campaign_score_real ?? 0}/100</strong>
-                <p>{adsResult.campaign_decision_real}</p>
-              </div>
-              <div className="ads-diagnosis-card optimized">
-                <span>Score optimizado</span>
-                <strong>{adsResult.campaign_score_optimized ?? 0}/100</strong>
-                <p>{adsResult.campaign_decision_optimized}</p>
-              </div>
-            </div>
-
-            {adsResult.campaign_issues?.length > 0 && (
-              <div className="ads-issues-card">
-                <h3>Alertas detectadas</h3>
-                <ul>
-                  {adsResult.campaign_issues.map((issue, i) => (
-                    <li key={i}>{issue}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {roiScenarios.length > 0 && (
-              <div className="ads-section">
-                <div className="section-head compact">
-                  <h3>Motor matemático ROI</h3>
-                  <span>{roiScenarios.length} escenarios</span>
-                </div>
-
-                <div className="roi-scenarios-grid">
-                  {roiScenarios.map((scenario, i) => (
-                    <div
-                      className={`roi-scenario-card ${scenario.estimated_roi >= 0 ? 'positive' : 'negative'}`}
-                      key={i}
-                    >
-                      <div className="scenario-head">
-                        <div>
-                          <span className="scenario-label">Escenario</span>
-                          <h4>{scenario.name}</h4>
-                        </div>
-                        <strong>{scenario.estimated_roi}%</strong>
-                      </div>
-
-                      <div className="scenario-metrics">
-                        <div>
-                          <span>CPM</span>
-                          <b>{scenario.currency} {scenario.estimated_cpm}</b>
-                        </div>
-                        <div>
-                          <span>CTR</span>
-                          <b>{scenario.estimated_ctr}%</b>
-                        </div>
-                        <div>
-                          <span>CPC</span>
-                          <b>{scenario.currency} {scenario.estimated_cpc}</b>
-                        </div>
-                        <div>
-                          <span>CPL</span>
-                          <b>{scenario.currency} {scenario.estimated_cpl}</b>
-                        </div>
-                        <div>
-                          <span>Leads</span>
-                          <b>{scenario.estimated_leads}</b>
-                        </div>
-                        <div>
-                          <span>Ventas</span>
-                          <b>{scenario.estimated_sales}</b>
-                        </div>
-                        <div>
-                          <span>Ingresos</span>
-                          <b>{scenario.currency} {scenario.estimated_revenue}</b>
-                        </div>
-                        <div>
-                          <span>Profit</span>
-                          <b>{scenario.currency} {scenario.estimated_profit}</b>
-                        </div>
-                      </div>
-
-                      <div className="scenario-note">
-                        <strong>Decisión:</strong> {scenario.decision}
-                      </div>
-
-                      <div className="scenario-note">
-                        <strong>Escalado:</strong> {scenario.scale_signal}
-                      </div>
-
-                      <div className="scenario-note">
-                        <strong>Optimizar si:</strong> {scenario.optimization_trigger}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="ads-pro-grid">
-              <div className="ads-pro-card">
-                <h3>🎯 Avatar y análisis</h3>
-                <p><strong>Avatar:</strong> {adsResult.customer_avatar || adsResult.target_audience}</p>
-                <p><strong>Mercado:</strong> {adsResult.market_analysis}</p>
-                <p><strong>Propuesta de valor:</strong> {adsResult.value_proposition}</p>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>💬 Copy principal</h3>
-                <p>{adsResult.primary_text}</p>
-                <div className="copy-preview">
-                  <strong>{adsResult.headline}</strong>
-                  <span>{adsResult.description}</span>
-                  <button type="button">{adsResult.cta || 'Enviar mensaje'}</button>
-                </div>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>🧠 Dolores y ángulos</h3>
-                <div className="tag-list">
-                  {(adsResult.pain_points || []).map((x, i) => <span key={`p-${i}`}>{x}</span>)}
-                </div>
-                <hr />
-                <div className="tag-list">
-                  {(adsResult.angles || []).map((x, i) => <span key={`a-${i}`}>{x}</span>)}
-                </div>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>🖼️ Prompt creativo IA</h3>
-                <p>{adsResult.creative_prompt}</p>
-              </div>
-            </div>
-
-            <div className="ads-section">
-              <div className="section-head compact">
-                <h3>Segmentaciones recomendadas</h3>
-                <span>{adsets.length} adsets</span>
-              </div>
-              <div className="ads-card-row">
-                {adsets.map((set, i) => (
-                  <div className="adset-card" key={i}>
-                    <h4>{set.name}</h4>
-                    <p>{set.message}</p>
-                    <div><strong>Edad:</strong> {set.age_range}</div>
-                    <div><strong>Género:</strong> {set.gender}</div>
-                    <div><strong>Ubicación:</strong> {(set.locations || []).join(', ')}</div>
-                    <div className="tag-list mini">
-                      {(set.interests || []).map((x, idx) => <span key={idx}>{x}</span>)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="ads-section">
-              <div className="section-head compact">
-                <h3>Variaciones de anuncios</h3>
-                <span>{variants.length} creativos</span>
-              </div>
-              <div className="ads-card-row">
-                {variants.map((ad, i) => (
-                  <div className="creative-card" key={i}>
-                    <div className="creative-thumb">
-                      <i className="fas fa-image"></i>
-                    </div>
-                    <h4>{ad.name}</h4>
-                    <div className="creative-angle">{ad.angle}</div>
-                    <p>{ad.primary_text}</p>
-                    <strong>{ad.headline}</strong>
-                    <small>{ad.description}</small>
-                    <button type="button">{ad.cta || 'Enviar mensaje'}</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="ads-pro-grid">
-              <div className="ads-pro-card">
-                <h3>🧲 Funnel recomendado</h3>
-                <p><strong>Destino:</strong> {funnel.destination}</p>
-                <p>{funnel.recommended_bot_flow}</p>
-                <ul>
-                  {(funnel.landing_structure || []).map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>📲 Secuencia WhatsApp</h3>
-                <p>{adsResult.whatsapp_script}</p>
-                <ul>
-                  {(funnel.follow_up_sequence || []).map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>📈 Optimización IA</h3>
-                <ul>
-                  {(adsResult.optimization_plan || adsResult.recommendations || []).map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>✅ Checklist de lanzamiento</h3>
-                <ul>
-                  {(adsResult.launch_checklist || adsResult.next_actions || []).map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>🤖 Reglas automáticas</h3>
-                <ul>
-                  {automationRules.map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>🚀 Reglas de escalado</h3>
-                <ul>
-                  {scaleRules.map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-
-              <div className="ads-pro-card">
-                <h3>🛑 Reglas de pausa</h3>
-                <ul>
-                  {killRules.map((x, i) => <li key={i}>{x}</li>)}
-                </ul>
-              </div>
-            </div>
-          </section>
-        )}
-      </div>
-    )
-  }
-
   // ========== RENDER PRINCIPAL ==========
   if (!me) return <LoginScreen onAuth={(user) => {
     setMe(user)
@@ -4515,10 +4515,27 @@ export default function App() {
   }} />
 
   if (forcePlanScreen && me.role !== 'admin') {
-    return <PlanGate onLogout={logout} />
+    return (
+      <PlanGate
+        plans={plans}
+        billingCycle={billingCycle}
+        setBillingCycle={setBillingCycle}
+        selectPlan={selectPlan}
+        showInvoice={showInvoice}
+        selectedPlan={selectedPlan}
+        subscription={subscription}
+        paymentTxHash={paymentTxHash}
+        setPaymentTxHash={setPaymentTxHash}
+        submitPlanPayment={submitPlanPayment}
+        cancelInvoice={cancelInvoice}
+        paymentQR={paymentQR}
+        me={me}
+        onLogout={logout}
+      />
+    )
   }
 
-  // ========== PANEL PRINCIPAL (con todas las pestañas) ==========
+  // ========== PANEL PRINCIPAL ==========
   return (
     <div className="app-shell">
       {landingLoading && (
@@ -4621,7 +4638,6 @@ export default function App() {
           <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
             <i className="fas fa-share-alt"></i> Social IA
           </button>
-          {/* Nuevo botón Ads IA */}
           <button className={tab === 'ads' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('ads')} type="button">
             <i className="fas fa-chart-line"></i> Ads IA
           </button>
@@ -5212,7 +5228,16 @@ export default function App() {
         )}
 
         {/* ======================== ADS IA ======================== */}
-        {tab === 'ads' && <AdsPanel />}
+        {tab === 'ads' && (
+          <AdsPanel
+            adsForm={adsForm}
+            setAdsForm={setAdsForm}
+            adsResult={adsResult}
+            adsLoading={adsLoading}
+            generateAdsCampaign={generateAdsCampaign}
+            showNotice={showNotice}
+          />
+        )}
 
         {/* ======================== CLIENTS (admin only) ======================== */}
         {tab === 'clients' && me.role === 'admin' && (
