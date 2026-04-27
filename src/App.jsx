@@ -432,7 +432,7 @@ function LoginScreen({ onAuth }) {
   )
 }
 
-// ========== COMPONENTE ADS IA (MEMOIZADO) ==========
+// ========== COMPONENTE ADS IA MEJORADO (CON GRÁFICOS PRO) ==========
 const AdsPanel = memo(function AdsPanel({ 
   adsForm, setAdsForm, 
   adsResult, adsLoading, 
@@ -449,6 +449,30 @@ const AdsPanel = memo(function AdsPanel({
   const scaleRules = adsResult?.scale_rules || []
   const killRules = adsResult?.kill_rules || []
 
+  // Preparar datos para gráficos
+  const chartData = useMemo(() => {
+    if (!roiScenarios.length) return null
+    const scenarios = roiScenarios
+    const maxROI = Math.max(...scenarios.map(s => s.estimated_roi || 0))
+    const maxCPL = Math.max(...scenarios.map(s => s.estimated_cpl || 0))
+    const maxLeads = Math.max(...scenarios.map(s => s.estimated_leads || 0))
+    return { scenarios, maxROI, maxCPL, maxLeads }
+  }, [roiScenarios])
+
+  // Componente Donut Chart (CSS puro)
+  const DonutChart = ({ percentage, label, color }) => {
+    const degree = (percentage / 100) * 360
+    return (
+      <div className="donut-container">
+        <div className="donut-ring">
+          <div className="donut-segment" style={{ transform: `rotate(${degree}deg)`, borderColor: color }}></div>
+          <div className="donut-inner">{percentage}%</div>
+        </div>
+        <div className="donut-label">{label}</div>
+      </div>
+    )
+  }
+
   return (
     <div className="ads-pro-page">
       <div className="ads-pro-hero">
@@ -459,7 +483,6 @@ const AdsPanel = memo(function AdsPanel({
             Diseña campañas, segmentación, creativos, funnel, WhatsApp y proyección de ROI con IA.
           </p>
         </div>
-
         <div className="ads-pro-status">
           <span className="status-dot"></span>
           Modo estrategia IA
@@ -486,7 +509,6 @@ const AdsPanel = memo(function AdsPanel({
                 onChange={(e) => setAdsForm({ ...adsForm, business_name: e.target.value })}
               />
             </label>
-
             <label>
               Producto o servicio
               <input
@@ -496,7 +518,6 @@ const AdsPanel = memo(function AdsPanel({
                 onChange={(e) => setAdsForm({ ...adsForm, product: e.target.value })}
               />
             </label>
-
             <label>
               Oferta principal
               <input
@@ -506,7 +527,6 @@ const AdsPanel = memo(function AdsPanel({
                 onChange={(e) => setAdsForm({ ...adsForm, offer: e.target.value })}
               />
             </label>
-
             <label>
               Público objetivo
               <input
@@ -516,7 +536,6 @@ const AdsPanel = memo(function AdsPanel({
                 onChange={(e) => setAdsForm({ ...adsForm, target: e.target.value })}
               />
             </label>
-
             <label>
               País / mercado
               <input
@@ -526,7 +545,6 @@ const AdsPanel = memo(function AdsPanel({
                 onChange={(e) => setAdsForm({ ...adsForm, country: e.target.value })}
               />
             </label>
-
             <label>
               Moneda
               <select
@@ -540,7 +558,6 @@ const AdsPanel = memo(function AdsPanel({
                 <option value="USDT">USDT</option>
               </select>
             </label>
-
             <label>
               Objetivo
               <select
@@ -553,7 +570,6 @@ const AdsPanel = memo(function AdsPanel({
                 <option value="traffic">Tráfico a landing</option>
               </select>
             </label>
-
             <label>
               Destino
               <select
@@ -565,7 +581,6 @@ const AdsPanel = memo(function AdsPanel({
                 <option value="form">Formulario</option>
               </select>
             </label>
-
             <label>
               Presupuesto diario
               <input
@@ -575,7 +590,6 @@ const AdsPanel = memo(function AdsPanel({
                 onChange={(e) => setAdsForm({ ...adsForm, budget_daily: Number(e.target.value) })}
               />
             </label>
-
             <label>
               Ticket promedio
               <input
@@ -630,6 +644,7 @@ const AdsPanel = memo(function AdsPanel({
             <div className="campaign-pill">{adsResult.objective}</div>
           </div>
 
+          {/* KPI Grid con scroll horizontal si es necesario */}
           <div className="ads-kpi-grid">
             <div className="ads-kpi">
               <span>Presupuesto mensual</span>
@@ -665,7 +680,70 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
-          {/* NUEVA SECCIÓN DE DIAGNÓSTICO */}
+          {/* SECCIÓN EJECUTIVA CON GRÁFICOS */}
+          {chartData && (
+            <div className="executive-charts">
+              <h3>📊 Resumen ejecutivo de escenarios</h3>
+              <div className="charts-grid">
+                {/* Gráfico de barras vertical: ROI por escenario */}
+                <div className="chart-card">
+                  <div className="chart-title">ROI por escenario (%)</div>
+                  <div className="bar-chart-vertical">
+                    {chartData.scenarios.map((s, idx) => (
+                      <div key={idx} className="bar-item-vertical">
+                        <div 
+                          className="bar-fill-vertical" 
+                          style={{ 
+                            height: `${Math.min(100, (s.estimated_roi / chartData.maxROI) * 100)}%`,
+                            backgroundColor: s.estimated_roi >= 0 ? '#10b981' : '#ef4444'
+                          }}
+                        ></div>
+                        <span className="bar-label-vertical">{s.name.slice(0, 8)}</span>
+                        <span className="bar-value-vertical">{s.estimated_roi}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Gráfico de barras horizontal: CPL */}
+                <div className="chart-card">
+                  <div className="chart-title">CPL estimado ({currency})</div>
+                  <div className="bar-chart-horizontal">
+                    {chartData.scenarios.map((s, idx) => (
+                      <div key={idx} className="bar-item-horizontal">
+                        <span className="bar-label-horizontal">{s.name}</span>
+                        <div className="bar-track">
+                          <div 
+                            className="bar-fill-horizontal" 
+                            style={{ width: `${(s.estimated_cpl / chartData.maxCPL) * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className="bar-value-horizontal">{currency} {s.estimated_cpl}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Donut chart de leads (primer escenario) */}
+                <div className="chart-card">
+                  <div className="chart-title">Distribución de leads</div>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                    <DonutChart 
+                      percentage={Math.round((chartData.scenarios[0]?.estimated_leads / (chartData.maxLeads || 1)) * 100)} 
+                      label={chartData.scenarios[0]?.name || 'Escenario'} 
+                      color="#3b82f6"
+                    />
+                    <div className="donut-note">
+                      <span>Leads totales: <strong>{chartData.scenarios[0]?.estimated_leads}</strong></span>
+                      <span>Máximo potencial: <strong>{chartData.maxLeads}</strong></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Diagnóstico y alertas */}
           <div className="ads-diagnosis-grid">
             <div className="ads-diagnosis-card real">
               <span>Score real</span>
@@ -690,13 +768,13 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
+          {/* Escenarios ROI */}
           {roiScenarios.length > 0 && (
             <div className="ads-section">
               <div className="section-head compact">
                 <h3>Motor matemático ROI</h3>
                 <span>{roiScenarios.length} escenarios</span>
               </div>
-
               <div className="roi-scenarios-grid">
                 {roiScenarios.map((scenario, i) => (
                   <div
@@ -710,59 +788,26 @@ const AdsPanel = memo(function AdsPanel({
                       </div>
                       <strong>{scenario.estimated_roi}%</strong>
                     </div>
-
                     <div className="scenario-metrics">
-                      <div>
-                        <span>CPM</span>
-                        <b>{scenario.currency} {scenario.estimated_cpm}</b>
-                      </div>
-                      <div>
-                        <span>CTR</span>
-                        <b>{scenario.estimated_ctr}%</b>
-                      </div>
-                      <div>
-                        <span>CPC</span>
-                        <b>{scenario.currency} {scenario.estimated_cpc}</b>
-                      </div>
-                      <div>
-                        <span>CPL</span>
-                        <b>{scenario.currency} {scenario.estimated_cpl}</b>
-                      </div>
-                      <div>
-                        <span>Leads</span>
-                        <b>{scenario.estimated_leads}</b>
-                      </div>
-                      <div>
-                        <span>Ventas</span>
-                        <b>{scenario.estimated_sales}</b>
-                      </div>
-                      <div>
-                        <span>Ingresos</span>
-                        <b>{scenario.currency} {scenario.estimated_revenue}</b>
-                      </div>
-                      <div>
-                        <span>Profit</span>
-                        <b>{scenario.currency} {scenario.estimated_profit}</b>
-                      </div>
+                      <div><span>CPM</span><b>{scenario.currency} {scenario.estimated_cpm}</b></div>
+                      <div><span>CTR</span><b>{scenario.estimated_ctr}%</b></div>
+                      <div><span>CPC</span><b>{scenario.currency} {scenario.estimated_cpc}</b></div>
+                      <div><span>CPL</span><b>{scenario.currency} {scenario.estimated_cpl}</b></div>
+                      <div><span>Leads</span><b>{scenario.estimated_leads}</b></div>
+                      <div><span>Ventas</span><b>{scenario.estimated_sales}</b></div>
+                      <div><span>Ingresos</span><b>{scenario.currency} {scenario.estimated_revenue}</b></div>
+                      <div><span>Profit</span><b>{scenario.currency} {scenario.estimated_profit}</b></div>
                     </div>
-
-                    <div className="scenario-note">
-                      <strong>Decisión:</strong> {scenario.decision}
-                    </div>
-
-                    <div className="scenario-note">
-                      <strong>Escalado:</strong> {scenario.scale_signal}
-                    </div>
-
-                    <div className="scenario-note">
-                      <strong>Optimizar si:</strong> {scenario.optimization_trigger}
-                    </div>
+                    <div className="scenario-note"><strong>Decisión:</strong> {scenario.decision}</div>
+                    <div className="scenario-note"><strong>Escalado:</strong> {scenario.scale_signal}</div>
+                    <div className="scenario-note"><strong>Optimizar si:</strong> {scenario.optimization_trigger}</div>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
+          {/* Resto del contenido (Avatar, Copy, etc.) */}
           <div className="ads-pro-grid">
             <div className="ads-pro-card">
               <h3>🎯 Avatar y análisis</h3>
@@ -770,7 +815,6 @@ const AdsPanel = memo(function AdsPanel({
               <p><strong>Mercado:</strong> {adsResult.market_analysis}</p>
               <p><strong>Propuesta de valor:</strong> {adsResult.value_proposition}</p>
             </div>
-
             <div className="ads-pro-card">
               <h3>💬 Copy principal</h3>
               <p>{adsResult.primary_text}</p>
@@ -780,7 +824,6 @@ const AdsPanel = memo(function AdsPanel({
                 <button type="button">{adsResult.cta || 'Enviar mensaje'}</button>
               </div>
             </div>
-
             <div className="ads-pro-card">
               <h3>🧠 Dolores y ángulos</h3>
               <div className="tag-list">
@@ -791,7 +834,6 @@ const AdsPanel = memo(function AdsPanel({
                 {(adsResult.angles || []).map((x, i) => <span key={`a-${i}`}>{x}</span>)}
               </div>
             </div>
-
             <div className="ads-pro-card">
               <h3>🖼️ Prompt creativo IA</h3>
               <p>{adsResult.creative_prompt}</p>
@@ -827,9 +869,7 @@ const AdsPanel = memo(function AdsPanel({
             <div className="ads-card-row">
               {variants.map((ad, i) => (
                 <div className="creative-card" key={i}>
-                  <div className="creative-thumb">
-                    <i className="fas fa-image"></i>
-                  </div>
+                  <div className="creative-thumb"><i className="fas fa-image"></i></div>
                   <h4>{ad.name}</h4>
                   <div className="creative-angle">{ad.angle}</div>
                   <p>{ad.primary_text}</p>
@@ -846,52 +886,32 @@ const AdsPanel = memo(function AdsPanel({
               <h3>🧲 Funnel recomendado</h3>
               <p><strong>Destino:</strong> {funnel.destination}</p>
               <p>{funnel.recommended_bot_flow}</p>
-              <ul>
-                {(funnel.landing_structure || []).map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{(funnel.landing_structure || []).map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
-
             <div className="ads-pro-card">
               <h3>📲 Secuencia WhatsApp</h3>
               <p>{adsResult.whatsapp_script}</p>
-              <ul>
-                {(funnel.follow_up_sequence || []).map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{(funnel.follow_up_sequence || []).map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
-
             <div className="ads-pro-card">
               <h3>📈 Optimización IA</h3>
-              <ul>
-                {(adsResult.optimization_plan || adsResult.recommendations || []).map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{(adsResult.optimization_plan || adsResult.recommendations || []).map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
-
             <div className="ads-pro-card">
               <h3>✅ Checklist de lanzamiento</h3>
-              <ul>
-                {(adsResult.launch_checklist || adsResult.next_actions || []).map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{(adsResult.launch_checklist || adsResult.next_actions || []).map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
-
             <div className="ads-pro-card">
               <h3>🤖 Reglas automáticas</h3>
-              <ul>
-                {automationRules.map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{automationRules.map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
-
             <div className="ads-pro-card">
               <h3>🚀 Reglas de escalado</h3>
-              <ul>
-                {scaleRules.map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{scaleRules.map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
-
             <div className="ads-pro-card">
               <h3>🛑 Reglas de pausa</h3>
-              <ul>
-                {killRules.map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
+              <ul>{killRules.map((x, i) => <li key={i}>{x}</li>)}</ul>
             </div>
           </div>
         </section>
@@ -2732,6 +2752,8 @@ export default function App() {
           grid-template-columns: repeat(8, minmax(130px, 1fr));
           gap: .85rem;
           margin-bottom: 1.5rem;
+          overflow-x: auto;
+          padding-bottom: 0.5rem;
         }
 
         .ads-kpi {
@@ -2739,6 +2761,7 @@ export default function App() {
           border: 1px solid #e2e8f0;
           border-radius: 1.2rem;
           padding: 1rem;
+          min-width: 130px;
         }
 
         .ads-kpi span {
@@ -2763,6 +2786,167 @@ export default function App() {
         .ads-kpi.negative {
           background: #fef2f2;
           border-color: #fecaca;
+        }
+
+        /* Nuevos estilos para gráficos ejecutivos */
+        .executive-charts {
+          background: white;
+          border-radius: 1.5rem;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+          border: 1px solid #e2e8f0;
+        }
+
+        .executive-charts h3 {
+          margin-bottom: 1rem;
+          padding-left: 0.5rem;
+        }
+
+        .charts-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .chart-card {
+          background: #f8fafc;
+          border-radius: 1.2rem;
+          padding: 1rem;
+          border: 1px solid #e2e8f0;
+        }
+
+        .chart-card .chart-title {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+
+        /* Gráfico vertical (barras hacia arriba) */
+        .bar-chart-vertical {
+          display: flex;
+          justify-content: space-around;
+          align-items: flex-end;
+          gap: 0.5rem;
+          height: 180px;
+        }
+
+        .bar-item-vertical {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          flex: 1;
+          gap: 0.35rem;
+        }
+
+        .bar-fill-vertical {
+          width: 100%;
+          background-color: #3b82f6;
+          border-radius: 8px 8px 0 0;
+          transition: height 0.5s;
+          min-height: 4px;
+        }
+
+        .bar-label-vertical {
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: #334155;
+        }
+
+        .bar-value-vertical {
+          font-size: 0.7rem;
+          color: #475569;
+        }
+
+        /* Gráfico horizontal */
+        .bar-chart-horizontal {
+          display: flex;
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+
+        .bar-item-horizontal {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .bar-label-horizontal {
+          width: 70px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #1e293b;
+        }
+
+        .bar-track {
+          flex: 1;
+          background: #e2e8f0;
+          border-radius: 12px;
+          height: 20px;
+          overflow: hidden;
+        }
+
+        .bar-fill-horizontal {
+          height: 100%;
+          background: linear-gradient(90deg, #3b82f6, #06b6d4);
+          border-radius: 12px;
+          transition: width 0.5s;
+        }
+
+        .bar-value-horizontal {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #0f172a;
+          min-width: 60px;
+          text-align: right;
+        }
+
+        /* Gráfico donut */
+        .donut-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .donut-ring {
+          position: relative;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background: #e2e8f0;
+          overflow: hidden;
+        }
+        .donut-segment {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          border: 8px solid transparent;
+          border-top-color: currentColor;
+          transform: rotate(0deg);
+        }
+        .donut-inner {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          font-size: 1.2rem;
+          color: #0f172a;
+        }
+        .donut-label {
+          font-size: 0.7rem;
+          color: #475569;
+        }
+        .donut-note {
+          font-size: 0.75rem;
+          color: #334155;
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
         }
 
         .ads-diagnosis-grid {
@@ -3071,7 +3255,8 @@ export default function App() {
 
           .ads-pro-form,
           .ads-pro-grid,
-          .roi-scenarios-grid {
+          .roi-scenarios-grid,
+          .charts-grid {
             grid-template-columns: 1fr;
           }
 
