@@ -3449,34 +3449,79 @@ export default function App() {
     loadSocialLogs()
   }, [selectedClientId, forcePlanScreen])
 
-  useEffect(() => {
-    const t = setInterval(async () => {
-      if (!me || forcePlanScreen) return
+ useEffect(() => {
+  const t = setInterval(async () => {
+    if (!me || forcePlanScreen) return
 
-      await loadMetrics()
+    try {
+      // Ads IA queda totalmente aislado:
+      // no refresca métricas, bots, inbox ni QR mientras escribes campaña.
+      if (tab === 'ads') return
 
-      if (me.role === 'admin') {
-        await loadClients()
-        await loadUsers()
+      if (tab === 'dashboard') {
+        await loadMetrics()
+
+        if (me.role === 'admin') {
+          await loadClients()
+          await loadUsers()
+        }
+
+        return
       }
 
-      if (selectedClientId) await loadBots(selectedClientId)
-      await loadInboxLeads()
-      if (selectedBotId) await loadQr(selectedBotId)
-    }, 7000)
+      if (tab === 'inbox') {
+        await loadInboxLeads()
+        return
+      }
 
-    return () => clearInterval(t)
-  }, [me, selectedClientId, selectedBotId, forcePlanScreen])
+      if (tab === 'bots') {
+        if (selectedClientId) await loadBots(selectedClientId)
+        if (selectedBotId) await loadQr(selectedBotId)
+        return
+      }
 
-  useEffect(() => {
-    if (!selectedBotId) {
-      setQrDataUrlBot('')
-      setConfig(emptyConfig)
-      return
+      if (tab === 'templates') {
+        await loadTemplates()
+        return
+      }
+
+      if (tab === 'landing') {
+        await loadLandings()
+        return
+      }
+
+      if (tab === 'funnel') {
+        await loadFunnelMetrics()
+        return
+      }
+
+      if (tab === 'social') {
+        await loadSocialCredential()
+        await loadSocialPosts()
+        await loadSocialLogs()
+        return
+      }
+    } catch (err) {
+      console.warn('Auto refresh error:', err.message)
     }
-    loadQr(selectedBotId)
-    loadConfig(selectedBotId)
-  }, [selectedBotId])
+  }, 30000)
+
+  return () => clearInterval(t)
+}, [me, tab, selectedClientId, selectedBotId, forcePlanScreen])
+
+ useEffect(() => {
+  if (!selectedBotId) {
+    setQrDataUrlBot('')
+    setConfig(emptyConfig)
+    return
+  }
+
+  // QR y config del bot solo se cargan dentro de la pantalla Bots.
+  if (tab !== 'bots') return
+
+  loadQr(selectedBotId)
+  loadConfig(selectedBotId)
+}, [selectedBotId, tab])
 
   useEffect(() => {
     if (selectedLead?.bot_id && selectedLead?.id) {
