@@ -2060,7 +2060,7 @@ export default function App() {
 
         .ads-kpi-grid {
           display: grid;
-          grid-template-columns: repeat(6, minmax(140px, 1fr));
+          grid-template-columns: repeat(8, minmax(130px, 1fr));
           gap: .85rem;
           margin-bottom: 1.5rem;
         }
@@ -2094,6 +2094,63 @@ export default function App() {
         .ads-kpi.negative {
           background: #fef2f2;
           border-color: #fecaca;
+        }
+
+        .ads-diagnosis-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .ads-diagnosis-card {
+          border-radius: 1.4rem;
+          padding: 1.2rem;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+        }
+
+        .ads-diagnosis-card span {
+          display: block;
+          font-size: .72rem;
+          text-transform: uppercase;
+          font-weight: 800;
+          color: #64748b;
+          margin-bottom: .3rem;
+        }
+
+        .ads-diagnosis-card strong {
+          display: block;
+          font-size: 2rem;
+          color: #0f172a;
+          margin-bottom: .4rem;
+        }
+
+        .ads-diagnosis-card.real {
+          background: #fff7ed;
+          border-color: #fed7aa;
+        }
+
+        .ads-diagnosis-card.optimized {
+          background: #ecfdf5;
+          border-color: #bbf7d0;
+        }
+
+        .ads-issues-card {
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          border-radius: 1.4rem;
+          padding: 1.2rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .ads-issues-card h3 {
+          color: #991b1b;
+          margin-bottom: .75rem;
+        }
+
+        .ads-issues-card li {
+          color: #7f1d1d;
         }
 
         .ads-pro-grid {
@@ -2765,7 +2822,8 @@ export default function App() {
       setAdsResult(res.plan)
       showNotice('Campaña IA generada correctamente')
     } catch (err) {
-      showNotice(err.message || 'Error generando campaña')
+      const msg = err.message || 'Error generando campaña'
+      showNotice(msg.length > 180 ? msg.slice(0, 180) + '...' : msg)
     } finally {
       setAdsLoading(false)
     }
@@ -4147,7 +4205,40 @@ export default function App() {
                 <span>ROI estimado</span>
                 <strong>{roi.estimated_roi || adsResult.estimated_roi}%</strong>
               </div>
+              <div className="ads-kpi">
+                <span>Break-even CPL</span>
+                <strong>{currency} {(roi.break_even_cpl || 0).toFixed(2)}</strong>
+              </div>
+              <div className="ads-kpi">
+                <span>Tasa cierre</span>
+                <strong>{(roi.conversion_rate || 0)}%</strong>
+              </div>
             </div>
+
+            {/* NUEVA SECCIÓN DE DIAGNÓSTICO */}
+            <div className="ads-diagnosis-grid">
+              <div className="ads-diagnosis-card real">
+                <span>Score real</span>
+                <strong>{adsResult.campaign_score_real ?? 0}/100</strong>
+                <p>{adsResult.campaign_decision_real}</p>
+              </div>
+              <div className="ads-diagnosis-card optimized">
+                <span>Score optimizado</span>
+                <strong>{adsResult.campaign_score_optimized ?? 0}/100</strong>
+                <p>{adsResult.campaign_decision_optimized}</p>
+              </div>
+            </div>
+
+            {adsResult.campaign_issues?.length > 0 && (
+              <div className="ads-issues-card">
+                <h3>Alertas detectadas</h3>
+                <ul>
+                  {adsResult.campaign_issues.map((issue, i) => (
+                    <li key={i}>{issue}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {roiScenarios.length > 0 && (
               <div className="ads-section">
@@ -4902,41 +4993,41 @@ export default function App() {
                 <div className="section-title">Leads y conversaciones</div>
                 <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
               </div>
-                      <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Teléfono</th>
-              <th>Stage</th>
-              <th>Bot</th>
-              <th>Último mensaje</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLeads.map(lead => (
-              <tr key={lead.id}>
-                <td>{lead.display_name || '—'}</td>
-                <td>{lead.phone}</td>
-                <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
-                <td>{lead.bot_name}</td>
-                <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                <td>
-                  <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
-                    Ver chat
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {filteredLeads.length === 0 && (
-              <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
-                  No hay leads
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Stage</th>
+                    <th>Bot</th>
+                    <th>Último mensaje</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLeads.map(lead => (
+                    <tr key={lead.id}>
+                      <td>{lead.display_name || '—'}</td>
+                      <td>{lead.phone}</td>
+                      <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
+                      <td>{lead.bot_name}</td>
+                      <td>{lead.last_inbound_text?.slice(0, 40)}</td>
+                      <td>
+                        <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
+                          Ver chat
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredLeads.length === 0 && (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                        No hay leads
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </section>
         )}
@@ -5042,7 +5133,8 @@ export default function App() {
                         <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
                         <td>{post.publish_mode}</td>
                         <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
-                        <td>{(post.content || '').slice(0, 120)}</td></tr>
+                        <td>{(post.content || '').slice(0, 120)}</td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
