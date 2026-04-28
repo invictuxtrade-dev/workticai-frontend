@@ -432,7 +432,7 @@ function LoginScreen({ onAuth }) {
   )
 }
 
-// ========== COMPONENTE ADS IA MEJORADO (CON GRÁFICOS PRO) ==========
+// ========== COMPONENTE ADS IA MEJORADO (CON GRÁFICOS PRO Y SIN SCROLL HORIZONTAL) ==========
 const AdsPanel = memo(function AdsPanel({ 
   adsForm, setAdsForm, 
   adsResult, adsLoading, 
@@ -644,7 +644,7 @@ const AdsPanel = memo(function AdsPanel({
             <div className="campaign-pill">{adsResult.objective}</div>
           </div>
 
-          {/* KPI Grid con scroll horizontal si es necesario */}
+          {/* KPI Grid - totalmente responsive sin scroll horizontal */}
           <div className="ads-kpi-grid">
             <div className="ads-kpi">
               <span>Presupuesto mensual</span>
@@ -727,7 +727,7 @@ const AdsPanel = memo(function AdsPanel({
                 {/* Donut chart de leads (primer escenario) */}
                 <div className="chart-card">
                   <div className="chart-title">Distribución de leads</div>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  <div className="donut-chart-wrapper">
                     <DonutChart 
                       percentage={Math.round((chartData.scenarios[0]?.estimated_leads / (chartData.maxLeads || 1)) * 100)} 
                       label={chartData.scenarios[0]?.name || 'Escenario'} 
@@ -2535,11 +2535,12 @@ export default function App() {
           .step-progress { flex-direction: column; align-items: flex-start; }
         }
 
-        /* ========== ADS ENGINE PRO (nuevo diseño) ========== */
+        /* ========== ADS ENGINE PRO (nuevo diseño - SIN SCROLL HORIZONTAL) ========== */
         .ads-pro-page {
-          max-width: 1380px;
+          max-width: 100%;
           margin: 0 auto;
           padding: 1rem 0 3rem;
+          overflow-x: hidden;
         }
 
         .ads-pro-hero {
@@ -2747,13 +2748,12 @@ export default function App() {
           font-size: .8rem;
         }
 
+        /* KPI Grid - Responsive y sin scroll horizontal */
         .ads-kpi-grid {
           display: grid;
-          grid-template-columns: repeat(8, minmax(130px, 1fr));
-          gap: .85rem;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 1rem;
           margin-bottom: 1.5rem;
-          overflow-x: auto;
-          padding-bottom: 0.5rem;
         }
 
         .ads-kpi {
@@ -2761,7 +2761,6 @@ export default function App() {
           border: 1px solid #e2e8f0;
           border-radius: 1.2rem;
           padding: 1rem;
-          min-width: 130px;
         }
 
         .ads-kpi span {
@@ -2776,6 +2775,7 @@ export default function App() {
         .ads-kpi strong {
           color: #0f172a;
           font-size: 1.35rem;
+          word-break: break-word;
         }
 
         .ads-kpi.positive {
@@ -2903,6 +2903,14 @@ export default function App() {
           text-align: right;
         }
 
+        /* Donut chart wrapper */
+        .donut-chart-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
         /* Gráfico donut */
         .donut-container {
           display: flex;
@@ -2947,6 +2955,7 @@ export default function App() {
           display: flex;
           flex-direction: column;
           gap: 0.2rem;
+          text-align: center;
         }
 
         .ads-diagnosis-grid {
@@ -3240,10 +3249,6 @@ export default function App() {
           .ads-side-card {
             position: static;
           }
-
-          .ads-kpi-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
         }
 
         @media (max-width: 720px) {
@@ -3257,10 +3262,6 @@ export default function App() {
           .ads-pro-grid,
           .roi-scenarios-grid,
           .charts-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .ads-kpi-grid {
             grid-template-columns: 1fr;
           }
 
