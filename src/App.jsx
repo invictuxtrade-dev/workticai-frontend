@@ -440,6 +440,14 @@ const AdsPanel = memo(function AdsPanel({
   showNotice 
 }) {
   const roi = adsResult?.roi || {}
+  // +++ INICIO CAMBIOS REALITY ENGINE (punto 1) +++
+  const confidenceScore = roi.confidence_score ?? 0
+  const confidenceLevel = roi.confidence_level || 'Sin datos'
+  const riskLevel = roi.risk_level || 'Sin datos'
+  const realityWarnings = roi.reality_warnings || []
+  const rawROI = roi.raw_roi ?? roi.estimated_roi
+  const adjustedROI = roi.adjusted_roi ?? roi.estimated_roi
+  // +++ FIN CAMBIOS REALITY ENGINE +++
   const currency = adsResult?.currency || adsForm.currency || 'USD'
   const adsets = adsResult?.adsets || []
   const variants = adsResult?.creative_variants || []
@@ -666,10 +674,28 @@ const AdsPanel = memo(function AdsPanel({
               <span>Ingresos estimados</span>
               <strong>{currency} {roi.estimated_revenue || adsResult.estimated_revenue}</strong>
             </div>
-            <div className={`ads-kpi ${Number(roi.estimated_roi || adsResult.estimated_roi) >= 0 ? 'positive' : 'negative'}`}>
-              <span>ROI estimado</span>
-              <strong>{roi.estimated_roi || adsResult.estimated_roi}%</strong>
+
+            {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 2) - reemplazo del ROI y nuevos KPIs +++ */}
+            <div className={`ads-kpi ${Number(adjustedROI || 0) >= 0 ? 'positive' : 'negative'}`}>
+              <span>ROI ajustado</span>
+              <strong>{adjustedROI}%</strong>
+              {rawROI !== adjustedROI && (
+                <small>ROI bruto: {rawROI}%</small>
+              )}
             </div>
+
+            <div className={`ads-kpi confidence-${String(confidenceLevel).toLowerCase()}`}>
+              <span>Confianza</span>
+              <strong>{confidenceScore}%</strong>
+              <small>{confidenceLevel}</small>
+            </div>
+
+            <div className={`ads-kpi risk-${String(riskLevel).toLowerCase()}`}>
+              <span>Riesgo</span>
+              <strong>{riskLevel}</strong>
+            </div>
+            {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
+
             <div className="ads-kpi">
               <span>Break-even CPL</span>
               <strong>{currency} {(roi.break_even_cpl || 0).toFixed(2)}</strong>
@@ -757,6 +783,20 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
+          {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 3) - Alertas de realidad +++ */}
+          {realityWarnings.length > 0 && (
+            <div className="reality-warning-card">
+              <h3>Validación de realidad</h3>
+              <p>El motor ajustó la proyección para evitar resultados demasiado optimistas.</p>
+              <ul>
+                {realityWarnings.map((warning, i) => (
+                  <li key={i}>{warning}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
+
           {adsResult.campaign_issues?.length > 0 && (
             <div className="ads-issues-card">
               <h3>Alertas detectadas</h3>
@@ -786,7 +826,8 @@ const AdsPanel = memo(function AdsPanel({
                         <span className="scenario-label">Escenario</span>
                         <h4>{scenario.name}</h4>
                       </div>
-                      <strong>{scenario.estimated_roi}%</strong>
+                      {/* +++ CAMBIO REALITY ENGINE (punto 4) - mostrar adjusted_roi o raw +++ */}
+                      <strong>{scenario.adjusted_roi ?? scenario.estimated_roi}%</strong>
                     </div>
                     <div className="scenario-metrics">
                       <div><span>CPM</span><b>{scenario.currency} {scenario.estimated_cpm}</b></div>
@@ -798,6 +839,21 @@ const AdsPanel = memo(function AdsPanel({
                       <div><span>Ingresos</span><b>{scenario.currency} {scenario.estimated_revenue}</b></div>
                       <div><span>Profit</span><b>{scenario.currency} {scenario.estimated_profit}</b></div>
                     </div>
+                    {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 4) - reality y warnings por escenario +++ */}
+                    <div className="scenario-reality">
+                      <span>ROI bruto: <b>{scenario.raw_roi ?? scenario.estimated_roi}%</b></span>
+                      <span>Confianza: <b>{scenario.confidence_score ?? 0}% · {scenario.confidence_level || 'Sin datos'}</b></span>
+                      <span>Riesgo: <b>{scenario.risk_level || 'Sin datos'}</b></span>
+                    </div>
+
+                    {scenario.reality_warnings?.length > 0 && (
+                      <div className="scenario-warnings">
+                        {scenario.reality_warnings.map((w, idx) => (
+                          <div key={idx}>⚠️ {w}</div>
+                        ))}
+                      </div>
+                    )}
+                    {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
                     <div className="scenario-note"><strong>Decisión:</strong> {scenario.decision}</div>
                     <div className="scenario-note"><strong>Escalado:</strong> {scenario.scale_signal}</div>
                     <div className="scenario-note"><strong>Optimizar si:</strong> {scenario.optimization_trigger}</div>
@@ -2792,6 +2848,82 @@ export default function App() {
           background: #fef2f2;
           border-color: #fecaca;
         }
+
+        /* +++ NUEVOS ESTILOS AGREGADOS (punto 5) +++ */
+        .ads-kpi small {
+          display: block;
+          margin-top: .35rem;
+          color: #64748b;
+          font-size: .72rem;
+          font-weight: 700;
+        }
+
+        .ads-kpi.confidence-alta,
+        .ads-kpi.risk-bajo {
+          background: #ecfdf5;
+          border-color: #bbf7d0;
+        }
+
+        .ads-kpi.confidence-media,
+        .ads-kpi.risk-medio {
+          background: #fffbeb;
+          border-color: #fde68a;
+        }
+
+        .ads-kpi.confidence-baja,
+        .ads-kpi.risk-alto {
+          background: #fef2f2;
+          border-color: #fecaca;
+        }
+
+        .reality-warning-card {
+          background: #fffbeb;
+          border: 1px solid #fde68a;
+          border-radius: 1.4rem;
+          padding: 1.2rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .reality-warning-card h3 {
+          color: #92400e;
+          margin-bottom: .35rem;
+        }
+
+        .reality-warning-card p,
+        .reality-warning-card li {
+          color: #78350f;
+          font-size: .9rem;
+        }
+
+        .reality-warning-card ul {
+          margin-top: .75rem;
+          padding-left: 1.2rem;
+        }
+
+        .scenario-reality {
+          display: grid;
+          gap: .35rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: .9rem;
+          padding: .8rem;
+          margin-top: .85rem;
+          font-size: .82rem;
+          color: #475569;
+        }
+
+        .scenario-warnings {
+          display: grid;
+          gap: .35rem;
+          background: #fff7ed;
+          border: 1px solid #fed7aa;
+          color: #9a3412;
+          border-radius: .9rem;
+          padding: .8rem;
+          margin-top: .75rem;
+          font-size: .82rem;
+        }
+        /* +++ FIN NUEVOS ESTILOS +++ */
 
         /* Nuevos estilos para gráficos ejecutivos */
         .executive-charts {
