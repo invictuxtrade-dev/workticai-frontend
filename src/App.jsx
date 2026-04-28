@@ -448,7 +448,7 @@ const AdsPanel = memo(function AdsPanel({
   const rawROI = roi.raw_roi ?? roi.estimated_roi
   const adjustedROI = roi.adjusted_roi ?? roi.estimated_roi
   // +++ FIN CAMBIOS REALITY ENGINE +++
-  const currency = adsResult?.currency || adsForm.currency || 'USD'
+  const currency = roi.currency || adsResult?.currency || 'USD'
   const adsets = adsResult?.adsets || []
   const variants = adsResult?.creative_variants || []
   const funnel = adsResult?.funnel || {}
