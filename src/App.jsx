@@ -432,7 +432,7 @@ function LoginScreen({ onAuth }) {
   )
 }
 
-// ========== COMPONENTE ADS IA MEJORADO (CON GRÁFICOS PRO) ==========
+// ========== COMPONENTE ADS IA MEJORADO (SIN SCROLL HORIZONTAL) ==========
 const AdsPanel = memo(function AdsPanel({ 
   adsForm, setAdsForm, 
   adsResult, adsLoading, 
@@ -644,7 +644,7 @@ const AdsPanel = memo(function AdsPanel({
             <div className="campaign-pill">{adsResult.objective}</div>
           </div>
 
-          {/* KPI Grid con scroll horizontal si es necesario */}
+          {/* KPI Grid - Totalmente responsive sin scroll horizontal */}
           <div className="ads-kpi-grid">
             <div className="ads-kpi">
               <span>Presupuesto mensual</span>
@@ -680,7 +680,7 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
-          {/* SECCIÓN EJECUTIVA CON GRÁFICOS */}
+          {/* SECCIÓN EJECUTIVA CON GRÁFICOS - Responsive */}
           {chartData && (
             <div className="executive-charts">
               <h3>📊 Resumen ejecutivo de escenarios</h3>
@@ -2535,11 +2535,13 @@ export default function App() {
           .step-progress { flex-direction: column; align-items: flex-start; }
         }
 
-        /* ========== ADS ENGINE PRO (nuevo diseño) ========== */
+        /* ========== ADS ENGINE PRO - NUEVO DISEÑO SIN SCROLL HORIZONTAL ========== */
         .ads-pro-page {
           max-width: 1380px;
           margin: 0 auto;
           padding: 1rem 0 3rem;
+          width: 100%;
+          overflow-x: hidden;
         }
 
         .ads-pro-hero {
@@ -2722,6 +2724,7 @@ export default function App() {
         .ads-output {
           margin-top: 1.5rem;
           padding: 1.5rem;
+          overflow-x: hidden;
         }
 
         .ads-output-head {
@@ -2730,12 +2733,14 @@ export default function App() {
           gap: 1rem;
           align-items: flex-start;
           margin-bottom: 1.5rem;
+          flex-wrap: wrap;
         }
 
         .ads-output-head h2 {
           font-size: 2rem;
           color: #0f172a;
           margin: .2rem 0;
+          word-break: break-word;
         }
 
         .campaign-pill {
@@ -2745,15 +2750,15 @@ export default function App() {
           border-radius: 999px;
           font-weight: 800;
           font-size: .8rem;
+          white-space: nowrap;
         }
 
+        /* KPI Grid - Responsive sin scroll */
         .ads-kpi-grid {
           display: grid;
-          grid-template-columns: repeat(8, minmax(130px, 1fr));
-          gap: .85rem;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 0.85rem;
           margin-bottom: 1.5rem;
-          overflow-x: auto;
-          padding-bottom: 0.5rem;
         }
 
         .ads-kpi {
@@ -2761,7 +2766,6 @@ export default function App() {
           border: 1px solid #e2e8f0;
           border-radius: 1.2rem;
           padding: 1rem;
-          min-width: 130px;
         }
 
         .ads-kpi span {
@@ -2776,6 +2780,7 @@ export default function App() {
         .ads-kpi strong {
           color: #0f172a;
           font-size: 1.35rem;
+          word-break: break-word;
         }
 
         .ads-kpi.positive {
@@ -2795,6 +2800,7 @@ export default function App() {
           padding: 1rem;
           margin-bottom: 1.5rem;
           border: 1px solid #e2e8f0;
+          overflow-x: hidden;
         }
 
         .executive-charts h3 {
@@ -2813,6 +2819,7 @@ export default function App() {
           border-radius: 1.2rem;
           padding: 1rem;
           border: 1px solid #e2e8f0;
+          overflow-x: auto;
         }
 
         .chart-card .chart-title {
@@ -2830,6 +2837,7 @@ export default function App() {
           align-items: flex-end;
           gap: 0.5rem;
           height: 180px;
+          min-width: 200px;
         }
 
         .bar-item-vertical {
@@ -2886,6 +2894,7 @@ export default function App() {
           border-radius: 12px;
           height: 20px;
           overflow: hidden;
+          min-width: 100px;
         }
 
         .bar-fill-horizontal {
@@ -3015,6 +3024,7 @@ export default function App() {
 
         .ads-pro-card {
           padding: 1.25rem;
+          overflow-x: auto;
         }
 
         .ads-pro-card h3 {
@@ -3175,6 +3185,7 @@ export default function App() {
           align-items: flex-start;
           gap: 1rem;
           margin-bottom: 1rem;
+          flex-wrap: wrap;
         }
 
         .scenario-label {
@@ -3242,7 +3253,7 @@ export default function App() {
           }
 
           .ads-kpi-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
           }
         }
 
@@ -3266,6 +3277,14 @@ export default function App() {
 
           .scenario-metrics {
             grid-template-columns: 1fr;
+          }
+
+          .bar-chart-vertical {
+            min-width: 260px;
+          }
+
+          .bar-track {
+            min-width: 80px;
           }
         }
       `
