@@ -96,7 +96,6 @@ const countries = [
   { code: 'PR', dialCode: '1', flag: '🇵🇷', name: 'Puerto Rico' },
 ]
 
-// ========== LOGINSCREEN REDISEÑADO CON BOTONES SUTILES ==========
 function LoginScreen({ onAuth }) {
   const [mode, setMode] = useState('login')
   const [form, setForm] = useState({
@@ -441,12 +440,14 @@ const AdsPanel = memo(function AdsPanel({
   showNotice 
 }) {
   const roi = adsResult?.roi || {}
+  // +++ INICIO CAMBIOS REALITY ENGINE (punto 1) +++
   const confidenceScore = roi.confidence_score ?? 0
   const confidenceLevel = roi.confidence_level || 'Sin datos'
   const riskLevel = roi.risk_level || 'Sin datos'
   const realityWarnings = roi.reality_warnings || []
   const rawROI = roi.raw_roi ?? roi.estimated_roi
   const adjustedROI = roi.adjusted_roi ?? roi.estimated_roi
+  // +++ FIN CAMBIOS REALITY ENGINE +++
   const currency = roi.currency || adsResult?.currency || 'USD'
   const adsets = adsResult?.adsets || []
   const variants = adsResult?.creative_variants || []
@@ -456,6 +457,7 @@ const AdsPanel = memo(function AdsPanel({
   const scaleRules = adsResult?.scale_rules || []
   const killRules = adsResult?.kill_rules || []
 
+  // Preparar datos para gráficos
   const chartData = useMemo(() => {
     if (!roiScenarios.length) return null
     const scenarios = roiScenarios
@@ -465,6 +467,7 @@ const AdsPanel = memo(function AdsPanel({
     return { scenarios, maxROI, maxCPL, maxLeads }
   }, [roiScenarios])
 
+  // Componente Donut Chart (CSS puro)
   const DonutChart = ({ percentage, label, color }) => {
     const degree = (percentage / 100) * 360
     return (
@@ -649,6 +652,7 @@ const AdsPanel = memo(function AdsPanel({
             <div className="campaign-pill">{adsResult.objective}</div>
           </div>
 
+          {/* KPI Grid - Totalmente responsive sin scroll horizontal */}
           <div className="ads-kpi-grid">
             <div className="ads-kpi">
               <span>Presupuesto mensual</span>
@@ -671,6 +675,7 @@ const AdsPanel = memo(function AdsPanel({
               <strong>{currency} {roi.estimated_revenue || adsResult.estimated_revenue}</strong>
             </div>
 
+            {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 2) - reemplazo del ROI y nuevos KPIs +++ */}
             <div className={`ads-kpi ${Number(adjustedROI || 0) >= 0 ? 'positive' : 'negative'}`}>
               <span>ROI ajustado</span>
               <strong>{adjustedROI}%</strong>
@@ -689,6 +694,7 @@ const AdsPanel = memo(function AdsPanel({
               <span>Riesgo</span>
               <strong>{riskLevel}</strong>
             </div>
+            {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
 
             <div className="ads-kpi">
               <span>Break-even CPL</span>
@@ -700,10 +706,12 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
+          {/* SECCIÓN EJECUTIVA CON GRÁFICOS - Responsive */}
           {chartData && (
             <div className="executive-charts">
               <h3>📊 Resumen ejecutivo de escenarios</h3>
               <div className="charts-grid">
+                {/* Gráfico de barras vertical: ROI por escenario */}
                 <div className="chart-card">
                   <div className="chart-title">ROI por escenario (%)</div>
                   <div className="bar-chart-vertical">
@@ -723,6 +731,7 @@ const AdsPanel = memo(function AdsPanel({
                   </div>
                 </div>
 
+                {/* Gráfico de barras horizontal: CPL */}
                 <div className="chart-card">
                   <div className="chart-title">CPL estimado ({currency})</div>
                   <div className="bar-chart-horizontal">
@@ -741,6 +750,7 @@ const AdsPanel = memo(function AdsPanel({
                   </div>
                 </div>
 
+                {/* Donut chart de leads (primer escenario) */}
                 <div className="chart-card">
                   <div className="chart-title">Distribución de leads</div>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
@@ -759,6 +769,7 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
+          {/* Diagnóstico y alertas */}
           <div className="ads-diagnosis-grid">
             <div className="ads-diagnosis-card real">
               <span>Score real</span>
@@ -772,6 +783,7 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
+          {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 3) - Alertas de realidad +++ */}
           {realityWarnings.length > 0 && (
             <div className="reality-warning-card">
               <h3>Validación de realidad</h3>
@@ -783,6 +795,7 @@ const AdsPanel = memo(function AdsPanel({
               </ul>
             </div>
           )}
+          {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
 
           {adsResult.campaign_issues?.length > 0 && (
             <div className="ads-issues-card">
@@ -795,6 +808,7 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
+          {/* Escenarios ROI */}
           {roiScenarios.length > 0 && (
             <div className="ads-section">
               <div className="section-head compact">
@@ -812,6 +826,7 @@ const AdsPanel = memo(function AdsPanel({
                         <span className="scenario-label">Escenario</span>
                         <h4>{scenario.name}</h4>
                       </div>
+                      {/* +++ CAMBIO REALITY ENGINE (punto 4) - mostrar adjusted_roi o raw +++ */}
                       <strong>{scenario.adjusted_roi ?? scenario.estimated_roi}%</strong>
                     </div>
                     <div className="scenario-metrics">
@@ -824,6 +839,7 @@ const AdsPanel = memo(function AdsPanel({
                       <div><span>Ingresos</span><b>{scenario.currency} {scenario.estimated_revenue}</b></div>
                       <div><span>Profit</span><b>{scenario.currency} {scenario.estimated_profit}</b></div>
                     </div>
+                    {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 4) - reality y warnings por escenario +++ */}
                     <div className="scenario-reality">
                       <span>ROI bruto: <b>{scenario.raw_roi ?? scenario.estimated_roi}%</b></span>
                       <span>Confianza: <b>{scenario.confidence_score ?? 0}% · {scenario.confidence_level || 'Sin datos'}</b></span>
@@ -837,6 +853,7 @@ const AdsPanel = memo(function AdsPanel({
                         ))}
                       </div>
                     )}
+                    {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
                     <div className="scenario-note"><strong>Decisión:</strong> {scenario.decision}</div>
                     <div className="scenario-note"><strong>Escalado:</strong> {scenario.scale_signal}</div>
                     <div className="scenario-note"><strong>Optimizar si:</strong> {scenario.optimization_trigger}</div>
@@ -846,6 +863,7 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
+          {/* Resto del contenido (Avatar, Copy, etc.) */}
           <div className="ads-pro-grid">
             <div className="ads-pro-card">
               <h3>🎯 Avatar y análisis</h3>
@@ -1811,13 +1829,13 @@ export default function App() {
           gap: 0.5rem;
           margin-bottom: 1.75rem;
           justify-content: center;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .tab-btn {
-          background: transparent !important;
+          background: transparent;
           border: none;
-          color: rgba(255, 255, 255, 0.6);
+          color: #64748b;
           padding: 0.5rem 1rem;
           font-weight: 500;
           font-size: 0.9rem;
@@ -1834,18 +1852,18 @@ export default function App() {
 
         .tab-btn i {
           font-size: 0.9rem;
-          opacity: 0.7;
         }
 
         .tab-btn:hover {
-          color: rgba(255, 255, 255, 0.9);
-          background: rgba(255, 255, 255, 0.05) !important;
+          color: #621bbb;
+          background: transparent;
           transform: translateY(-1px);
         }
 
         .tab-btn.active {
-          color: #ffffff;
-          background: transparent !important;
+          color: #621bbb;
+          background: transparent;
+          box-shadow: none;
         }
 
         .tab-btn.active::after {
@@ -1855,7 +1873,7 @@ export default function App() {
           left: 0;
           right: 0;
           height: 2px;
-          background: linear-gradient(90deg, #c655ff, #4b139e);
+          background: #621bbb;
           border-radius: 2px;
         }
 
@@ -2831,6 +2849,7 @@ export default function App() {
           border-color: #fecaca;
         }
 
+        /* +++ NUEVOS ESTILOS AGREGADOS (punto 5) +++ */
         .ads-kpi small {
           display: block;
           margin-top: .35rem;
@@ -2904,6 +2923,7 @@ export default function App() {
           margin-top: .75rem;
           font-size: .82rem;
         }
+        /* +++ FIN NUEVOS ESTILOS +++ */
 
         /* Nuevos estilos para gráficos ejecutivos */
         .executive-charts {
@@ -5592,7 +5612,7 @@ export default function App() {
           </section>
         )}
 
-               {/* ======================== BILLING (admin only) ======================== */}
+        {/* ======================== BILLING (admin only) ======================== */}
         {tab === 'billing' && me.role === 'admin' && (
           <div className="stack gap-lg">
             <div className="stripe-card stack">
