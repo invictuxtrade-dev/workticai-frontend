@@ -436,7 +436,9 @@ function LoginScreen({ onAuth }) {
 const AdsPanel = memo(function AdsPanel({ 
   adsForm, setAdsForm, 
   adsResult, adsLoading, 
-  generateAdsCampaign, 
+  generateAdsCampaign,
+  generateAdsEcosystem,
+  ecosystemLoading,
   showNotice 
 }) {
   const roi = adsResult?.roi || {}
@@ -619,6 +621,26 @@ const AdsPanel = memo(function AdsPanel({
               <>
                 <i className="fas fa-rocket"></i>
                 Generar campaña profesional
+              </>
+            )}
+          </button>
+
+          {/* +++ BOTÓN ECOSISTEMA COMPLETO (punto 5.4) +++ */}
+          <button
+            className="ads-generate-btn ecosystem"
+            onClick={generateAdsEcosystem}
+            disabled={ecosystemLoading || adsLoading}
+            style={{ marginTop: '0.8rem' }}
+          >
+            {ecosystemLoading ? (
+              <>
+                <i className="fas fa-circle-notch fa-spin"></i>
+                Creando ecosistema completo...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-diagram-project"></i>
+                Generar ecosistema completo
               </>
             )}
           </button>
@@ -2751,6 +2773,17 @@ export default function App() {
           box-shadow: 0 14px 26px rgba(59,130,246,.22);
         }
 
+        /* +++ ESTILO NUEVO PARA EL BOTÓN DE ECOSISTEMA (punto 6) +++ */
+        .ads-generate-btn.ecosystem {
+          background: linear-gradient(135deg, #10b981, #059669);
+          box-shadow: 0 14px 30px rgba(16, 185, 129, 0.25);
+        }
+
+        .ads-generate-btn.ecosystem:hover {
+          background: linear-gradient(135deg, #059669, #047857);
+        }
+        /* +++ FIN ESTILO ECOSISTEMA +++ */
+
         .ads-flow {
           display: flex;
           flex-direction: column;
@@ -3477,6 +3510,9 @@ export default function App() {
   })
   const [adsResult, setAdsResult] = useState(null)
   const [adsLoading, setAdsLoading] = useState(false)
+  
+  // +++ NUEVO ESTADO PARA ECOSISTEMA (punto 5.1) +++
+  const [ecosystemLoading, setEcosystemLoading] = useState(false)
 
   // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
   useEffect(() => {
@@ -3844,6 +3880,68 @@ export default function App() {
       setAdsLoading(false)
     }
   }, [adsForm, me, selectedClientId, showNotice])
+
+  // +++ NUEVA FUNCIÓN PARA ECOSISTEMA COMPLETO (punto 5.1) +++
+  async function generateAdsEcosystem() {
+    if (!adsForm.business_name.trim()) {
+      showNotice('Escribe el nombre del negocio')
+      return
+    }
+    if (!adsForm.product.trim()) {
+      showNotice('Escribe el producto o servicio')
+      return
+    }
+    if (!adsForm.offer.trim()) {
+      showNotice('Escribe la oferta principal')
+      return
+    }
+    if (!adsForm.target.trim()) {
+      showNotice('Describe el público objetivo')
+      return
+    }
+
+    setEcosystemLoading(true)
+    try {
+      const clientParam = me?.role === 'admin' && selectedClientId
+        ? `?client_id=${selectedClientId}`
+        : ''
+
+      if (me?.role === 'admin' && !selectedClientId) {
+        showNotice('Selecciona un cliente antes de generar el ecosistema')
+        return
+      }
+
+      const data = await api(`/api/ads/ecosystem${clientParam}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          business_name: adsForm.business_name,
+          product: adsForm.product,
+          offer: adsForm.offer,
+          target: adsForm.target,
+          country: adsForm.country,
+          budget_daily: Number(adsForm.budget_daily || 10),
+          ticket_average: Number(adsForm.ticket_average || 50)
+        })
+      })
+
+      setAdsResult(data.plan)
+
+      showNotice?.(
+        `Ecosistema creado: campaña, bot y landing. Bot ID: ${data.bot_id}`,
+        'success'
+      )
+
+      // Recargar bots y landings después de crear el ecosistema
+      if (selectedClientId) {
+        await loadBots(selectedClientId)
+        await loadLandings()
+      }
+    } catch (err) {
+      showNotice?.(err.message || 'No se pudo crear el ecosistema', 'error')
+    } finally {
+      setEcosystemLoading(false)
+    }
+  }
 
   // ======================== FUNCIONES EXISTENTES CON GUARDIA PLAN ========================
   async function loadLandings() {
@@ -5571,6 +5669,8 @@ export default function App() {
             adsResult={adsResult}
             adsLoading={adsLoading}
             generateAdsCampaign={generateAdsCampaign}
+            generateAdsEcosystem={generateAdsEcosystem}
+            ecosystemLoading={ecosystemLoading}
             showNotice={showNotice}
           />
         )}
