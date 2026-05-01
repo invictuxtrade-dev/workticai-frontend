@@ -1762,7 +1762,7 @@ export default function App() {
         }
 
         .auth-logo img {
-          max-width: 300px;
+          max-width: 220px;
           width: 100%;
           height: auto;
           object-fit: contain;
