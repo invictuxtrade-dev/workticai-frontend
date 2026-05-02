@@ -3263,7 +3263,7 @@ export default function App() {
         .ads-card-row {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-                    gap: 1rem;
+          gap: 1rem;
         }
 
         .adset-card,
@@ -3564,6 +3564,144 @@ export default function App() {
         .facebook-groups-table {
           width: 100%;
         }
+
+        /* Assistant AI Styles */
+        .assistant-page {
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        .assistant-hero {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .assistant-layout {
+          display: grid;
+          grid-template-columns: 340px 1fr;
+          gap: 1.5rem;
+        }
+
+        .assistant-suggestions {
+          height: fit-content;
+        }
+
+        .quick-list {
+          display: flex;
+          flex-direction: column;
+          gap: .65rem;
+        }
+
+        .quick-question {
+          background: #f8fafc;
+          color: #0f172a;
+          border: 1px solid #e2e8f0;
+          text-align: left;
+          justify-content: flex-start;
+          border-radius: .85rem;
+          padding: .75rem;
+        }
+
+        .quick-question:hover {
+          background: #eff6ff;
+          color: #1d4ed8;
+        }
+
+        .assistant-chat {
+          min-height: 650px;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .assistant-messages {
+          flex: 1;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          padding-right: .5rem;
+        }
+
+        .assistant-empty {
+          text-align: center;
+          margin: auto;
+          color: #64748b;
+          max-width: 520px;
+        }
+
+        .assistant-empty i {
+          font-size: 3rem;
+          color: #3b82f6;
+          margin-bottom: 1rem;
+        }
+
+        .assistant-bubble {
+          max-width: 82%;
+          padding: 1rem;
+          border-radius: 1rem;
+          border: 1px solid #e2e8f0;
+          white-space: pre-wrap;
+        }
+
+        .assistant-bubble.user {
+          align-self: flex-end;
+          background: #2563eb;
+          color: white;
+          border-color: #2563eb;
+        }
+
+        .assistant-bubble.bot {
+          align-self: flex-start;
+          background: #f8fafc;
+          color: #0f172a;
+        }
+
+        .assistant-role {
+          font-size: .7rem;
+          font-weight: 700;
+          opacity: .75;
+          margin-bottom: .35rem;
+          text-transform: uppercase;
+          letter-spacing: .04em;
+        }
+
+        .assistant-text {
+          line-height: 1.55;
+        }
+
+        .assistant-compose {
+          display: flex;
+          gap: .75rem;
+          margin-top: 1rem;
+          border-top: 1px solid #e2e8f0;
+          padding-top: 1rem;
+        }
+
+        .assistant-compose textarea {
+          flex: 1;
+          resize: none;
+        }
+
+        @media (max-width: 980px) {
+          .assistant-layout {
+            grid-template-columns: 1fr;
+          }
+
+          .assistant-hero {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .assistant-bubble {
+            max-width: 100%;
+          }
+
+          .assistant-compose {
+            flex-direction: column;
+          }
+        }
       `
       document.head.appendChild(style)
     }
@@ -3586,6 +3724,11 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
+
+  // Assistant AI states
+  const [assistantMessages, setAssistantMessages] = useState([])
+  const [assistantInput, setAssistantInput] = useState('')
+  const [assistantLoading, setAssistantLoading] = useState(false)
 
   // Planes y suscripciones
   const [plans, setPlans] = useState([])
@@ -3682,7 +3825,7 @@ export default function App() {
   const [facebookDiscovery, setFacebookDiscovery] = useState(null)
   const [facebookDiscoverLoading, setFacebookDiscoverLoading] = useState(false)
 
-  // NEW: Growth AI estados
+  // Growth AI estados
   const [growthSettings, setGrowthSettings] = useState(null)
   const [joinQueue, setJoinQueue] = useState([])
   const [facebookLogs, setFacebookLogs] = useState([])
@@ -3708,6 +3851,18 @@ export default function App() {
   const [newClient, setNewClient] = useState({ name: '', email: '', phone: '', plan: 'pro' })
   const [newUser, setNewUser] = useState({ client_id: '', name: '', email: '', password: '', role: 'client_admin' })
   const [newBotName, setNewBotName] = useState('')
+
+  // Assistant quick questions
+  const assistantQuickQuestions = [
+    '¿Cómo conecto WhatsApp con QR?',
+    '¿Cómo creo mi primera landing?',
+    '¿Cómo publico una landing en mi dominio?',
+    '¿Cómo configuro Facebook y Meta API?',
+    '¿Cómo creo una campaña automática?',
+    '¿Cómo uso el módulo de grupos?',
+    '¿Cómo consigo clientes con Worktic AI?',
+    '¿Cómo descargo el HTML y lo subo a cPanel?'
+  ]
 
   // Computed values
   const selectedClient = useMemo(() => clients.find((x) => x.id === selectedClientId), [clients, selectedClientId])
@@ -3805,6 +3960,63 @@ export default function App() {
     return (div.textContent || div.innerText || '')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
+  }
+
+  // ======================== ASSISTANT AI FUNCTIONS ========================
+  async function loadAssistantMessages() {
+    if (!selectedClientId) return
+
+    try {
+      const data = await api(`/api/assistant/messages?client_id=${selectedClientId}`)
+      setAssistantMessages(data || [])
+    } catch (err) {
+      showNotice(err.message || 'Error cargando asistente')
+    }
+  }
+
+  async function sendAssistantMessage(customText = '') {
+    const text = (customText || assistantInput).trim()
+    if (!text || !selectedClientId) return
+
+    setAssistantInput('')
+    setAssistantMessages(prev => [
+      ...prev,
+      {
+        id: `local-${Date.now()}`,
+        role: 'user',
+        content: text,
+        created_at: new Date().toISOString()
+      }
+    ])
+
+    setAssistantLoading(true)
+    try {
+      const msg = await api(`/api/assistant/chat?client_id=${selectedClientId}`, {
+        method: 'POST',
+        body: JSON.stringify({ message: text })
+      })
+
+      setAssistantMessages(prev => [...prev, msg])
+    } catch (err) {
+      showNotice(err.message || 'No se pudo responder')
+    } finally {
+      setAssistantLoading(false)
+    }
+  }
+
+  async function clearAssistantMessages() {
+    if (!selectedClientId) return
+    if (!window.confirm('¿Borrar historial del asistente?')) return
+
+    try {
+      await api(`/api/assistant/messages?client_id=${selectedClientId}`, {
+        method: 'DELETE'
+      })
+      setAssistantMessages([])
+      showNotice('Historial borrado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo borrar historial')
+    }
   }
 
   // ======================== FUNCIONES GRUPOS WHATSAPP ========================
@@ -4456,7 +4668,7 @@ export default function App() {
     URL.revokeObjectURL(url)
   }
 
-    function getPublicLandingUrl(landing) {
+  function getPublicLandingUrl(landing) {
     if (!landing?.id) return ''
     return `${API_BASE}/l/${landing.id}`
   }
@@ -4926,16 +5138,25 @@ export default function App() {
   }, [selectedClientId, forcePlanScreen])
 
   useEffect(() => {
-  if (!me) return
-  if (forcePlanScreen) return
-  if (!selectedClientId) return
+    if (!me) return
+    if (forcePlanScreen) return
+    if (!selectedClientId) return
 
-  loadGroupBots()
-  loadFacebookTargets()
-  loadGrowthSettings()
-  loadJoinQueue()
-  loadFacebookLogs()
-}, [me, forcePlanScreen, selectedClientId])
+    loadGroupBots()
+    loadFacebookTargets()
+    loadGrowthSettings()
+    loadJoinQueue()
+    loadFacebookLogs()
+  }, [me, forcePlanScreen, selectedClientId])
+
+  // Assistant effect
+  useEffect(() => {
+    if (!me) return
+    if (!selectedClientId) return
+    if (tab !== 'assistant') return
+
+    loadAssistantMessages()
+  }, [me, selectedClientId, tab])
 
   // Período de refresco automático (30s)
   useEffect(() => {
@@ -5021,15 +5242,15 @@ export default function App() {
     }
   }, [selectedLeadId, selectedLead])
 
-async function loadInitial() {
-  await loadClients()
-  await loadTemplates()
-  await loadUsers()
-  await loadMetrics()
-  await loadFunnelMetrics()
-  await loadInboxLeads()
-  await loadLandings()
-}
+  async function loadInitial() {
+    await loadClients()
+    await loadTemplates()
+    await loadUsers()
+    await loadMetrics()
+    await loadFunnelMetrics()
+    await loadInboxLeads()
+    await loadLandings()
+  }
 
   async function loadMetrics() {
     if (forcePlanScreen) return
@@ -5463,6 +5684,13 @@ async function loadInitial() {
           <button className={tab === 'groups' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('groups')} type="button">
             <i className="fas fa-users"></i> Grupos
           </button>
+          <button
+            className={tab === 'assistant' ? 'menu-item active' : 'menu-item'}
+            onClick={() => setTab('assistant')}
+            type="button"
+          >
+            <i className="fas fa-robot"></i> Asistente AI
+          </button>
           {me.role === 'admin' && (
             <>
               <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
@@ -5497,6 +5725,113 @@ async function loadInitial() {
             )}
           </div>
         </header>
+
+        {/* ======================== ASSISTANT AI ======================== */}
+        {tab === 'assistant' && (
+          <section className="assistant-page stack gap-lg">
+            <div className="assistant-hero stripe-card">
+              <div>
+                <div className="eyebrow">Worktic AI Assistant</div>
+                <h2>Tu copiloto para configurar, vender y automatizar</h2>
+                <p className="muted">
+                  Pregúntame cómo conectar WhatsApp, configurar Facebook, crear landings, publicar en dominio propio, lanzar campañas, usar grupos y conseguir clientes.
+                </p>
+              </div>
+
+              <button type="button" className="secondary" onClick={clearAssistantMessages}>
+                <i className="fas fa-trash"></i> Limpiar chat
+              </button>
+            </div>
+
+            <div className="assistant-layout">
+              <aside className="assistant-suggestions stripe-card">
+                <div className="section-title">
+                  <i className="fas fa-bolt"></i> Preguntas rápidas
+                </div>
+
+                <div className="quick-list">
+                  {assistantQuickQuestions.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      className="quick-question"
+                      onClick={() => sendAssistantMessage(q)}
+                      disabled={assistantLoading}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="empty-box">
+                  Este asistente guía al cliente dentro de la plataforma y también le explica estrategia práctica de ventas automáticas.
+                </div>
+              </aside>
+
+              <section className="assistant-chat stripe-card">
+                <div className="assistant-messages">
+                  {assistantMessages.length === 0 && (
+                    <div className="assistant-empty">
+                      <i className="fas fa-comments"></i>
+                      <h3>Hola, soy tu asistente de Worktic AI</h3>
+                      <p>
+                        Puedo ayudarte paso a paso con WhatsApp, Facebook, landings, campañas, grupos, funnels y ventas automáticas.
+                      </p>
+                    </div>
+                  )}
+
+                  {assistantMessages.map((m) => (
+                    <div
+                      key={m.id}
+                      className={m.role === 'user' ? 'assistant-bubble user' : 'assistant-bubble bot'}
+                    >
+                      <div className="assistant-role">
+                        {m.role === 'user' ? 'Tú' : 'Worktic AI'}
+                      </div>
+                      <div className="assistant-text">
+                        {m.content}
+                      </div>
+                    </div>
+                  ))}
+
+                  {assistantLoading && (
+                    <div className="assistant-bubble bot">
+                      <div className="assistant-role">Worktic AI</div>
+                      <div className="assistant-text">
+                        <i className="fas fa-circle-notch fa-spin"></i> Pensando...
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <form
+                  className="assistant-compose"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    sendAssistantMessage()
+                  }}
+                >
+                  <textarea
+                    rows={2}
+                    placeholder="Ej: ¿Cómo conecto Facebook y creo mi primera campaña?"
+                    value={assistantInput}
+                    onChange={(e) => setAssistantInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        sendAssistantMessage()
+                      }
+                    }}
+                  />
+
+                  <button type="submit" disabled={assistantLoading || !assistantInput.trim()}>
+                    <i className="fas fa-paper-plane"></i> Enviar
+                  </button>
+                </form>
+              </section>
+            </div>
+          </section>
+        )}
 
         {/* ======================== DASHBOARD ======================== */}
         {tab === 'dashboard' && (
@@ -5921,7 +6256,7 @@ async function loadInitial() {
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
-                                            </td>
+                      </td>
                     </tr>
                   )}
                 </tbody>
