@@ -76,9 +76,10 @@ const emptySocialCampaign = {
   image_prompt: ''
 }
 
-// Formulario vacío para bot de grupo WhatsApp
+// Formulario vacío para bot de grupo WhatsApp (ACTUALIZADO CON group_jid)
 const emptyGroupBotForm = {
   name: '',
+  group_jid: '',
   business_name: '',
   business_description: '',
   offer: '',
@@ -92,7 +93,7 @@ const emptyGroupBotForm = {
   human_handoff_phone: ''
 }
 
-// Formulario vacío para grupo de Facebook
+// Formulario vacío para grupo de Facebook (actual)
 const emptyFacebookGroupForm = {
   name: '',
   url: '',
@@ -102,6 +103,16 @@ const emptyFacebookGroupForm = {
   relevance_score: 70,
   rules_summary: '',
   notes: ''
+}
+
+// NUEVO FORMULARIO PARA FACEBOOK DISCOVERY IA
+const emptyFacebookDiscoveryForm = {
+  product: '',
+  business_name: '',
+  offer: '',
+  target_audience: '',
+  country: 'Colombia',
+  niche: ''
 }
 
 // Lista de países para el selector (bandera + código)
@@ -470,14 +481,12 @@ const AdsPanel = memo(function AdsPanel({
   showNotice 
 }) {
   const roi = adsResult?.roi || {}
-  // +++ INICIO CAMBIOS REALITY ENGINE (punto 1) +++
   const confidenceScore = roi.confidence_score ?? 0
   const confidenceLevel = roi.confidence_level || 'Sin datos'
   const riskLevel = roi.risk_level || 'Sin datos'
   const realityWarnings = roi.reality_warnings || []
   const rawROI = roi.raw_roi ?? roi.estimated_roi
   const adjustedROI = roi.adjusted_roi ?? roi.estimated_roi
-  // +++ FIN CAMBIOS REALITY ENGINE +++
   const currency = roi.currency || adsResult?.currency || 'USD'
   const adsets = adsResult?.adsets || []
   const variants = adsResult?.creative_variants || []
@@ -487,7 +496,6 @@ const AdsPanel = memo(function AdsPanel({
   const scaleRules = adsResult?.scale_rules || []
   const killRules = adsResult?.kill_rules || []
 
-  // Preparar datos para gráficos
   const chartData = useMemo(() => {
     if (!roiScenarios.length) return null
     const scenarios = roiScenarios
@@ -497,7 +505,6 @@ const AdsPanel = memo(function AdsPanel({
     return { scenarios, maxROI, maxCPL, maxLeads }
   }, [roiScenarios])
 
-  // Componente Donut Chart (CSS puro)
   const DonutChart = ({ percentage, label, color }) => {
     const degree = (percentage / 100) * 360
     return (
@@ -653,7 +660,6 @@ const AdsPanel = memo(function AdsPanel({
             )}
           </button>
 
-          {/* +++ BOTÓN ECOSISTEMA COMPLETO (punto 5.4) +++ */}
           <button
             className="ads-generate-btn ecosystem"
             onClick={generateAdsEcosystem}
@@ -702,7 +708,6 @@ const AdsPanel = memo(function AdsPanel({
             <div className="campaign-pill">{adsResult.objective}</div>
           </div>
 
-          {/* KPI Grid - Totalmente responsive sin scroll horizontal */}
           <div className="ads-kpi-grid">
             <div className="ads-kpi">
               <span>Presupuesto mensual</span>
@@ -725,7 +730,6 @@ const AdsPanel = memo(function AdsPanel({
               <strong>{currency} {roi.estimated_revenue || adsResult.estimated_revenue}</strong>
             </div>
 
-            {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 2) - reemplazo del ROI y nuevos KPIs +++ */}
             <div className={`ads-kpi ${Number(adjustedROI || 0) >= 0 ? 'positive' : 'negative'}`}>
               <span>ROI ajustado</span>
               <strong>{adjustedROI}%</strong>
@@ -744,7 +748,6 @@ const AdsPanel = memo(function AdsPanel({
               <span>Riesgo</span>
               <strong>{riskLevel}</strong>
             </div>
-            {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
 
             <div className="ads-kpi">
               <span>Break-even CPL</span>
@@ -756,12 +759,10 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
-          {/* SECCIÓN EJECUTIVA CON GRÁFICOS - Responsive */}
           {chartData && (
             <div className="executive-charts">
               <h3>📊 Resumen ejecutivo de escenarios</h3>
               <div className="charts-grid">
-                {/* Gráfico de barras vertical: ROI por escenario */}
                 <div className="chart-card">
                   <div className="chart-title">ROI por escenario (%)</div>
                   <div className="bar-chart-vertical">
@@ -781,7 +782,6 @@ const AdsPanel = memo(function AdsPanel({
                   </div>
                 </div>
 
-                {/* Gráfico de barras horizontal: CPL */}
                 <div className="chart-card">
                   <div className="chart-title">CPL estimado ({currency})</div>
                   <div className="bar-chart-horizontal">
@@ -800,7 +800,6 @@ const AdsPanel = memo(function AdsPanel({
                   </div>
                 </div>
 
-                {/* Donut chart de leads (primer escenario) */}
                 <div className="chart-card">
                   <div className="chart-title">Distribución de leads</div>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
@@ -819,7 +818,6 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
-          {/* Diagnóstico y alertas */}
           <div className="ads-diagnosis-grid">
             <div className="ads-diagnosis-card real">
               <span>Score real</span>
@@ -833,7 +831,6 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           </div>
 
-          {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 3) - Alertas de realidad +++ */}
           {realityWarnings.length > 0 && (
             <div className="reality-warning-card">
               <h3>Validación de realidad</h3>
@@ -845,7 +842,6 @@ const AdsPanel = memo(function AdsPanel({
               </ul>
             </div>
           )}
-          {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
 
           {adsResult.campaign_issues?.length > 0 && (
             <div className="ads-issues-card">
@@ -858,7 +854,6 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
-          {/* Escenarios ROI */}
           {roiScenarios.length > 0 && (
             <div className="ads-section">
               <div className="section-head compact">
@@ -876,7 +871,6 @@ const AdsPanel = memo(function AdsPanel({
                         <span className="scenario-label">Escenario</span>
                         <h4>{scenario.name}</h4>
                       </div>
-                      {/* +++ CAMBIO REALITY ENGINE (punto 4) - mostrar adjusted_roi o raw +++ */}
                       <strong>{scenario.adjusted_roi ?? scenario.estimated_roi}%</strong>
                     </div>
                     <div className="scenario-metrics">
@@ -889,7 +883,6 @@ const AdsPanel = memo(function AdsPanel({
                       <div><span>Ingresos</span><b>{scenario.currency} {scenario.estimated_revenue}</b></div>
                       <div><span>Profit</span><b>{scenario.currency} {scenario.estimated_profit}</b></div>
                     </div>
-                    {/* +++ INICIO CAMBIOS REALITY ENGINE (punto 4) - reality y warnings por escenario +++ */}
                     <div className="scenario-reality">
                       <span>ROI bruto: <b>{scenario.raw_roi ?? scenario.estimated_roi}%</b></span>
                       <span>Confianza: <b>{scenario.confidence_score ?? 0}% · {scenario.confidence_level || 'Sin datos'}</b></span>
@@ -903,7 +896,7 @@ const AdsPanel = memo(function AdsPanel({
                         ))}
                       </div>
                     )}
-                    {/* +++ FIN CAMBIOS REALITY ENGINE +++ */}
+
                     <div className="scenario-note"><strong>Decisión:</strong> {scenario.decision}</div>
                     <div className="scenario-note"><strong>Escalado:</strong> {scenario.scale_signal}</div>
                     <div className="scenario-note"><strong>Optimizar si:</strong> {scenario.optimization_trigger}</div>
@@ -913,7 +906,6 @@ const AdsPanel = memo(function AdsPanel({
             </div>
           )}
 
-          {/* Resto del contenido (Avatar, Copy, etc.) */}
           <div className="ads-pro-grid">
             <div className="ads-pro-card">
               <h3>🎯 Avatar y análisis</h3>
@@ -1692,7 +1684,7 @@ export default function App() {
           width: 220px;
         }
 
-        /* ========== LOGIN SUTIL Y ESPECTACULAR ========== */
+        /* Login styles */
         .auth-shell {
           display: flex;
           justify-content: center;
@@ -1964,7 +1956,6 @@ export default function App() {
           color: #94a3b8;
         }
 
-        /* Estilos para el selector de país con búsqueda */
         .phone-input-group {
           display: flex;
           gap: 0.75rem;
@@ -2059,7 +2050,6 @@ export default function App() {
           width: 100%;
         }
 
-        /* Estilos para captcha */
         .captcha-container {
           background: #f8fafc;
           border-radius: 0.75rem;
@@ -2170,7 +2160,6 @@ export default function App() {
           }
         }
 
-        /* Resto de estilos existentes */
         .muted {
           color: #64748b;
           font-size: 0.85rem;
@@ -2370,7 +2359,7 @@ export default function App() {
           .left-rail { width: 240px; }
         }
 
-        /* ========== ESTILOS NUEVOS PARA PlanGate (OpenAI style) ========== */
+        /* PlanGate styles */
         .plan-page {
           min-height: 100vh;
           padding: 4rem 2rem;
@@ -2519,7 +2508,6 @@ export default function App() {
           margin-top: 0.2rem;
         }
 
-        /* Estilos mejorados para la factura (inline, sin animaciones) */
         .invoice-card {
           background: white;
           border-radius: 2rem;
@@ -2641,7 +2629,7 @@ export default function App() {
           .step-progress { flex-direction: column; align-items: flex-start; }
         }
 
-        /* ========== ADS ENGINE PRO - NUEVO DISEÑO SIN SCROLL HORIZONTAL ========== */
+        /* Ads Panel Styles */
         .ads-pro-page {
           max-width: 1380px;
           margin: 0 auto;
@@ -2801,7 +2789,6 @@ export default function App() {
           box-shadow: 0 14px 26px rgba(59,130,246,.22);
         }
 
-        /* +++ ESTILO NUEVO PARA EL BOTÓN DE ECOSISTEMA (punto 6) +++ */
         .ads-generate-btn.ecosystem {
           background: linear-gradient(135deg, #10b981, #059669);
           box-shadow: 0 14px 30px rgba(16, 185, 129, 0.25);
@@ -2810,7 +2797,6 @@ export default function App() {
         .ads-generate-btn.ecosystem:hover {
           background: linear-gradient(135deg, #059669, #047857);
         }
-        /* +++ FIN ESTILO ECOSISTEMA +++ */
 
         .ads-flow {
           display: flex;
@@ -2870,7 +2856,6 @@ export default function App() {
           white-space: nowrap;
         }
 
-        /* KPI Grid - Responsive sin scroll */
         .ads-kpi-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -2910,7 +2895,6 @@ export default function App() {
           border-color: #fecaca;
         }
 
-        /* +++ NUEVOS ESTILOS AGREGADOS (punto 5) +++ */
         .ads-kpi small {
           display: block;
           margin-top: .35rem;
@@ -2984,9 +2968,7 @@ export default function App() {
           margin-top: .75rem;
           font-size: .82rem;
         }
-        /* +++ FIN NUEVOS ESTILOS +++ */
 
-        /* Nuevos estilos para gráficos ejecutivos */
         .executive-charts {
           background: white;
           border-radius: 1.5rem;
@@ -3023,7 +3005,6 @@ export default function App() {
           text-align: center;
         }
 
-        /* Gráfico vertical (barras hacia arriba) */
         .bar-chart-vertical {
           display: flex;
           justify-content: space-around;
@@ -3060,7 +3041,6 @@ export default function App() {
           color: #475569;
         }
 
-        /* Gráfico horizontal */
         .bar-chart-horizontal {
           display: flex;
           flex-direction: column;
@@ -3105,7 +3085,6 @@ export default function App() {
           text-align: right;
         }
 
-        /* Gráfico donut */
         .donut-container {
           display: flex;
           flex-direction: column;
@@ -3290,7 +3269,7 @@ export default function App() {
         .ads-card-row {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 1rem;
+                    gap: 1rem;
         }
 
         .adset-card,
@@ -3347,7 +3326,6 @@ export default function App() {
           margin-top: .85rem;
         }
 
-        /* Nuevos estilos para escenarios ROI y reglas */
         .roi-scenarios-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
@@ -3490,34 +3468,23 @@ export default function App() {
 
         .groups-tabs {
           display: flex;
-          gap: 0.5rem;
-          border-bottom: 1px solid #e2e8f0;
-          margin-bottom: 1rem;
+          gap: 0.75rem;
+          margin-top: 1rem;
+          flex-wrap: wrap;
         }
 
         .groups-tab {
-          background: transparent;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          font-weight: 600;
-          color: #64748b;
+          background: #e2e8f0;
+          color: #0f172a;
+          border-radius: 999px;
+          padding: 0.7rem 1rem;
           cursor: pointer;
-          border-radius: 0;
-          position: relative;
+          transition: all 0.2s;
         }
 
         .groups-tab.active {
-          color: #3b82f6;
-        }
-
-        .groups-tab.active::after {
-          content: '';
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          right: 0;
-          height: 2px;
           background: #3b82f6;
+          color: white;
         }
 
         .group-bot-card, .facebook-group-card {
@@ -3574,6 +3541,35 @@ export default function App() {
           border-radius: 9999px;
           font-size: 0.7rem;
         }
+
+        .check-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.75rem;
+          border-radius: 0.75rem;
+          font-size: 0.85rem;
+        }
+
+        .check-row input {
+          width: auto;
+        }
+
+        .tag-list.mini {
+          display: flex;
+          gap: 0.35rem;
+          flex-wrap: wrap;
+        }
+
+        .tag-list.mini span {
+          font-size: 0.7rem;
+        }
+
+        .facebook-groups-table {
+          width: 100%;
+        }
       `
       document.head.appendChild(style)
     }
@@ -3596,13 +3592,17 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  // ========== NUEVOS ESTADOS PARA GRUPOS (WhatsApp Groups AI + Facebook Groups) ==========
+  // Estados para GRUPOS
   const [groupBots, setGroupBots] = useState([])
   const [facebookTargets, setFacebookTargets] = useState([])
   const [groupBotForm, setGroupBotForm] = useState(emptyGroupBotForm)
   const [facebookGroupForm, setFacebookGroupForm] = useState(emptyFacebookGroupForm)
+  const [groupsTab, setGroupsTab] = useState('whatsapp')
+  const [facebookDiscoveryForm, setFacebookDiscoveryForm] = useState(emptyFacebookDiscoveryForm)
+  const [facebookDiscovery, setFacebookDiscovery] = useState(null)
+  const [facebookDiscoverLoading, setFacebookDiscoverLoading] = useState(false)
 
-  // ========== NUEVOS ESTADOS PARA PLANES Y SUSCRIPCIONES ==========
+  // Estados para PLANES Y SUSCRIPCIONES
   const [plans, setPlans] = useState([])
   const [subscription, setSubscription] = useState(null)
   const [billingConfig, setBillingConfig] = useState({
@@ -3616,14 +3616,11 @@ export default function App() {
   const [paymentTxHash, setPaymentTxHash] = useState('')
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [pendingSubscriptions, setPendingSubscriptions] = useState([])
-
-  // NUEVOS ESTADOS PARA VISTA INLINE DE FACTURA (sin modal)
   const [showInvoice, setShowInvoice] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [paymentQR, setPaymentQR] = useState('')
 
-  // ========== ADS IA NUEVO ESTADO (PRO) ==========
-  const [adsPlans, setAdsPlans] = useState([])
+  // Estados para ADS IA
   const [adsForm, setAdsForm] = useState({
     business_name: '',
     product: '',
@@ -3638,19 +3635,9 @@ export default function App() {
   })
   const [adsResult, setAdsResult] = useState(null)
   const [adsLoading, setAdsLoading] = useState(false)
-  
-  // +++ NUEVO ESTADO PARA ECOSISTEMA (punto 5.1) +++
   const [ecosystemLoading, setEcosystemLoading] = useState(false)
 
-  // ========== REDIRECCIÓN DE PESTAÑAS PROHIBIDAS ==========
-  useEffect(() => {
-    if (!me) return
-    const adminOnlyTabs = ['clients', 'users', 'billing']
-    if (me.role !== 'admin' && adminOnlyTabs.includes(tab)) {
-      setTab('dashboard')
-    }
-  }, [me, tab])
-
+  // Estados existentes
   const [clients, setClients] = useState([])
   const [users, setUsers] = useState([])
   const [bots, setBots] = useState([])
@@ -3699,6 +3686,7 @@ export default function App() {
   const [socialActionText, setSocialActionText] = useState('')
   const [socialActionStep, setSocialActionStep] = useState(0)
 
+  // Paginación
   const [searchBot, setSearchBot] = useState('')
   const [botPage, setBotPage] = useState(1)
   const [searchLead, setSearchLead] = useState('')
@@ -3812,7 +3800,7 @@ export default function App() {
       .trim()
   }
 
-  // ======================== FUNCIONES DE GRUPOS (WhatsApp Groups AI + Facebook Groups) ========================
+  // ======================== FUNCIONES DE GRUPOS ========================
   async function loadGroupBots() {
     if (forcePlanScreen) return
     try {
@@ -3821,7 +3809,19 @@ export default function App() {
     } catch (err) {
       console.error(err)
       if (err.status === 402) setForcePlanScreen(true)
-      showNotice(err.message || 'Error cargando bots de grupo')
+      showNotice(err.message || 'Error cargando bots de grupos')
+    }
+  }
+
+  async function loadFacebookTargets() {
+    if (forcePlanScreen) return
+    try {
+      const data = await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setFacebookTargets(data || [])
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+      showNotice(err.message || 'Error cargando grupos Facebook')
     }
   }
 
@@ -3844,130 +3844,92 @@ export default function App() {
         method: 'POST',
         body: JSON.stringify(groupBotForm)
       })
-      showNotice('Bot de grupo creado correctamente')
       setGroupBotForm(emptyGroupBotForm)
       await loadGroupBots()
+      showNotice('Bot de grupo creado')
     } catch (err) {
-      showNotice(err.message || 'Error creando bot de grupo')
+      showNotice(err.message || 'No se pudo crear el bot de grupo')
     } finally {
       setBusy(false)
     }
   }
 
-  async function updateGroupBot(bot) {
-    const updated = { ...bot }
-    const name = prompt('Nuevo nombre:', bot.name)
-    if (name && name.trim()) updated.name = name.trim()
-    
-    const offer = prompt('Oferta principal:', bot.offer)
-    if (offer && offer.trim()) updated.offer = offer.trim()
-    
+  async function toggleGroupBotStatus(bot) {
+    const updated = {
+      ...bot,
+      status: bot.status === 'active' ? 'inactive' : 'active'
+    }
+
     try {
       await api(`/api/groups/whatsapp-bots/${bot.id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'PUT',
         body: JSON.stringify(updated)
       })
-      showNotice('Bot de grupo actualizado')
       await loadGroupBots()
+      showNotice(updated.status === 'active' ? 'Bot activado' : 'Bot pausado')
     } catch (err) {
-      showNotice(err.message || 'Error actualizando bot de grupo')
+      showNotice(err.message || 'No se pudo cambiar estado')
     }
   }
 
-  async function toggleGroupBotStatus(bot) {
-    const newStatus = bot.status === 'active' ? 'inactive' : 'active'
-    try {
-      await api(`/api/groups/whatsapp-bots/${bot.id}/status${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status: newStatus })
-      })
-      showNotice(`Bot de grupo ${newStatus === 'active' ? 'activado' : 'pausado'}`)
-      await loadGroupBots()
-    } catch (err) {
-      showNotice(err.message || 'Error cambiando estado del bot')
-    }
-  }
-
-  async function deleteGroupBot(botId) {
+  async function deleteGroupBot(id) {
     if (!window.confirm('¿Eliminar este bot de grupo?')) return
+
     try {
-      await api(`/api/groups/whatsapp-bots/${botId}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+      await api(`/api/groups/whatsapp-bots/${id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'DELETE'
       })
-      showNotice('Bot de grupo eliminado')
       await loadGroupBots()
+      showNotice('Bot eliminado')
     } catch (err) {
-      showNotice(err.message || 'Error eliminando bot de grupo')
+      showNotice(err.message || 'No se pudo eliminar')
     }
   }
 
-  async function loadFacebookTargets() {
-    if (forcePlanScreen) return
+  async function discoverFacebookGroups() {
+    if (!facebookDiscoveryForm.product.trim()) {
+      showNotice('Escribe el producto o servicio a buscar')
+      return
+    }
+    setFacebookDiscoverLoading(true)
     try {
-      const data = await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
-      setFacebookTargets(data || [])
+      const data = await api(`/api/groups/facebook-discover${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'POST',
+        body: JSON.stringify(facebookDiscoveryForm)
+      })
+      setFacebookDiscovery(data)
+      showNotice('Discovery IA generado')
     } catch (err) {
-      console.error(err)
-      if (err.status === 402) setForcePlanScreen(true)
-      showNotice(err.message || 'Error cargando grupos de Facebook')
+      showNotice(err.message || 'No se pudo buscar grupos con IA')
+    } finally {
+      setFacebookDiscoverLoading(false)
     }
   }
 
-  async function createFacebookTarget() {
-    if (!facebookGroupForm.name.trim()) {
-      showNotice('Escribe el nombre del grupo')
-      return
-    }
-    if (!facebookGroupForm.url.trim()) {
-      showNotice('Escribe la URL del grupo')
-      return
-    }
-    setBusy(true)
+  async function saveRecommendedFacebookGroup(target) {
     try {
       await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'POST',
-        body: JSON.stringify(facebookGroupForm)
+        body: JSON.stringify(target)
       })
-      showNotice('Grupo de Facebook guardado correctamente')
-      setFacebookGroupForm(emptyFacebookGroupForm)
       await loadFacebookTargets()
+      showNotice('Grupo recomendado guardado')
     } catch (err) {
-      showNotice(err.message || 'Error guardando grupo de Facebook')
-    } finally {
-      setBusy(false)
+      showNotice(err.message || 'No se pudo guardar el grupo')
     }
   }
 
-  async function updateFacebookTarget(target) {
-    const updated = { ...target }
-    const relevanceScore = prompt('Nuevo score de relevancia (0-100):', target.relevance_score)
-    if (relevanceScore && !isNaN(relevanceScore)) updated.relevance_score = parseInt(relevanceScore, 10)
-    
-    const notes = prompt('Notas adicionales:', target.notes || '')
-    if (notes !== null) updated.notes = notes
-    
-    try {
-      await api(`/api/groups/facebook-targets/${target.id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
-        method: 'PUT',
-        body: JSON.stringify(updated)
-      })
-      showNotice('Grupo de Facebook actualizado')
-      await loadFacebookTargets()
-    } catch (err) {
-      showNotice(err.message || 'Error actualizando grupo de Facebook')
-    }
-  }
+  async function deleteFacebookTarget(id) {
+    if (!window.confirm('¿Eliminar este grupo?')) return
 
-  async function deleteFacebookTarget(targetId) {
-    if (!window.confirm('¿Eliminar este grupo de Facebook?')) return
     try {
-      await api(`/api/groups/facebook-targets/${targetId}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+      await api(`/api/groups/facebook-targets/${id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'DELETE'
       })
-      showNotice('Grupo de Facebook eliminado')
       await loadFacebookTargets()
+      showNotice('Grupo eliminado')
     } catch (err) {
-      showNotice(err.message || 'Error eliminando grupo de Facebook')
+      showNotice(err.message || 'No se pudo eliminar')
     }
   }
 
@@ -4115,7 +4077,7 @@ export default function App() {
     }
   }
 
-  // ========== ADS IA FUNCIÓN (PRO) ==========
+  // ========== ADS IA FUNCIÓN ==========
   const generateAdsCampaign = useCallback(async () => {
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
@@ -4168,7 +4130,6 @@ export default function App() {
     }
   }, [adsForm, me, selectedClientId, showNotice])
 
-  // +++ NUEVA FUNCIÓN PARA ECOSISTEMA COMPLETO (punto 5.1) +++
   async function generateAdsEcosystem() {
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
@@ -4213,7 +4174,7 @@ export default function App() {
 
       setAdsResult(data.plan)
 
-      showNotice?.(
+      showNotice(
         `Ecosistema creado: campaña, bot y landing. Bot ID: ${data.bot_id}`,
         'success'
       )
@@ -4223,13 +4184,13 @@ export default function App() {
         await loadLandings()
       }
     } catch (err) {
-      showNotice?.(err.message || 'No se pudo crear el ecosistema', 'error')
+      showNotice(err.message || 'No se pudo crear el ecosistema', 'error')
     } finally {
       setEcosystemLoading(false)
     }
   }
 
-  // ======================== FUNCIONES EXISTENTES CON GUARDIA PLAN ========================
+  // ======================== FUNCIONES EXISTENTES ========================
   async function loadLandings() {
     if (forcePlanScreen) return
     try {
@@ -4846,7 +4807,7 @@ export default function App() {
     loadFacebookTargets()
   }, [selectedClientId, forcePlanScreen])
 
-  // Período de refresco automático (30s) – evita actualizaciones cuando estás en la pestaña Ads
+  // Período de refresco automático (30s)
   useEffect(() => {
     const t = setInterval(async () => {
       if (!me || forcePlanScreen) return
@@ -5379,7 +5340,6 @@ export default function App() {
           <button className={tab === 'ads' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('ads')} type="button">
             <i className="fas fa-chart-line"></i> Ads IA
           </button>
-          {/* +++ NUEVO BOTÓN PARA GRUPOS +++ */}
           <button className={tab === 'groups' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('groups')} type="button">
             <i className="fas fa-users"></i> Grupos
           </button>
@@ -5839,7 +5799,7 @@ export default function App() {
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
-                      </td>
+                                            </td>
                     </tr>
                   )}
                 </tbody>
@@ -5985,234 +5945,359 @@ export default function App() {
 
         {/* ======================== GRUPOS (WhatsApp Groups AI + Facebook Groups) ======================== */}
         {tab === 'groups' && (
-          <div className="groups-container">
+          <section className="stack gap-lg">
             <div className="stripe-card">
+              <div className="row between">
+                <div>
+                  <div className="eyebrow">Worktic Groups AI</div>
+                  <h2>Grupos inteligentes</h2>
+                  <p className="muted">
+                    Administra bots IA para grupos de WhatsApp y descubre comunidades de Facebook relacionadas con el negocio.
+                  </p>
+                </div>
+              </div>
+
               <div className="groups-tabs">
-                <button 
-                  className={`groups-tab ${!selectedClientId?.includes('facebook') ? 'active' : ''}`}
-                  onClick={() => setSelectedClientId(selectedClientId || (clients[0]?.id || ''))}
+                <button
                   type="button"
+                  className={groupsTab === 'whatsapp' ? 'groups-tab active' : 'groups-tab'}
+                  onClick={() => setGroupsTab('whatsapp')}
                 >
-                  WhatsApp Groups AI
+                  <i className="fab fa-whatsapp"></i> WhatsApp Groups AI
                 </button>
-                <button 
-                  className={`groups-tab ${selectedClientId?.includes('facebook') ? 'active' : ''}`}
-                  onClick={() => {}} 
+
+                <button
                   type="button"
+                  className={groupsTab === 'facebook' ? 'groups-tab active' : 'groups-tab'}
+                  onClick={() => setGroupsTab('facebook')}
                 >
-                  Facebook Groups
+                  <i className="fab fa-facebook"></i> Facebook Discovery
                 </button>
-              </div>
-
-              {/* WhatsApp Groups AI Section */}
-              <div style={{ marginBottom: '2rem' }}>
-                <div className="row between center" style={{ marginBottom: '1rem' }}>
-                  <div className="section-title"><i className="fab fa-whatsapp"></i> WhatsApp Group Bots</div>
-                  <small className="muted">Crea IA para gestionar tus grupos de WhatsApp</small>
-                </div>
-
-                <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createGroupBot(); }}>
-                  <input 
-                    placeholder="Nombre del bot *" 
-                    value={groupBotForm.name}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, name: e.target.value })}
-                  />
-                  <input 
-                    placeholder="Nombre del negocio *" 
-                    value={groupBotForm.business_name}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, business_name: e.target.value })}
-                  />
-                  <input 
-                    placeholder="Descripción del negocio" 
-                    value={groupBotForm.business_description}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, business_description: e.target.value })}
-                  />
-                  <input 
-                    placeholder="Oferta principal *" 
-                    value={groupBotForm.offer}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, offer: e.target.value })}
-                  />
-                  <input 
-                    placeholder="Público objetivo" 
-                    value={groupBotForm.target_audience}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, target_audience: e.target.value })}
-                  />
-                  <textarea 
-                    placeholder="Reglas del grupo (separadas por coma)" 
-                    value={groupBotForm.rules}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, rules: e.target.value })}
-                    rows={2}
-                  />
-                  <textarea 
-                    className="full" 
-                    placeholder="Mensaje de bienvenida" 
-                    value={groupBotForm.welcome_message}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, welcome_message: e.target.value })}
-                    rows={3}
-                  />
-                  <textarea 
-                    className="full" 
-                    placeholder="Prompt del sistema para IA" 
-                    value={groupBotForm.system_prompt}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, system_prompt: e.target.value })}
-                    rows={4}
-                  />
-                  <input 
-                    placeholder="Teléfono para transferencia humana" 
-                    value={groupBotForm.human_handoff_phone}
-                    onChange={e => setGroupBotForm({ ...groupBotForm, human_handoff_phone: e.target.value })}
-                  />
-                  <div className="full row gap-sm">
-                    <label className="toggle">
-                      <input type="checkbox" checked={groupBotForm.moderation_enabled} onChange={e => setGroupBotForm({ ...groupBotForm, moderation_enabled: e.target.checked })} />
-                      Moderación activa
-                    </label>
-                    <label className="toggle">
-                      <input type="checkbox" checked={groupBotForm.auto_reply_enabled} onChange={e => setGroupBotForm({ ...groupBotForm, auto_reply_enabled: e.target.checked })} />
-                      Respuesta automática
-                    </label>
-                    <label className="toggle">
-                      <input type="checkbox" checked={groupBotForm.lead_capture_enabled} onChange={e => setGroupBotForm({ ...groupBotForm, lead_capture_enabled: e.target.checked })} />
-                      Captura de leads
-                    </label>
-                  </div>
-                  <button type="submit" className="full" disabled={busy}>Crear bot de grupo</button>
-                </form>
-
-                <div style={{ marginTop: '2rem' }}>
-                  <h4>Mis Bots de Grupo</h4>
-                  {groupBots.length === 0 && <div className="empty-box">No hay bots de grupo creados</div>}
-                  {groupBots.map(bot => (
-                    <div key={bot.id} className="group-bot-card">
-                      <div className="row between">
-                        <div>
-                          <h4>{bot.name}</h4>
-                          <div className="muted tiny">{bot.business_name}</div>
-                        </div>
-                        <span className={`status-badge ${bot.status === 'active' ? 'active' : 'inactive'}`}>
-                          {bot.status === 'active' ? 'Activo' : 'Inactivo'}
-                        </span>
-                      </div>
-                      <div className="row gap-sm" style={{ marginTop: '0.5rem' }}>
-                        <button type="button" onClick={() => toggleGroupBotStatus(bot)}>
-                          {bot.status === 'active' ? 'Pausar' : 'Activar'}
-                        </button>
-                        <button type="button" onClick={() => updateGroupBot(bot)} className="secondary">
-                          Editar
-                        </button>
-                        <button type="button" onClick={() => deleteGroupBot(bot.id)} className="danger">
-                          Eliminar
-                        </button>
-                      </div>
-                      {bot.offer && <div className="muted tiny" style={{ marginTop: '0.5rem' }}>Oferta: {bot.offer}</div>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Facebook Groups Section */}
-              <div>
-                <div className="row between center" style={{ marginBottom: '1rem' }}>
-                  <div className="section-title"><i className="fab fa-facebook"></i> Facebook Groups</div>
-                  <small className="muted">Guarda grupos de Facebook para análisis</small>
-                </div>
-
-                <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createFacebookTarget(); }}>
-                  <input 
-                    placeholder="Nombre del grupo *" 
-                    value={facebookGroupForm.name}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, name: e.target.value })}
-                  />
-                  <input 
-                    placeholder="URL del grupo *" 
-                    value={facebookGroupForm.url}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, url: e.target.value })}
-                  />
-                  <input 
-                    placeholder="Categoría" 
-                    value={facebookGroupForm.category}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, category: e.target.value })}
-                  />
-                  <input 
-                    placeholder="Nicho / Industria" 
-                    value={facebookGroupForm.niche}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, niche: e.target.value })}
-                  />
-                  <input 
-                    type="number" 
-                    placeholder="Número de miembros" 
-                    value={facebookGroupForm.members_count}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, members_count: parseInt(e.target.value) || 0 })}
-                  />
-                  <input 
-                    type="number" 
-                    placeholder="Score de relevancia (0-100)" 
-                    value={facebookGroupForm.relevance_score}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, relevance_score: parseInt(e.target.value) || 70 })}
-                  />
-                  <textarea 
-                    className="full" 
-                    placeholder="Resumen de reglas" 
-                    value={facebookGroupForm.rules_summary}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, rules_summary: e.target.value })}
-                    rows={2}
-                  />
-                  <textarea 
-                    className="full" 
-                    placeholder="Notas adicionales" 
-                    value={facebookGroupForm.notes}
-                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, notes: e.target.value })}
-                    rows={2}
-                  />
-                  <button type="submit" className="full" disabled={busy}>Guardar grupo</button>
-                </form>
-
-                <div style={{ marginTop: '2rem' }}>
-                <h4>Grupos de Facebook Guardados</h4>
-                <table className="facebook-groups-table">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Nicho</th>
-                      <th>Miembros</th>
-                      <th>Relevancia</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {facebookTargets.length === 0 && (
-                      <tr>
-                        <td colSpan="5" className="empty-box">No hay grupos guardados</td>
-                      </tr>
-                    )}
-                    {facebookTargets.map(target => (
-                      <tr key={target.id}>
-                        <td>{target.name}</td>
-                        <td>{target.niche || '—'}</td>
-                        <td>{target.members_count || 0}</td>
-                        <td>
-                          <span className={target.relevance_score >= 70 ? 'relevance-high' : target.relevance_score >= 40 ? 'relevance-medium' : 'relevance-low'}>
-                            {target.relevance_score}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="row gap-sm">
-                            <button type="button" onClick={() => updateFacebookTarget(target)} className="tiny-btn">
-                              Editar
-                            </button>
-                            <button type="button" onClick={() => deleteFacebookTarget(target.id)} className="danger tiny-btn">
-                              Eliminar
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
               </div>
             </div>
-          </div>
+
+            {groupsTab === 'whatsapp' && (
+              <div className="panel-grid">
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    <i className="fab fa-whatsapp"></i> Crear bot para grupo
+                  </div>
+
+                  <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createGroupBot() }}>
+                    <input
+                      placeholder="Nombre del bot *"
+                      value={groupBotForm.name}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, name: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Group JID opcional: 120363xxxxx@g.us"
+                      value={groupBotForm.group_jid}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, group_jid: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Nombre del negocio"
+                      value={groupBotForm.business_name}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, business_name: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Oferta principal"
+                      value={groupBotForm.offer}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, offer: e.target.value })}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Descripción del negocio"
+                      value={groupBotForm.business_description}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, business_description: e.target.value })}
+                      rows={2}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Público objetivo"
+                      value={groupBotForm.target_audience}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, target_audience: e.target.value })}
+                      rows={2}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Reglas del grupo"
+                      value={groupBotForm.rules}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, rules: e.target.value })}
+                      rows={3}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Mensaje de bienvenida"
+                      value={groupBotForm.welcome_message}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, welcome_message: e.target.value })}
+                      rows={2}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Prompt IA para administrar el grupo"
+                      value={groupBotForm.system_prompt}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, system_prompt: e.target.value })}
+                      rows={4}
+                    />
+
+                    <label className="check-row">
+                      <input
+                        type="checkbox"
+                        checked={groupBotForm.moderation_enabled}
+                        onChange={(e) => setGroupBotForm({ ...groupBotForm, moderation_enabled: e.target.checked })}
+                      />
+                      Moderación activa
+                    </label>
+
+                    <label className="check-row">
+                      <input
+                        type="checkbox"
+                        checked={groupBotForm.auto_reply_enabled}
+                        onChange={(e) => setGroupBotForm({ ...groupBotForm, auto_reply_enabled: e.target.checked })}
+                      />
+                      Auto respuestas
+                    </label>
+
+                    <label className="check-row">
+                      <input
+                        type="checkbox"
+                        checked={groupBotForm.lead_capture_enabled}
+                        onChange={(e) => setGroupBotForm({ ...groupBotForm, lead_capture_enabled: e.target.checked })}
+                      />
+                      Capturar leads
+                    </label>
+
+                    <input
+                      className="full"
+                      placeholder="Teléfono humano para escalamiento"
+                      value={groupBotForm.human_handoff_phone}
+                      onChange={(e) => setGroupBotForm({ ...groupBotForm, human_handoff_phone: e.target.value })}
+                    />
+
+                    <button type="submit" className="full" disabled={busy}>
+                      <i className="fas fa-plus"></i> Crear bot de grupo
+                    </button>
+                  </form>
+                </section>
+
+                <section className="stripe-card stack">
+                  <div className="row between">
+                    <div className="section-title">
+                      <i className="fas fa-users"></i> Bots de grupos
+                    </div>
+                    <button type="button" className="secondary tiny-btn" onClick={loadGroupBots}>
+                      Recargar
+                    </button>
+                  </div>
+
+                  <div className="list two-col">
+                    {groupBots.length === 0 && (
+                      <div className="empty-box">Aún no hay bots de grupos.</div>
+                    )}
+
+                    {groupBots.map((bot) => (
+                      <div key={bot.id} className="bot-card">
+                        <div className="row between">
+                          <strong>{bot.name}</strong>
+                          <span className={`pill ${bot.status || 'draft'}`}>{bot.status || 'draft'}</span>
+                        </div>
+
+                        <div className="muted" style={{ marginTop: '.5rem' }}>
+                          Grupo: {bot.group_jid || 'Pendiente por conectar'}
+                        </div>
+
+                        <div className="muted">Oferta: {bot.offer || '—'}</div>
+
+                        <div className="tag-list mini" style={{ marginTop: '.75rem' }}>
+                          {bot.moderation_enabled && <span>Moderación</span>}
+                          {bot.auto_reply_enabled && <span>Auto reply</span>}
+                          {bot.lead_capture_enabled && <span>Leads</span>}
+                        </div>
+
+                        <div className="row" style={{ marginTop: '1rem' }}>
+                          <button type="button" className="tiny-btn" onClick={() => toggleGroupBotStatus(bot)}>
+                            {bot.status === 'active' ? 'Pausar' : 'Activar'}
+                          </button>
+
+                          <button type="button" className="danger tiny-btn" onClick={() => deleteGroupBot(bot.id)}>
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="empty-box">
+                    Para conectar un grupo real: conecta el WhatsApp del bot con QR, agrega ese número al grupo y luego guarda el JID del grupo terminado en <strong>@g.us</strong>.
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {groupsTab === 'facebook' && (
+              <div className="panel-grid">
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    <i className="fab fa-facebook"></i> Discovery IA de grupos
+                  </div>
+
+                  <form className="form-grid" onSubmit={(e) => { e.preventDefault(); discoverFacebookGroups() }}>
+                    <input
+                      placeholder="Producto o servicio *"
+                      value={facebookDiscoveryForm.product}
+                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, product: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Nombre del negocio"
+                      value={facebookDiscoveryForm.business_name}
+                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, business_name: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="País / mercado"
+                      value={facebookDiscoveryForm.country}
+                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, country: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Nicho"
+                      value={facebookDiscoveryForm.niche}
+                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, niche: e.target.value })}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Oferta principal"
+                      value={facebookDiscoveryForm.offer}
+                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, offer: e.target.value })}
+                      rows={2}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Público objetivo"
+                      value={facebookDiscoveryForm.target_audience}
+                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, target_audience: e.target.value })}
+                      rows={2}
+                    />
+
+                    <button type="submit" className="full" disabled={facebookDiscoverLoading}>
+                      {facebookDiscoverLoading ? (
+                        <>
+                          <i className="fas fa-circle-notch fa-spin"></i> Buscando grupos con IA...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-magnifying-glass"></i> Buscar grupos IA
+                        </>
+                      )}
+                    </button>
+                  </form>
+
+                  {facebookDiscovery && (
+                    <div className="stack" style={{ marginTop: '1rem' }}>
+                      <div className="ads-pro-card">
+                        <h3>Keywords sugeridas</h3>
+                        <div className="tag-list">
+                          {(facebookDiscovery.search_keywords || []).map((k, i) => <span key={i}>{k}</span>)}
+                        </div>
+                      </div>
+
+                      <div className="ads-pro-card">
+                        <h3>Estrategia segura</h3>
+                        <p>{facebookDiscovery.strategy}</p>
+                      </div>
+
+                      {(facebookDiscovery.warnings || []).length > 0 && (
+                        <div className="reality-warning-card">
+                          <h3>Advertencias</h3>
+                          <ul>
+                            {facebookDiscovery.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+
+                <section className="stripe-card stack">
+                  <div className="row between">
+                    <div className="section-title">
+                      <i className="fas fa-bullseye"></i> Grupos recomendados
+                    </div>
+                    <button type="button" className="secondary tiny-btn" onClick={loadFacebookTargets}>
+                      Recargar
+                    </button>
+                  </div>
+
+                  {facebookDiscovery?.groups?.length > 0 && (
+                    <div className="list two-col">
+                      {facebookDiscovery.groups.map((g, i) => (
+                        <div className="bot-card" key={i}>
+                          <div className="row between">
+                            <strong>{g.name}</strong>
+                            <span className="pill hot">{g.relevance_score || 70}/100</span>
+                          </div>
+                          <div className="muted">{g.niche || g.category}</div>
+                          <p style={{ marginTop: '.5rem' }}>{g.notes}</p>
+                          <small>{g.rules_summary}</small>
+                          <button type="button" style={{ marginTop: '.75rem' }} onClick={() => saveRecommendedFacebookGroup(g)}>
+                            Guardar recomendado
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="section-title" style={{ marginTop: '1rem' }}>
+                    Grupos guardados
+                  </div>
+
+                  <div className="list two-col">
+                    {facebookTargets.length === 0 && (
+                      <div className="empty-box">Aún no hay grupos guardados.</div>
+                    )}
+
+                    {facebookTargets.map((g) => (
+                      <div className="bot-card" key={g.id}>
+                        <div className="row between">
+                          <strong>{g.name}</strong>
+                          <span className="pill interested">{g.relevance_score || 0}/100</span>
+                        </div>
+                        <div className="muted">{g.niche || g.category || 'Sin nicho'}</div>
+                        <div className="muted">Miembros: {g.members_count || 'Estimado pendiente'}</div>
+                        <p style={{ marginTop: '.5rem' }}>{g.notes}</p>
+                        <small>{g.join_status || 'pending_manual_join'}</small>
+                        <div className="row" style={{ marginTop: '1rem' }}>
+                          {g.url && (
+                            <a href={g.url} target="_blank" rel="noreferrer">
+                              <button type="button" className="tiny-btn">Abrir</button>
+                            </a>
+                          )}
+                          <button type="button" className="danger tiny-btn" onClick={() => deleteFacebookTarget(g.id)}>
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="empty-box">
+                    Worktic recomienda grupos, keywords y estrategia. El ingreso al grupo debe ser manual y respetando reglas de Meta.
+                  </div>
+                </section>
+              </div>
+            )}
+          </section>
         )}
 
         {/* ======================== CLIENTS (admin only) ======================== */}
