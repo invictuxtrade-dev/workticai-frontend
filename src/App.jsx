@@ -76,6 +76,34 @@ const emptySocialCampaign = {
   image_prompt: ''
 }
 
+// Formulario vacío para bot de grupo WhatsApp
+const emptyGroupBotForm = {
+  name: '',
+  business_name: '',
+  business_description: '',
+  offer: '',
+  target_audience: '',
+  rules: '',
+  welcome_message: '',
+  system_prompt: '',
+  moderation_enabled: true,
+  auto_reply_enabled: true,
+  lead_capture_enabled: true,
+  human_handoff_phone: ''
+}
+
+// Formulario vacío para grupo de Facebook
+const emptyFacebookGroupForm = {
+  name: '',
+  url: '',
+  category: '',
+  niche: '',
+  members_count: 0,
+  relevance_score: 70,
+  rules_summary: '',
+  notes: ''
+}
+
 // Lista de países para el selector (bandera + código)
 const countries = [
   { code: 'CO', dialCode: '57', flag: '🇨🇴', name: 'Colombia' },
@@ -3452,6 +3480,100 @@ export default function App() {
             min-width: 80px;
           }
         }
+
+        /* ========== ESTILOS PARA GRUPOS (WhatsApp Groups AI + Facebook Groups) ========== */
+        .groups-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .groups-tabs {
+          display: flex;
+          gap: 0.5rem;
+          border-bottom: 1px solid #e2e8f0;
+          margin-bottom: 1rem;
+        }
+
+        .groups-tab {
+          background: transparent;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          font-weight: 600;
+          color: #64748b;
+          cursor: pointer;
+          border-radius: 0;
+          position: relative;
+        }
+
+        .groups-tab.active {
+          color: #3b82f6;
+        }
+
+        .groups-tab.active::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: #3b82f6;
+        }
+
+        .group-bot-card, .facebook-group-card {
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 1rem;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .group-bot-card h4, .facebook-group-card h4 {
+          margin-bottom: 0.5rem;
+          color: #0f172a;
+        }
+
+        .group-bot-card .status-badge {
+          display: inline-block;
+          padding: 0.2rem 0.6rem;
+          border-radius: 9999px;
+          font-size: 0.7rem;
+          font-weight: 600;
+        }
+
+        .group-bot-card .status-badge.active {
+          background: #d1fae5;
+          color: #065f46;
+        }
+
+        .group-bot-card .status-badge.inactive {
+          background: #fee2e2;
+          color: #991b1b;
+        }
+
+        .facebook-group-card .relevance-high {
+          background: #d1fae5;
+          color: #065f46;
+          padding: 0.2rem 0.6rem;
+          border-radius: 9999px;
+          font-size: 0.7rem;
+        }
+
+        .facebook-group-card .relevance-medium {
+          background: #fef3c7;
+          color: #92400e;
+          padding: 0.2rem 0.6rem;
+          border-radius: 9999px;
+          font-size: 0.7rem;
+        }
+
+        .facebook-group-card .relevance-low {
+          background: #fee2e2;
+          color: #991b1b;
+          padding: 0.2rem 0.6rem;
+          border-radius: 9999px;
+          font-size: 0.7rem;
+        }
       `
       document.head.appendChild(style)
     }
@@ -3473,6 +3595,12 @@ export default function App() {
   const [tab, setTab] = useState('dashboard')
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
+
+  // ========== NUEVOS ESTADOS PARA GRUPOS (WhatsApp Groups AI + Facebook Groups) ==========
+  const [groupBots, setGroupBots] = useState([])
+  const [facebookTargets, setFacebookTargets] = useState([])
+  const [groupBotForm, setGroupBotForm] = useState(emptyGroupBotForm)
+  const [facebookGroupForm, setFacebookGroupForm] = useState(emptyFacebookGroupForm)
 
   // ========== NUEVOS ESTADOS PARA PLANES Y SUSCRIPCIONES ==========
   const [plans, setPlans] = useState([])
@@ -3682,6 +3810,165 @@ export default function App() {
     return (div.textContent || div.innerText || '')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
+  }
+
+  // ======================== FUNCIONES DE GRUPOS (WhatsApp Groups AI + Facebook Groups) ========================
+  async function loadGroupBots() {
+    if (forcePlanScreen) return
+    try {
+      const data = await api(`/api/groups/whatsapp-bots${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setGroupBots(data || [])
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+      showNotice(err.message || 'Error cargando bots de grupo')
+    }
+  }
+
+  async function createGroupBot() {
+    if (!groupBotForm.name.trim()) {
+      showNotice('Escribe un nombre para el bot de grupo')
+      return
+    }
+    if (!groupBotForm.business_name.trim()) {
+      showNotice('Escribe el nombre del negocio')
+      return
+    }
+    if (!groupBotForm.offer.trim()) {
+      showNotice('Escribe la oferta principal')
+      return
+    }
+    setBusy(true)
+    try {
+      await api(`/api/groups/whatsapp-bots${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'POST',
+        body: JSON.stringify(groupBotForm)
+      })
+      showNotice('Bot de grupo creado correctamente')
+      setGroupBotForm(emptyGroupBotForm)
+      await loadGroupBots()
+    } catch (err) {
+      showNotice(err.message || 'Error creando bot de grupo')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function updateGroupBot(bot) {
+    const updated = { ...bot }
+    const name = prompt('Nuevo nombre:', bot.name)
+    if (name && name.trim()) updated.name = name.trim()
+    
+    const offer = prompt('Oferta principal:', bot.offer)
+    if (offer && offer.trim()) updated.offer = offer.trim()
+    
+    try {
+      await api(`/api/groups/whatsapp-bots/${bot.id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'PUT',
+        body: JSON.stringify(updated)
+      })
+      showNotice('Bot de grupo actualizado')
+      await loadGroupBots()
+    } catch (err) {
+      showNotice(err.message || 'Error actualizando bot de grupo')
+    }
+  }
+
+  async function toggleGroupBotStatus(bot) {
+    const newStatus = bot.status === 'active' ? 'inactive' : 'active'
+    try {
+      await api(`/api/groups/whatsapp-bots/${bot.id}/status${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus })
+      })
+      showNotice(`Bot de grupo ${newStatus === 'active' ? 'activado' : 'pausado'}`)
+      await loadGroupBots()
+    } catch (err) {
+      showNotice(err.message || 'Error cambiando estado del bot')
+    }
+  }
+
+  async function deleteGroupBot(botId) {
+    if (!window.confirm('¿Eliminar este bot de grupo?')) return
+    try {
+      await api(`/api/groups/whatsapp-bots/${botId}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'DELETE'
+      })
+      showNotice('Bot de grupo eliminado')
+      await loadGroupBots()
+    } catch (err) {
+      showNotice(err.message || 'Error eliminando bot de grupo')
+    }
+  }
+
+  async function loadFacebookTargets() {
+    if (forcePlanScreen) return
+    try {
+      const data = await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setFacebookTargets(data || [])
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+      showNotice(err.message || 'Error cargando grupos de Facebook')
+    }
+  }
+
+  async function createFacebookTarget() {
+    if (!facebookGroupForm.name.trim()) {
+      showNotice('Escribe el nombre del grupo')
+      return
+    }
+    if (!facebookGroupForm.url.trim()) {
+      showNotice('Escribe la URL del grupo')
+      return
+    }
+    setBusy(true)
+    try {
+      await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'POST',
+        body: JSON.stringify(facebookGroupForm)
+      })
+      showNotice('Grupo de Facebook guardado correctamente')
+      setFacebookGroupForm(emptyFacebookGroupForm)
+      await loadFacebookTargets()
+    } catch (err) {
+      showNotice(err.message || 'Error guardando grupo de Facebook')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function updateFacebookTarget(target) {
+    const updated = { ...target }
+    const relevanceScore = prompt('Nuevo score de relevancia (0-100):', target.relevance_score)
+    if (relevanceScore && !isNaN(relevanceScore)) updated.relevance_score = parseInt(relevanceScore, 10)
+    
+    const notes = prompt('Notas adicionales:', target.notes || '')
+    if (notes !== null) updated.notes = notes
+    
+    try {
+      await api(`/api/groups/facebook-targets/${target.id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'PUT',
+        body: JSON.stringify(updated)
+      })
+      showNotice('Grupo de Facebook actualizado')
+      await loadFacebookTargets()
+    } catch (err) {
+      showNotice(err.message || 'Error actualizando grupo de Facebook')
+    }
+  }
+
+  async function deleteFacebookTarget(targetId) {
+    if (!window.confirm('¿Eliminar este grupo de Facebook?')) return
+    try {
+      await api(`/api/groups/facebook-targets/${targetId}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'DELETE'
+      })
+      showNotice('Grupo de Facebook eliminado')
+      await loadFacebookTargets()
+    } catch (err) {
+      showNotice(err.message || 'Error eliminando grupo de Facebook')
+    }
   }
 
   // ======================== FUNCIONES DE PLANES Y FACTURACIÓN ========================
@@ -3931,7 +4218,6 @@ export default function App() {
         'success'
       )
 
-      // Recargar bots y landings después de crear el ecosistema
       if (selectedClientId) {
         await loadBots(selectedClientId)
         await loadLandings()
@@ -4001,6 +4287,14 @@ export default function App() {
       loadBillingConfig()
     }
   }, [me])
+
+  // Cargar datos de grupos cuando el usuario está autenticado
+  useEffect(() => {
+    if (me && !forcePlanScreen && selectedClientId) {
+      loadGroupBots()
+      loadFacebookTargets()
+    }
+  }, [me, forcePlanScreen, selectedClientId])
 
   // ======================== FUNCIONES DE LANDING ========================
   async function generateLanding() {
@@ -4548,6 +4842,8 @@ export default function App() {
     loadSocialCredential()
     loadSocialPosts()
     loadSocialLogs()
+    loadGroupBots()
+    loadFacebookTargets()
   }, [selectedClientId, forcePlanScreen])
 
   // Período de refresco automático (30s) – evita actualizaciones cuando estás en la pestaña Ads
@@ -4598,6 +4894,12 @@ export default function App() {
         await loadSocialLogs()
         return
       }
+
+      if (tab === 'groups') {
+        await loadGroupBots()
+        await loadFacebookTargets()
+        return
+      }
     }, 30000)
 
     return () => clearInterval(t)
@@ -4632,6 +4934,8 @@ export default function App() {
     await loadFunnelMetrics()
     await loadInboxLeads()
     await loadLandings()
+    await loadGroupBots()
+    await loadFacebookTargets()
   }
 
   async function loadMetrics() {
@@ -5074,6 +5378,10 @@ export default function App() {
           </button>
           <button className={tab === 'ads' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('ads')} type="button">
             <i className="fas fa-chart-line"></i> Ads IA
+          </button>
+          {/* +++ NUEVO BOTÓN PARA GRUPOS +++ */}
+          <button className={tab === 'groups' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('groups')} type="button">
+            <i className="fas fa-users"></i> Grupos
           </button>
           {me.role === 'admin' && (
             <>
@@ -5673,6 +5981,238 @@ export default function App() {
             ecosystemLoading={ecosystemLoading}
             showNotice={showNotice}
           />
+        )}
+
+        {/* ======================== GRUPOS (WhatsApp Groups AI + Facebook Groups) ======================== */}
+        {tab === 'groups' && (
+          <div className="groups-container">
+            <div className="stripe-card">
+              <div className="groups-tabs">
+                <button 
+                  className={`groups-tab ${!selectedClientId?.includes('facebook') ? 'active' : ''}`}
+                  onClick={() => setSelectedClientId(selectedClientId || (clients[0]?.id || ''))}
+                  type="button"
+                >
+                  WhatsApp Groups AI
+                </button>
+                <button 
+                  className={`groups-tab ${selectedClientId?.includes('facebook') ? 'active' : ''}`}
+                  onClick={() => {}} 
+                  type="button"
+                >
+                  Facebook Groups
+                </button>
+              </div>
+
+              {/* WhatsApp Groups AI Section */}
+              <div style={{ marginBottom: '2rem' }}>
+                <div className="row between center" style={{ marginBottom: '1rem' }}>
+                  <div className="section-title"><i className="fab fa-whatsapp"></i> WhatsApp Group Bots</div>
+                  <small className="muted">Crea IA para gestionar tus grupos de WhatsApp</small>
+                </div>
+
+                <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createGroupBot(); }}>
+                  <input 
+                    placeholder="Nombre del bot *" 
+                    value={groupBotForm.name}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, name: e.target.value })}
+                  />
+                  <input 
+                    placeholder="Nombre del negocio *" 
+                    value={groupBotForm.business_name}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, business_name: e.target.value })}
+                  />
+                  <input 
+                    placeholder="Descripción del negocio" 
+                    value={groupBotForm.business_description}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, business_description: e.target.value })}
+                  />
+                  <input 
+                    placeholder="Oferta principal *" 
+                    value={groupBotForm.offer}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, offer: e.target.value })}
+                  />
+                  <input 
+                    placeholder="Público objetivo" 
+                    value={groupBotForm.target_audience}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, target_audience: e.target.value })}
+                  />
+                  <textarea 
+                    placeholder="Reglas del grupo (separadas por coma)" 
+                    value={groupBotForm.rules}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, rules: e.target.value })}
+                    rows={2}
+                  />
+                  <textarea 
+                    className="full" 
+                    placeholder="Mensaje de bienvenida" 
+                    value={groupBotForm.welcome_message}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, welcome_message: e.target.value })}
+                    rows={3}
+                  />
+                  <textarea 
+                    className="full" 
+                    placeholder="Prompt del sistema para IA" 
+                    value={groupBotForm.system_prompt}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, system_prompt: e.target.value })}
+                    rows={4}
+                  />
+                  <input 
+                    placeholder="Teléfono para transferencia humana" 
+                    value={groupBotForm.human_handoff_phone}
+                    onChange={e => setGroupBotForm({ ...groupBotForm, human_handoff_phone: e.target.value })}
+                  />
+                  <div className="full row gap-sm">
+                    <label className="toggle">
+                      <input type="checkbox" checked={groupBotForm.moderation_enabled} onChange={e => setGroupBotForm({ ...groupBotForm, moderation_enabled: e.target.checked })} />
+                      Moderación activa
+                    </label>
+                    <label className="toggle">
+                      <input type="checkbox" checked={groupBotForm.auto_reply_enabled} onChange={e => setGroupBotForm({ ...groupBotForm, auto_reply_enabled: e.target.checked })} />
+                      Respuesta automática
+                    </label>
+                    <label className="toggle">
+                      <input type="checkbox" checked={groupBotForm.lead_capture_enabled} onChange={e => setGroupBotForm({ ...groupBotForm, lead_capture_enabled: e.target.checked })} />
+                      Captura de leads
+                    </label>
+                  </div>
+                  <button type="submit" className="full" disabled={busy}>Crear bot de grupo</button>
+                </form>
+
+                <div style={{ marginTop: '2rem' }}>
+                  <h4>Mis Bots de Grupo</h4>
+                  {groupBots.length === 0 && <div className="empty-box">No hay bots de grupo creados</div>}
+                  {groupBots.map(bot => (
+                    <div key={bot.id} className="group-bot-card">
+                      <div className="row between">
+                        <div>
+                          <h4>{bot.name}</h4>
+                          <div className="muted tiny">{bot.business_name}</div>
+                        </div>
+                        <span className={`status-badge ${bot.status === 'active' ? 'active' : 'inactive'}`}>
+                          {bot.status === 'active' ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </div>
+                      <div className="row gap-sm" style={{ marginTop: '0.5rem' }}>
+                        <button type="button" onClick={() => toggleGroupBotStatus(bot)}>
+                          {bot.status === 'active' ? 'Pausar' : 'Activar'}
+                        </button>
+                        <button type="button" onClick={() => updateGroupBot(bot)} className="secondary">
+                          Editar
+                        </button>
+                        <button type="button" onClick={() => deleteGroupBot(bot.id)} className="danger">
+                          Eliminar
+                        </button>
+                      </div>
+                      {bot.offer && <div className="muted tiny" style={{ marginTop: '0.5rem' }}>Oferta: {bot.offer}</div>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Facebook Groups Section */}
+              <div>
+                <div className="row between center" style={{ marginBottom: '1rem' }}>
+                  <div className="section-title"><i className="fab fa-facebook"></i> Facebook Groups</div>
+                  <small className="muted">Guarda grupos de Facebook para análisis</small>
+                </div>
+
+                <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createFacebookTarget(); }}>
+                  <input 
+                    placeholder="Nombre del grupo *" 
+                    value={facebookGroupForm.name}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, name: e.target.value })}
+                  />
+                  <input 
+                    placeholder="URL del grupo *" 
+                    value={facebookGroupForm.url}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, url: e.target.value })}
+                  />
+                  <input 
+                    placeholder="Categoría" 
+                    value={facebookGroupForm.category}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, category: e.target.value })}
+                  />
+                  <input 
+                    placeholder="Nicho / Industria" 
+                    value={facebookGroupForm.niche}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, niche: e.target.value })}
+                  />
+                  <input 
+                    type="number" 
+                    placeholder="Número de miembros" 
+                    value={facebookGroupForm.members_count}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, members_count: parseInt(e.target.value) || 0 })}
+                  />
+                  <input 
+                    type="number" 
+                    placeholder="Score de relevancia (0-100)" 
+                    value={facebookGroupForm.relevance_score}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, relevance_score: parseInt(e.target.value) || 70 })}
+                  />
+                  <textarea 
+                    className="full" 
+                    placeholder="Resumen de reglas" 
+                    value={facebookGroupForm.rules_summary}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, rules_summary: e.target.value })}
+                    rows={2}
+                  />
+                  <textarea 
+                    className="full" 
+                    placeholder="Notas adicionales" 
+                    value={facebookGroupForm.notes}
+                    onChange={e => setFacebookGroupForm({ ...facebookGroupForm, notes: e.target.value })}
+                    rows={2}
+                  />
+                  <button type="submit" className="full" disabled={busy}>Guardar grupo</button>
+                </form>
+
+                <div style={{ marginTop: '2rem' }}>
+                <h4>Grupos de Facebook Guardados</h4>
+                <table className="facebook-groups-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Nicho</th>
+                      <th>Miembros</th>
+                      <th>Relevancia</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {facebookTargets.length === 0 && (
+                      <tr>
+                        <td colSpan="5" className="empty-box">No hay grupos guardados</td>
+                      </tr>
+                    )}
+                    {facebookTargets.map(target => (
+                      <tr key={target.id}>
+                        <td>{target.name}</td>
+                        <td>{target.niche || '—'}</td>
+                        <td>{target.members_count || 0}</td>
+                        <td>
+                          <span className={target.relevance_score >= 70 ? 'relevance-high' : target.relevance_score >= 40 ? 'relevance-medium' : 'relevance-low'}>
+                            {target.relevance_score}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="row gap-sm">
+                            <button type="button" onClick={() => updateFacebookTarget(target)} className="tiny-btn">
+                              Editar
+                            </button>
+                            <button type="button" onClick={() => deleteFacebookTarget(target.id)} className="danger tiny-btn">
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* ======================== CLIENTS (admin only) ======================== */}
