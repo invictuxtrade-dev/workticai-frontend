@@ -76,7 +76,6 @@ const emptySocialCampaign = {
   image_prompt: ''
 }
 
-// Formulario vacío para bot de grupo WhatsApp (ACTUALIZADO CON group_jid)
 const emptyGroupBotForm = {
   name: '',
   group_jid: '',
@@ -93,7 +92,6 @@ const emptyGroupBotForm = {
   human_handoff_phone: ''
 }
 
-// Formulario vacío para grupo de Facebook (actual)
 const emptyFacebookGroupForm = {
   name: '',
   url: '',
@@ -105,7 +103,6 @@ const emptyFacebookGroupForm = {
   notes: ''
 }
 
-// NUEVO FORMULARIO PARA FACEBOOK DISCOVERY IA
 const emptyFacebookDiscoveryForm = {
   product: '',
   business_name: '',
@@ -115,7 +112,6 @@ const emptyFacebookDiscoveryForm = {
   niche: ''
 }
 
-// Lista de países para el selector (bandera + código)
 const countries = [
   { code: 'CO', dialCode: '57', flag: '🇨🇴', name: 'Colombia' },
   { code: 'AR', dialCode: '54', flag: '🇦🇷', name: 'Argentina' },
@@ -471,7 +467,6 @@ function LoginScreen({ onAuth }) {
   )
 }
 
-// ========== COMPONENTE ADS IA MEJORADO (SIN SCROLL HORIZONTAL) ==========
 const AdsPanel = memo(function AdsPanel({ 
   adsForm, setAdsForm, 
   adsResult, adsLoading, 
@@ -1018,7 +1013,6 @@ const AdsPanel = memo(function AdsPanel({
   )
 })
 
-// ========== COMPONENTE PLAN GATE (MEMOIZADO) ==========
 const PlanGate = memo(function PlanGate({ 
   plans, billingCycle, setBillingCycle, selectPlan, 
   showInvoice, selectedPlan, subscription, 
@@ -3586,23 +3580,14 @@ export default function App() {
     }
   }, [])
 
-  // ======================== TODA LA LÓGICA DEL ESTADO Y FUNCIONES ========================
+  // ======================== ESTADOS PRINCIPALES ========================
   const [me, setMe] = useState(null)
   const [tab, setTab] = useState('dashboard')
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [forcePlanScreen, setForcePlanScreen] = useState(false)
 
-  // Estados para GRUPOS
-  const [groupBots, setGroupBots] = useState([])
-  const [facebookTargets, setFacebookTargets] = useState([])
-  const [groupBotForm, setGroupBotForm] = useState(emptyGroupBotForm)
-  const [facebookGroupForm, setFacebookGroupForm] = useState(emptyFacebookGroupForm)
-  const [groupsTab, setGroupsTab] = useState('whatsapp')
-  const [facebookDiscoveryForm, setFacebookDiscoveryForm] = useState(emptyFacebookDiscoveryForm)
-  const [facebookDiscovery, setFacebookDiscovery] = useState(null)
-  const [facebookDiscoverLoading, setFacebookDiscoverLoading] = useState(false)
-
-  // Estados para PLANES Y SUSCRIPCIONES
+  // Planes y suscripciones
   const [plans, setPlans] = useState([])
   const [subscription, setSubscription] = useState(null)
   const [billingConfig, setBillingConfig] = useState({
@@ -3614,13 +3599,61 @@ export default function App() {
   const [billingCycle, setBillingCycle] = useState('monthly')
   const [selectedPlanSlug, setSelectedPlanSlug] = useState('')
   const [paymentTxHash, setPaymentTxHash] = useState('')
-  const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [pendingSubscriptions, setPendingSubscriptions] = useState([])
   const [showInvoice, setShowInvoice] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [paymentQR, setPaymentQR] = useState('')
 
-  // Estados para ADS IA
+  // Clientes y usuarios
+  const [clients, setClients] = useState([])
+  const [users, setUsers] = useState([])
+  const [selectedClientId, setSelectedClientId] = useState('')
+
+  // Bots, leads y mensajes
+  const [bots, setBots] = useState([])
+  const [selectedBotId, setSelectedBotId] = useState('')
+  const [leads, setLeads] = useState([])
+  const [selectedLeadId, setSelectedLeadId] = useState(null)
+  const [messages, setMessages] = useState([])
+  const [qrDataUrlBot, setQrDataUrlBot] = useState('')
+  const [sendNumber, setSendNumber] = useState('')
+  const [sendMessage, setSendMessage] = useState('Hola 👋')
+  const [chatMessage, setChatMessage] = useState('')
+
+  // Configuración bots
+  const [config, setConfig] = useState(emptyConfig)
+
+  // Plantillas
+  const [templates, setTemplates] = useState([])
+  const [templateForm, setTemplateForm] = useState(emptyTemplate)
+
+  // Landing
+  const [landingForm, setLandingForm] = useState(emptyLanding)
+  const [landings, setLandings] = useState([])
+  const [editingLandingId, setEditingLandingId] = useState('')
+  const [landingHTML, setLandingHTML] = useState('')
+  const [landingLoading, setLandingLoading] = useState(false)
+  const [landingLoadingText, setLandingLoadingText] = useState('')
+  const [landingLoadingStep, setLandingLoadingStep] = useState(0)
+
+  // Social IA
+  const [socialCredential, setSocialCredential] = useState(emptySocialCredential)
+  const [socialCampaign, setSocialCampaign] = useState(emptySocialCampaign)
+  const [socialPosts, setSocialPosts] = useState([])
+  const [socialLogs, setSocialLogs] = useState([])
+  const [socialImageURL, setSocialImageURL] = useState('')
+  const [socialLoading, setSocialLoading] = useState(false)
+  const [socialLoadingStep, setSocialLoadingStep] = useState(0)
+  const [socialLoadingText, setSocialLoadingText] = useState('')
+  const [socialContent, setSocialContent] = useState('')
+  const [socialImagePrompt, setSocialImagePrompt] = useState('')
+  const [socialImageLoading, setSocialImageLoading] = useState(false)
+  const [socialUploadLoading, setSocialUploadLoading] = useState(false)
+  const [socialActionLoading, setSocialActionLoading] = useState(false)
+  const [socialActionStep, setSocialActionStep] = useState(0)
+  const [socialActionText, setSocialActionText] = useState('')
+
+  // Ads IA
   const [adsForm, setAdsForm] = useState({
     business_name: '',
     product: '',
@@ -3637,54 +3670,26 @@ export default function App() {
   const [adsLoading, setAdsLoading] = useState(false)
   const [ecosystemLoading, setEcosystemLoading] = useState(false)
 
-  // Estados existentes
-  const [clients, setClients] = useState([])
-  const [users, setUsers] = useState([])
-  const [bots, setBots] = useState([])
-  const [templates, setTemplates] = useState([])
+  // Grupos WhatsApp
+  const [groupBots, setGroupBots] = useState([])
+  const [groupBotForm, setGroupBotForm] = useState(emptyGroupBotForm)
+
+  // Grupos Facebook
+  const [facebookTargets, setFacebookTargets] = useState([])
+  const [facebookGroupForm, setFacebookGroupForm] = useState(emptyFacebookGroupForm)
+  const [groupsTab, setGroupsTab] = useState('whatsapp')
+  const [facebookDiscoveryForm, setFacebookDiscoveryForm] = useState(emptyFacebookDiscoveryForm)
+  const [facebookDiscovery, setFacebookDiscovery] = useState(null)
+  const [facebookDiscoverLoading, setFacebookDiscoverLoading] = useState(false)
+
+  // NEW: Growth AI estados
+  const [growthSettings, setGrowthSettings] = useState(null)
+  const [joinQueue, setJoinQueue] = useState([])
+  const [facebookLogs, setFacebookLogs] = useState([])
+
+  // Métricas
   const [metrics, setMetrics] = useState({})
   const [funnelMetrics, setFunnelMetrics] = useState({})
-
-  const [selectedClientId, setSelectedClientId] = useState('')
-  const [selectedBotId, setSelectedBotId] = useState('')
-  const [selectedLeadId, setSelectedLeadId] = useState(null)
-
-  const [qrDataUrlBot, setQrDataUrlBot] = useState('')
-  const [leads, setLeads] = useState([])
-  const [messages, setMessages] = useState([])
-  const [config, setConfig] = useState(emptyConfig)
-
-  const [newClient, setNewClient] = useState({ name: '', email: '', phone: '', plan: 'pro' })
-  const [newUser, setNewUser] = useState({ client_id: '', name: '', email: '', password: '', role: 'client_admin' })
-  const [newBotName, setNewBotName] = useState('')
-  const [sendNumber, setSendNumber] = useState('')
-  const [sendMessage, setSendMessage] = useState('Hola 👋')
-  const [chatMessage, setChatMessage] = useState('')
-  const [templateForm, setTemplateForm] = useState(emptyTemplate)
-
-  const [landingForm, setLandingForm] = useState(emptyLanding)
-  const [landings, setLandings] = useState([])
-  const [editingLandingId, setEditingLandingId] = useState('')
-  const [landingHTML, setLandingHTML] = useState('')
-  const [landingLoading, setLandingLoading] = useState(false)
-  const [landingLoadingText, setLandingLoadingText] = useState('')
-  const [landingLoadingStep, setLandingLoadingStep] = useState(0)
-
-  const [socialCredential, setSocialCredential] = useState(emptySocialCredential)
-  const [socialCampaign, setSocialCampaign] = useState(emptySocialCampaign)
-  const [socialPosts, setSocialPosts] = useState([])
-  const [socialLogs, setSocialLogs] = useState([])
-  const [socialImageURL, setSocialImageURL] = useState('')
-  const [socialLoadingStep, setSocialLoadingStep] = useState(0)
-  const [socialLoadingText, setSocialLoadingText] = useState('')
-  const [socialContent, setSocialContent] = useState('')
-  const [socialLoading, setSocialLoading] = useState(false)
-  const [socialImagePrompt, setSocialImagePrompt] = useState('')
-  const [socialImageLoading, setSocialImageLoading] = useState(false)
-  const [socialUploadLoading, setSocialUploadLoading] = useState(false)
-  const [socialActionLoading, setSocialActionLoading] = useState(false)
-  const [socialActionText, setSocialActionText] = useState('')
-  const [socialActionStep, setSocialActionStep] = useState(0)
 
   // Paginación
   const [searchBot, setSearchBot] = useState('')
@@ -3697,9 +3702,14 @@ export default function App() {
   const [clientPage, setClientPage] = useState(1)
   const [searchUser, setSearchUser] = useState('')
   const [userPage, setUserPage] = useState(1)
-
   const pageSize = 5
 
+  // Nuevo cliente, nuevo usuario, nuevo bot
+  const [newClient, setNewClient] = useState({ name: '', email: '', phone: '', plan: 'pro' })
+  const [newUser, setNewUser] = useState({ client_id: '', name: '', email: '', password: '', role: 'client_admin' })
+  const [newBotName, setNewBotName] = useState('')
+
+  // Computed values
   const selectedClient = useMemo(() => clients.find((x) => x.id === selectedClientId), [clients, selectedClientId])
   const selectedBot = useMemo(() => bots.find((x) => x.id === selectedBotId), [bots, selectedBotId])
   const selectedLead = useMemo(() => leads.find((x) => x.id === selectedLeadId), [leads, selectedLeadId])
@@ -3708,76 +3718,73 @@ export default function App() {
     () => bots.filter((b) => b.status === 'connected' || b.status === 'waiting_qr'),
     [bots]
   )
-
   const inactiveBots = useMemo(
     () => bots.filter((b) => b.status !== 'connected' && b.status !== 'waiting_qr'),
     [bots]
   )
-
   const filteredActiveBots = useMemo(() => {
     return activeBots.filter(b => b.name.toLowerCase().includes(searchBot.toLowerCase()) || (b.phone && b.phone.includes(searchBot)))
   }, [activeBots, searchBot])
-
   const paginatedActiveBots = useMemo(() => {
     const start = (botPage - 1) * pageSize
     return filteredActiveBots.slice(start, start + pageSize)
   }, [filteredActiveBots, botPage])
-
   const filteredInactiveBots = useMemo(() => {
     return inactiveBots.filter(b => b.name.toLowerCase().includes(searchBot.toLowerCase()) || (b.phone && b.phone.includes(searchBot)))
   }, [inactiveBots, searchBot])
-
   const paginatedInactiveBots = useMemo(() => {
     const start = (botPage - 1) * pageSize
     return filteredInactiveBots.slice(start, start + pageSize)
   }, [filteredInactiveBots, botPage])
-
   const filteredLeads = useMemo(() => {
     return leads.filter(lead => 
       (lead.display_name || lead.phone).toLowerCase().includes(searchLead.toLowerCase()) ||
       (lead.client_name && lead.client_name.toLowerCase().includes(searchLead.toLowerCase()))
     )
   }, [leads, searchLead])
-
   const paginatedLeads = useMemo(() => {
     const start = (leadPage - 1) * pageSize
     return filteredLeads.slice(start, start + pageSize)
   }, [filteredLeads, leadPage])
-
   const filteredTemplates = useMemo(() => {
     return templates.filter(t => t.name.toLowerCase().includes(searchTemplate.toLowerCase()))
   }, [templates, searchTemplate])
-
   const paginatedTemplates = useMemo(() => {
     const start = (templatePage - 1) * pageSize
     return filteredTemplates.slice(start, start + pageSize)
   }, [filteredTemplates, templatePage])
-
   const filteredClients = useMemo(() => {
     return clients.filter(c => c.name.toLowerCase().includes(searchClient.toLowerCase()) || c.email.toLowerCase().includes(searchClient.toLowerCase()))
   }, [clients, searchClient])
-
   const paginatedClients = useMemo(() => {
     const start = (clientPage - 1) * pageSize
     return filteredClients.slice(start, start + pageSize)
   }, [filteredClients, clientPage])
-
   const filteredUsers = useMemo(() => {
     return users.filter(u => u.name.toLowerCase().includes(searchUser.toLowerCase()) || u.email.toLowerCase().includes(searchUser.toLowerCase()))
   }, [users, searchUser])
-
   const paginatedUsers = useMemo(() => {
     const start = (userPage - 1) * pageSize
     return filteredUsers.slice(start, start + pageSize)
   }, [filteredUsers, userPage])
-
   const botLeadsByStage = useMemo(() => {
     if (!selectedBot) return { stages: [], counts: [] }
     const stages = ['new', 'qualified', 'interested', 'hot', 'closed']
     const counts = stages.map(s => leads.filter(l => l.bot_id === selectedBot.id && l.stage === s).length)
     return { stages, counts }
   }, [selectedBot, leads])
+  const leadsByStageGlobal = useMemo(() => {
+    const stages = ['new', 'qualified', 'interested', 'hot', 'closed']
+    const counts = stages.map(s => leads.filter(l => l.stage === s).length)
+    return { stages, counts }
+  }, [leads])
+  const messagesLast7Days = useMemo(() => {
+    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+    const counts = [12, 19, 15, 22, 27, 18, 24]
+    return { days, counts }
+  }, [])
 
+  // Funciones auxiliares
   const showNotice = useCallback((msg) => {
     setToast(msg)
     setTimeout(() => setToast(null), 3000)
@@ -3800,7 +3807,7 @@ export default function App() {
       .trim()
   }
 
-  // ======================== FUNCIONES DE GRUPOS ========================
+  // ======================== FUNCIONES GRUPOS WHATSAPP ========================
   async function loadGroupBots() {
     if (forcePlanScreen) return
     try {
@@ -3810,18 +3817,6 @@ export default function App() {
       console.error(err)
       if (err.status === 402) setForcePlanScreen(true)
       showNotice(err.message || 'Error cargando bots de grupos')
-    }
-  }
-
-  async function loadFacebookTargets() {
-    if (forcePlanScreen) return
-    try {
-      const data = await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
-      setFacebookTargets(data || [])
-    } catch (err) {
-      console.error(err)
-      if (err.status === 402) setForcePlanScreen(true)
-      showNotice(err.message || 'Error cargando grupos Facebook')
     }
   }
 
@@ -3859,7 +3854,6 @@ export default function App() {
       ...bot,
       status: bot.status === 'active' ? 'inactive' : 'active'
     }
-
     try {
       await api(`/api/groups/whatsapp-bots/${bot.id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'PUT',
@@ -3874,13 +3868,38 @@ export default function App() {
 
   async function deleteGroupBot(id) {
     if (!window.confirm('¿Eliminar este bot de grupo?')) return
-
     try {
       await api(`/api/groups/whatsapp-bots/${id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
         method: 'DELETE'
       })
       await loadGroupBots()
       showNotice('Bot eliminado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo eliminar')
+    }
+  }
+
+  // ======================== FUNCIONES GRUPOS FACEBOOK ========================
+  async function loadFacebookTargets() {
+    if (forcePlanScreen) return
+    try {
+      const data = await api(`/api/groups/facebook-targets${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setFacebookTargets(data || [])
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+      showNotice(err.message || 'Error cargando grupos Facebook')
+    }
+  }
+
+  async function deleteFacebookTarget(id) {
+    if (!window.confirm('¿Eliminar este grupo?')) return
+    try {
+      await api(`/api/groups/facebook-targets/${id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'DELETE'
+      })
+      await loadFacebookTargets()
+      showNotice('Grupo eliminado')
     } catch (err) {
       showNotice(err.message || 'No se pudo eliminar')
     }
@@ -3919,21 +3938,101 @@ export default function App() {
     }
   }
 
-  async function deleteFacebookTarget(id) {
-    if (!window.confirm('¿Eliminar este grupo?')) return
-
+  // ======================== NUEVAS FUNCIONES GROWTH AI ========================
+  async function loadGrowthSettings() {
     try {
-      await api(`/api/groups/facebook-targets/${id}${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
-        method: 'DELETE'
-      })
-      await loadFacebookTargets()
-      showNotice('Grupo eliminado')
+      const data = await api(`/api/groups/growth-settings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setGrowthSettings(data)
     } catch (err) {
-      showNotice(err.message || 'No se pudo eliminar')
+      showNotice(err.message || 'Error cargando configuración Growth AI')
     }
   }
 
-  // ======================== FUNCIONES DE PLANES Y FACTURACIÓN ========================
+  async function saveGrowthSettings() {
+    try {
+      const data = await api(`/api/groups/growth-settings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'PUT',
+        body: JSON.stringify(growthSettings)
+      })
+      setGrowthSettings(data)
+      showNotice('Configuración Growth AI guardada')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo guardar configuración')
+    }
+  }
+
+  async function loadJoinQueue() {
+    try {
+      const data = await api(`/api/groups/facebook-join-queue${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setJoinQueue(data || [])
+    } catch (err) {
+      showNotice(err.message || 'Error cargando cola')
+    }
+  }
+
+  async function loadFacebookLogs(groupId = '') {
+    try {
+      const qs = new URLSearchParams()
+      if (selectedClientId) qs.set('client_id', selectedClientId)
+      if (groupId) qs.set('group_target_id', groupId)
+
+      const data = await api(`/api/groups/facebook-logs?${qs.toString()}`)
+      setFacebookLogs(data || [])
+    } catch (err) {
+      showNotice(err.message || 'Error cargando logs')
+    }
+  }
+
+  async function requestFacebookJoin(group, mode = 'manual') {
+    try {
+      await api(`/api/groups/facebook-targets/${group.id}/request-join${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'POST',
+        body: JSON.stringify({ mode })
+      })
+
+      await loadFacebookTargets()
+      await loadJoinQueue()
+      await loadFacebookLogs()
+      showNotice(mode === 'auto' ? 'Unión programada en modo seguro' : 'Acción manual creada')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo solicitar unión')
+    }
+  }
+
+  async function markFacebookJoined(group) {
+    try {
+      await api(`/api/groups/facebook-targets/${group.id}/mark-joined${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'POST'
+      })
+
+      await loadFacebookTargets()
+      await loadJoinQueue()
+      await loadFacebookLogs()
+      showNotice('Grupo marcado como unido')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo marcar como unido')
+    }
+  }
+
+  async function pauseQueueItem(item) {
+    try {
+      await api(`/api/groups/facebook-join-queue/${item.id}/status${selectedClientId ? `?client_id=${selectedClientId}` : ''}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: 'paused',
+          message: 'Pausado manualmente por el usuario'
+        })
+      })
+
+      await loadJoinQueue()
+      await loadFacebookLogs()
+      showNotice('Elemento pausado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo pausar')
+    }
+  }
+
+  // ======================== FUNCIONES PLANES Y FACTURACIÓN ========================
   async function loadPlans() {
     try {
       const data = await api('/api/plans')
@@ -4077,7 +4176,7 @@ export default function App() {
     }
   }
 
-  // ========== ADS IA FUNCIÓN ==========
+  // ======================== FUNCIONES ADS IA ========================
   const generateAdsCampaign = useCallback(async () => {
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
@@ -4173,11 +4272,7 @@ export default function App() {
       })
 
       setAdsResult(data.plan)
-
-      showNotice(
-        `Ecosistema creado: campaña, bot y landing. Bot ID: ${data.bot_id}`,
-        'success'
-      )
+      showNotice(`Ecosistema creado: campaña, bot y landing. Bot ID: ${data.bot_id}`, 'success')
 
       if (selectedClientId) {
         await loadBots(selectedClientId)
@@ -4190,74 +4285,7 @@ export default function App() {
     }
   }
 
-  // ======================== FUNCIONES EXISTENTES ========================
-  async function loadLandings() {
-    if (forcePlanScreen) return
-    try {
-      const data = await api(`/api/landings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
-      setLandings(data || [])
-    } catch (err) {
-      console.error('loadLandings', err)
-      if (err.status === 402) setForcePlanScreen(true)
-      setLandings([])
-    }
-  }
-
-  async function loadFunnelMetrics() {
-    if (forcePlanScreen) return
-    try {
-      const data = await api(`/api/funnel${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
-      setFunnelMetrics(data || {})
-    } catch (err) {
-      console.error(err)
-      if (err.status === 402) setForcePlanScreen(true)
-      setFunnelMetrics({})
-    }
-  }
-
-  async function bootstrap() {
-    if (!getToken()) return
-    try {
-      const user = await api('/api/auth/me')
-      setMe(user)
-      setForcePlanScreen(false)
-    } catch (err) {
-      if (err.status === 402 && err.message === 'plan_required') {
-        setForcePlanScreen(true)
-        try {
-          const user = await api('/api/auth/me')
-          setMe(user)
-        } catch {}
-        return
-      }
-      setToken('')
-    }
-  }
-
-  useEffect(() => {
-    bootstrap()
-    loadPlans()
-  }, [])
-
-  useEffect(() => {
-    if (!me) return
-    loadPlans()
-    loadCurrentSubscription()
-
-    if (me.role === 'admin') {
-      loadBillingConfig()
-    }
-  }, [me])
-
-  // Cargar datos de grupos cuando el usuario está autenticado
-  useEffect(() => {
-    if (me && !forcePlanScreen && selectedClientId) {
-      loadGroupBots()
-      loadFacebookTargets()
-    }
-  }, [me, forcePlanScreen, selectedClientId])
-
-  // ======================== FUNCIONES DE LANDING ========================
+  // ======================== FUNCIONES LANDING ========================
   async function generateLanding() {
     if (!selectedBotId) {
       showNotice('Selecciona un bot primero')
@@ -4770,7 +4798,76 @@ export default function App() {
     }
   }
 
-  // ======================== EFECTOS Y CARGA INICIAL ========================
+  // ======================== FUNCIONES EXISTENTES ========================
+  async function loadLandings() {
+    if (forcePlanScreen) return
+    try {
+      const data = await api(`/api/landings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setLandings(data || [])
+    } catch (err) {
+      console.error('loadLandings', err)
+      if (err.status === 402) setForcePlanScreen(true)
+      setLandings([])
+    }
+  }
+
+  async function loadFunnelMetrics() {
+    if (forcePlanScreen) return
+    try {
+      const data = await api(`/api/funnel${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
+      setFunnelMetrics(data || {})
+    } catch (err) {
+      console.error(err)
+      if (err.status === 402) setForcePlanScreen(true)
+      setFunnelMetrics({})
+    }
+  }
+
+  async function bootstrap() {
+    if (!getToken()) return
+    try {
+      const user = await api('/api/auth/me')
+      setMe(user)
+      setForcePlanScreen(false)
+    } catch (err) {
+      if (err.status === 402 && err.message === 'plan_required') {
+        setForcePlanScreen(true)
+        try {
+          const user = await api('/api/auth/me')
+          setMe(user)
+        } catch {}
+        return
+      }
+      setToken('')
+    }
+  }
+
+  useEffect(() => {
+    bootstrap()
+    loadPlans()
+  }, [])
+
+  useEffect(() => {
+    if (!me) return
+    loadPlans()
+    loadCurrentSubscription()
+
+    if (me.role === 'admin') {
+      loadBillingConfig()
+    }
+  }, [me])
+
+  // Cargar datos de grupos cuando el usuario está autenticado
+  useEffect(() => {
+    if (me && !forcePlanScreen && selectedClientId) {
+      loadGroupBots()
+      loadFacebookTargets()
+      loadGrowthSettings()
+      loadJoinQueue()
+      loadFacebookLogs()
+    }
+  }, [me, forcePlanScreen, selectedClientId])
+
   useEffect(() => {
     if (!selectedClientId && clients.length > 0) {
       setSelectedClientId(clients[0].id)
@@ -4782,10 +4879,6 @@ export default function App() {
   useEffect(() => setTemplatePage(1), [searchTemplate])
   useEffect(() => setClientPage(1), [searchClient])
   useEffect(() => setUserPage(1), [searchUser])
-
-  useEffect(() => {
-    bootstrap()
-  }, [])
 
   useEffect(() => {
     if (me && !forcePlanScreen) loadInitial()
@@ -4805,6 +4898,9 @@ export default function App() {
     loadSocialLogs()
     loadGroupBots()
     loadFacebookTargets()
+    loadGrowthSettings()
+    loadJoinQueue()
+    loadFacebookLogs()
   }, [selectedClientId, forcePlanScreen])
 
   // Período de refresco automático (30s)
@@ -4859,6 +4955,9 @@ export default function App() {
       if (tab === 'groups') {
         await loadGroupBots()
         await loadFacebookTargets()
+        await loadGrowthSettings()
+        await loadJoinQueue()
+        await loadFacebookLogs()
         return
       }
     }, 30000)
@@ -4897,6 +4996,9 @@ export default function App() {
     await loadLandings()
     await loadGroupBots()
     await loadFacebookTargets()
+    await loadGrowthSettings()
+    await loadJoinQueue()
+    await loadFacebookLogs()
   }
 
   async function loadMetrics() {
@@ -5194,18 +5296,6 @@ export default function App() {
     setShowInvoice(false)
     setSelectedPlan(null)
   }
-
-  const leadsByStageGlobal = useMemo(() => {
-    const stages = ['new', 'qualified', 'interested', 'hot', 'closed']
-    const counts = stages.map(s => leads.filter(l => l.stage === s).length)
-    return { stages, counts }
-  }, [leads])
-
-  const messagesLast7Days = useMemo(() => {
-    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
-    const counts = [12, 19, 15, 22, 27, 18, 24]
-    return { days, counts }
-  }, [])
 
   // ========== RENDER PRINCIPAL ==========
   if (!me) return <LoginScreen onAuth={(user) => {
@@ -6144,6 +6234,95 @@ export default function App() {
 
             {groupsTab === 'facebook' && (
               <div className="panel-grid">
+                {/* Growth AI Settings Card - NEW */}
+                {growthSettings && (
+                  <section className="stripe-card stack">
+                    <div className="row between">
+                      <div>
+                        <div className="section-title">
+                          <i className="fas fa-seedling"></i> Facebook Growth AI
+                        </div>
+                        <p className="muted">
+                          Controla cuántos grupos puede intentar trabajar el sistema por día y el modo seguro.
+                        </p>
+                      </div>
+
+                      <button type="button" onClick={saveGrowthSettings}>
+                        Guardar configuración
+                      </button>
+                    </div>
+
+                    <div className="form-grid">
+                      <label className="check-row">
+                        <input
+                          type="checkbox"
+                          checked={!!growthSettings.auto_join_enabled}
+                          onChange={(e) => setGrowthSettings({ ...growthSettings, auto_join_enabled: e.target.checked })}
+                        />
+                        Activar programación automática segura
+                      </label>
+
+                      <label className="check-row">
+                        <input
+                          type="checkbox"
+                          checked={!!growthSettings.safe_mode}
+                          onChange={(e) => setGrowthSettings({ ...growthSettings, safe_mode: e.target.checked })}
+                        />
+                        Modo seguro
+                      </label>
+
+                      <input
+                        type="number"
+                        min="1"
+                        max="2"
+                        placeholder="Máx grupos por día"
+                        value={growthSettings.max_joins_per_day || 2}
+                        onChange={(e) => setGrowthSettings({ ...growthSettings, max_joins_per_day: Number(e.target.value) })}
+                      />
+
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Máx total grupos"
+                        value={growthSettings.max_total_groups || 50}
+                        onChange={(e) => setGrowthSettings({ ...growthSettings, max_total_groups: Number(e.target.value) })}
+                      />
+
+                      <input
+                        type="number"
+                        min="60"
+                        placeholder="Delay mínimo minutos"
+                        value={growthSettings.min_delay_minutes || 120}
+                        onChange={(e) => setGrowthSettings({ ...growthSettings, min_delay_minutes: Number(e.target.value) })}
+                      />
+
+                      <input
+                        type="number"
+                        min="60"
+                        placeholder="Delay máximo minutos"
+                        value={growthSettings.max_delay_minutes || 360}
+                        onChange={(e) => setGrowthSettings({ ...growthSettings, max_delay_minutes: Number(e.target.value) })}
+                      />
+
+                      <input
+                        placeholder="Horario permitido"
+                        value={growthSettings.allowed_hours || '08:00-20:00'}
+                        onChange={(e) => setGrowthSettings({ ...growthSettings, allowed_hours: e.target.value })}
+                      />
+
+                      <input
+                        placeholder="Timezone"
+                        value={growthSettings.timezone || 'America/Bogota'}
+                        onChange={(e) => setGrowthSettings({ ...growthSettings, timezone: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="empty-box">
+                      Recomendado: máximo 1 o 2 grupos al día, delays largos y siempre revisar reglas del grupo antes de participar.
+                    </div>
+                  </section>
+                )}
+
                 <section className="stripe-card stack">
                   <div className="section-title">
                     <i className="fab fa-facebook"></i> Discovery IA de grupos
@@ -6280,9 +6459,20 @@ export default function App() {
                         <div className="row" style={{ marginTop: '1rem' }}>
                           {g.url && (
                             <a href={g.url} target="_blank" rel="noreferrer">
-                              <button type="button" className="tiny-btn">Abrir</button>
+                              <button type="button" className="tiny-btn">
+                                <i className="fas fa-eye"></i> Ver grupo
+                              </button>
                             </a>
                           )}
+                          <button type="button" className="tiny-btn" onClick={() => requestFacebookJoin(g, 'manual')}>
+                            <i className="fas fa-hand-pointer"></i> Unirme manual
+                          </button>
+                          <button type="button" className="tiny-btn" onClick={() => requestFacebookJoin(g, 'auto')}>
+                            <i className="fas fa-clock"></i> Programar
+                          </button>
+                          <button type="button" className="tiny-btn" onClick={() => markFacebookJoined(g)}>
+                            <i className="fas fa-check"></i> Ya estoy unido
+                          </button>
                           <button type="button" className="danger tiny-btn" onClick={() => deleteFacebookTarget(g.id)}>
                             Eliminar
                           </button>
@@ -6290,9 +6480,79 @@ export default function App() {
                       </div>
                     ))}
                   </div>
+                </section>
 
-                  <div className="empty-box">
-                    Worktic recomienda grupos, keywords y estrategia. El ingreso al grupo debe ser manual y respetando reglas de Meta.
+                {/* Cola de unión */}
+                <section className="stripe-card stack">
+                  <div className="row between">
+                    <div className="section-title">
+                      <i className="fas fa-list-check"></i> Cola de unión
+                    </div>
+                    <button type="button" className="secondary tiny-btn" onClick={loadJoinQueue}>
+                      Recargar
+                    </button>
+                  </div>
+
+                  <div className="list two-col">
+                    {joinQueue.length === 0 && (
+                      <div className="empty-box">No hay acciones en cola.</div>
+                    )}
+
+                    {joinQueue.map((item) => (
+                      <div key={item.id} className="bot-card">
+                        <div className="row between">
+                          <strong>{item.group_name || 'Grupo'}</strong>
+                          <span className={`pill ${item.status}`}>{item.status}</span>
+                        </div>
+
+                        <div className="muted">
+                          Programado: {item.scheduled_for ? new Date(item.scheduled_for).toLocaleString() : 'Manual / sin fecha'}
+                        </div>
+
+                        <p style={{ marginTop: '.5rem' }}>{item.notes}</p>
+
+                        {item.group_url && (
+                          <a href={item.group_url} target="_blank" rel="noreferrer">
+                            <button type="button" className="tiny-btn">
+                              Ver grupo
+                            </button>
+                          </a>
+                        )}
+
+                        <button type="button" className="secondary tiny-btn" onClick={() => pauseQueueItem(item)}>
+                          Pausar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Logs de actividad */}
+                <section className="stripe-card stack">
+                  <div className="row between">
+                    <div className="section-title">
+                      <i className="fas fa-clock-rotate-left"></i> Actividad
+                    </div>
+                    <button type="button" className="secondary tiny-btn" onClick={() => loadFacebookLogs()}>
+                      Recargar
+                    </button>
+                  </div>
+
+                  <div className="stack gap-sm">
+                    {facebookLogs.length === 0 && (
+                      <div className="empty-box">Sin actividad todavía.</div>
+                    )}
+
+                    {facebookLogs.map((log) => (
+                      <div key={log.id} className="bot-card">
+                        <div className="row between">
+                          <strong>{log.action_type}</strong>
+                          <span className={`pill ${log.status}`}>{log.status}</span>
+                        </div>
+                        <p>{log.message}</p>
+                        <small>{new Date(log.created_at).toLocaleString()}</small>
+                      </div>
+                    ))}
                   </div>
                 </section>
               </div>
