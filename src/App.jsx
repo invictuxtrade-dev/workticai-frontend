@@ -3940,6 +3940,7 @@ export default function App() {
 
   // ======================== NUEVAS FUNCIONES GROWTH AI ========================
   async function loadGrowthSettings() {
+    if (!selectedClientId) return
     try {
       const data = await api(`/api/groups/growth-settings${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setGrowthSettings(data)
@@ -3962,6 +3963,7 @@ export default function App() {
   }
 
   async function loadJoinQueue() {
+    if (!selectedClientId) return
     try {
       const data = await api(`/api/groups/facebook-join-queue${selectedClientId ? `?client_id=${selectedClientId}` : ''}`)
       setJoinQueue(data || [])
@@ -3971,6 +3973,7 @@ export default function App() {
   }
 
   async function loadFacebookLogs(groupId = '') {
+    if (!selectedClientId) return
     try {
       const qs = new URLSearchParams()
       if (selectedClientId) qs.set('client_id', selectedClientId)
@@ -4903,6 +4906,18 @@ export default function App() {
     loadFacebookLogs()
   }, [selectedClientId, forcePlanScreen])
 
+  useEffect(() => {
+  if (!me) return
+  if (forcePlanScreen) return
+  if (!selectedClientId) return
+
+  loadGroupBots()
+  loadFacebookTargets()
+  loadGrowthSettings()
+  loadJoinQueue()
+  loadFacebookLogs()
+}, [me, forcePlanScreen, selectedClientId])
+
   // Período de refresco automático (30s)
   useEffect(() => {
     const t = setInterval(async () => {
@@ -4953,6 +4968,7 @@ export default function App() {
       }
 
       if (tab === 'groups') {
+        if (!selectedClientId) return
         await loadGroupBots()
         await loadFacebookTargets()
         await loadGrowthSettings()
@@ -4986,20 +5002,15 @@ export default function App() {
     }
   }, [selectedLeadId, selectedLead])
 
-  async function loadInitial() {
-    await loadClients()
-    await loadTemplates()
-    await loadUsers()
-    await loadMetrics()
-    await loadFunnelMetrics()
-    await loadInboxLeads()
-    await loadLandings()
-    await loadGroupBots()
-    await loadFacebookTargets()
-    await loadGrowthSettings()
-    await loadJoinQueue()
-    await loadFacebookLogs()
-  }
+async function loadInitial() {
+  await loadClients()
+  await loadTemplates()
+  await loadUsers()
+  await loadMetrics()
+  await loadFunnelMetrics()
+  await loadInboxLeads()
+  await loadLandings()
+}
 
   async function loadMetrics() {
     if (forcePlanScreen) return
