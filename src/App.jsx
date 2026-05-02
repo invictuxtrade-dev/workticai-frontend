@@ -3565,10 +3565,13 @@ export default function App() {
           width: 100%;
         }
 
-        /* Assistant AI Styles */
+        /* ASSISTANT AI STYLES MEJORADOS */
         .assistant-page {
           max-width: 1400px;
           margin: 0 auto;
+          height: calc(100vh - 120px);
+          display: flex;
+          flex-direction: column;
         }
 
         .assistant-hero {
@@ -3576,16 +3579,21 @@ export default function App() {
           justify-content: space-between;
           align-items: center;
           gap: 1rem;
+          flex-shrink: 0;
         }
 
         .assistant-layout {
           display: grid;
           grid-template-columns: 340px 1fr;
           gap: 1.5rem;
+          flex: 1;
+          min-height: 0;
         }
 
         .assistant-suggestions {
           height: fit-content;
+          max-height: 100%;
+          overflow-y: auto;
         }
 
         .quick-list {
@@ -3610,18 +3618,43 @@ export default function App() {
         }
 
         .assistant-chat {
-          min-height: 650px;
           display: flex;
           flex-direction: column;
+          height: 100%;
+          min-height: 0;
         }
 
-        .assistant-messages {
+        .assistant-messages-container {
           flex: 1;
           overflow-y: auto;
           display: flex;
           flex-direction: column;
           gap: 1rem;
           padding-right: .5rem;
+          min-height: 0;
+          position: relative;
+        }
+
+        .assistant-messages {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .load-more-btn {
+          background: transparent;
+          color: #3b82f6;
+          border: 1px solid #e2e8f0;
+          border-radius: 2rem;
+          padding: 0.5rem 1rem;
+          font-size: 0.8rem;
+          margin: 0.5rem auto;
+          width: fit-content;
+        }
+
+        .load-more-btn:hover {
+          background: #eff6ff;
+          transform: none;
         }
 
         .assistant-empty {
@@ -3643,6 +3676,7 @@ export default function App() {
           border-radius: 1rem;
           border: 1px solid #e2e8f0;
           white-space: pre-wrap;
+          word-break: break-word;
         }
 
         .assistant-bubble.user {
@@ -3677,11 +3711,34 @@ export default function App() {
           margin-top: 1rem;
           border-top: 1px solid #e2e8f0;
           padding-top: 1rem;
+          flex-shrink: 0;
         }
 
         .assistant-compose textarea {
           flex: 1;
           resize: none;
+        }
+
+        .scroll-to-bottom-btn {
+          position: absolute;
+          bottom: 10px;
+          right: 20px;
+          background: #3b82f6;
+          border-radius: 9999px;
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          cursor: pointer;
+          z-index: 10;
+        }
+
+        .scroll-to-bottom-btn:hover {
+          background: #2563eb;
+          transform: translateY(-2px);
         }
 
         @media (max-width: 980px) {
@@ -3725,10 +3782,16 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
 
-  // Assistant AI states
+  // Assistant AI states MEJORADOS
   const [assistantMessages, setAssistantMessages] = useState([])
   const [assistantInput, setAssistantInput] = useState('')
   const [assistantLoading, setAssistantLoading] = useState(false)
+  const [assistantHasMore, setAssistantHasMore] = useState(false)
+  const [assistantPage, setAssistantPage] = useState(1)
+  const [assistantLoadingMore, setAssistantLoadingMore] = useState(false)
+  const [showScrollButton, setShowScrollButton] = useState(false)
+  const messagesEndRef = useRef(null)
+  const messagesContainerRef = useRef(null)
 
   // Planes y suscripciones
   const [plans, setPlans] = useState([])
@@ -3962,15 +4025,63 @@ export default function App() {
       .trim()
   }
 
-  // ======================== ASSISTANT AI FUNCTIONS ========================
-  async function loadAssistantMessages() {
+  // ======================== ASSISTANT AI FUNCTIONS MEJORADAS ========================
+  const scrollToBottom = useCallback((behavior = 'smooth') => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior
+      })
+    }
+  }, [])
+
+  const handleScroll = useCallback(() => {
+    if (messagesContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
+      setShowScrollButton(!isNearBottom)
+    }
+  }, [])
+
+  async function loadAssistantMessages(loadMore = false) {
     if (!selectedClientId) return
 
+    const pageToLoad = loadMore ? assistantPage + 1 : 1
+
     try {
-      const data = await api(`/api/assistant/messages?client_id=${selectedClientId}`)
-      setAssistantMessages(data || [])
+      if (loadMore) {
+        setAssistantLoadingMore(true)
+      }
+      const data = await api(`/api/assistant/messages?client_id=${selectedClientId}&page=${pageToLoad}&limit=20`)
+      
+      const newMessages = data.messages || []
+      const hasMore = data.has_more || false
+
+      if (loadMore) {
+        setAssistantMessages(prev => [...newMessages, ...prev])
+        setAssistantPage(pageToLoad)
+        setTimeout(() => {
+          if (messagesContainerRef.current && newMessages.length > 0) {
+            const firstNewMessageIndex = newMessages.length
+            const firstNewMessageElement = messagesContainerRef.current.children[firstNewMessageIndex]
+            if (firstNewMessageElement) {
+              const offsetTop = firstNewMessageElement.offsetTop
+              messagesContainerRef.current.scrollTop = offsetTop - 50
+            }
+          }
+        }, 100)
+      } else {
+        setAssistantMessages(newMessages)
+        setAssistantPage(1)
+        setTimeout(() => scrollToBottom('auto'), 100)
+      }
+      setAssistantHasMore(hasMore)
     } catch (err) {
       showNotice(err.message || 'Error cargando asistente')
+    } finally {
+      if (loadMore) {
+        setAssistantLoadingMore(false)
+      }
     }
   }
 
@@ -3997,6 +4108,7 @@ export default function App() {
       })
 
       setAssistantMessages(prev => [...prev, msg])
+      setTimeout(() => scrollToBottom('smooth'), 100)
     } catch (err) {
       showNotice(err.message || 'No se pudo responder')
     } finally {
@@ -4013,6 +4125,8 @@ export default function App() {
         method: 'DELETE'
       })
       setAssistantMessages([])
+      setAssistantHasMore(false)
+      setAssistantPage(1)
       showNotice('Historial borrado')
     } catch (err) {
       showNotice(err.message || 'No se pudo borrar historial')
@@ -5149,7 +5263,7 @@ export default function App() {
     loadFacebookLogs()
   }, [me, forcePlanScreen, selectedClientId])
 
-  // Assistant effect
+  // Assistant effect mejorado
   useEffect(() => {
     if (!me) return
     if (!selectedClientId) return
@@ -5726,7 +5840,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* ======================== ASSISTANT AI ======================== */}
+        {/* ======================== ASSISTANT AI MEJORADO ======================== */}
         {tab === 'assistant' && (
           <section className="assistant-page stack gap-lg">
             <div className="assistant-hero stripe-card">
@@ -5769,38 +5883,68 @@ export default function App() {
               </aside>
 
               <section className="assistant-chat stripe-card">
-                <div className="assistant-messages">
-                  {assistantMessages.length === 0 && (
-                    <div className="assistant-empty">
-                      <i className="fas fa-comments"></i>
-                      <h3>Hola, soy tu asistente de Worktic AI</h3>
-                      <p>
-                        Puedo ayudarte paso a paso con WhatsApp, Facebook, landings, campañas, grupos, funnels y ventas automáticas.
-                      </p>
-                    </div>
+                <div 
+                  className="assistant-messages-container" 
+                  ref={messagesContainerRef}
+                  onScroll={handleScroll}
+                >
+                  {assistantHasMore && (
+                    <button 
+                      className="load-more-btn"
+                      onClick={() => loadAssistantMessages(true)}
+                      disabled={assistantLoadingMore}
+                    >
+                      {assistantLoadingMore ? (
+                        <><i className="fas fa-circle-notch fa-spin"></i> Cargando...</>
+                      ) : (
+                        <><i className="fas fa-arrow-up"></i> Cargar mensajes anteriores</>
+                      )}
+                    </button>
                   )}
 
-                  {assistantMessages.map((m) => (
-                    <div
-                      key={m.id}
-                      className={m.role === 'user' ? 'assistant-bubble user' : 'assistant-bubble bot'}
-                    >
-                      <div className="assistant-role">
-                        {m.role === 'user' ? 'Tú' : 'Worktic AI'}
+                  <div className="assistant-messages">
+                    {assistantMessages.length === 0 && !assistantLoading && (
+                      <div className="assistant-empty">
+                        <i className="fas fa-comments"></i>
+                        <h3>Hola, soy tu asistente de Worktic AI</h3>
+                        <p>
+                          Puedo ayudarte paso a paso con WhatsApp, Facebook, landings, campañas, grupos, funnels y ventas automáticas.
+                        </p>
                       </div>
-                      <div className="assistant-text">
-                        {m.content}
-                      </div>
-                    </div>
-                  ))}
+                    )}
 
-                  {assistantLoading && (
-                    <div className="assistant-bubble bot">
-                      <div className="assistant-role">Worktic AI</div>
-                      <div className="assistant-text">
-                        <i className="fas fa-circle-notch fa-spin"></i> Pensando...
+                    {assistantMessages.map((m) => (
+                      <div
+                        key={m.id}
+                        className={m.role === 'user' ? 'assistant-bubble user' : 'assistant-bubble bot'}
+                      >
+                        <div className="assistant-role">
+                          {m.role === 'user' ? 'Tú' : 'Worktic AI'}
+                        </div>
+                        <div className="assistant-text">
+                          {m.content}
+                        </div>
                       </div>
-                    </div>
+                    ))}
+
+                    {assistantLoading && (
+                      <div className="assistant-bubble bot">
+                        <div className="assistant-role">Worktic AI</div>
+                        <div className="assistant-text">
+                          <i className="fas fa-circle-notch fa-spin"></i> Pensando...
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {showScrollButton && (
+                    <button 
+                      className="scroll-to-bottom-btn"
+                      onClick={() => scrollToBottom('smooth')}
+                      title="Ir al final"
+                    >
+                      <i className="fas fa-arrow-down"></i>
+                    </button>
                   )}
                 </div>
 
