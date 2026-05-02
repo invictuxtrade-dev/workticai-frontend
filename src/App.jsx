@@ -801,7 +801,7 @@ const AdsPanel = memo(function AdsPanel({
                     <DonutChart 
                       percentage={Math.round((chartData.scenarios[0]?.estimated_leads / (chartData.maxLeads || 1)) * 100)} 
                       label={chartData.scenarios[0]?.name || 'Escenario'} 
-                      color="#3b82f6"
+                      color="#7430e2"
                     />
                     <div className="donut-note">
                       <span>Leads totales: <strong>{chartData.scenarios[0]?.estimated_leads}</strong></span>
@@ -1244,7 +1244,7 @@ export default function App() {
 
         .left-rail {
           width: 280px;
-          background: linear-gradient(180deg, #0b1120 0%, #0f172a 100%);
+          background: linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%);
           color: #e2e8f0;
           display: flex;
           flex-direction: column;
@@ -1343,7 +1343,7 @@ export default function App() {
         }
 
         .menu-item.active {
-          background: #3b82f6;
+          background: #18103a;
           color: white;
           box-shadow: 0 4px 8px rgba(59,130,246,0.3);
         }
@@ -1410,7 +1410,7 @@ export default function App() {
         .metric {
           text-align: center;
           padding: 1rem;
-          border-left: 4px solid #3b82f6;
+          border-left: 4px solid #7430e2;
         }
 
         .metric-label {
@@ -1449,7 +1449,7 @@ export default function App() {
           cursor: pointer;
         }
         .bot-card:hover {
-          border-color: #3b82f6;
+          border-color: #7430e2;
           box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         .bot-card.active {
@@ -1475,7 +1475,7 @@ export default function App() {
         .pill.closed { background: #d1d5db; color: #1f2937; }
 
         button {
-          background: #3b82f6;
+          background: #722ee0;
           border: none;
           color: white;
           padding: 0.5rem 1rem;
@@ -1558,7 +1558,7 @@ export default function App() {
 
         input:focus, select:focus, textarea:focus {
           outline: none;
-          border-color: #3b82f6;
+          border-color: #7430e2;
           box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
         }
 
@@ -1618,7 +1618,7 @@ export default function App() {
 
         .chat-item.active {
           background: #eff6ff;
-          border-color: #3b82f6;
+          border-color: #7430e2;
         }
 
         .messages {
@@ -1645,7 +1645,7 @@ export default function App() {
         }
 
         .bubble.outbound {
-          background: #3b82f6;
+          background: #7430e2;
           color: white;
           align-self: flex-end;
           border-bottom-right-radius: 0.2rem;
@@ -1735,7 +1735,7 @@ export default function App() {
 
         .particle {
           position: absolute;
-          background: #3b82f6;
+          background: #7430e2;
           border-radius: 50%;
           filter: blur(0.5px);
           animation: floatGentle 18s infinite linear;
@@ -1941,7 +1941,7 @@ export default function App() {
         }
 
         .auth-form-pro input:focus {
-          border-color: #3b82f6;
+          border-color: #7430e2;
           box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
           outline: none;
         }
@@ -2212,7 +2212,7 @@ export default function App() {
           font-size: 0.8rem;
         }
         .bar-fill {
-          background: #3b82f6;
+          background: #7430e2;
           height: 24px;
           border-radius: 12px;
           transition: width 0.5s;
@@ -2306,7 +2306,7 @@ export default function App() {
         }
 
         .template-card:hover {
-          border-color: #3b82f6;
+          border-color: #7430e2;
           box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
 
@@ -2331,7 +2331,7 @@ export default function App() {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          color: #3b82f6;
+          color: #7430e2;
           font-weight: 500;
         }
         .loader:before {
@@ -2339,7 +2339,7 @@ export default function App() {
           width: 1rem;
           height: 1rem;
           border: 2px solid #e2e8f0;
-          border-top-color: #3b82f6;
+          border-top-color: #7430e2;
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
         }
@@ -2520,7 +2520,7 @@ export default function App() {
           left: 0;
           right: 0;
           height: 6px;
-          background: linear-gradient(90deg, #3b82f6, #06b6d4, #3b82f6);
+          background: linear-gradient(90deg, #7430e2, #06b6d4, #7430e2);
         }
 
         .invoice-details {
@@ -2604,7 +2604,7 @@ export default function App() {
         }
 
         .step.active .step-number {
-          background: #3b82f6;
+          background: #7430e2;
           color: white;
         }
 
@@ -2778,7 +2778,7 @@ export default function App() {
           justify-content: center;
           padding: 1rem;
           border-radius: 1rem;
-          background: linear-gradient(135deg, #621bbb, #3b82f6);
+          background: linear-gradient(135deg, #621bbb, #7430e2);
           font-size: 1rem;
           box-shadow: 0 14px 26px rgba(59,130,246,.22);
         }
@@ -3018,7 +3018,7 @@ export default function App() {
 
         .bar-fill-vertical {
           width: 100%;
-          background-color: #3b82f6;
+          background-color: #7430e2;
           border-radius: 8px 8px 0 0;
           transition: height 0.5s;
           min-height: 4px;
@@ -3066,7 +3066,7 @@ export default function App() {
 
         .bar-fill-horizontal {
           height: 100%;
-          background: linear-gradient(90deg, #3b82f6, #06b6d4);
+          background: linear-gradient(90deg, #7430e2, #06b6d4);
           border-radius: 12px;
           transition: width 0.5s;
         }
@@ -3477,7 +3477,7 @@ export default function App() {
         }
 
         .groups-tab.active {
-          background: #3b82f6;
+          background: #7430e2;
           color: white;
         }
 
@@ -3643,7 +3643,7 @@ export default function App() {
 
         .load-more-btn {
           background: transparent;
-          color: #3b82f6;
+          color: #7430e2;
           border: 1px solid #e2e8f0;
           border-radius: 2rem;
           padding: 0.5rem 1rem;
@@ -3666,7 +3666,7 @@ export default function App() {
 
         .assistant-empty i {
           font-size: 3rem;
-          color: #3b82f6;
+          color: #7430e2;
           margin-bottom: 1rem;
         }
 
@@ -3723,7 +3723,7 @@ export default function App() {
           position: absolute;
           bottom: 10px;
           right: 20px;
-          background: #3b82f6;
+          background: #7430e2;
           border-radius: 9999px;
           width: 40px;
           height: 40px;
@@ -6344,7 +6344,7 @@ export default function App() {
                   ['Hot', leads.filter(l => l.stage === 'hot').length],
                   ['Cerrados', metrics.closed_leads]
                 ].map(([label, val], i) => (
-                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#3b82f6', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
+                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#7430e2', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
                     {label}: {val || 0}
                   </div>
                 ))}
@@ -7080,7 +7080,7 @@ export default function App() {
               <div className="template-list">
                 {paginatedClients.map(c => (
                   <button key={c.id} className={selectedClientId === c.id ? 'template-card active-outline' : 'template-card'} onClick={() => setSelectedClientId(c.id)} type="button">
-                    <div className="row between"><i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#3b82f6' }}></i><strong>{c.name}</strong><span className="pill">{c.plan}</span></div>
+                    <div className="row between"><i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#7430e2' }}></i><strong>{c.name}</strong><span className="pill">{c.plan}</span></div>
                     <div className="muted" style={{ color: '#1e293b' }}>{c.email}</div>
                   </button>
                 ))}
