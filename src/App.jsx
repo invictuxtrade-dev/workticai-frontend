@@ -4456,6 +4456,25 @@ export default function App() {
     URL.revokeObjectURL(url)
   }
 
+    function getPublicLandingUrl(landing) {
+    if (!landing?.id) return ''
+    return `${API_BASE}/l/${landing.id}`
+  }
+
+  function openPublicLanding(landing) {
+    const url = getPublicLandingUrl(landing)
+    if (!url) return
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  async function copyPublicLandingUrl(landing) {
+    const url = getPublicLandingUrl(landing)
+    if (!url) return
+
+    await navigator.clipboard.writeText(url)
+    showNotice('URL pública copiada')
+  }
+
   // ======================== FUNCIONES SOCIAL IA ========================
   async function loadSocialCredential() {
     if (forcePlanScreen) return
@@ -5812,6 +5831,8 @@ async function loadInitial() {
                       <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
                         <button type="button" onClick={() => loadLandingForEdit(land)}>Editar</button>
                         <button type="button" className="secondary" onClick={() => setLandingHTML(land.html || land.preview_html || '')}>Ver</button>
+                        <button type="button" className="secondary" onClick={() => openPublicLanding(land)}> Abrir pública</button>
+                        <button type="button" className="secondary" onClick={() => copyPublicLandingUrl(land)}> Copiar URL</button>
                         <button type="button" className="danger" onClick={() => deleteLanding(land.id)}>Eliminar</button>
                       </div>
                     </div>
