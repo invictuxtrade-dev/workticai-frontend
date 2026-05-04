@@ -5133,7 +5133,7 @@ async function getInstagramData() {
     setInstagramData(data)
 
     showNotice(
-      `IG: @${data.username} | 👥 ${data.followers_count} | 📸 ${data.media_count}`
+      `IG: @${data.username || data.instagram_username} | 👥 ${data.followers_count || 0} | 📸 ${data.media_count || 0}`
     )
   } catch (err) {
     showNotice(err.message)
