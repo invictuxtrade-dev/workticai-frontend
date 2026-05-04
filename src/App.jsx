@@ -5121,16 +5121,20 @@ export default function App() {
     }
   }
 
-  async function getInstagramData() {
+async function getInstagramData() {
+  if (!selectedClientId) {
+    showNotice('Selecciona un cliente primero')
+    return
+  }
+
   try {
-    const data = await api('/api/social/instagram/data')
+    const data = await api(`/api/social/instagram/data?client_id=${selectedClientId}`)
 
     setInstagramData(data)
 
     showNotice(
       `IG: @${data.username} | 👥 ${data.followers_count} | 📸 ${data.media_count}`
     )
-
   } catch (err) {
     showNotice(err.message)
   }
