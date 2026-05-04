@@ -55,7 +55,12 @@ const emptySocialCredential = {
   page_id: '',
   page_name: '',
   enabled: true,
-  ad_account_id: ''
+  ad_account_id: '',
+
+  // 🔥 NUEVO INSTAGRAM
+  instagram_account_id: '',
+  instagram_username: '',
+  instagram_connected: false
 }
 
 const emptySocialCampaign = {
@@ -5092,6 +5097,25 @@ export default function App() {
     }
   }
 
+  async function verifyInstagram() {
+    if (!selectedClientId) return
+
+    try {
+      const res = await api(`/api/social/instagram/verify?client_id=${selectedClientId}`, {
+        method: 'POST'
+      })
+
+      if (res.connected) {
+        showNotice(`Instagram conectado: @${res.instagram_username}`)
+        loadSocialCredentials()
+      } else {
+        showNotice('No hay Instagram conectado a la página')
+      }
+    } catch (err) {
+      showNotice(err.message)
+    }
+  }
+
   async function generateSocialImage() {
     if (!socialImagePrompt.trim()) {
       showNotice('Describe la imagen que quieres generar')
@@ -6422,7 +6446,30 @@ export default function App() {
                   <input value={socialCredential.ad_account_id} onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })} placeholder="Ad Account ID (opcional)" />
                   <label className="toggle"><input type="checkbox" checked={!!socialCredential.enabled} onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })} /> Facebook habilitado</label>
                 </div>
-                <button type="button" onClick={saveSocialCredential}>Guardar credenciales</button>
+                <div className="row gap-sm">
+                  <button type="button" onClick={saveSocialCredential}>
+                    Guardar credenciales
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={verifyInstagram}
+                  >
+                    <i className="fab fa-instagram"></i> Verificar Instagram
+                  </button>
+                </div>
+
+{/* ESTADO INSTAGRAM */}
+{socialCredential.instagram_connected ? (
+  <div className="pill success" style={{ marginTop: '0.75rem' }}>
+    <i className="fab fa-instagram"></i> Instagram conectado: @{socialCredential.instagram_username}
+  </div>
+) : (
+  <div className="pill warning" style={{ marginTop: '0.75rem' }}>
+    <i className="fab fa-instagram"></i> Instagram no conectado
+  </div>
+)}
               </section>
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-bullhorn"></i> Configuración campaña</div>
