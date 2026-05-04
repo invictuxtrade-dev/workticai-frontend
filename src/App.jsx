@@ -5116,6 +5116,23 @@ export default function App() {
     }
   }
 
+    async function loadSocialCredentials() {
+    try {
+      const res = await api('/api/social/credentials')
+
+      // 🔥 actualizar estado del frontend
+      setSocialCredential(prev => ({
+        ...prev,
+        instagram_account_id: res.instagram_account_id || '',
+        instagram_username: res.instagram_username || '',
+        instagram_connected: res.instagram_connected || false
+      }))
+
+    } catch (err) {
+      console.error('Error cargando social credentials', err)
+    }
+  }
+
   async function generateSocialImage() {
     if (!socialImagePrompt.trim()) {
       showNotice('Describe la imagen que quieres generar')
