@@ -3863,6 +3863,11 @@ export default function App() {
   const [socialActionLoading, setSocialActionLoading] = useState(false)
   const [socialActionStep, setSocialActionStep] = useState(0)
   const [socialActionText, setSocialActionText] = useState('')
+  // 🔥 SOCIAL STATE (PEGAR AQUÍ)
+  const [instagramData, setInstagramData] = useState(null)
+  const [selectedPlatforms, setSelectedPlatforms] = useState(['facebook'])
+  const [socialText, setSocialText] = useState('')
+  const [socialImageUrl, setSocialImageUrl] = useState('')
 
   // Ads IA
   const [adsForm, setAdsForm] = useState({
@@ -5115,6 +5120,53 @@ export default function App() {
       showNotice(err.message)
     }
   }
+
+  async function getInstagramData() {
+  try {
+    const data = await api('/api/social/instagram/data')
+
+    setInstagramData(data)
+
+    showNotice(
+      `IG: @${data.username} | 👥 ${data.followers_count} | 📸 ${data.media_count}`
+    )
+
+  } catch (err) {
+    showNotice(err.message)
+  }
+}
+
+
+async function publishMulti() {
+  if (!selectedClientId) return
+
+  if (!selectedPlatforms.length) {
+    showNotice('Selecciona Facebook, Instagram o ambos')
+    return
+  }
+
+  if (!socialContent.trim()) {
+    showNotice('Primero genera o escribe el contenido social')
+    return
+  }
+
+  try {
+    await api(`/api/social/publish-multi?client_id=${selectedClientId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        platforms: selectedPlatforms,
+        content: socialContent,
+        image_url: socialImageURL || socialCampaign.manual_image_url || ''
+      })
+    })
+
+    showNotice('Publicado correctamente 🚀')
+    await loadSocialPosts()
+    await loadSocialLogs()
+  } catch (err) {
+    showNotice(err.message || 'Error publicando')
+  }
+}
 
     async function loadSocialCredentials() {
     try {
@@ -6475,6 +6527,9 @@ export default function App() {
                   >
                     <i className="fab fa-instagram"></i> Verificar Instagram
                   </button>
+                  <button onClick={getInstagramData}>
+                    Obtener datos IG
+                  </button>
                 </div>
 
 {/* ESTADO INSTAGRAM */}
@@ -6485,6 +6540,14 @@ export default function App() {
 ) : (
   <div className="pill warning" style={{ marginTop: '0.75rem' }}>
     <i className="fab fa-instagram"></i> Instagram no conectado
+  </div>
+)}
+
+{instagramData && (
+  <div className="muted tiny" style={{ marginTop: '0.5rem' }}>
+    <div>👤 @{instagramData.username}</div>
+    <div>👥 Seguidores: {instagramData.followers_count}</div>
+    <div>📸 Posts: {instagramData.media_count}</div>
   </div>
 )}
               </section>
@@ -6517,6 +6580,41 @@ export default function App() {
                 <div className="row gap-sm">
                   <button type="button" onClick={generateSocial}>Generar contenido IA</button>
                   <button type="button" className="secondary" onClick={publishSocialNow}>Publicar ahora</button>
+                  <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+  <label className="toggle">
+    <input
+      type="checkbox"
+      checked={selectedPlatforms.includes('facebook')}
+      onChange={(e) => {
+        if (e.target.checked) {
+          setSelectedPlatforms(prev => [...new Set([...prev, 'facebook'])])
+        } else {
+          setSelectedPlatforms(prev => prev.filter(p => p !== 'facebook'))
+        }
+      }}
+    />
+    Facebook
+  </label>
+
+  <label className="toggle">
+    <input
+      type="checkbox"
+      checked={selectedPlatforms.includes('instagram')}
+      onChange={(e) => {
+        if (e.target.checked) {
+          setSelectedPlatforms(prev => [...new Set([...prev, 'instagram'])])
+        } else {
+          setSelectedPlatforms(prev => prev.filter(p => p !== 'instagram'))
+        }
+      }}
+    />
+    Instagram
+  </label>
+
+  <button type="button" onClick={publishMulti}>
+    <i className="fas fa-paper-plane"></i> Publicar selección
+  </button>
+</div>
                   <button type="button" className="secondary" onClick={scheduleSocialPost}>Programar</button>
                 </div>
               </section>
