@@ -5160,12 +5160,12 @@ async function publishMulti() {
   const imageURL = socialImageURL || socialCampaign.manual_image_url || ''
 
   if (selectedPlatforms.includes('instagram') && !imageURL.startsWith('https://')) {
-    showNotice('Instagram requiere una imagen pública HTTPS')
+    showNotice('Instagram requiere una imagen pública HTTPS. Genera o sube una imagen primero.')
     return
   }
 
   try {
-    await api(`/api/social/publish-multi?client_id=${selectedClientId}`, {
+    const res = await api(`/api/social/publish-multi?client_id=${selectedClientId}`, {
       method: 'POST',
       body: JSON.stringify({
         platforms: selectedPlatforms,
@@ -5173,6 +5173,19 @@ async function publishMulti() {
         image_url: imageURL
       })
     })
+
+    const ig = res?.results?.instagram
+    const fb = res?.results?.facebook
+
+    if (selectedPlatforms.includes('instagram') && ig && ig.ok === false) {
+      showNotice(`Instagram falló: ${ig.error || 'error desconocido'}`)
+      return
+    }
+
+    if (selectedPlatforms.includes('facebook') && fb && fb.ok === false) {
+      showNotice(`Facebook falló: ${fb.error || 'error desconocido'}`)
+      return
+    }
 
     showNotice('Publicado correctamente 🚀')
     await loadSocialPosts()
