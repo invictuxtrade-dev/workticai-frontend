@@ -5140,6 +5140,28 @@ async function getInstagramData() {
   }
 }
 
+function cleanSocialCaption(text) {
+  let s = String(text || '')
+
+  // Si viene HTML completo, intenta sacar solo el texto visible del body
+  if (s.includes('<html') || s.includes('<body') || s.includes('<!DOCTYPE')) {
+    const doc = new DOMParser().parseFromString(s, 'text/html')
+    s = doc.body?.innerText || s
+  }
+
+  // Limpieza adicional por si quedan etiquetas
+  s = s
+    .replace(/<!DOCTYPE[^>]*>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+
+  return s
+}
 
 async function publishMulti() {
   if (!selectedClientId) {
@@ -5169,7 +5191,7 @@ async function publishMulti() {
       method: 'POST',
       body: JSON.stringify({
         platforms: selectedPlatforms,
-        content: socialContent,
+        content: cleanSocialCaption(socialContent),
         image_url: imageURL
       })
     })
