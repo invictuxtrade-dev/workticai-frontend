@@ -5142,7 +5142,10 @@ async function getInstagramData() {
 
 
 async function publishMulti() {
-  if (!selectedClientId) return
+  if (!selectedClientId) {
+    showNotice('Selecciona un cliente primero')
+    return
+  }
 
   if (!selectedPlatforms.length) {
     showNotice('Selecciona Facebook, Instagram o ambos')
@@ -5154,13 +5157,20 @@ async function publishMulti() {
     return
   }
 
+  const imageURL = socialImageURL || socialCampaign.manual_image_url || ''
+
+  if (selectedPlatforms.includes('instagram') && !imageURL.startsWith('https://')) {
+    showNotice('Instagram requiere una imagen pública HTTPS')
+    return
+  }
+
   try {
     await api(`/api/social/publish-multi?client_id=${selectedClientId}`, {
       method: 'POST',
       body: JSON.stringify({
         platforms: selectedPlatforms,
         content: socialContent,
-        image_url: socialImageURL || socialCampaign.manual_image_url || ''
+        image_url: imageURL
       })
     })
 
