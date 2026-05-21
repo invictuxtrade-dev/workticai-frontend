@@ -5355,6 +5355,22 @@ export default function App() {
     }
   }
 
+    async function addMusicToVideo(id, category = 'auto') {
+    try {
+      showNotice('Agregando música automática...')
+
+      const updated = await api(`/api/social/videos/${id}/add-music`, {
+        method: 'POST',
+        body: JSON.stringify({ category })
+      })
+
+      setVideoJobs(prev => prev.map(v => v.id === id ? updated : v))
+      showNotice('Música agregada correctamente 🎵')
+    } catch (err) {
+      showNotice(err.message || 'Error agregando música')
+    }
+  }
+
   // ======================== FUNCIONES EXISTENTES ========================
   async function loadLandings() {
     if (forcePlanScreen) return
@@ -6841,14 +6857,43 @@ export default function App() {
                         </button>
 
                         {job.video_url && (
-                          <a
-                          href={`${API_BASE}/api/social/videos/${job.id}/download`}
+  <>
+                        <button type="button" onClick={() => downloadAIVideo(job.id)}>
+                          ⬇ Descargar
+                        </button>
+
+                        <button type="button" onClick={() => addMusicToVideo(job.id, 'auto')}>
+                          🎵 Música auto
+                        </button>
+
+                        <select
+                          onChange={(e) => {
+                            if (e.target.value) addMusicToVideo(job.id, e.target.value)
+                          }}
+                          defaultValue=""
                         >
-                          <button type="button">
-                            ⬇ Descargar
-                          </button>
-                        </a>
-                        )}
+                          <option value="">Música por categoría</option>
+                          <option value="corporate">Corporativa</option>
+                          <option value="viral">Viral</option>
+                          <option value="cinematic">Cinemática</option>
+                          <option value="trading">Trading</option>
+                          <option value="dark">Dark</option>
+                          <option value="motivational">Motivacional</option>
+                          <option value="luxury">Luxury</option>
+                          <option value="tech">Tech</option>
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(job.video_url)
+                            showNotice('URL copiada')
+                          }}
+                        >
+                          🔗 Copiar URL
+                        </button>
+                      </>
+                    )}
                       </div>
                     </div>
                   ))}
