@@ -3739,6 +3739,89 @@ export default function App() {
           z-index: 10;
         }
 
+              .video-ai-card-pro{
+        background:#fff;
+        border:1px solid #e5e7eb;
+        border-radius:24px;
+        padding:1.2rem;
+        margin-top:1rem;
+        box-shadow:0 10px 30px rgba(0,0,0,.05);
+      }
+
+      .video-ai-top{
+        display:flex;
+        justify-content:space-between;
+        gap:1rem;
+        align-items:flex-start;
+        margin-bottom:1rem;
+      }
+
+      .video-ai-title{
+        font-size:1.1rem;
+        font-weight:700;
+        color:#111827;
+      }
+
+      .video-ai-prompt{
+        font-size:.85rem;
+        color:#6b7280;
+        margin-top:.4rem;
+        line-height:1.5;
+      }
+
+      .video-preview-wrap{
+        border-radius:20px;
+        overflow:hidden;
+        background:#000;
+        margin-top:1rem;
+      }
+
+      .video-preview-pro{
+        width:100%;
+        max-height:700px;
+        object-fit:cover;
+        display:block;
+      }
+
+      .video-actions{
+        display:flex;
+        flex-wrap:wrap;
+        gap:.75rem;
+        margin-top:1rem;
+      }
+
+      .video-status{
+        padding:.45rem .8rem;
+        border-radius:999px;
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+      }
+
+      .video-status.processing{
+        background:#ede9fe;
+        color:#6d28d9;
+      }
+
+      .video-status.completed{
+        background:#dcfce7;
+        color:#166534;
+      }
+
+      .video-status.error{
+        background:#fee2e2;
+        color:#991b1b;
+      }
+
+      .video-error-box{
+        margin-top:1rem;
+        padding:1rem;
+        border-radius:16px;
+        background:#fee2e2;
+        color:#991b1b;
+        font-size:.85rem;
+      }
+
         .scroll-to-bottom-btn:hover {
           background: #2563eb;
           transform: translateY(-2px);
@@ -6813,47 +6896,78 @@ export default function App() {
               {videoJobs.length > 0 && (
                 <div className="template-list" style={{ marginTop: '1rem' }}>
                   {videoJobs.map(job => (
-                    <div key={job.id} className="template-card">
-                      <div className="row between">
-                        <strong>Video IA</strong>
-                        <span className={`pill ${job.status}`}>{job.status}</span>
+                  <div
+                    key={job.id}
+                    className="video-ai-card-pro"
+                  >
+                    <div className="video-ai-top">
+                      <div>
+                        <div className="video-ai-title">
+                          🎬 Video IA
+                        </div>
+
+                        <div className="video-ai-prompt">
+                          {job.prompt}
+                        </div>
                       </div>
 
-                      <div className="muted tiny">{job.prompt}</div>
+                      <span className={`video-status ${job.status}`}>
+                        {job.status}
+                      </span>
+                    </div>
 
-                      {job.video_url && (
+                    {job.video_url && (
+                      <div className="video-preview-wrap">
                         <video
                           src={job.video_url}
                           controls
-                          style={{ width: '100%', borderRadius: '0.75rem', marginTop: '0.75rem' }}
+                          className="video-preview-pro"
                         />
-                      )}
+                      </div>
+                    )}
 
-                      {job.error && (
-                        <div className="error" style={{ marginTop: '0.75rem' }}>
-                          {job.error}
-                        </div>
-                      )}
+                    {job.error && (
+                      <div className="video-error-box">
+                        {job.error}
+                      </div>
+                    )}
 
-                      <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                        <button type="button" className="secondary" onClick={() => refreshAIVideo(job.id)}>
-                          Actualizar estado
-                        </button>
+                    <div className="video-actions">
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => refreshAIVideo(job.id)}
+                      >
+                        🔄 Actualizar
+                      </button>
 
-                        {job.video_url && (
+                      {job.video_url && (
+                        <>
+                          <a
+                            href={job.video_url}
+                            download
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <button type="button">
+                              ⬇ Descargar
+                            </button>
+                          </a>
+
                           <button
                             type="button"
                             onClick={() => {
                               navigator.clipboard.writeText(job.video_url)
-                              showNotice('URL del video copiada')
+                              showNotice('URL copiada')
                             }}
                           >
-                            Copiar URL
+                            🔗 Copiar URL
                           </button>
-                        )}
-                      </div>
+                        </>
+                      )}
                     </div>
-                  ))}
+                  </div>
+                ))}
                 </div>
               )}
             </div>
