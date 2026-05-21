@@ -6841,15 +6841,13 @@ export default function App() {
                         </button>
 
                         {job.video_url && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              navigator.clipboard.writeText(job.video_url)
-                              showNotice('URL del video copiada')
-                            }}
-                          >
-                            Copiar URL
+                          <a
+                          href={`${API_BASE}/api/social/videos/${job.id}/download`}
+                        >
+                          <button type="button">
+                            ⬇ Descargar
                           </button>
+                        </a>
                         )}
                       </div>
                     </div>
