@@ -3776,13 +3776,29 @@ export default function App() {
         margin-top:1rem;
       }
 
+      .video-preview-wrap{
+        width:260px;
+        max-width:100%;
+        aspect-ratio:9/16;
+        border-radius:24px;
+        overflow:hidden;
+        background:#000;
+        margin:1rem auto;
+        box-shadow:0 20px 45px rgba(15,23,42,.25);
+      }
+
       .video-preview-pro{
         width:100%;
-        max-height:700px;
+        height:100%;
         object-fit:cover;
         display:block;
       }
-
+      
+      .video-ai-card-pro{
+        max-width:420px;
+        margin:1rem auto;
+      }
+        
       .video-actions{
         display:flex;
         flex-wrap:wrap;
@@ -6943,16 +6959,13 @@ export default function App() {
 
                       {job.video_url && (
                         <>
-                          <a
-                            href={job.video_url}
-                            download
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <button type="button">
-                              ⬇ Descargar
-                            </button>
-                          </a>
+                             <a
+                              href={`${API_BASE}/api/social/videos/${job.id}/download`}
+                            >
+                              <button type="button">
+                                ⬇ Descargar
+                              </button>
+                            </a>
 
                           <button
                             type="button"
