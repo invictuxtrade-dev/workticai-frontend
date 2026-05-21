@@ -5881,6 +5881,19 @@ export default function App() {
     } catch (err) { showNotice(err.message || 'Error') }
   }
 
+  async function addVoiceSubtitles(id) {
+  try {
+    await api(`/api/social/videos/${id}/voice-subtitles`, {
+      method: 'POST'
+    })
+
+    alert('Voz y subtítulos agregados')
+    loadVideos()
+  } catch (err) {
+    alert(err.message)
+  }
+}
+
   async function logout() {
     setToken('')
     setMe(null)
@@ -6882,6 +6895,13 @@ export default function App() {
                           <option value="luxury">Luxury</option>
                           <option value="tech">Tech</option>
                         </select>
+
+                        <button
+                          type="button"
+                          onClick={() => addVoiceSubtitles(job.id)}
+                        >
+                          🎤 Voz + Subtítulos
+                        </button>
 
                         <button
                           type="button"
