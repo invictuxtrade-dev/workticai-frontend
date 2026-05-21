@@ -56,8 +56,6 @@ const emptySocialCredential = {
   page_name: '',
   enabled: true,
   ad_account_id: '',
-
-  // 🔥 NUEVO INSTAGRAM
   instagram_account_id: '',
   instagram_username: '',
   instagram_connected: false
@@ -3863,11 +3861,17 @@ export default function App() {
   const [socialActionLoading, setSocialActionLoading] = useState(false)
   const [socialActionStep, setSocialActionStep] = useState(0)
   const [socialActionText, setSocialActionText] = useState('')
-  // 🔥 SOCIAL STATE (PEGAR AQUÍ)
+  // SOCIAL STATE
   const [instagramData, setInstagramData] = useState(null)
   const [selectedPlatforms, setSelectedPlatforms] = useState(['facebook'])
   const [socialText, setSocialText] = useState('')
   const [socialImageUrl, setSocialImageUrl] = useState('')
+
+  // AI Video Engine states
+  const [videoPrompt, setVideoPrompt] = useState('')
+  const [videoDuration, setVideoDuration] = useState(5)
+  const [videoJobs, setVideoJobs] = useState([])
+  const [videoLoading, setVideoLoading] = useState(false)
 
   // Ads IA
   const [adsForm, setAdsForm] = useState({
@@ -5121,107 +5125,104 @@ export default function App() {
     }
   }
 
-async function getInstagramData() {
-  if (!selectedClientId) {
-    showNotice('Selecciona un cliente primero')
-    return
+  async function getInstagramData() {
+    if (!selectedClientId) {
+      showNotice('Selecciona un cliente primero')
+      return
+    }
+
+    try {
+      const data = await api(`/api/social/instagram/data?client_id=${selectedClientId}`)
+
+      setInstagramData(data)
+
+      showNotice(
+        `IG: @${data.username || data.instagram_username} | 👥 ${data.followers_count || 0} | 📸 ${data.media_count || 0}`
+      )
+    } catch (err) {
+      showNotice(err.message)
+    }
   }
 
-  try {
-    const data = await api(`/api/social/instagram/data?client_id=${selectedClientId}`)
+  function cleanSocialCaption(text) {
+    let s = String(text || '')
 
-    setInstagramData(data)
+    if (s.includes('<html') || s.includes('<body') || s.includes('<!DOCTYPE')) {
+      const doc = new DOMParser().parseFromString(s, 'text/html')
+      s = doc.body?.innerText || s
+    }
 
-    showNotice(
-      `IG: @${data.username || data.instagram_username} | 👥 ${data.followers_count || 0} | 📸 ${data.media_count || 0}`
-    )
-  } catch (err) {
-    showNotice(err.message)
-  }
-}
+    s = s
+      .replace(/<!DOCTYPE[^>]*>/gi, '')
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
 
-function cleanSocialCaption(text) {
-  let s = String(text || '')
-
-  // Si viene HTML completo, intenta sacar solo el texto visible del body
-  if (s.includes('<html') || s.includes('<body') || s.includes('<!DOCTYPE')) {
-    const doc = new DOMParser().parseFromString(s, 'text/html')
-    s = doc.body?.innerText || s
-  }
-
-  // Limpieza adicional por si quedan etiquetas
-  s = s
-    .replace(/<!DOCTYPE[^>]*>/gi, '')
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
-
-  return s
-}
-
-async function publishMulti() {
-  if (!selectedClientId) {
-    showNotice('Selecciona un cliente primero')
-    return
+    return s
   }
 
-  if (!selectedPlatforms.length) {
-    showNotice('Selecciona Facebook, Instagram o ambos')
-    return
-  }
+  async function publishMulti() {
+    if (!selectedClientId) {
+      showNotice('Selecciona un cliente primero')
+      return
+    }
 
-  if (!socialContent.trim()) {
-    showNotice('Primero genera o escribe el contenido social')
-    return
-  }
+    if (!selectedPlatforms.length) {
+      showNotice('Selecciona Facebook, Instagram o ambos')
+      return
+    }
 
-  const imageURL = socialImageURL || socialCampaign.manual_image_url || ''
+    if (!socialContent.trim()) {
+      showNotice('Primero genera o escribe el contenido social')
+      return
+    }
 
-  if (selectedPlatforms.includes('instagram') && !imageURL.startsWith('https://')) {
-    showNotice('Instagram requiere una imagen pública HTTPS. Genera o sube una imagen primero.')
-    return
-  }
+    const imageURL = socialImageURL || socialCampaign.manual_image_url || ''
 
-  try {
-    const res = await api(`/api/social/publish-multi?client_id=${selectedClientId}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        platforms: selectedPlatforms,
-        content: cleanSocialCaption(socialContent),
-        image_url: imageURL
+    if (selectedPlatforms.includes('instagram') && !imageURL.startsWith('https://')) {
+      showNotice('Instagram requiere una imagen pública HTTPS. Genera o sube una imagen primero.')
+      return
+    }
+
+    try {
+      const res = await api(`/api/social/publish-multi?client_id=${selectedClientId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          platforms: selectedPlatforms,
+          content: cleanSocialCaption(socialContent),
+          image_url: imageURL
+        })
       })
-    })
 
-    const ig = res?.results?.instagram
-    const fb = res?.results?.facebook
+      const ig = res?.results?.instagram
+      const fb = res?.results?.facebook
 
-    if (selectedPlatforms.includes('instagram') && ig && ig.ok === false) {
-      showNotice(`Instagram falló: ${ig.error || 'error desconocido'}`)
-      return
+      if (selectedPlatforms.includes('instagram') && ig && ig.ok === false) {
+        showNotice(`Instagram falló: ${ig.error || 'error desconocido'}`)
+        return
+      }
+
+      if (selectedPlatforms.includes('facebook') && fb && fb.ok === false) {
+        showNotice(`Facebook falló: ${fb.error || 'error desconocido'}`)
+        return
+      }
+
+      showNotice('Publicado correctamente 🚀')
+      await loadSocialPosts()
+      await loadSocialLogs()
+    } catch (err) {
+      showNotice(err.message || 'Error publicando')
     }
-
-    if (selectedPlatforms.includes('facebook') && fb && fb.ok === false) {
-      showNotice(`Facebook falló: ${fb.error || 'error desconocido'}`)
-      return
-    }
-
-    showNotice('Publicado correctamente 🚀')
-    await loadSocialPosts()
-    await loadSocialLogs()
-  } catch (err) {
-    showNotice(err.message || 'Error publicando')
   }
-}
 
-    async function loadSocialCredentials() {
+  async function loadSocialCredentials() {
     try {
       const res = await api('/api/social/credentials')
 
-      // 🔥 actualizar estado del frontend
       setSocialCredential(prev => ({
         ...prev,
         instagram_account_id: res.instagram_account_id || '',
@@ -5285,6 +5286,72 @@ async function publishMulti() {
       showNotice(err.message || 'Error subiendo imagen')
     } finally {
       setSocialUploadLoading(false)
+    }
+  }
+
+  // ======================== AI VIDEO ENGINE FUNCTIONS ========================
+  async function generateAIVideo() {
+    if (!selectedClientId) {
+      showNotice('Selecciona un cliente primero')
+      return
+    }
+
+    const prompt = videoPrompt || socialContent || socialCampaign.prompt
+
+    if (!prompt.trim()) {
+      showNotice('Escribe un prompt o genera contenido primero')
+      return
+    }
+
+    setVideoLoading(true)
+
+    try {
+      const job = await api(`/api/social/generate-video?client_id=${selectedClientId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          prompt,
+          image_url: socialImageURL || socialCampaign.manual_image_url || '',
+          duration: Number(videoDuration || 5)
+        })
+      })
+
+      showNotice('Video IA en proceso. Presiona actualizar en unos segundos.')
+      setVideoJobs(prev => [job, ...prev])
+    } catch (err) {
+      showNotice(err.message || 'Error generando video IA')
+    } finally {
+      setVideoLoading(false)
+    }
+  }
+
+  async function loadAIVideos() {
+    if (!selectedClientId) return
+
+    try {
+      const items = await api(`/api/social/videos?client_id=${selectedClientId}`)
+      setVideoJobs(Array.isArray(items) ? items : [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function refreshAIVideo(id) {
+    try {
+      const updated = await api(`/api/social/videos/${id}/refresh`, {
+        method: 'POST'
+      })
+
+      setVideoJobs(prev => prev.map(v => v.id === id ? updated : v))
+
+      if (updated.status === 'completed') {
+        showNotice('Video IA listo 🚀')
+      } else if (updated.status === 'error') {
+        showNotice(updated.error || 'Error generando video')
+      } else {
+        showNotice('Video todavía procesando...')
+      }
+    } catch (err) {
+      showNotice(err.message)
     }
   }
 
@@ -5391,6 +5458,7 @@ async function publishMulti() {
     loadGrowthSettings()
     loadJoinQueue()
     loadFacebookLogs()
+    loadAIVideos()
   }, [selectedClientId, forcePlanScreen])
 
   useEffect(() => {
@@ -5460,6 +5528,7 @@ async function publishMulti() {
         await loadSocialCredential()
         await loadSocialPosts()
         await loadSocialLogs()
+        await loadAIVideos()
         return
       }
 
@@ -6581,7 +6650,6 @@ async function publishMulti() {
                   </button>
                 </div>
 
-{/* ESTADO INSTAGRAM */}
 {socialCredential.instagram_connected ? (
   <div className="pill success" style={{ marginTop: '0.75rem' }}>
     <i className="fab fa-instagram"></i> Instagram conectado: @{socialCredential.instagram_username}
@@ -6707,6 +6775,89 @@ async function publishMulti() {
                 </div>
               </div>
             </section>
+
+            {/* ======================== AI VIDEO ENGINE ======================== */}
+            <div className="stripe-card" style={{ marginTop: '1rem' }}>
+              <div className="section-head">
+                <div>
+                  <h3>🎬 AI Video Engine</h3>
+                  <p className="muted tiny">
+                    Genera videos verticales para Reels, TikTok y campañas automáticas.
+                  </p>
+                </div>
+                <span className="pill">Beta</span>
+              </div>
+
+              <textarea
+                rows={4}
+                placeholder="Describe el video: escena, producto, movimiento, estilo visual, CTA..."
+                value={videoPrompt}
+                onChange={(e) => setVideoPrompt(e.target.value)}
+              />
+
+              <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+                <select value={videoDuration} onChange={(e) => setVideoDuration(Number(e.target.value))}>
+                  <option value={5}>5 segundos</option>
+                  <option value={10}>10 segundos</option>
+                </select>
+
+                <button type="button" onClick={generateAIVideo} disabled={videoLoading}>
+                  {videoLoading ? 'Generando video...' : 'Generar video IA'}
+                </button>
+
+                <button type="button" className="secondary" onClick={loadAIVideos}>
+                  Actualizar lista
+                </button>
+              </div>
+
+              {videoJobs.length > 0 && (
+                <div className="template-list" style={{ marginTop: '1rem' }}>
+                  {videoJobs.map(job => (
+                    <div key={job.id} className="template-card">
+                      <div className="row between">
+                        <strong>Video IA</strong>
+                        <span className={`pill ${job.status}`}>{job.status}</span>
+                      </div>
+
+                      <div className="muted tiny">{job.prompt}</div>
+
+                      {job.video_url && (
+                        <video
+                          src={job.video_url}
+                          controls
+                          style={{ width: '100%', borderRadius: '0.75rem', marginTop: '0.75rem' }}
+                        />
+                      )}
+
+                      {job.error && (
+                        <div className="error" style={{ marginTop: '0.75rem' }}>
+                          {job.error}
+                        </div>
+                      )}
+
+                      <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+                        <button type="button" className="secondary" onClick={() => refreshAIVideo(job.id)}>
+                          Actualizar estado
+                        </button>
+
+                        {job.video_url && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(job.video_url)
+                              showNotice('URL del video copiada')
+                            }}
+                          >
+                            Copiar URL
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="panel-grid">
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
