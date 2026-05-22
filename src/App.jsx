@@ -3914,8 +3914,7 @@ export default function App() {
 
         /* Studio Import Box */
         .studio-import-box {
-          background: #1e293b;
-          border: 2px dashed #4b5563;
+          border: 2px dashed #cbd5e1;
           border-radius: 18px;
           padding: 20px;
           text-align: center;
@@ -3923,9 +3922,8 @@ export default function App() {
         }
 
         .studio-import-box input {
-          background: #111827;
-          color: white;
-          border: 1px solid #374151;
+          color: #111827;
+          border: 1px solid #cbd5e1;
           margin-bottom: 10px;
         }
 
