@@ -3758,6 +3758,199 @@ export default function App() {
             max-width: 100%;
           }
 
+          /* ========== AI VIDEO ENGINE - REEL STYLE PREMIUM ========== */
+          .video-reel-container {
+            background: linear-gradient(145deg, #0f0f1a 0%, #1a1a2e 100%);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
+          }
+
+          .video-reel-header {
+            display: flex;
+          justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          }
+
+          .video-reel-header h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #a78bfa;
+            font-weight: 600;
+            margin: 0;
+          }
+
+          .video-reel-badge {
+            background: rgba(167, 139, 250, 0.15);
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            color: #c4b5fd;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+          }
+
+          .video-reel-player {
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+          }
+
+          .video-reel-player video {
+            width: 100%;
+            max-height: 580px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+          }
+
+          .video-reel-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+          }
+
+          .video-reel-player:hover .video-reel-overlay {
+            opacity: 1;
+          }
+
+          .video-reel-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+          }
+
+          .video-reel-actions button {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+          }
+
+          .video-reel-actions button:hover {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            transform: translateY(-2px);
+          }
+
+          .video-reel-info {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            justify-content: center;
+          }
+
+          .video-reel-info span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+          }
+
+          .video-job-card-reel {
+            background: #1e1e2f;
+            border-radius: 1.25rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 1rem;
+          }
+
+          .video-job-card-reel:hover {
+            border-color: rgba(124, 58, 237, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.3);
+          }
+
+          .video-job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+          }
+
+          .video-job-prompt {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          }
+
+          .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 500;
+          }
+
+          .status-badge.completed {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+          }
+
+          .status-badge.processing {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+          }
+
+          .status-badge.pending {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+          }
+
+          .status-badge.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+          }
+
+          .video-grid-reel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+          }
+
+          @media (max-width: 768px) {
+            .video-grid-reel {
+              grid-template-columns: 1fr;
+            }
+            
+            .video-reel-container {
+              padding: 1rem;
+            }
+          }
+
           .assistant-compose {
             flex-direction: column;
           }
@@ -6811,118 +7004,204 @@ export default function App() {
               </div>
             </section>
 
-            {/* ======================== AI VIDEO ENGINE ======================== */}
-            <div className="stripe-card" style={{ marginTop: '1rem' }}>
-              <div className="section-head">
-                <div>
-                  <h3>🎬 AI Video Engine</h3>
-                  <p className="muted tiny">
-                    Genera videos verticales para Reels, TikTok y campañas automáticas.
-                  </p>
+            {/* ======================== AI VIDEO ENGINE - REEL STYLE PREMIUM ======================== */}
+            <div className="video-reel-container">
+              <div className="video-reel-header">
+                <h4>
+                  <i className="fas fa-play-circle" style={{ marginRight: '0.5rem' }}></i>
+                  AI Video Engine
+                </h4>
+                <div className="video-reel-badge">
+                  <i className="fas fa-mobile-alt"></i> Formato Reel
                 </div>
-                <span className="pill">Beta</span>
               </div>
 
-              <textarea
-                rows={4}
-                placeholder="Describe el video: escena, producto, movimiento, estilo visual, CTA..."
-                value={videoPrompt}
-                onChange={(e) => setVideoPrompt(e.target.value)}
-              />
+              <div className="row gap-sm" style={{ marginBottom: '1rem' }}>
+                <textarea
+                  rows={3}
+                  placeholder="🎬 Describe tu Reel: ejemplo: 'Producto en manos de un usuario, fondo urbano, movimiento dinámico, texto animado que diga OFERTA LIMITADA'"
+                  value={videoPrompt}
+                  onChange={(e) => setVideoPrompt(e.target.value)}
+                  style={{ 
+                    background: '#1a1a2e', 
+                    border: '1px solid rgba(255,255,255,0.1)', 
+                    color: '#f1f5f9',
+                    fontSize: '0.9rem'
+                  }}
+                />
 
-              <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                <select value={videoDuration} onChange={(e) => setVideoDuration(Number(e.target.value))}>
-                  <option value={5}>5 segundos</option>
-                  <option value={10}>10 segundos</option>
-                </select>
+                <div className="row gap-sm" style={{ alignItems: 'center' }}>
+                  <select 
+                    value={videoDuration} 
+                    onChange={(e) => setVideoDuration(Number(e.target.value))}
+                    style={{ background: '#1e1e2f', borderColor: 'rgba(255,255,255,0.1)', color: '#f1f5f9' }}
+                  >
+                    <option value={5}>5 segundos</option>
+                    <option value={10}>10 segundos</option>
+                  </select>
 
-                <button type="button" onClick={generateAIVideo} disabled={videoLoading}>
-                  {videoLoading ? 'Generando video...' : 'Generar video IA'}
-                </button>
+                  <button 
+                    type="button" 
+                    onClick={generateAIVideo} 
+                    disabled={videoLoading}
+                    style={{
+                      background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
+                      border: 'none',
+                      padding: '0.6rem 1.2rem'
+                    }}
+                  >
+                    {videoLoading ? (
+                      <><i className="fas fa-circle-notch fa-spin"></i> Generando...</>
+                    ) : (
+                      <><i className="fas fa-magic"></i> Generar Reel IA</>
+                    )}
+                  </button>
 
-                <button type="button" className="secondary" onClick={loadAIVideos}>
-                  Actualizar lista
-                </button>
+                  <button 
+                    type="button" 
+                    className="secondary" 
+                    onClick={loadAIVideos}
+                    style={{ background: '#334155' }}
+                  >
+                    <i className="fas fa-sync-alt"></i>
+                  </button>
+                </div>
               </div>
 
               {videoJobs.length > 0 && (
-                <div className="template-list" style={{ marginTop: '1rem' }}>
-                  {videoJobs.map(job => (
-                    <div key={job.id} className="template-card">
-                      <div className="row between">
-                        <strong>Video IA</strong>
-                        <span className={`pill ${job.status}`}>{job.status}</span>
-                      </div>
+                <div>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: '1rem',
+                    padding: '0 0.25rem'
+                  }}>
+                    <span style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                      <i className="fas fa-film"></i> Tus Reels generados
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{videoJobs.length} videos</span>
+                  </div>
 
-                      <div className="muted tiny">{job.prompt}</div>
-
-                      {job.video_url && (
-                        <video
-                          src={job.video_url}
-                          controls
-                          style={{ width: '100%', borderRadius: '0.75rem', marginTop: '0.75rem' }}
-                        />
-                      )}
-
-                      {job.error && (
-                        <div className="error" style={{ marginTop: '0.75rem' }}>
-                          {job.error}
+                  <div className="video-grid-reel">
+                    {videoJobs.map(job => (
+                      <div key={job.id} className="video-job-card-reel">
+                        <div className="video-job-header">
+                          <div className="row gap-sm">
+                            <i className="fas fa-video" style={{ color: '#a78bfa', fontSize: '0.9rem' }}></i>
+                            <strong style={{ fontSize: '0.85rem', color: '#f1f5f9' }}>
+                              {job.id?.slice(0, 8)}
+                            </strong>
+                          </div>
+                          <span className={`status-badge ${job.status}`}>
+                            {job.status === 'completed' && <><i className="fas fa-check-circle"></i> Listo</>}
+                            {job.status === 'processing' && <><i className="fas fa-spinner fa-pulse"></i> Procesando</>}
+                            {job.status === 'pending' && <><i className="fas fa-clock"></i> En cola</>}
+                            {job.status === 'error' && <><i className="fas fa-exclamation-triangle"></i> Error</>}
+                          </span>
                         </div>
-                      )}
 
-                      <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                        <button type="button" className="secondary" onClick={() => refreshAIVideo(job.id)}>
-                          Actualizar estado
-                        </button>
+                        <div className="video-job-prompt">
+                          "{job.prompt?.slice(0, 100)}{job.prompt?.length > 100 ? '...' : ''}"
+                        </div>
 
                         {job.video_url && (
-  <>
-                        <button type="button" onClick={() => downloadAIVideo(job.id)}>
-                          ⬇ Descargar
-                        </button>
+                          <div className="video-reel-player">
+                            <video 
+                              src={job.video_url} 
+                              controls
+                              playsInline
+                              preload="metadata"
+                            />
+                            <div className="video-reel-overlay">
+                              <div className="video-reel-info">
+                                <span><i className="fas fa-clock"></i> {videoDuration}s</span>
+                                <span><i className="fas fa-music"></i> Audio IA</span>
+                                <span><i className="fas fa-mobile-alt"></i> 9:16</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
-                        <button type="button" onClick={() => addMusicToVideo(job.id, 'auto')}>
-                          🎵 Música auto
-                        </button>
+                        {job.error && (
+                          <div style={{ 
+                            marginTop: '0.75rem', 
+                            padding: '0.5rem', 
+                            background: 'rgba(239, 68, 68, 0.1)', 
+                            borderRadius: '0.75rem',
+                            fontSize: '0.7rem',
+                            color: '#f87171'
+                          }}>
+                            <i className="fas fa-exclamation-circle"></i> {job.error}
+                          </div>
+                        )}
 
-                        <select
-                          onChange={(e) => {
-                            if (e.target.value) addMusicToVideo(job.id, e.target.value)
-                          }}
-                          defaultValue=""
-                        >
-                          <option value="">Música por categoría</option>
-                          <option value="corporate">Corporativa</option>
-                          <option value="viral">Viral</option>
-                          <option value="cinematic">Cinemática</option>
-                          <option value="trading">Trading</option>
-                          <option value="dark">Dark</option>
-                          <option value="motivational">Motivacional</option>
-                          <option value="luxury">Luxury</option>
-                          <option value="tech">Tech</option>
-                        </select>
+                        <div className="video-reel-actions">
+                          <button type="button" onClick={() => refreshAIVideo(job.id)}>
+                            <i className="fas fa-sync-alt"></i> Estado
+                          </button>
 
-                        <button
-                          type="button"
-                          onClick={() => addVoiceSubtitles(job.id)}
-                        >
-                          🎤 Voz + Subtítulos
-                        </button>
+                          {job.video_url && (
+                            <>
+                              <button type="button" onClick={() => downloadAIVideo(job.id)}>
+                                <i className="fas fa-download"></i>
+                              </button>
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(job.video_url)
-                            showNotice('URL copiada')
-                          }}
-                        >
-                          🔗 Copiar URL
-                        </button>
-                      </>
-                    )}
+                              <button type="button" onClick={() => addMusicToVideo(job.id, 'auto')}>
+                                <i className="fas fa-music"></i> Música
+                              </button>
+
+                              <select
+                                onChange={(e) => {
+                                  if (e.target.value) addMusicToVideo(job.id, e.target.value)
+                                }}
+                                defaultValue=""
+                                style={{ fontSize: '0.7rem', padding: '0.4rem 0.6rem' }}
+                              >
+                                <option value="">🎵 Categoría</option>
+                                <option value="corporate">Corporativa</option>
+                                <option value="viral">Viral</option>
+                                <option value="cinematic">Cinemática</option>
+                                <option value="trading">Trading</option>
+                                <option value="dark">Dark</option>
+                                <option value="motivational">Motivacional</option>
+                                <option value="luxury">Luxury</option>
+                                <option value="tech">Tech</option>
+                              </select>
+
+                              <button type="button" onClick={() => addVoiceSubtitles(job.id)}>
+                                <i className="fas fa-microphone-alt"></i> Voz + Subs
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(job.video_url)
+                                  showNotice('URL copiada 📋')
+                                }}
+                              >
+                                <i className="fas fa-link"></i>
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {videoJobs.length === 0 && !videoLoading && (
+                <div style={{ 
+                  textAlign: 'center', 
+                  padding: '3rem', 
+                  background: 'rgba(255,255,255,0.02)',
+                  borderRadius: '1.5rem',
+                  border: '1px dashed rgba(255,255,255,0.08)'
+                }}>
+                  <i className="fas fa-video" style={{ fontSize: '2.5rem', color: '#475569', marginBottom: '1rem', display: 'block' }}></i>
+                  <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>Aún no hay videos generados</p>
+                  <p style={{ fontSize: '0.8rem', color: '#475569' }}>Describe una escena y genera tu primer Reel con IA</p>
                 </div>
               )}
             </div>
