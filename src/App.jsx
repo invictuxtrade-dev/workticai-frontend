@@ -5526,7 +5526,6 @@ export default function App() {
     }
   }
 
-  // NUEVA FUNCION PARA ACTUALIZAR CONFIGURACION DEL VIDEO LOCALMENTE
   async function updateJobSetting(jobId, key, value) {
     setVideoJobs(prev => prev.map(job => 
       job.id === jobId 
@@ -5535,7 +5534,6 @@ export default function App() {
     ))
   }
 
-  // NUEVA FUNCION PARA GENERAR VOZ Y SUBTITULOS
   async function addVoiceAndSubtitles(jobId) {
     const job = videoJobs.find(j => j.id === jobId)
     if (!job) return
@@ -5767,6 +5765,11 @@ export default function App() {
         await loadSocialCredential()
         await loadSocialPosts()
         await loadSocialLogs()
+        await loadAIVideos()
+        return
+      }
+
+      if (tab === 'video') {
         await loadAIVideos()
         return
       }
@@ -6241,6 +6244,9 @@ export default function App() {
           </button>
           <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
             <i className="fas fa-share-alt"></i> Social IA
+          </button>
+          <button className={tab === 'video' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('video')} type="button">
+            <i className="fas fa-video"></i> Video AI
           </button>
           <button className={tab === 'ads' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('ads')} type="button">
             <i className="fas fa-chart-line"></i> Ads IA
@@ -6772,7 +6778,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ======================== FUNNEL ======================== */}
+                {/* ======================== FUNNEL ======================== */}
         {tab === 'funnel' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
@@ -6820,7 +6826,7 @@ export default function App() {
                 <div className="section-title">Leads y conversaciones</div>
                 <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
               </div>
-              <table>
+              <table className="leads-table">
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -6832,21 +6838,22 @@ export default function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredLeads.map(lead => (
-                    <tr key={lead.id}>
-                      <td>{lead.display_name || '—'}</td>
-                      <td>{lead.phone}</td>
-                      <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
-                      <td>{lead.bot_name}</td>
-                      <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                      <td>
-                        <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
-                          Ver chat
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredLeads.length === 0 && (
+                  {filteredLeads.length > 0 ? (
+                    filteredLeads.map(lead => (
+                      <tr key={lead.id}>
+                        <td>{lead.display_name || '—'}</td>
+                        <td>{lead.phone}</td>
+                        <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
+                        <td>{lead.bot_name}</td>
+                        <td>{lead.last_inbound_text?.slice(0, 40)}</td>
+                        <td>
+                          <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
+                            Ver chat
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
@@ -7015,7 +7022,79 @@ export default function App() {
               </div>
             </section>
 
-            {/* ======================== AI VIDEO ENGINE MEJORADO ======================== */}
+            <div className="panel-grid">
+              <section className="stripe-card stack">
+                <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
+                <table>
+                  <thead>
+                    <tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr>
+                  </thead>
+                  <tbody>
+                    {socialPosts.map(post => (
+                      <tr key={post.id}>
+                        <td>{post.platform}</td>
+                        <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
+                        <td>{post.publish_mode}</td>
+                        <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
+                        <td>{(post.content || '').slice(0, 120)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
+              </section>
+              <section className="stripe-card stack">
+                <div className="section-title"><i className="fas fa-file-alt"></i> Logs sociales</div>
+                <div className="stack gap-sm">
+                  {socialLogs.map(log => (
+                    <div key={log.id} className="bot-card"><div className="row between"><strong>{log.level}</strong><span className="tiny">{log.created_at ? new Date(log.created_at).toLocaleString() : ''}</span></div><div className="muted">{log.message}</div></div>
+                  ))}
+                  {socialLogs.length === 0 && <div className="empty-box">Sin logs aún</div>}
+                </div>
+              </section>
+            </div>
+          </section>
+        )}
+
+        {/* ======================== VIDEO AI (NUEVA PESTAÑA) ======================== */}
+        {tab === 'video' && (
+          <div className="stack gap-lg">
+            {/* Botón para generar nuevo video */}
+            <div className="stripe-card">
+              <div className="section-head">
+                <div>
+                  <h3>🎬 AI Video Engine</h3>
+                  <p className="muted tiny">
+                    Genera videos verticales para Reels, TikTok y campañas automáticas.
+                  </p>
+                </div>
+                <span className="pill">Beta</span>
+              </div>
+
+              <textarea
+                rows={4}
+                placeholder="Describe el video: escena, producto, movimiento, estilo visual, CTA..."
+                value={videoPrompt}
+                onChange={(e) => setVideoPrompt(e.target.value)}
+              />
+
+              <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+                <select value={videoDuration} onChange={(e) => setVideoDuration(Number(e.target.value))}>
+                  <option value={5}>5 segundos</option>
+                  <option value={10}>10 segundos</option>
+                </select>
+
+                <button type="button" onClick={generateAIVideo} disabled={videoLoading}>
+                  {videoLoading ? 'Generando video...' : 'Generar video IA'}
+                </button>
+
+                <button type="button" className="secondary" onClick={loadAIVideos}>
+                  Actualizar lista
+                </button>
+              </div>
+            </div>
+
+            {/* Lista de videos generados con el nuevo diseño premium */}
             {videoJobs.length > 0 && videoJobs.map(job => (
               <div key={job.id} className="video-studio">
                 <div className="video-toolbar">
@@ -7173,73 +7252,12 @@ export default function App() {
               </div>
             ))}
 
-            {/* Botón para generar nuevo video fuera del loop */}
-            <div className="stripe-card" style={{ marginTop: '1rem' }}>
-              <div className="section-head">
-                <div>
-                  <h3>🎬 AI Video Engine</h3>
-                  <p className="muted tiny">
-                    Genera videos verticales para Reels, TikTok y campañas automáticas.
-                  </p>
-                </div>
-                <span className="pill">Beta</span>
+            {videoJobs.length === 0 && !videoLoading && (
+              <div className="empty-box">
+                No hay videos generados aún. Completa el prompt y haz clic en "Generar video IA".
               </div>
-
-              <textarea
-                rows={4}
-                placeholder="Describe el video: escena, producto, movimiento, estilo visual, CTA..."
-                value={videoPrompt}
-                onChange={(e) => setVideoPrompt(e.target.value)}
-              />
-
-              <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                <select value={videoDuration} onChange={(e) => setVideoDuration(Number(e.target.value))}>
-                  <option value={5}>5 segundos</option>
-                  <option value={10}>10 segundos</option>
-                </select>
-
-                <button type="button" onClick={generateAIVideo} disabled={videoLoading}>
-                  {videoLoading ? 'Generando video...' : 'Generar video IA'}
-                </button>
-
-                <button type="button" className="secondary" onClick={loadAIVideos}>
-                  Actualizar lista
-                </button>
-              </div>
-            </div>
-
-            <div className="panel-grid">
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
-                <table>
-                  <thead>
-                    <tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr>
-                  </thead>
-                  <tbody>
-                    {socialPosts.map(post => (
-                      <tr key={post.id}>
-                        <td>{post.platform}</td>
-                        <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
-                        <td>{post.publish_mode}</td>
-                        <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
-                        <td>{(post.content || '').slice(0, 120)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
-              </section>
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-file-alt"></i> Logs sociales</div>
-                <div className="stack gap-sm">
-                  {socialLogs.map(log => (
-                    <div key={log.id} className="bot-card"><div className="row between"><strong>{log.level}</strong><span className="tiny">{log.created_at ? new Date(log.created_at).toLocaleString() : ''}</span></div><div className="muted">{log.message}</div></div>
-                  ))}
-                  {socialLogs.length === 0 && <div className="empty-box">Sin logs aún</div>}
-                </div>
-              </section>
-            </div>
-          </section>
+            )}
+          </div>
         )}
 
         {/* ======================== ADS IA ======================== */}
