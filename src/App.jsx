@@ -4279,6 +4279,23 @@ export default function App() {
     }
   }
 
+    async function addAnimatedCaptions(jobId, text, style) {
+    try {
+      const updated = await api(`/api/social/videos/${jobId}/animated-captions`, {
+        method: 'POST',
+        body: JSON.stringify({
+          text: text || '',
+          style: style || 'karaoke'
+        })
+      })
+
+      setVideoJobs(prev => prev.map(v => v.id === jobId ? updated : v))
+      showNotice('Captions animados aplicados 🔥')
+    } catch (err) {
+      showNotice(err.message || 'Error aplicando captions animados')
+    }
+  }
+
   // ======================== ASSISTANT AI FUNCTIONS MEJORADAS ========================
   const scrollToBottom = useCallback((behavior = 'smooth') => {
     if (messagesContainerRef.current) {
@@ -7171,6 +7188,7 @@ export default function App() {
           uploadAIVideoFile={uploadAIVideoFile}
           trimAIVideo={trimAIVideo}
           exportAIVideoPreset={exportAIVideoPreset}
+          addAnimatedCaptions={addAnimatedCaptions}
           showNotice={showNotice}
         />
         )}

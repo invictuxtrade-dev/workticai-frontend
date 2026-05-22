@@ -14,11 +14,15 @@ import {
   FaSyncAlt,
   FaDownload,
   FaLink,
-  FaVideo
+  FaVideo,
+  FaSearchMinus,
+  FaSearchPlus
 } from 'react-icons/fa'
 
 import '../styles/video-ai-studio.css'
 import { api, API_BASE } from '../api'
+
+const pxPerSecondBase = 42
 
 export default function VideoAIStudio({
   selectedClientId,
@@ -48,6 +52,7 @@ export default function VideoAIStudio({
   uploadAIVideoFile,
   trimAIVideo,
   exportAIVideoPreset,
+  addAnimatedCaptions,
   showNotice
 }) {
   const [loading, setLoading] = useState(false)
@@ -55,10 +60,16 @@ export default function VideoAIStudio({
   const [selectedJobId, setSelectedJobId] = useState('')
   const [trimStart, setTrimStart] = useState(0)
   const [trimEnd, setTrimEnd] = useState(10)
+  const [zoom, setZoom] = useState(1)
+  const [duration, setDuration] = useState(10)
+  const [selectedClip, setSelectedClip] = useState('video')
+  const [captionsStyle, setCaptionsStyle] = useState('karaoke')
+  const [previewCaption, setPreviewCaption] = useState('Automatiza tus ventas con Worktic AI')
 
   const waveformRef = useRef(null)
   const wavesurfer = useRef(null)
   const videoRef = useRef(null)
+  const timelineRef = useRef(null)
 
   const selectedJob = useMemo(() => {
     if (!videoJobs.length) return null
@@ -66,6 +77,15 @@ export default function VideoAIStudio({
   }, [videoJobs, selectedJobId])
 
   const currentVideoUrl = selectedJob?.video_url || ''
+
+  const [clips, setClips] = useState([
+    { id: 'video', label: '🎬 Video principal', track: 'video', start: 0, length: 10, color: 'purple' },
+    { id: 'audio', label: '🎵 Música / Voz', track: 'audio', start: 0, length: 10, color: 'blue' },
+    { id: 'subs', label: '💬 Subtítulos IA', track: 'subs', start: 0, length: 10, color: 'green' }
+  ])
+
+  const pxPerSecond = pxPerSecondBase * zoom
+  const timelineWidth = Math.max(600, duration * pxPerSecond)
 
   useEffect(() => {
     if (!selectedJobId && videoJobs.length > 0) {
@@ -91,7 +111,6 @@ export default function VideoAIStudio({
     })
 
     wavesurfer.current.load(currentVideoUrl)
-
     wavesurfer.current.on('play', () => setPlaying(true))
     wavesurfer.current.on('pause', () => setPlaying(false))
 
@@ -102,6 +121,13 @@ export default function VideoAIStudio({
       }
     }
   }, [currentVideoUrl])
+
+  function onVideoLoaded(e) {
+    const d = Math.max(1, Math.round(e.currentTarget.duration || 10))
+    setDuration(d)
+    setTrimEnd(Math.min(10, d))
+    setClips(prev => prev.map(c => ({ ...c, length: Math.min(c.length, d) || d })))
+  }
 
   async function handleUploadFile(file) {
     if (!file) return
@@ -123,18 +149,13 @@ export default function VideoAIStudio({
         `${API_BASE}/api/social/videos/upload${selectedClientId ? `?client_id=${selectedClientId}` : ''}`,
         {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('wsos_token') || ''}`
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem('wsos_token') || ''}` },
           body: formData
         }
       )
 
       const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data?.error || 'Error subiendo video')
-      }
+      if (!res.ok) throw new Error(data?.error || 'Error subiendo video')
 
       setVideoJobs?.(prev => [data, ...(prev || [])])
       setSelectedJobId(data.id)
@@ -168,7 +189,6 @@ export default function VideoAIStudio({
 
     try {
       setLoading(true)
-
       const updated = await api(`/api/social/videos/${selectedJob.id}/effect`, {
         method: 'POST',
         body: JSON.stringify({ effect })
@@ -216,6 +236,66 @@ export default function VideoAIStudio({
     showNotice?.('URL copiada')
   }
 
+  function updateClip(id, patch) {
+    setClips(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c))
+  }
+
+  function moveClipByMouse(e, clip) {
+    const box = timelineRef.current?.getBoundingClientRect()
+    if (!box) return
+
+    const x = e.clientX - box.left + timelineRef.current.scrollLeft
+    const nextStart = Math.max(0, Math.min(duration - clip.length, x / pxPerSecond))
+    updateClip(clip.id, { start: Number(nextStart.toFixed(1)) })
+    setSelectedClip(clip.id)
+  }
+
+  function resizeClipByMouse(e, clip) {
+    const box = timelineRef.current?.getBoundingClientRect()
+    if (!box) return
+
+    const x = e.clientX - box.left + timelineRef.current.scrollLeft
+    const nextLength = Math.max(1, Math.min(duration - clip.start, (x / pxPerSecond) - clip.start))
+    updateClip(clip.id, { length: Number(nextLength.toFixed(1)) })
+
+    if (clip.id === 'video') {
+      setTrimStart(Number(clip.start.toFixed(1)))
+      setTrimEnd(Number((clip.start + nextLength).toFixed(1)))
+    }
+  }
+
+  function handleMouseDrag(e, clip, mode) {
+    e.preventDefault()
+
+    const onMove = (ev) => {
+      if (mode === 'move') moveClipByMouse(ev, clip)
+      if (mode === 'resize') resizeClipByMouse(ev, clip)
+    }
+
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }
+
+  function jumpToClip(clip) {
+    if (videoRef.current) {
+      videoRef.current.currentTime = clip.start
+    }
+    if (wavesurfer.current) {
+      const ratio = clip.start / Math.max(duration, 1)
+      wavesurfer.current.seekTo(Math.max(0, Math.min(1, ratio)))
+    }
+    setSelectedClip(clip.id)
+  }
+
+  const ruler = Array.from({ length: Math.ceil(duration) + 1 }, (_, i) => i)
+
+  const currentClip = clips.find(c => c.id === selectedClip)
+
   return (
     <div className="video-ai-studio">
 
@@ -225,11 +305,7 @@ export default function VideoAIStudio({
           <p>Genera, importa, edita, musicaliza y exporta videos verticales con IA.</p>
         </div>
 
-        <button
-          className="export-btn"
-          type="button"
-          onClick={() => selectedJob?.id && handleExport('reels')}
-        >
+        <button className="export-btn" type="button" onClick={() => selectedJob?.id && handleExport('reels')}>
           <FaFileExport />
           Exportar Reel
         </button>
@@ -246,10 +322,7 @@ export default function VideoAIStudio({
         />
 
         <div className="row" style={{ marginTop: 12 }}>
-          <select
-            value={videoDuration || 5}
-            onChange={(e) => setVideoDuration?.(Number(e.target.value))}
-          >
+          <select value={videoDuration || 5} onChange={(e) => setVideoDuration?.(Number(e.target.value))}>
             <option value={5}>5 segundos</option>
             <option value={10}>10 segundos</option>
           </select>
@@ -275,13 +348,22 @@ export default function VideoAIStudio({
             animate={{ opacity: 1, y: 0 }}
           >
             {currentVideoUrl ? (
-              <video
-                key={currentVideoUrl}
-                ref={videoRef}
-                src={currentVideoUrl}
-                controls
-                className="studio-video"
-              />
+              <div className="caption-preview-wrap">
+                <video
+                  key={currentVideoUrl}
+                  ref={videoRef}
+                  src={currentVideoUrl}
+                  controls
+                  className="studio-video"
+                  onLoadedMetadata={onVideoLoaded}
+                />
+
+                <div className={`animated-caption-preview ${captionsStyle}`}>
+                  {String(previewCaption || '').split(' ').slice(0, 5).map((w, i) => (
+                    <span key={`${w}-${i}`}>{w}</span>
+                  ))}
+                </div>
+              </div>
             ) : (
               <div className="empty-video">
                 <FaVideo />
@@ -292,17 +374,29 @@ export default function VideoAIStudio({
 
           <div className="timeline-panel">
             <div className="timeline-header">
-              <h3>🎵 Waveform / Timeline</h3>
+              <h3>🎞 Timeline editable</h3>
 
-              <button
-                type="button"
-                onClick={() => {
-                  if (!wavesurfer.current) return
-                  wavesurfer.current.playPause()
-                }}
-              >
-                {playing ? <FaPause /> : <FaPlay />}
-              </button>
+              <div className="timeline-actions">
+                <button type="button" onClick={() => setZoom(z => Math.max(0.6, Number((z - 0.2).toFixed(1))))}>
+                  <FaSearchMinus />
+                </button>
+
+                <span>{Math.round(zoom * 100)}%</span>
+
+                <button type="button" onClick={() => setZoom(z => Math.min(2.4, Number((z + 0.2).toFixed(1))))}>
+                  <FaSearchPlus />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!wavesurfer.current) return
+                    wavesurfer.current.playPause()
+                  }}
+                >
+                  {playing ? <FaPause /> : <FaPlay />}
+                </button>
+              </div>
             </div>
 
             {currentVideoUrl ? (
@@ -311,15 +405,65 @@ export default function VideoAIStudio({
               <div className="empty-box">Sube o genera un video para ver el waveform.</div>
             )}
 
-            <div className="timeline-editor">
-              <div className="timeline-track purple">
-                <div className="timeline-clip">🎬 Video principal</div>
+            <div className="editable-timeline" ref={timelineRef}>
+              <div className="timeline-ruler" style={{ width: timelineWidth }}>
+                {ruler.map(s => (
+                  <span key={s} style={{ left: s * pxPerSecond }}>
+                    {s}s
+                  </span>
+                ))}
               </div>
-              <div className="timeline-track blue">
-                <div className="timeline-clip">🎵 Música / Voz</div>
+
+              {['video', 'audio', 'subs'].map(track => (
+                <div className="editable-track" key={track} style={{ width: timelineWidth }}>
+                  <div className="track-label">
+                    {track === 'video' ? 'VIDEO' : track === 'audio' ? 'AUDIO' : 'SUBS'}
+                  </div>
+
+                  {clips.filter(c => c.track === track).map(clip => (
+                    <div
+                      key={clip.id}
+                      className={`editable-clip ${clip.color} ${selectedClip === clip.id ? 'active' : ''}`}
+                      style={{
+                        left: clip.start * pxPerSecond,
+                        width: clip.length * pxPerSecond
+                      }}
+                      onClick={() => jumpToClip(clip)}
+                      onMouseDown={(e) => handleMouseDrag(e, clip, 'move')}
+                    >
+                      <span>{clip.label}</span>
+                      <b>{clip.start}s - {(clip.start + clip.length).toFixed(1)}s</b>
+
+                      <i
+                        className="clip-resize"
+                        onMouseDown={(e) => {
+                          e.stopPropagation()
+                          handleMouseDrag(e, clip, 'resize')
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div className="clip-inspector">
+              <div>
+                <strong>Clip seleccionado:</strong> {currentClip?.label || 'Ninguno'}
               </div>
-              <div className="timeline-track green">
-                <div className="timeline-clip">💬 Subtítulos</div>
+
+              <div className="row">
+                <input
+                  type="number"
+                  value={currentClip?.start ?? 0}
+                  onChange={(e) => currentClip && updateClip(currentClip.id, { start: Number(e.target.value) })}
+                />
+
+                <input
+                  type="number"
+                  value={currentClip?.length ?? 1}
+                  onChange={(e) => currentClip && updateClip(currentClip.id, { length: Number(e.target.value) })}
+                />
               </div>
             </div>
           </div>
@@ -435,16 +579,39 @@ export default function VideoAIStudio({
               rows={3}
               placeholder="Texto para voz IA. Si lo dejas vacío, se usa el prompt del video."
               value={voiceText || ''}
-              onChange={(e) => setVoiceText?.(e.target.value)}
+              onChange={(e) => {
+                setVoiceText?.(e.target.value)
+                setPreviewCaption(e.target.value || 'Automatiza tus ventas con Worktic AI')
+              }}
             />
 
-            <button
-              type="button"
-              onClick={() => selectedJob?.id && addVoiceAndSubtitles?.(selectedJob.id)}
-            >
+            <button type="button" onClick={() => selectedJob?.id && addVoiceAndSubtitles?.(selectedJob.id)}>
               <FaClosedCaptioning />
               Generar Voz + Subs
             </button>
+          </div>
+
+          <div className="tool-card">
+            <h3>🤖 Auto Captions animados</h3>
+
+            <label>Estilo caption</label>
+            <select value={captionsStyle} onChange={(e) => setCaptionsStyle(e.target.value)}>
+              <option value="karaoke">Karaoke TikTok</option>
+              <option value="neon">Neón</option>
+              <option value="bold">Bold Viral</option>
+              <option value="minimal">Minimal Pro</option>
+            </select>
+
+            <textarea
+              rows={2}
+              value={previewCaption}
+              onChange={(e) => setPreviewCaption(e.target.value)}
+            />
+
+        <button type="button" onClick={() => selectedJob?.id && addAnimatedCaptions?.(selectedJob.id, previewCaption, captionsStyle)}>
+        <FaMagic />
+        Aplicar captions animados
+        </button>
           </div>
 
           <div className="tool-card">

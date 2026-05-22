@@ -128,3 +128,233 @@
   font-size:22px;
   z-index:9999;
 }
+
+.caption-preview-wrap{
+  width:100%;
+  height:100%;
+  position:relative;
+}
+
+.animated-caption-preview{
+  position:absolute;
+  left:50%;
+  bottom:78px;
+  transform:translateX(-50%);
+  width:86%;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px;
+  pointer-events:none;
+  text-align:center;
+  z-index:5;
+}
+
+.animated-caption-preview span{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:10px;
+  font-size:18px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:white;
+  animation:captionPop .9s infinite alternate ease-in-out;
+}
+
+.animated-caption-preview span:nth-child(2){
+  animation-delay:.12s;
+}
+
+.animated-caption-preview span:nth-child(3){
+  animation-delay:.24s;
+}
+
+.animated-caption-preview span:nth-child(4){
+  animation-delay:.36s;
+}
+
+.animated-caption-preview.karaoke span{
+  background:linear-gradient(135deg,#7c3aed,#2563eb);
+  box-shadow:0 8px 24px rgba(124,58,237,.45);
+}
+
+.animated-caption-preview.neon span{
+  background:rgba(0,255,213,.12);
+  border:1px solid rgba(0,255,213,.6);
+  text-shadow:0 0 12px #00ffd5;
+  box-shadow:0 0 22px rgba(0,255,213,.35);
+}
+
+.animated-caption-preview.bold span{
+  background:#facc15;
+  color:#111827;
+  box-shadow:0 8px 0 #000;
+}
+
+.animated-caption-preview.minimal span{
+  background:rgba(15,23,42,.78);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+@keyframes captionPop{
+  from{
+    transform:scale(.96) translateY(2px);
+    opacity:.86;
+  }
+  to{
+    transform:scale(1.06) translateY(-2px);
+    opacity:1;
+  }
+}
+
+.timeline-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.timeline-actions span{
+  color:#94a3b8;
+  font-size:12px;
+  min-width:42px;
+  text-align:center;
+}
+
+.editable-timeline{
+  margin-top:18px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  background:#020617;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:14px;
+}
+
+.timeline-ruler{
+  height:28px;
+  position:relative;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  margin-bottom:10px;
+}
+
+.timeline-ruler span{
+  position:absolute;
+  top:0;
+  transform:translateX(-50%);
+  font-size:11px;
+  color:#94a3b8;
+}
+
+.timeline-ruler span::after{
+  content:'';
+  position:absolute;
+  top:16px;
+  left:50%;
+  width:1px;
+  height:10px;
+  background:rgba(255,255,255,.16);
+}
+
+.editable-track{
+  height:68px;
+  position:relative;
+  margin-bottom:10px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+}
+
+.track-label{
+  position:sticky;
+  left:0;
+  z-index:4;
+  width:70px;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#94a3b8;
+  font-size:11px;
+  font-weight:900;
+  background:rgba(15,23,42,.92);
+  border-right:1px solid rgba(255,255,255,.06);
+}
+
+.editable-clip{
+  position:absolute;
+  top:10px;
+  height:46px;
+  border-radius:12px;
+  padding:8px 14px;
+  cursor:grab;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  z-index:3;
+  user-select:none;
+}
+
+.editable-clip:active{
+  cursor:grabbing;
+}
+
+.editable-clip span{
+  font-size:12px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.editable-clip b{
+  font-size:10px;
+  color:rgba(255,255,255,.78);
+  white-space:nowrap;
+}
+
+.editable-clip.purple{
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
+}
+
+.editable-clip.blue{
+  background:linear-gradient(135deg,#2563eb,#0284c7);
+}
+
+.editable-clip.green{
+  background:linear-gradient(135deg,#10b981,#059669);
+}
+
+.editable-clip.active{
+  outline:2px solid #fff;
+  box-shadow:0 0 0 4px rgba(124,58,237,.32),0 18px 45px rgba(0,0,0,.35);
+}
+
+.clip-resize{
+  position:absolute;
+  right:0;
+  top:0;
+  width:12px;
+  height:100%;
+  cursor:ew-resize;
+  background:rgba(255,255,255,.28);
+}
+
+.clip-inspector{
+  margin-top:14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.clip-inspector input{
+  width:90px;
+}
