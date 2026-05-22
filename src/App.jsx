@@ -5881,16 +5881,22 @@ export default function App() {
     } catch (err) { showNotice(err.message || 'Error') }
   }
 
-  async function addVoiceSubtitles(id) {
+ async function addVoiceSubtitles(id) {
   try {
+    showNotice('Generando voz y subtítulos...')
+
     await api(`/api/social/videos/${id}/voice-subtitles`, {
       method: 'POST'
     })
 
-    alert('Voz y subtítulos agregados')
-    loadVideos()
+    showNotice('Voz y subtítulos en proceso 🎤')
+
+    setTimeout(() => {
+      refreshAIVideo(id)
+    }, 5000)
+
   } catch (err) {
-    alert(err.message)
+    showNotice(err.message || 'Error generando voz y subtítulos')
   }
 }
 
