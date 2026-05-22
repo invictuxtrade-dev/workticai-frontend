@@ -3762,6 +3762,155 @@ export default function App() {
             flex-direction: column;
           }
         }
+
+        /* ========== VIDEO STUDIO PREMIUM STYLES ========== */
+        .video-studio {
+          background: #0f172a;
+          border-radius: 24px;
+          padding: 20px;
+          margin-top: 20px;
+          color: white;
+          box-shadow: 0 20px 50px rgba(0,0,0,.35);
+        }
+
+        .video-toolbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
+        .studio-logo {
+          font-size: 20px;
+          font-weight: 700;
+        }
+
+        .studio-actions {
+          display: flex;
+          gap: 10px;
+        }
+
+        .video-editor-layout {
+          display: grid;
+          grid-template-columns: 80px 1fr 320px;
+          gap: 20px;
+        }
+
+        .editor-sidebar {
+          background: #111827;
+          border-radius: 18px;
+          padding: 15px 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .editor-tool {
+          background: #1e293b;
+          padding: 12px;
+          border-radius: 12px;
+          text-align: center;
+          cursor: pointer;
+          transition: .2s;
+        }
+
+        .editor-tool:hover {
+          background: #7430e2;
+        }
+
+        .editor-tool.active {
+          background: #7430e2;
+        }
+
+        .video-preview-area {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .phone-frame {
+          width: 320px;
+          height: 570px;
+          background: black;
+          border-radius: 38px;
+          padding: 10px;
+          border: 5px solid #374151;
+          box-shadow: 0 20px 60px rgba(0,0,0,.5);
+        }
+
+        .reel-video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 28px;
+        }
+
+        .timeline-editor {
+          width: 100%;
+          background: #111827;
+          border-radius: 18px;
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .timeline-track {
+          height: 50px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          padding: 0 15px;
+          font-weight: 700;
+        }
+
+        .video-track {
+          background: #7430e2;
+        }
+
+        .audio-track {
+          background: #2563eb;
+        }
+
+        .subtitle-track {
+          background: #10b981;
+        }
+
+        .editor-controls {
+          background: #111827;
+          border-radius: 20px;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .editor-controls select {
+          background: #1e293b;
+          color: white;
+          border: none;
+        }
+
+        .editor-switches {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .generate-btn {
+          background: #7430e2;
+          color: white;
+          border: none;
+          padding: 14px;
+          border-radius: 14px;
+          font-size: 16px;
+          font-weight: 700;
+        }
+
+        .generate-btn:hover {
+          background: #5b21b6;
+        }
       `
       document.head.appendChild(style)
     }
@@ -5361,7 +5510,7 @@ export default function App() {
     }
   }
 
-    async function addMusicToVideo(id, category = 'auto') {
+  async function addMusicToVideo(id, category = 'auto') {
     try {
       showNotice('Agregando música automática...')
 
@@ -5375,6 +5524,74 @@ export default function App() {
     } catch (err) {
       showNotice(err.message || 'Error agregando música')
     }
+  }
+
+  // NUEVA FUNCION PARA ACTUALIZAR CONFIGURACION DEL VIDEO LOCALMENTE
+  async function updateJobSetting(jobId, key, value) {
+    setVideoJobs(prev => prev.map(job => 
+      job.id === jobId 
+        ? { ...job, [key]: value }
+        : job
+    ))
+  }
+
+  // NUEVA FUNCION PARA GENERAR VOZ Y SUBTITULOS
+  async function addVoiceAndSubtitles(jobId) {
+    const job = videoJobs.find(j => j.id === jobId)
+    if (!job) return
+
+    const finalEnableVoice = job.enable_voice !== undefined ? job.enable_voice : enableVoice
+    const finalEnableSubtitles = job.enable_subtitles !== undefined ? job.enable_subtitles : enableSubtitles
+    const finalVoiceText = job.voice_text || voiceText || job.prompt || ''
+    const finalVoiceLanguage = job.voice_language || voiceLanguage || 'es'
+    const finalVoiceGender = job.voice_gender || voiceGender || 'female'
+
+    if (!finalVoiceText.trim()) {
+      showNotice('No hay texto para generar voz. Escribe el texto o espera el prompt del video.')
+      return
+    }
+
+    if (!finalEnableVoice && !finalEnableSubtitles) {
+      showNotice('Activa Voz IA o Subtítulos')
+      return
+    }
+
+    showNotice('Procesando voz y subtítulos...')
+
+    try {
+      const response = await api(`/api/social/videos/${jobId}/voice-subtitles`, {
+        method: 'POST',
+        body: JSON.stringify({
+          text: finalVoiceText,
+          language: finalVoiceLanguage,
+          gender: finalVoiceGender,
+          enable_voice: finalEnableVoice,
+          enable_subtitles: finalEnableSubtitles
+        })
+      })
+
+      showNotice('Voz/subtítulos en proceso 🎤')
+
+      setTimeout(() => {
+        refreshAIVideo(jobId)
+      }, 5000)
+
+    } catch (err) {
+      showNotice(err.message || 'Error generando voz y subtítulos')
+    }
+  }
+
+  async function downloadAIVideo(jobId) {
+    const job = videoJobs.find(j => j.id === jobId)
+    if (!job?.video_url) return
+
+    const link = document.createElement('a')
+    link.href = job.video_url
+    link.download = `worktic_video_${jobId}.mp4`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    showNotice('Descargando video...')
   }
 
   // ======================== FUNCIONES EXISTENTES ========================
@@ -5886,41 +6103,6 @@ export default function App() {
       showNotice('Plantilla creada')
     } catch (err) { showNotice(err.message || 'Error') }
   }
-
-  // NUEVA FUNCION PARA VOZ Y SUBTITULOS (REEMPLAZADA)
-  async function addVoiceSubtitles(jobId) {
-  try {
-    const finalEnableVoice = enableVoice !== false
-    const finalEnableSubtitles = enableSubtitles !== false
-
-    if (!finalEnableVoice && !finalEnableSubtitles) {
-      showNotice('Activa Voz IA o Subtítulos')
-      return
-    }
-
-    showNotice('Procesando voz y subtítulos.')
-
-    const response = await api(`/api/social/videos/${jobId}/voice-subtitles`, {
-      method: 'POST',
-      body: JSON.stringify({
-        text: voiceText || '',
-        language: voiceLanguage || 'es',
-        gender: voiceGender || 'female',
-        enable_voice: finalEnableVoice,
-        enable_subtitles: finalEnableSubtitles
-      })
-    })
-
-    showNotice('Voz/subtítulos en proceso 🎤')
-
-    setTimeout(() => {
-      refreshAIVideo(jobId)
-    }, 5000)
-
-  } catch (err) {
-    showNotice(err.message || 'Error generando voz y subtítulos')
-  }
-}
 
   async function logout() {
     setToken('')
@@ -6833,7 +7015,165 @@ export default function App() {
               </div>
             </section>
 
-            {/* ======================== AI VIDEO ENGINE ======================== */}
+            {/* ======================== AI VIDEO ENGINE MEJORADO ======================== */}
+            {videoJobs.length > 0 && videoJobs.map(job => (
+              <div key={job.id} className="video-studio">
+                <div className="video-toolbar">
+                  <div className="studio-logo">
+                    🎬 Worktic Studio AI
+                  </div>
+
+                  <div className="studio-actions">
+                    <button onClick={() => refreshAIVideo(job.id)}>
+                      🔄 Estado
+                    </button>
+
+                    <button onClick={() => downloadAIVideo(job.id)}>
+                      ⬇ Descargar
+                    </button>
+
+                    <button onClick={() => addMusicToVideo(job.id, 'auto')}>
+                      🎵 Música
+                    </button>
+                  </div>
+                </div>
+
+                <div className="video-editor-layout">
+
+                  {/* PANEL IZQUIERDO */}
+                  <div className="editor-sidebar">
+
+                    <div className="editor-tool active">
+                      🎥 Video
+                    </div>
+
+                    <div className="editor-tool">
+                      🎵 Audio
+                    </div>
+
+                    <div className="editor-tool">
+                      🎙 Voz IA
+                    </div>
+
+                    <div className="editor-tool">
+                      💬 Subtítulos
+                    </div>
+
+                    <div className="editor-tool">
+                      ✨ Efectos
+                    </div>
+
+                  </div>
+
+                  {/* PREVIEW */}
+                  <div className="video-preview-area">
+
+                    <div className="phone-frame">
+                      {job.video_url ? (
+                        <video
+                          controls
+                          src={job.video_url}
+                          className="reel-video"
+                        />
+                      ) : (
+                        <div className="empty-box" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          Procesando video...
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="timeline-editor">
+
+                      <div className="timeline-track video-track">
+                        <span>🎬 VIDEO</span>
+                      </div>
+
+                      <div className="timeline-track audio-track">
+                        <span>🎵 AUDIO</span>
+                      </div>
+
+                      <div className="timeline-track subtitle-track">
+                        <span>💬 SUBS</span>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* PANEL DERECHO */}
+                  <div className="editor-controls">
+
+                    <h3>⚙ IA Video Controls</h3>
+
+                    <label>Idioma</label>
+                    <select
+                      value={job.voice_language || voiceLanguage || 'es'}
+                      onChange={(e) =>
+                        updateJobSetting(job.id, 'voice_language', e.target.value)
+                      }
+                    >
+                      <option value="es">Español</option>
+                      <option value="en">English</option>
+                    </select>
+
+                    <label>Tipo voz</label>
+                    <select
+                      value={job.voice_gender || voiceGender || 'female'}
+                      onChange={(e) =>
+                        updateJobSetting(job.id, 'voice_gender', e.target.value)
+                      }
+                    >
+                      <option value="female">Femenina</option>
+                      <option value="male">Masculina</option>
+                    </select>
+
+                    <div className="editor-switches">
+
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={job.enable_voice !== undefined ? job.enable_voice : enableVoice}
+                          onChange={(e) =>
+                            updateJobSetting(job.id, 'enable_voice', e.target.checked)
+                          }
+                        />
+                        Voz IA
+                      </label>
+
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={job.enable_subtitles !== undefined ? job.enable_subtitles : enableSubtitles}
+                          onChange={(e) =>
+                            updateJobSetting(job.id, 'enable_subtitles', e.target.checked)
+                          }
+                        />
+                        Subtítulos
+                      </label>
+
+                    </div>
+
+                    <textarea
+                      rows={3}
+                      placeholder="Texto para voz IA (opcional, si no se usa el prompt del video)"
+                      value={job.voice_text || voiceText}
+                      onChange={(e) => updateJobSetting(job.id, 'voice_text', e.target.value)}
+                    />
+
+                    <button
+                      className="generate-btn"
+                      onClick={() => addVoiceAndSubtitles(job.id)}
+                    >
+                      🚀 Generar Voz + Subs
+                    </button>
+
+                  </div>
+
+                </div>
+              </div>
+            ))}
+
+            {/* Botón para generar nuevo video fuera del loop */}
             <div className="stripe-card" style={{ marginTop: '1rem' }}>
               <div className="section-head">
                 <div>
@@ -6852,76 +7192,6 @@ export default function App() {
                 onChange={(e) => setVideoPrompt(e.target.value)}
               />
 
-              {/* NUEVO FORMULARIO DE VOZ IA (PASO 2) */}
-              <div className="stack" style={{ marginTop: 12 }}>
-                <label>Texto para voz IA</label>
-
-                <textarea
-                  rows={4}
-                  value={voiceText}
-                  onChange={(e) => setVoiceText(e.target.value)}
-                  placeholder="Texto que narrará la IA..."
-                />
-
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 12
-                }}>
-
-                  <div>
-                    <label>Idioma</label>
-
-                    <select
-                      value={voiceLanguage}
-                      onChange={(e) => setVoiceLanguage(e.target.value)}
-                    >
-                      <option value="es">Español</option>
-                      <option value="en">English</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label>Tipo de voz</label>
-
-                    <select
-                      value={voiceGender}
-                      onChange={(e) => setVoiceGender(e.target.value)}
-                    >
-                      <option value="female">Femenina</option>
-                      <option value="male">Masculina</option>
-                    </select>
-                  </div>
-
-                </div>
-
-                <div style={{
-                  display: 'flex',
-                  gap: 20,
-                  marginTop: 10
-                }}>
-
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={enableVoice}
-                      onChange={(e) => setEnableVoice(e.target.checked)}
-                    />
-                    Voz IA
-                  </label>
-
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={enableSubtitles}
-                      onChange={(e) => setEnableSubtitles(e.target.checked)}
-                    />
-                    Subtítulos
-                  </label>
-
-                </div>
-              </div>
-
               <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
                 <select value={videoDuration} onChange={(e) => setVideoDuration(Number(e.target.value))}>
                   <option value={5}>5 segundos</option>
@@ -6936,87 +7206,6 @@ export default function App() {
                   Actualizar lista
                 </button>
               </div>
-
-              {videoJobs.length > 0 && (
-                <div className="template-list" style={{ marginTop: '1rem' }}>
-                  {videoJobs.map(job => (
-                    <div key={job.id} className="template-card">
-                      <div className="row between">
-                        <strong>Video IA</strong>
-                        <span className={`pill ${job.status}`}>{job.status}</span>
-                      </div>
-
-                      <div className="muted tiny">{job.prompt}</div>
-
-                      {job.video_url && (
-                        <video
-                          src={job.video_url}
-                          controls
-                          style={{ width: '100%', borderRadius: '0.75rem', marginTop: '0.75rem' }}
-                        />
-                      )}
-
-                      {job.error && (
-                        <div className="error" style={{ marginTop: '0.75rem' }}>
-                          {job.error}
-                        </div>
-                      )}
-
-                      <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                        <button type="button" className="secondary" onClick={() => refreshAIVideo(job.id)}>
-                          Actualizar estado
-                        </button>
-
-                        {job.video_url && (
-  <>
-                        <button type="button" onClick={() => downloadAIVideo(job.id)}>
-                          ⬇ Descargar
-                        </button>
-
-                        <button type="button" onClick={() => addMusicToVideo(job.id, 'auto')}>
-                          🎵 Música auto
-                        </button>
-
-                        <select
-                          onChange={(e) => {
-                            if (e.target.value) addMusicToVideo(job.id, e.target.value)
-                          }}
-                          defaultValue=""
-                        >
-                          <option value="">Música por categoría</option>
-                          <option value="corporate">Corporativa</option>
-                          <option value="viral">Viral</option>
-                          <option value="cinematic">Cinemática</option>
-                          <option value="trading">Trading</option>
-                          <option value="dark">Dark</option>
-                          <option value="motivational">Motivacional</option>
-                          <option value="luxury">Luxury</option>
-                          <option value="tech">Tech</option>
-                        </select>
-
-                        <button
-                          type="button"
-                          onClick={() => addVoiceSubtitles(job.id)}
-                        >
-                          🎤 Voz + Subtítulos
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(job.video_url)
-                            showNotice('URL copiada')
-                          }}
-                        >
-                          🔗 Copiar URL
-                        </button>
-                      </>
-                    )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             <div className="panel-grid">
