@@ -3911,6 +3911,29 @@ export default function App() {
         .generate-btn:hover {
           background: #5b21b6;
         }
+
+        /* Studio Import Box */
+        .studio-import-box {
+          background: #1e293b;
+          border: 2px dashed #4b5563;
+          border-radius: 18px;
+          padding: 20px;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+
+        .studio-import-box input {
+          background: #111827;
+          color: white;
+          border: 1px solid #374151;
+          margin-bottom: 10px;
+        }
+
+        .studio-import-box p {
+          color: #9ca3af;
+          font-size: 0.85rem;
+          margin-top: 8px;
+        }
       `
       document.head.appendChild(style)
     }
@@ -4192,6 +4215,69 @@ export default function App() {
     return (div.textContent || div.innerText || '')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
+  }
+
+  // ======================== FUNCIONES VIDEO AI NUEVAS ========================
+  async function uploadAIVideoFile(file) {
+    if (!file) {
+      showNotice('Selecciona un archivo de video')
+      return
+    }
+
+    if (!selectedClientId) {
+      showNotice('Selecciona un cliente primero')
+      return
+    }
+
+    try {
+      showNotice('Subiendo video...')
+
+      const form = new FormData()
+      form.append('video', file)
+
+      const job = await api(`/api/social/videos/upload?client_id=${selectedClientId}`, {
+        method: 'POST',
+        body: form
+      })
+
+      setVideoJobs(prev => [job, ...prev])
+      showNotice('Video importado correctamente 🎬')
+    } catch (err) {
+      showNotice(err.message || 'Error subiendo video')
+    }
+  }
+
+  async function trimAIVideo(jobId, startSeconds, endSeconds) {
+    if (!jobId) return
+    try {
+      const updated = await api(`/api/social/videos/${jobId}/trim`, {
+        method: 'POST',
+        body: JSON.stringify({
+          start_seconds: Number(startSeconds),
+          end_seconds: Number(endSeconds)
+        })
+      })
+
+      setVideoJobs(prev => prev.map(v => v.id === jobId ? updated : v))
+      showNotice('Video recortado ✂️')
+    } catch (err) {
+      showNotice(err.message || 'Error recortando video')
+    }
+  }
+
+  async function exportAIVideoPreset(jobId, preset) {
+    if (!jobId) return
+    try {
+      const updated = await api(`/api/social/videos/${jobId}/export`, {
+        method: 'POST',
+        body: JSON.stringify({ preset })
+      })
+
+      setVideoJobs(prev => prev.map(v => v.id === jobId ? updated : v))
+      showNotice(`Exportado para ${preset}`)
+    } catch (err) {
+      showNotice(err.message || 'Error exportando video')
+    }
   }
 
   // ======================== ASSISTANT AI FUNCTIONS MEJORADAS ========================
@@ -6778,7 +6864,7 @@ export default function App() {
           </section>
         )}
 
-                {/* ======================== FUNNEL ======================== */}
+        {/* ======================== FUNNEL ======================== */}
         {tab === 'funnel' && (
           <section className="stack gap-lg">
             <div className="metric-grid">
@@ -6857,7 +6943,7 @@ export default function App() {
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
-                      </td>
+                       </td>
                     </tr>
                   )}
                 </tbody>
@@ -7094,6 +7180,20 @@ export default function App() {
               </div>
             </div>
 
+            {/* Importador de video */}
+            <div className="stripe-card">
+              <div className="studio-import-box">
+                <div className="row gap-sm" style={{ justifyContent: 'center' }}>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/quicktime"
+                    onChange={(e) => uploadAIVideoFile(e.target.files?.[0])}
+                  />
+                </div>
+                <p>Importa un video desde tu dispositivo para editarlo con IA.</p>
+              </div>
+            </div>
+
             {/* Lista de videos generados con el nuevo diseño premium */}
             {videoJobs.length > 0 && videoJobs.map(job => (
               <div key={job.id} className="video-studio">
@@ -7245,6 +7345,25 @@ export default function App() {
                     >
                       🚀 Generar Voz + Subs
                     </button>
+
+                    {/* Nuevas acciones de edición */}
+                    <div className="row" style={{ marginTop: '0.75rem', justifyContent: 'center' }}>
+                      <button type="button" onClick={() => trimAIVideo(job.id, 0, 10)}>
+                        ✂ Cortar 0-10s
+                      </button>
+
+                      <button type="button" onClick={() => exportAIVideoPreset(job.id, 'tiktok')}>
+                        🎬 TikTok
+                      </button>
+
+                      <button type="button" onClick={() => exportAIVideoPreset(job.id, 'reels')}>
+                        🎬 Reels
+                      </button>
+
+                      <button type="button" onClick={() => exportAIVideoPreset(job.id, 'shorts')}>
+                        🎬 Shorts
+                      </button>
+                    </div>
 
                   </div>
 
