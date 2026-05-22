@@ -7143,7 +7143,36 @@ export default function App() {
 
         {/* ======================== VIDEO AI (NUEVA PESTAÑA) ======================== */}
         {tab === 'video' && (
-          <VideoAIStudio />
+          <VideoAIStudio
+          selectedClientId={selectedClientId}
+          videoPrompt={videoPrompt}
+          setVideoPrompt={setVideoPrompt}
+          videoDuration={videoDuration}
+          setVideoDuration={setVideoDuration}
+          videoLoading={videoLoading}
+          generateAIVideo={generateAIVideo}
+          loadAIVideos={loadAIVideos}
+          videoJobs={videoJobs}
+          setVideoJobs={setVideoJobs}
+          refreshAIVideo={refreshAIVideo}
+          addMusicToVideo={addMusicToVideo}
+          addVoiceAndSubtitles={addVoiceAndSubtitles}
+          downloadAIVideo={downloadAIVideo}
+          voiceText={voiceText}
+          setVoiceText={setVoiceText}
+          voiceLanguage={voiceLanguage}
+          setVoiceLanguage={setVoiceLanguage}
+          voiceGender={voiceGender}
+          setVoiceGender={setVoiceGender}
+          enableVoice={enableVoice}
+          setEnableVoice={setEnableVoice}
+          enableSubtitles={enableSubtitles}
+          setEnableSubtitles={setEnableSubtitles}
+          uploadAIVideoFile={uploadAIVideoFile}
+          trimAIVideo={trimAIVideo}
+          exportAIVideoPreset={exportAIVideoPreset}
+          showNotice={showNotice}
+        />
         )}
 
         {/* ======================== ADS IA ======================== */}
