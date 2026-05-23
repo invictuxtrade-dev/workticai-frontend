@@ -3933,6 +3933,80 @@ export default function App() {
           font-size: 0.85rem;
           margin-top: 8px;
         }
+
+        /* Social Video Picker Styles */
+        .social-video-picker{
+          background:#0f172a;
+          border:1px solid rgba(255,255,255,.08);
+          border-radius:18px;
+          padding:16px;
+          margin-top:14px;
+          color:white;
+        }
+
+        .social-video-grid{
+          display:grid;
+          grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+          gap:12px;
+          margin:14px 0;
+        }
+
+        .social-video-card{
+          background:#020617;
+          border:1px solid rgba(255,255,255,.08);
+          border-radius:16px;
+          padding:8px;
+          color:white;
+          display:flex;
+          flex-direction:column;
+          gap:8px;
+          text-align:left;
+        }
+
+        .social-video-card video{
+          width:100%;
+          aspect-ratio:9/16;
+          object-fit:cover;
+          border-radius:12px;
+          background:#000;
+        }
+
+        .social-video-card span{
+          font-size:11px;
+          color:#cbd5e1;
+        }
+
+        .social-video-card.active{
+          outline:2px solid #7430e2;
+          box-shadow:0 0 0 4px rgba(116,48,226,.25);
+        }
+
+        .selected-social-video{
+          display:grid;
+          grid-template-columns:90px 1fr;
+          gap:12px;
+          align-items:center;
+          background:rgba(116,48,226,.12);
+          border:1px solid rgba(116,48,226,.35);
+          border-radius:16px;
+          padding:12px;
+          margin-bottom:12px;
+        }
+
+        .selected-social-video video{
+          width:90px;
+          aspect-ratio:9/16;
+          object-fit:cover;
+          border-radius:12px;
+          background:#000;
+        }
+
+        .selected-social-video small{
+          display:block;
+          color:#94a3b8;
+          word-break:break-all;
+          margin-top:4px;
+        }
       `
       document.head.appendChild(style)
     }
@@ -4037,6 +4111,10 @@ export default function App() {
   const [selectedPlatforms, setSelectedPlatforms] = useState(['facebook'])
   const [socialText, setSocialText] = useState('')
   const [socialImageUrl, setSocialImageUrl] = useState('')
+  // NUEVOS ESTADOS PARA VIDEO A SOCIAL AI
+  const [socialMediaType, setSocialMediaType] = useState('image')
+  const [selectedSocialVideoURL, setSelectedSocialVideoURL] = useState('')
+  const [selectedSocialVideoId, setSelectedSocialVideoId] = useState('')
 
   // AI Video Engine states
   const [videoPrompt, setVideoPrompt] = useState('')
@@ -4279,7 +4357,7 @@ export default function App() {
     }
   }
 
-    async function addAnimatedCaptions(jobId, text, style) {
+  async function addAnimatedCaptions(jobId, text, style) {
     try {
       const updated = await api(`/api/social/videos/${jobId}/animated-captions`, {
         method: 'POST',
@@ -4294,6 +4372,35 @@ export default function App() {
     } catch (err) {
       showNotice(err.message || 'Error aplicando captions animados')
     }
+  }
+
+  // ======================== FUNCIÓN PARA ENVIAR VIDEO A SOCIAL AI ========================
+  function sendVideoToSocialAI(job) {
+    if (!job?.video_url) {
+      showNotice('Este video todavía no está listo')
+      return
+    }
+
+    const resolvedURL = resolveMediaURL(job.video_url)
+
+    setSocialMediaType('video')
+    setSelectedSocialVideoURL(resolvedURL)
+    setSelectedSocialVideoId(job.id)
+
+    setSocialCampaign(prev => ({
+      ...prev,
+      image_mode: 'video',
+      manual_image_url: resolvedURL,
+      image_prompt: ''
+    }))
+
+    setSocialContent(prev => {
+      if (prev && prev.trim()) return prev
+      return `🚀 Mira este video creado con Worktic AI.\n\nAutomatiza tus ventas, contenido y captación de clientes con inteligencia artificial.\n\n#WorkticAI #Automatización #MarketingDigital #IA`
+    })
+
+    setTab('social')
+    showNotice('Video enviado a Social AI 🎬')
   }
 
   // ======================== ASSISTANT AI FUNCTIONS MEJORADAS ========================
@@ -5165,7 +5272,7 @@ export default function App() {
       showNotice('Primero genera el contenido')
       return
     }
-    if (socialCampaign.image_mode === 'ai' && !socialImageURL) {
+    if (socialMediaType === 'image' && socialCampaign.image_mode === 'ai' && !socialImageURL) {
       showNotice('Genera una imagen IA primero o selecciona otro modo de imagen')
       return
     }
@@ -5185,11 +5292,20 @@ export default function App() {
     const campaign = await createSocialCampaign()
     if (!campaign) return
 
-    const finalImageURL = socialCampaign.image_mode === 'manual'
-      ? socialCampaign.manual_image_url
-      : socialCampaign.image_mode === 'ai'
-        ? socialImageURL
-        : ''
+    let finalImageURL = ''
+    let finalImageMode = socialCampaign.image_mode
+
+    if (socialMediaType === 'image') {
+      finalImageURL = socialCampaign.image_mode === 'manual'
+        ? socialCampaign.manual_image_url
+        : socialCampaign.image_mode === 'ai'
+          ? socialImageURL
+          : ''
+    } else if (socialMediaType === 'video') {
+      finalImageURL = selectedSocialVideoURL
+      finalImageMode = 'video'
+    }
+
     const finalContent = htmlToPlainText(socialContent)
 
     setSocialActionLoading(true)
@@ -5204,7 +5320,7 @@ export default function App() {
           campaign_id: campaign.id,
           content: finalContent,
           image_url: finalImageURL,
-          image_mode: socialCampaign.image_mode,
+          image_mode: finalImageMode,
           image_prompt: socialCampaign.image_prompt || socialImagePrompt,
           objective: socialCampaign.objective,
           bot_id: socialCampaign.bot_id,
@@ -5237,7 +5353,7 @@ export default function App() {
       showNotice('Primero genera el contenido')
       return
     }
-    if (socialCampaign.image_mode === 'ai' && !socialImageURL) {
+    if (socialMediaType === 'image' && socialCampaign.image_mode === 'ai' && !socialImageURL) {
       showNotice('Genera una imagen IA primero o selecciona otro modo de imagen')
       return
     }
@@ -5266,11 +5382,20 @@ export default function App() {
       return
     }
 
-    const finalImageURL = socialCampaign.image_mode === 'manual'
-      ? socialCampaign.manual_image_url
-      : socialCampaign.image_mode === 'ai'
-        ? socialImageURL
-        : ''
+    let finalImageURL = ''
+    let finalImageMode = socialCampaign.image_mode
+
+    if (socialMediaType === 'image') {
+      finalImageURL = socialCampaign.image_mode === 'manual'
+        ? socialCampaign.manual_image_url
+        : socialCampaign.image_mode === 'ai'
+          ? socialImageURL
+          : ''
+    } else if (socialMediaType === 'video') {
+      finalImageURL = selectedSocialVideoURL
+      finalImageMode = 'video'
+    }
+
     const finalContent = htmlToPlainText(socialContent)
 
     setSocialActionLoading(true)
@@ -5285,7 +5410,7 @@ export default function App() {
           campaign_id: campaign.id,
           content: finalContent,
           image_url: finalImageURL,
-          image_mode: socialCampaign.image_mode,
+          image_mode: finalImageMode,
           image_prompt: socialCampaign.image_prompt || socialImagePrompt,
           objective: socialCampaign.objective,
           bot_id: socialCampaign.bot_id,
@@ -5438,10 +5563,16 @@ export default function App() {
       return
     }
 
-    const imageURL = socialImageURL || socialCampaign.manual_image_url || ''
+    let imageURL = ''
 
-    if (selectedPlatforms.includes('instagram') && !imageURL.startsWith('https://')) {
-      showNotice('Instagram requiere una imagen pública HTTPS. Genera o sube una imagen primero.')
+    if (socialMediaType === 'image') {
+      imageURL = socialImageURL || socialCampaign.manual_image_url || ''
+    } else if (socialMediaType === 'video') {
+      imageURL = selectedSocialVideoURL || ''
+    }
+
+    if (selectedPlatforms.includes('instagram') && socialMediaType !== 'text' && !imageURL.startsWith('https://')) {
+      showNotice('Instagram requiere una imagen/video público HTTPS. Genera o sube un archivo primero.')
       return
     }
 
@@ -5451,7 +5582,8 @@ export default function App() {
         body: JSON.stringify({
           platforms: selectedPlatforms,
           content: cleanSocialCaption(socialContent),
-          image_url: imageURL
+          image_url: imageURL,
+          media_type: socialMediaType
         })
       })
 
@@ -6959,7 +7091,7 @@ export default function App() {
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
-                       </td>
+                        </td>
                     </tr>
                   )}
                 </tbody>
@@ -7028,10 +7160,108 @@ export default function App() {
                   </select>
                   <select value={socialCampaign.bot_id} onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}><option value="">Selecciona bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
                   <select value={socialCampaign.landing_id} onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}><option value="">Selecciona landing</option>{landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}</select>
-                  <select value={socialCampaign.image_mode} onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}>
-                    <option value="ai">Imagen IA</option><option value="manual">Imagen manual</option><option value="none">Sin imagen</option>
+                  
+                  {/* Nuevo selector de tipo de medio */}
+                  <select
+                    value={socialMediaType}
+                    onChange={(e) => {
+                      const type = e.target.value
+                      setSocialMediaType(type)
+
+                      if (type === 'text') {
+                        setSocialCampaign(prev => ({
+                          ...prev,
+                          image_mode: 'none',
+                          manual_image_url: ''
+                        }))
+                        setSelectedSocialVideoURL('')
+                        setSelectedSocialVideoId('')
+                      }
+
+                      if (type === 'image') {
+                        setSocialCampaign(prev => ({
+                          ...prev,
+                          image_mode: 'ai'
+                        }))
+                        setSelectedSocialVideoURL('')
+                        setSelectedSocialVideoId('')
+                      }
+
+                      if (type === 'video') {
+                        setSocialCampaign(prev => ({
+                          ...prev,
+                          image_mode: 'video',
+                          manual_image_url: selectedSocialVideoURL || prev.manual_image_url
+                        }))
+                      }
+                    }}
+                  >
+                    <option value="image">Imagen</option>
+                    <option value="video">Video AI</option>
+                    <option value="text">Solo texto</option>
                   </select>
-                  <input value={socialCampaign.manual_image_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} placeholder="URL imagen manual" />
+
+                  {socialMediaType !== 'video' && socialMediaType !== 'text' && (
+                    <>
+                      <select value={socialCampaign.image_mode} onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}>
+                        <option value="ai">Imagen IA</option>
+                        <option value="manual">Imagen manual</option>
+                        <option value="none">Sin imagen</option>
+                      </select>
+                      <input value={socialCampaign.manual_image_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} placeholder="URL imagen manual" />
+                    </>
+                  )}
+
+                  {socialMediaType === 'video' && (
+                    <div className="social-video-picker">
+                      <div className="section-title">
+                        <i className="fas fa-video"></i> Seleccionar video de Video AI
+                      </div>
+
+                      <div className="social-video-grid">
+                        {(videoJobs || []).filter(v => v.video_url).map(job => {
+                          const url = resolveMediaURL(job.video_url)
+                          const active = selectedSocialVideoId === job.id
+
+                          return (
+                            <button
+                              key={job.id}
+                              type="button"
+                              className={active ? 'social-video-card active' : 'social-video-card'}
+                              onClick={() => {
+                                setSelectedSocialVideoId(job.id)
+                                setSelectedSocialVideoURL(url)
+                                setSocialCampaign(prev => ({
+                                  ...prev,
+                                  image_mode: 'video',
+                                  manual_image_url: url
+                                }))
+                                showNotice('Video seleccionado para Social AI')
+                              }}
+                            >
+                              <video src={url} muted playsInline />
+                              <span>{job.provider === 'upload' ? 'Subido' : 'IA'} · {job.status}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {selectedSocialVideoURL && (
+                        <div className="selected-social-video">
+                          <video src={selectedSocialVideoURL} controls playsInline />
+                          <div>
+                            <strong>Video listo para publicación</strong>
+                            <small>{selectedSocialVideoURL}</small>
+                          </div>
+                        </div>
+                      )}
+
+                      <button type="button" className="secondary" onClick={() => setTab('video')}>
+                        Abrir Video AI Studio
+                      </button>
+                    </div>
+                  )}
+
                   <input value={socialCampaign.manual_link_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })} placeholder="Link manual" />
                   <input value={socialCampaign.call_to_action} onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })} placeholder="Call to action" />
                   <select value={socialCampaign.publish_mode} onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}>
@@ -7106,8 +7336,11 @@ export default function App() {
                   </div>
                   <div style={{ whiteSpace: 'pre-line', color: '#0f172a', fontSize: '15px', lineHeight: 1.5 }}>{htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}</div>
                 </div>
-                {(socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
+                {socialMediaType === 'image' && (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
                   <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ width: '100%', maxHeight: '520px', objectFit: 'cover', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
+                )}
+                {socialMediaType === 'video' && selectedSocialVideoURL && (
+                  <video src={selectedSocialVideoURL} controls style={{ width: '100%', maxHeight: '520px', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
                 )}
                 <div style={{ padding: '12px 16px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Destino del clic</div>
@@ -7161,36 +7394,37 @@ export default function App() {
         {/* ======================== VIDEO AI (NUEVA PESTAÑA) ======================== */}
         {tab === 'video' && (
           <VideoAIStudio
-          selectedClientId={selectedClientId}
-          videoPrompt={videoPrompt}
-          setVideoPrompt={setVideoPrompt}
-          videoDuration={videoDuration}
-          setVideoDuration={setVideoDuration}
-          videoLoading={videoLoading}
-          generateAIVideo={generateAIVideo}
-          loadAIVideos={loadAIVideos}
-          videoJobs={videoJobs}
-          setVideoJobs={setVideoJobs}
-          refreshAIVideo={refreshAIVideo}
-          addMusicToVideo={addMusicToVideo}
-          addVoiceAndSubtitles={addVoiceAndSubtitles}
-          downloadAIVideo={downloadAIVideo}
-          voiceText={voiceText}
-          setVoiceText={setVoiceText}
-          voiceLanguage={voiceLanguage}
-          setVoiceLanguage={setVoiceLanguage}
-          voiceGender={voiceGender}
-          setVoiceGender={setVoiceGender}
-          enableVoice={enableVoice}
-          setEnableVoice={setEnableVoice}
-          enableSubtitles={enableSubtitles}
-          setEnableSubtitles={setEnableSubtitles}
-          uploadAIVideoFile={uploadAIVideoFile}
-          trimAIVideo={trimAIVideo}
-          exportAIVideoPreset={exportAIVideoPreset}
-          addAnimatedCaptions={addAnimatedCaptions}
-          showNotice={showNotice}
-        />
+            selectedClientId={selectedClientId}
+            videoPrompt={videoPrompt}
+            setVideoPrompt={setVideoPrompt}
+            videoDuration={videoDuration}
+            setVideoDuration={setVideoDuration}
+            videoLoading={videoLoading}
+            generateAIVideo={generateAIVideo}
+            loadAIVideos={loadAIVideos}
+            videoJobs={videoJobs}
+            setVideoJobs={setVideoJobs}
+            refreshAIVideo={refreshAIVideo}
+            addMusicToVideo={addMusicToVideo}
+            addVoiceAndSubtitles={addVoiceAndSubtitles}
+            downloadAIVideo={downloadAIVideo}
+            voiceText={voiceText}
+            setVoiceText={setVoiceText}
+            voiceLanguage={voiceLanguage}
+            setVoiceLanguage={setVoiceLanguage}
+            voiceGender={voiceGender}
+            setVoiceGender={setVoiceGender}
+            enableVoice={enableVoice}
+            setEnableVoice={setEnableVoice}
+            enableSubtitles={enableSubtitles}
+            setEnableSubtitles={setEnableSubtitles}
+            uploadAIVideoFile={uploadAIVideoFile}
+            trimAIVideo={trimAIVideo}
+            exportAIVideoPreset={exportAIVideoPreset}
+            addAnimatedCaptions={addAnimatedCaptions}
+            sendVideoToSocialAI={sendVideoToSocialAI}
+            showNotice={showNotice}
+          />
         )}
 
         {/* ======================== ADS IA ======================== */}
