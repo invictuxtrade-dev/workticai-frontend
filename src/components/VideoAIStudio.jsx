@@ -292,6 +292,17 @@ export default function VideoAIStudio({
     setSelectedClip(clip.id)
   }
 
+  function removeVideoFromWorkspace(jobId) {
+  setVideoJobs?.(prev => (prev || []).filter(v => v.id !== jobId))
+
+  if (selectedJobId === jobId) {
+    const next = (videoJobs || []).find(v => v.id !== jobId)
+    setSelectedJobId(next?.id || '')
+  }
+
+  showNotice?.('Video quitado del editor')
+ }
+
   const ruler = Array.from({ length: Math.ceil(duration) + 1 }, (_, i) => i)
 
   const currentClip = clips.find(c => c.id === selectedClip)
@@ -474,15 +485,25 @@ export default function VideoAIStudio({
 
               <div className="video-job-list">
                 {videoJobs.map(job => (
-                  <button
-                    key={job.id}
+                <div className="video-job-row" key={job.id}>
+                    <button
                     type="button"
                     className={selectedJob?.id === job.id ? 'video-job active' : 'video-job'}
                     onClick={() => setSelectedJobId(job.id)}
-                  >
+                    >
                     <span>{job.provider === 'upload' ? '📂' : '🤖'} {job.status}</span>
                     <small>{String(job.prompt || 'Video').slice(0, 70)}</small>
-                  </button>
+                    </button>
+
+                    <button
+                    type="button"
+                    className="remove-video-btn"
+                    onClick={() => removeVideoFromWorkspace(job.id)}
+                    title="Quitar del editor"
+                    >
+                    ✕
+                    </button>
+                </div>
                 ))}
               </div>
             </div>
