@@ -7322,9 +7322,44 @@ export default function App() {
                 <label className="secondary" style={{ cursor: 'pointer' }}>{socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}<input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => uploadSocialImage(e.target.files?.[0])} /></label>
                 <button type="button" className="secondary" onClick={() => { setSocialImageURL(''); setSocialImagePrompt(''); setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', image_prompt: '' })) }}>Sin imagen</button>
               </div>
-              {(socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ maxWidth: '320px', width: '100%', borderRadius: '1rem', border: '1px solid #e2e8f0', marginTop: '1rem', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.opacity = '0.4'; showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.') }} />
-              )}
+              {socialCampaign.image_mode !== 'none' && (
+              socialMediaType === 'video' && selectedSocialVideoURL ? (
+                <video
+                  src={selectedSocialVideoURL}
+                  controls
+                  playsInline
+                  muted
+                  style={{
+                    maxWidth: '320px',
+                    width: '100%',
+                    borderRadius: '1rem',
+                    border: '1px solid #e2e8f0',
+                    marginTop: '1rem',
+                    background: '#000',
+                    objectFit: 'cover'
+                  }}
+                />
+              ) : (
+                (socialImageURL || socialCampaign.manual_image_url) && (
+                  <img
+                    src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
+                    alt="Preview social"
+                    style={{
+                      maxWidth: '320px',
+                      width: '100%',
+                      borderRadius: '1rem',
+                      border: '1px solid #e2e8f0',
+                      marginTop: '1rem',
+                      objectFit: 'cover'
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.style.opacity = '0.4'
+                      showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.')
+                    }}
+                  />
+                )
+              )
+            )}
             </section>
             <section className="stripe-card stack">
               <div className="section-title"><i className="fas fa-eye"></i> Preview de publicación</div>
