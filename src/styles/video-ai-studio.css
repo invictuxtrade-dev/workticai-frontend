@@ -29,10 +29,7 @@
 }
 
 .video-preview-section{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:24px;
+  min-width: 0;
 }
 
 .video-phone-frame{
@@ -78,9 +75,9 @@
 }
 
 .editor-sidebar{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
+  position: sticky;
+  top: 20px;
+  align-self: start;
 }
 
 .tool-card{
@@ -462,7 +459,10 @@
   }
 
   .video-ai-studio{
-    height:auto;
-    overflow:visible;
-  }
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
 }
