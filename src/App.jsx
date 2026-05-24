@@ -474,6 +474,26 @@ function LoginScreen({ onAuth }) {
   )
 }
 
+function PremiumGate({ title, description, onUpgrade }) {
+  return (
+    <section className="premium-gate">
+      <div className="premium-gate-icon">
+        <i className="fas fa-lock"></i>
+      </div>
+
+      <div>
+        <h2>{title}</h2>
+        <p>{description}</p>
+      </div>
+
+      <button type="button" onClick={onUpgrade}>
+        <i className="fas fa-crown"></i>
+        Mejorar plan
+      </button>
+    </section>
+  )
+}
+
 const AdsPanel = memo(function AdsPanel({ 
   adsForm, setAdsForm, 
   adsResult, adsLoading, 
@@ -1313,6 +1333,82 @@ export default function App() {
           font-size: 0.7rem;
           color: #cbd5e1;
           word-break: break-all;
+        }
+
+        .plan-badge-pro {
+          display: inline-flex;
+          align-items: center;
+          gap: .45rem;
+          padding: .45rem .75rem;
+          border-radius: 999px;
+          background: linear-gradient(135deg,#7430e2,#2563eb);
+          color: white;
+          font-size: .75rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          box-shadow: 0 10px 25px rgba(116,48,226,.25);
+        }
+
+        .plan-badge-free {
+          background: #f1f5f9;
+          color: #475569;
+          box-shadow: none;
+        }
+
+        .menu-item.locked {
+          opacity: .55;
+          cursor: not-allowed;
+          position: relative;
+        }
+
+        .menu-item.locked::after {
+          content: 'PRO';
+          margin-left: auto;
+          font-size: .62rem;
+          font-weight: 900;
+          padding: .15rem .4rem;
+          border-radius: 999px;
+          background: rgba(255,255,255,.18);
+          color: white;
+        }
+
+        .premium-gate {
+          min-height: 420px;
+          border-radius: 1.5rem;
+          background:
+            radial-gradient(circle at top left, rgba(116,48,226,.18), transparent 35%),
+            linear-gradient(135deg,#ffffff,#f8fafc);
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 30px 90px rgba(15,23,42,.08);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          text-align: center;
+          padding: 3rem;
+        }
+
+        .premium-gate-icon {
+          width: 78px;
+          height: 78px;
+          border-radius: 24px;
+          background: linear-gradient(135deg,#7430e2,#2563eb);
+          color: white;
+          display: grid;
+          place-items: center;
+          font-size: 2rem;
+          box-shadow: 0 25px 55px rgba(116,48,226,.35);
+        }
+
+        .premium-gate h2 {
+          font-size: 1.8rem;
+          color: #0f172a;
+        }
+
+        .premium-gate p {
+          max-width: 560px;
+          color: #64748b;
         }
 
         .menu {
@@ -4293,6 +4389,44 @@ export default function App() {
   const selectedBot = useMemo(() => bots.find((x) => x.id === selectedBotId), [bots, selectedBotId])
   const selectedLead = useMemo(() => leads.find((x) => x.id === selectedLeadId), [leads, selectedLeadId])
 
+  // ======================== PERMISOS Y PLANES ========================
+  const currentPlan = useMemo(() => {
+    const slug = subscription?.plan_slug || me?.plan || 'free'
+    return plans.find(p => p.slug === slug) || null
+  }, [plans, subscription, me])
+
+  const planPermissions = useMemo(() => {
+    try {
+      return JSON.parse(currentPlan?.permissions || '{}')
+    } catch {
+      return {}
+    }
+  }, [currentPlan])
+
+  const planLimits = useMemo(() => {
+    try {
+      return JSON.parse(currentPlan?.limits || '{}')
+    } catch {
+      return {}
+    }
+  }, [currentPlan])
+
+  const isAdmin = me?.role === 'admin'
+  const activePlanSlug = subscription?.plan_slug || me?.plan || 'free'
+  const isFreePlan = activePlanSlug === 'free'
+
+  function canUseFeature(feature) {
+    if (isAdmin) return true
+    return planPermissions?.[feature] === true
+  }
+
+  function requireFeature(feature, label = 'esta función') {
+    if (canUseFeature(feature)) return true
+    showNotice(`${label} requiere un plan superior.`)
+    setForcePlanScreen(true)
+    return false
+  }
+
   const activeBots = useMemo(
     () => bots.filter((b) => b.status === 'connected' || b.status === 'waiting_qr'),
     [bots]
@@ -4398,6 +4532,8 @@ export default function App() {
       return
     }
 
+    if (!requireFeature('video_ai', 'Video AI')) return
+
     try {
       showNotice('Subiendo video...')
 
@@ -4418,6 +4554,7 @@ export default function App() {
 
   async function trimAIVideo(jobId, startSeconds, endSeconds) {
     if (!jobId) return
+    if (!requireFeature('video_ai', 'Video AI')) return
     try {
       const updated = await api(`/api/social/videos/${jobId}/trim`, {
         method: 'POST',
@@ -4436,6 +4573,7 @@ export default function App() {
 
   async function exportAIVideoPreset(jobId, preset) {
     if (!jobId) return
+    if (!requireFeature('video_ai', 'Video AI')) return
     try {
       const updated = await api(`/api/social/videos/${jobId}/export`, {
         method: 'POST',
@@ -4450,6 +4588,7 @@ export default function App() {
   }
 
   async function addAnimatedCaptions(jobId, text, style) {
+    if (!requireFeature('video_ai', 'Video AI')) return
     try {
       const updated = await api(`/api/social/videos/${jobId}/animated-captions`, {
         method: 'POST',
@@ -4623,6 +4762,8 @@ export default function App() {
   }
 
   async function createGroupBot() {
+    if (!requireFeature('groups_ai', 'Grupos IA')) return
+    
     if (!groupBotForm.name.trim()) {
       showNotice('Escribe un nombre para el bot de grupo')
       return
@@ -4708,6 +4849,8 @@ export default function App() {
   }
 
   async function discoverFacebookGroups() {
+    if (!requireFeature('groups_ai', 'Groups IA Discovery')) return
+    
     if (!facebookDiscoveryForm.product.trim()) {
       showNotice('Escribe el producto o servicio a buscar')
       return
@@ -5040,6 +5183,8 @@ export default function App() {
       showNotice('Suscripción aprobada')
       await loadPendingSubscriptions()
       await loadClients()
+      await bootstrap()
+      await loadCurrentSubscription()
     } catch (err) {
       showNotice(err.message || 'Error aprobando suscripción')
     }
@@ -5047,6 +5192,8 @@ export default function App() {
 
   // ======================== FUNCIONES ADS IA ========================
   const generateAdsCampaign = useCallback(async () => {
+    if (!requireFeature('ads_ai', 'Ads IA')) return
+    
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
       return
@@ -5096,9 +5243,11 @@ export default function App() {
     } finally {
       setAdsLoading(false)
     }
-  }, [adsForm, me, selectedClientId, showNotice])
+  }, [adsForm, me, selectedClientId, showNotice, requireFeature])
 
   async function generateAdsEcosystem() {
+    if (!requireFeature('ads_ai', 'Ecosistema Ads IA')) return
+    
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
       return
@@ -5426,6 +5575,8 @@ export default function App() {
   }
 
   async function publishSocialNow() {
+    if (!requireFeature('social_ai', 'Social AI')) return
+    
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
       return
@@ -5509,6 +5660,8 @@ export default function App() {
   }
 
   async function scheduleSocialPost() {
+    if (!requireFeature('social_ai', 'Social AI')) return
+    
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
       return
@@ -5716,6 +5869,8 @@ export default function App() {
   }
 
   async function publishMulti() {
+    if (!requireFeature('social_ai', 'Publicación multired')) return
+    
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
       return
@@ -5789,7 +5944,7 @@ export default function App() {
 
       setSocialCredential(prev => ({
         ...prev,
-        instagram_account_id: res.instagram_account_id || '',
+        instagram_account_id: res.instagram_account_id || res.instagram_id || '',
         instagram_username: res.instagram_username || '',
         instagram_connected: res.instagram_connected || false,
         tiktok_access_token: res.tiktok_access_token || '',
@@ -5858,6 +6013,8 @@ export default function App() {
 
   // ======================== AI VIDEO ENGINE FUNCTIONS ========================
   async function generateAIVideo() {
+    if (!requireFeature('video_ai', 'Video AI')) return
+    
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
       return
@@ -6704,6 +6861,13 @@ async function updateUser(e) {
           <div className="user-name">{me.name}</div>
           <div className="user-role">{me.role === 'admin' ? 'Administrador' : 'Cliente'}</div>
           <div className="user-email">{me.email}</div>
+          <div
+            className={`plan-badge-pro ${isFreePlan ? 'plan-badge-free' : ''}`}
+            style={{ marginTop: '.75rem' }}
+          >
+            <i className="fas fa-crown"></i>
+            {activePlanSlug}
+          </div>
         </div>
 
         {me?.role !== 'admin' && (
@@ -6735,16 +6899,32 @@ async function updateUser(e) {
           <button className={tab === 'funnel' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('funnel')} type="button">
             <i className="fas fa-filter"></i> Funnel
           </button>
-          <button className={tab === 'social' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('social')} type="button">
-            <i className="fas fa-share-alt"></i> Social IA
+          <button
+            className={`${tab === 'social' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('social_ai') ? 'locked' : ''}`}
+            onClick={() => canUseFeature('social_ai') ? setTab('social') : setForcePlanScreen(true)}
+            type="button"
+          >
+            <i className="fas fa-share-nodes"></i> Social AI
           </button>
-          <button className={tab === 'video' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('video')} type="button">
+          <button
+            className={`${tab === 'video' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('video_ai') ? 'locked' : ''}`}
+            onClick={() => canUseFeature('video_ai') ? setTab('video') : setForcePlanScreen(true)}
+            type="button"
+          >
             <i className="fas fa-video"></i> Video AI
           </button>
-          <button className={tab === 'ads' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('ads')} type="button">
+          <button
+            className={`${tab === 'ads' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('ads_ai') ? 'locked' : ''}`}
+            onClick={() => canUseFeature('ads_ai') ? setTab('ads') : setForcePlanScreen(true)}
+            type="button"
+          >
             <i className="fas fa-chart-line"></i> Ads IA
           </button>
-          <button className={tab === 'groups' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('groups')} type="button">
+          <button
+            className={`${tab === 'groups' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('groups_ai') ? 'locked' : ''}`}
+            onClick={() => canUseFeature('groups_ai') ? setTab('groups') : setForcePlanScreen(true)}
+            type="button"
+          >
             <i className="fas fa-users"></i> Grupos
           </button>
           <button
@@ -7154,8 +7334,7 @@ async function updateUser(e) {
                 <input value={config.tone} onChange={e => setConfig({...config, tone: e.target.value})} placeholder="Tono" />
                 <input value={config.human_handoff_phone} onChange={e => setConfig({...config, human_handoff_phone: e.target.value})} placeholder="Teléfono humano" />
                 <input value={config.cta_button_text} onChange={e => setConfig({...config, cta_button_text: e.target.value})} placeholder="Texto CTA" />
-                <input value={config.cta_button_text} onChange={e => setConfig({...config, cta_button_text: e.target.value})} placeholder="Texto CTA" />
-                                <input value={config.cta_link} onChange={e => setConfig({...config, cta_link: e.target.value})} placeholder="Link CTA" />
+                <input value={config.cta_link} onChange={e => setConfig({...config, cta_link: e.target.value})} placeholder="Link CTA" />
                 <input type="number" value={config.followup_delay_mins} onChange={e => setConfig({...config, followup_delay_mins: Number(e.target.value)})} placeholder="Minutos follow-up" />
                 <label className="toggle"><input type="checkbox" checked={config.followup_enabled} onChange={e => setConfig({...config, followup_enabled: e.target.checked})} /> Seguimiento automático</label>
                 <select value={config.reply_mode || 'manual'} onChange={e => setConfig({ ...config, reply_mode: e.target.value })}>
@@ -7363,8 +7542,15 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== SOCIAL IA ======================== */}
-        {tab === 'social' && (
+        {/* ======================== SOCIAL IA con PremiumGate ======================== */}
+        {tab === 'social' && !canUseFeature('social_ai') && (
+          <PremiumGate
+            title="Social AI requiere un plan superior"
+            description="Genera contenido, publica en redes sociales y automatiza tu presencia con IA."
+            onUpgrade={() => setForcePlanScreen(true)}
+          />
+        )}
+        {tab === 'social' && canUseFeature('social_ai') && (
           <section className="stack gap-lg">
             <div className="panel-grid">
               <section className="stripe-card stack">
@@ -7736,8 +7922,15 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== VIDEO AI (NUEVA PESTAÑA) ======================== */}
-        {tab === 'video' && (
+        {/* ======================== VIDEO AI con PremiumGate ======================== */}
+        {tab === 'video' && !canUseFeature('video_ai') && (
+          <PremiumGate
+            title="Video AI requiere un plan superior"
+            description="Genera, edita, sube, recorta y prepara videos para redes con IA."
+            onUpgrade={() => setForcePlanScreen(true)}
+          />
+        )}
+        {tab === 'video' && canUseFeature('video_ai') && (
           <VideoAIStudio
             selectedClientId={selectedClientId}
             videoPrompt={videoPrompt}
@@ -7772,8 +7965,15 @@ async function updateUser(e) {
           />
         )}
 
-        {/* ======================== ADS IA ======================== */}
-        {tab === 'ads' && (
+        {/* ======================== ADS IA con PremiumGate ======================== */}
+        {tab === 'ads' && !canUseFeature('ads_ai') && (
+          <PremiumGate
+            title="Ads IA requiere un plan superior"
+            description="Genera campañas publicitarias completas con proyección de ROI, segmentación y creativos."
+            onUpgrade={() => setForcePlanScreen(true)}
+          />
+        )}
+        {tab === 'ads' && canUseFeature('ads_ai') && (
           <AdsPanel
             adsForm={adsForm}
             setAdsForm={setAdsForm}
@@ -7786,8 +7986,15 @@ async function updateUser(e) {
           />
         )}
 
-        {/* ======================== GRUPOS (WhatsApp Groups AI + Facebook Groups) ======================== */}
-        {tab === 'groups' && (
+        {/* ======================== GRUPOS con PremiumGate ======================== */}
+        {tab === 'groups' && !canUseFeature('groups_ai') && (
+          <PremiumGate
+            title="Grupos IA requiere un plan superior"
+            description="Administra bots IA para grupos de WhatsApp y descubre comunidades de Facebook para crecimiento."
+            onUpgrade={() => setForcePlanScreen(true)}
+          />
+        )}
+        {tab === 'groups' && canUseFeature('groups_ai') && (
           <section className="stack gap-lg">
             <div className="stripe-card">
               <div className="row between">
