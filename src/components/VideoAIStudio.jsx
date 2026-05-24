@@ -692,15 +692,15 @@ export default function VideoAIStudio({
             </button>
 
             {/* ✅ NUEVO BOTÓN: Enviar a Social AI */}
-            {selectedJob && selectedJob.status === 'completed' && (
-              <button 
+            {selectedJob && selectedJob.status === 'completed' && selectedJob.video_url && (
+            <button 
                 type="button" 
                 className="social-ai-btn"
-                onClick={() => selectedJob?.id && sendVideoToSocialAI?.(selectedJob)}
-              >
+                onClick={() => sendVideoToSocialAI?.(selectedJob)}
+            >
                 <FaShareAlt />
                 Enviar a Social AI
-              </button>
+            </button>
             )}
 
             <button type="button">
