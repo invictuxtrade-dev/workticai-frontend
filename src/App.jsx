@@ -4364,6 +4364,7 @@ export default function App() {
   const [searchClient, setSearchClient] = useState('')
   const [clientPage, setClientPage] = useState(1)
   const [searchUser, setSearchUser] = useState('')
+  const [userClientFilter, setUserClientFilter] = useState('')
   const [userPage, setUserPage] = useState(1)
   const pageSize = 5
 
@@ -4474,8 +4475,19 @@ export default function App() {
     return filteredClients.slice(start, start + pageSize)
   }, [filteredClients, clientPage])
   const filteredUsers = useMemo(() => {
-    return users.filter(u => u.name.toLowerCase().includes(searchUser.toLowerCase()) || u.email.toLowerCase().includes(searchUser.toLowerCase()))
-  }, [users, searchUser])
+  const q = searchUser.toLowerCase()
+
+  return users.filter(u => {
+    const matchesClient = !userClientFilter || u.client_id === userClientFilter
+
+    const matchesSearch =
+      (u.name || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (u.role || '').toLowerCase().includes(q)
+
+    return matchesClient && matchesSearch
+  })
+}, [users, searchUser, userClientFilter])
   const paginatedUsers = useMemo(() => {
     const start = (userPage - 1) * pageSize
     return filteredUsers.slice(start, start + pageSize)
@@ -6866,7 +6878,7 @@ async function updateUser(e) {
             style={{ marginTop: '.75rem' }}
           >
             <i className="fas fa-crown"></i>
-            {activePlanSlug}
+            {isAdmin ? 'ADMIN' : activePlanSlug}
           </div>
         </div>
 
@@ -8586,7 +8598,34 @@ async function updateUser(e) {
               <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}><option value="client_admin">client_admin</option><option value="client_user">client_user</option>{me.role === 'admin' && <option value="admin">admin</option>}</select>
               <button className="full" disabled={busy}>Crear usuario</button>
             </form></section>
-            <section className="stripe-card stack"><div className="row between center"><div className="section-title">Usuarios</div><input type="text" placeholder="Buscar usuario..." value={searchUser} onChange={e => setSearchUser(e.target.value)} className="search-input" /></div>
+            <section className="stripe-card stack">
+            <div className="row between center">
+              <div className="section-title">Usuarios</div>
+
+              <div className="row">
+                <select
+                  value={userClientFilter}
+                  onChange={(e) => {
+                    setUserClientFilter(e.target.value)
+                    setUserPage(1)
+                  }}
+                  className="search-input"
+                >
+                  <option value="">Todos los usuarios</option>
+                  {clients.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Buscar usuario..."
+                  value={searchUser}
+                  onChange={e => setSearchUser(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
               <div className="template-list">
               {paginatedUsers.map(u => (
                 <div key={u.id} className="template-card">
@@ -8610,17 +8649,19 @@ async function updateUser(e) {
                       Editar
                     </button>
 
-                    <button
-                      className="danger tiny-btn"
-                      type="button"
-                      onClick={() => {
-                        setUserToDelete(u)
-                        setShowDeleteUserModal(true)
-                      }}
-                    >
-                      <i className="fas fa-trash"></i>
-                      Eliminar
-                    </button>
+                    {me.id !== u.id && (
+                      <button
+                        className="danger tiny-btn"
+                        type="button"
+                        onClick={() => {
+                          setUserToDelete(u)
+                          setShowDeleteUserModal(true)
+                        }}
+                      >
+                        <i className="fas fa-trash"></i>
+                        Eliminar
+                      </button>
+                    )}
                   </div>
 
                 </div>
