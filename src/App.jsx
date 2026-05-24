@@ -7392,8 +7392,7 @@ export default function App() {
                     <button type="button" onClick={publishMulti}>
                       <i className="fas fa-paper-plane"></i> Publicar selección
                     </button>
-                  </div>
-                  <button type="button" className="secondary"
+                     <button type="button" className="secondary"
                     onClick={() => {
                       if (!selectedPlatforms.length) {
                         showNotice('Selecciona al menos una red social')
@@ -7406,8 +7405,10 @@ export default function App() {
                       scheduleSocialPost()
                     }}
                   >
-                    Programar selección
+                  <i className="fas fa-calendar"></i>  Programar selección
                   </button>
+                  </div>
+                 
                 </div>
               </section>
             </div>
