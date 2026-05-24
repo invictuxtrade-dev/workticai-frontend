@@ -5422,7 +5422,7 @@ export default function App() {
         method: 'POST',
         body: JSON.stringify({
           campaign_id: campaign.id,
-          platform: selectedSocialPlatform,
+          platform: selectedPlatforms[0] || 'facebook',
           content: finalContent,
           image_url: finalImageURL,
           video_url: selectedSocialVideoURL || '',
@@ -7189,17 +7189,6 @@ export default function App() {
                 <div className="section-title"><i className="fas fa-bullhorn"></i> Configuración campaña</div>
                 <div className="form-grid">
                   <input value={socialCampaign.name} onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })} placeholder="Nombre de campaña" />
-                  
-                  {/* Selector de red social */}
-                  <div className="field-group">
-                    <label>Red social</label>
-                    <select value={selectedSocialPlatform} onChange={(e) => setSelectedSocialPlatform(e.target.value)}>
-                      <option value="facebook">Facebook</option>
-                      <option value="instagram">Instagram</option>
-                      <option value="tiktok">TikTok</option>
-                    </select>
-                  </div>
-
                   <select value={socialCampaign.objective} onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}>
                     <option value="whatsapp">Enviar a WhatsApp</option>
                     <option value="landing">Enviar a Landing</option>
@@ -7341,7 +7330,6 @@ export default function App() {
                 </div>
                 <div className="row gap-sm">
                   <button type="button" onClick={generateSocial}>Generar contenido IA</button>
-                  <button type="button" className="secondary" onClick={publishSocialNow}>Publicar ahora</button>
                   <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
                     <label className="toggle">
                       <input
@@ -7392,7 +7380,21 @@ export default function App() {
                       <i className="fas fa-paper-plane"></i> Publicar selección
                     </button>
                   </div>
-                  <button type="button" className="secondary" onClick={scheduleSocialPost}>Programar</button>
+                  <button type="button" className="secondary"
+                    onClick={() => {
+                      if (!selectedPlatforms.length) {
+                        showNotice('Selecciona al menos una red social')
+                        return
+                      }
+                      if (selectedPlatforms.length > 1) {
+                        showNotice('Por ahora programa una red a la vez')
+                        return
+                      }
+                      scheduleSocialPost()
+                    }}
+                  >
+                    Programar selección
+                  </button>
                 </div>
               </section>
             </div>
