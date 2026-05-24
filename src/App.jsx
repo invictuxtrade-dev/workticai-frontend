@@ -1593,6 +1593,34 @@ export default function App() {
           color: #475569;
         }
 
+        .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.72);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        padding: 2rem;
+        overflow-y: auto;
+      }
+
+      .modal-card-pro {
+        max-width: 560px;
+        margin: 8vh auto;
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 30px 80px rgba(15,23,42,0.35);
+      }
+
+      .modal-danger-box {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: #fee2e2;
+        color: #991b1b;
+        font-weight: 700;
+      }
+
         .inbox-layout {
           display: grid;
           grid-template-columns: 340px 1fr 300px;
@@ -4078,6 +4106,16 @@ export default function App() {
   // Clientes y usuarios
   const [clients, setClients] = useState([])
   const [users, setUsers] = useState([])
+  const [editingClient, setEditingClient] = useState(null)
+  const [editingUser, setEditingUser] = useState(null)
+
+  const [showDeleteClientModal, setShowDeleteClientModal] = useState(false)
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
+
+  const [clientToDelete, setClientToDelete] = useState(null)
+  const [userToDelete, setUserToDelete] = useState(null)
+
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [selectedClientId, setSelectedClientId] = useState('')
 
   // Bots, leads y mensajes
@@ -6239,14 +6277,95 @@ export default function App() {
     finally { setBusy(false) }
   }
 
-  async function deleteUser(id) {
-    if (!window.confirm('Eliminar usuario?')) return
-    try {
-      await api(`/api/users/${id}`, { method: 'DELETE' })
-      await loadUsers()
-      showNotice('Usuario eliminado')
-    } catch (err) { showNotice(err.message || 'Error') }
+  async function updateClient(e) {
+  e.preventDefault()
+
+  if (!editingClient?.id) return
+
+  setBusy(true)
+
+  try {
+    await api(`/api/clients/${editingClient.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(editingClient)
+    })
+
+    await loadClients()
+
+    setEditingClient(null)
+
+    showNotice('Cliente actualizado')
+  } catch (err) {
+    showNotice(err.message || 'No se pudo actualizar cliente')
+  } finally {
+    setBusy(false)
   }
+}
+
+async function updateUser(e) {
+  e.preventDefault()
+
+  if (!editingUser?.id) return
+
+  setBusy(true)
+
+  try {
+    await api(`/api/users/${editingUser.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(editingUser)
+    })
+
+    await loadUsers()
+
+    setEditingUser(null)
+
+    showNotice('Usuario actualizado')
+  } catch (err) {
+    showNotice(err.message || 'No se pudo actualizar usuario')
+  } finally {
+    setBusy(false)
+  }
+}
+
+  async function deleteClient(id) {
+  if (deleteConfirmText !== 'ELIMINAR') {
+    showNotice('Debes escribir ELIMINAR para continuar')
+    return
+  }
+
+  try {
+    await api(`/api/clients/${id}`, {
+      method: 'DELETE'
+    })
+
+    setClients(prev => prev.filter(c => c.id !== id))
+
+    setShowDeleteClientModal(false)
+    setClientToDelete(null)
+    setDeleteConfirmText('')
+
+    showNotice('Cliente eliminado completamente')
+  } catch (err) {
+    showNotice(err.message || 'No se pudo eliminar cliente')
+  }
+}
+
+  async function deleteUser(id) {
+  try {
+    await api(`/api/users/${id}`, {
+      method: 'DELETE'
+    })
+
+    setUsers(prev => prev.filter(u => u.id !== id))
+
+    setShowDeleteUserModal(false)
+    setUserToDelete(null)
+
+    showNotice('Usuario eliminado')
+  } catch (err) {
+    showNotice(err.message || 'No se pudo eliminar usuario')
+  }
+}
 
   async function createBot(e) {
     e.preventDefault()
@@ -8097,10 +8216,49 @@ export default function App() {
               <div className="row between center"><div className="section-title">Clientes</div><input type="text" placeholder="Buscar cliente..." value={searchClient} onChange={e => setSearchClient(e.target.value)} className="search-input" /></div>
               <div className="template-list">
                 {paginatedClients.map(c => (
-                  <button key={c.id} className={selectedClientId === c.id ? 'template-card active-outline' : 'template-card'} onClick={() => setSelectedClientId(c.id)} type="button">
-                    <div className="row between"><i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#7430e2' }}></i><strong>{c.name}</strong><span className="pill">{c.plan}</span></div>
-                    <div className="muted" style={{ color: '#1e293b' }}>{c.email}</div>
-                  </button>
+                  <div
+                    key={c.id}
+                    className={selectedClientId === c.id ? 'template-card active-outline' : 'template-card'}
+                    onClick={() => setSelectedClientId(c.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="row between">
+                      <i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#7430e2' }}></i>
+                      <strong>{c.name}</strong>
+                      <span className="pill">{c.plan}</span>
+                    </div>
+
+                    <div className="muted" style={{ color: '#1e293b' }}>
+                      {c.email}
+                    </div>
+
+                    <div className="row" style={{ marginTop: '1rem' }}>
+                      <button
+                        className="secondary tiny-btn"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setEditingClient(c)
+                        }}
+                      >
+                        <i className="fas fa-pen"></i>
+                        Editar
+                      </button>
+
+                      <button
+                        className="danger tiny-btn"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setClientToDelete(c)
+                          setShowDeleteClientModal(true)
+                        }}
+                      >
+                        <i className="fas fa-trash"></i>
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
               <div className="pagination"><button type="button" onClick={() => setClientPage(p => Math.max(1, p-1))} disabled={clientPage === 1}>Anterior</button><span>Página {clientPage}</span><button type="button" onClick={() => setClientPage(p => p+1)} disabled={clientPage * pageSize >= filteredClients.length}>Siguiente</button></div>
@@ -8120,7 +8278,45 @@ export default function App() {
               <button className="full" disabled={busy}>Crear usuario</button>
             </form></section>
             <section className="stripe-card stack"><div className="row between center"><div className="section-title">Usuarios</div><input type="text" placeholder="Buscar usuario..." value={searchUser} onChange={e => setSearchUser(e.target.value)} className="search-input" /></div>
-              <div className="template-list">{paginatedUsers.map(u => <div key={u.id} className="template-card"><div className="row between"><strong>{u.name}</strong><span className="pill">{u.role}</span></div><div className="muted tiny">{u.email}</div><button className="danger tiny-btn" onClick={() => deleteUser(u.id)}>Eliminar</button></div>)}</div>
+              <div className="template-list">
+              {paginatedUsers.map(u => (
+                <div key={u.id} className="template-card">
+
+                  <div className="row between">
+                    <strong>{u.name}</strong>
+                    <span className="pill">{u.role}</span>
+                  </div>
+
+                  <div className="muted tiny">
+                    {u.email}
+                  </div>
+
+                  <div className="row" style={{ marginTop: '1rem' }}>
+                    <button
+                      className="secondary tiny-btn"
+                      type="button"
+                      onClick={() => setEditingUser(u)}
+                    >
+                      <i className="fas fa-pen"></i>
+                      Editar
+                    </button>
+
+                    <button
+                      className="danger tiny-btn"
+                      type="button"
+                      onClick={() => {
+                        setUserToDelete(u)
+                        setShowDeleteUserModal(true)
+                      }}
+                    >
+                      <i className="fas fa-trash"></i>
+                      Eliminar
+                    </button>
+                  </div>
+
+                </div>
+              ))}
+            </div>
               <div className="pagination"><button type="button" onClick={() => setUserPage(p => Math.max(1, p-1))} disabled={userPage === 1}>Anterior</button><span>Página {userPage}</span><button type="button" onClick={() => setUserPage(p => p+1)} disabled={userPage * pageSize >= filteredUsers.length}>Siguiente</button></div>
             </section>
           </section>
@@ -8173,7 +8369,196 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {editingClient && (
+  <div className="modal-overlay">
+    <form onSubmit={updateClient} className="modal-card-pro stack">
+      <h2>Editar cliente</h2>
+
+      <input
+        value={editingClient.name || ''}
+        onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })}
+        placeholder="Nombre"
+      />
+
+      <input
+        value={editingClient.email || ''}
+        onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })}
+        placeholder="Email"
+      />
+
+      <input
+        value={editingClient.phone || ''}
+        onChange={(e) => setEditingClient({ ...editingClient, phone: e.target.value })}
+        placeholder="Teléfono"
+      />
+
+      <input
+        value={editingClient.plan || ''}
+        onChange={(e) => setEditingClient({ ...editingClient, plan: e.target.value })}
+        placeholder="Plan"
+      />
+
+      <select
+        value={editingClient.status || 'active'}
+        onChange={(e) => setEditingClient({ ...editingClient, status: e.target.value })}
+      >
+        <option value="active">Activo</option>
+        <option value="inactive">Inactivo</option>
+        <option value="suspended">Suspendido</option>
+      </select>
+
+      <div className="row">
+        <button type="submit" disabled={busy}>Guardar cambios</button>
+        <button type="button" className="secondary" onClick={() => setEditingClient(null)}>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+)}
+
+{editingUser && (
+  <div className="modal-overlay">
+    <form onSubmit={updateUser} className="modal-card-pro stack">
+      <h2>Editar usuario</h2>
+
+      <select
+        value={editingUser.client_id || ''}
+        onChange={(e) => setEditingUser({ ...editingUser, client_id: e.target.value })}
+      >
+        <option value="">Cliente</option>
+        {clients.map(c => (
+          <option key={c.id} value={c.id}>{c.name}</option>
+        ))}
+      </select>
+
+      <input
+        value={editingUser.name || ''}
+        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+        placeholder="Nombre"
+      />
+
+      <input
+        value={editingUser.email || ''}
+        onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+        placeholder="Email"
+      />
+
+      <input
+        type="password"
+        value={editingUser.password || ''}
+        onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+        placeholder="Nueva contraseña opcional"
+      />
+
+      <select
+        value={editingUser.role || 'client_user'}
+        onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+      >
+        <option value="client_admin">client_admin</option>
+        <option value="client_user">client_user</option>
+        <option value="admin">admin</option>
+      </select>
+
+      <select
+        value={editingUser.status || 'active'}
+        onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
+      >
+        <option value="active">Activo</option>
+        <option value="inactive">Inactivo</option>
+        <option value="suspended">Suspendido</option>
+      </select>
+
+      <div className="row">
+        <button type="submit" disabled={busy}>Guardar cambios</button>
+        <button type="button" className="secondary" onClick={() => setEditingUser(null)}>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+)}
+
+{showDeleteClientModal && clientToDelete && (
+  <div className="modal-overlay">
+    <div className="modal-card-pro stack">
+      <h2 style={{ color: '#dc2626' }}>⚠️ Eliminar cliente</h2>
+
+      <p>
+        Vas a eliminar permanentemente el cliente <strong>{clientToDelete.name}</strong>.
+      </p>
+
+      <div className="modal-danger-box">
+        Esto eliminará usuarios, bots, landings, campañas, videos IA, publicaciones, logs, grupos y todo el ecosistema asociado.
+      </div>
+
+      <input
+        type="text"
+        placeholder="Escribe ELIMINAR"
+        value={deleteConfirmText}
+        onChange={(e) => setDeleteConfirmText(e.target.value)}
+      />
+
+      <div className="row">
+        <button
+          type="button"
+          className="danger"
+          onClick={() => deleteClient(clientToDelete.id)}
+        >
+          Eliminar definitivamente
+        </button>
+
+        <button
+          type="button"
+          className="secondary"
+          onClick={() => {
+            setShowDeleteClientModal(false)
+            setClientToDelete(null)
+            setDeleteConfirmText('')
+          }}
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{showDeleteUserModal && userToDelete && (
+  <div className="modal-overlay">
+    <div className="modal-card-pro stack">
+      <h2>Eliminar usuario</h2>
+
+      <p>
+        ¿Seguro que deseas eliminar el usuario <strong>{userToDelete.name}</strong>?
+      </p>
+
+      <div className="row">
+        <button
+          type="button"
+          className="danger"
+          onClick={() => deleteUser(userToDelete.id)}
+        >
+          Eliminar
+        </button>
+
+        <button
+          type="button"
+          className="secondary"
+          onClick={() => {
+            setShowDeleteUserModal(false)
+            setUserToDelete(null)
+          }}
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       </main>
     </div>
+    
   )
 }
