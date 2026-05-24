@@ -7497,15 +7497,6 @@ export default function App() {
                 </table>
                 {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
               </section>
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-file-alt"></i> Logs sociales</div>
-                <div className="stack gap-sm">
-                  {socialLogs.map(log => (
-                    <div key={log.id} className="bot-card"><div className="row between"><strong>{log.level}</strong><span className="tiny">{log.created_at ? new Date(log.created_at).toLocaleString() : ''}</span></div><div className="muted">{log.message}</div></div>
-                  ))}
-                  {socialLogs.length === 0 && <div className="empty-box">Sin logs aún</div>}
-                </div>
-              </section>
             </div>
           </section>
         )}
