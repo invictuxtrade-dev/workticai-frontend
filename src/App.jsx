@@ -4004,6 +4004,16 @@ export default function App() {
           background:#000;
         }
 
+        .social-history-wrapper{
+          width:100%;
+          overflow-x:auto;
+          border-radius:20px;
+        }
+
+        .social-posts-table{
+          width:100%;
+        }
+
         .selected-social-video small{
           display:block;
           color:#94a3b8;
