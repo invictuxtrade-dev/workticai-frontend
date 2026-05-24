@@ -4088,6 +4088,41 @@ export default function App() {
 
   // Planes y suscripciones
   const [plans, setPlans] = useState([])
+  // NUEVOS ESTADOS PARA PLANES
+  const [editingPlan, setEditingPlan] = useState(null)
+  const [showDeletePlanModal, setShowDeletePlanModal] = useState(false)
+  const [planToDelete, setPlanToDelete] = useState(null)
+  const [newPlan, setNewPlan] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    price_monthly: 0,
+    price_yearly: 0,
+    permissions: JSON.stringify({
+      whatsapp_ai: true,
+      landings: true,
+      funnels: true,
+      social_ai: true,
+      video_ai: false,
+      ads_ai: false,
+      groups_ai: false,
+      assistant_ai: false
+    }, null, 2),
+    limits: JSON.stringify({
+      bots: 1,
+      users: 1,
+      landing_pages: 1,
+      funnels: 1,
+      social_posts_month: 20,
+      ai_images_month: 10,
+      ai_videos_month: 0
+    }, null, 2),
+    features: JSON.stringify([], null, 2),
+    grace_days: 1,
+    is_free: false,
+    is_active: true,
+    sort_order: 1
+  })
   const [subscription, setSubscription] = useState(null)
   const [billingConfig, setBillingConfig] = useState({
     usdt_bep20_wallet: '',
@@ -4810,6 +4845,70 @@ export default function App() {
     } catch (err) {
       console.error(err)
       if (err.status === 402 && err.message === 'plan_required') setForcePlanScreen(true)
+    }
+  }
+
+  // NUEVAS FUNCIONES PARA PLANES
+  async function createPlan(e) {
+    e.preventDefault()
+    setBusy(true)
+    try {
+      await api('/api/plans', {
+        method: 'POST',
+        body: JSON.stringify(newPlan)
+      })
+      await loadPlans()
+      setNewPlan({
+        name: '',
+        slug: '',
+        description: '',
+        price_monthly: 0,
+        price_yearly: 0,
+        permissions: '{}',
+        limits: '{}',
+        features: '[]',
+        grace_days: 1,
+        is_free: false,
+        is_active: true,
+        sort_order: 1
+      })
+      showNotice('Plan creado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo crear plan')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function updatePlan(e) {
+    e.preventDefault()
+    setBusy(true)
+    try {
+      await api(`/api/plans/${editingPlan.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(editingPlan)
+      })
+      await loadPlans()
+      setEditingPlan(null)
+      showNotice('Plan actualizado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo actualizar plan')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function deletePlan(id) {
+    try {
+      await api(`/api/plans/${id}`, {
+        method: 'DELETE'
+      })
+      await loadPlans()
+      setShowDeletePlanModal(false)
+      setPlanToDelete(null)
+      showNotice('Plan eliminado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo eliminar plan')
     }
   }
 
@@ -6663,6 +6762,9 @@ async function updateUser(e) {
               <button className={tab === 'users' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('users')} type="button">
                 <i className="fas fa-users"></i> Usuarios
               </button>
+              <button className={tab === 'plans' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('plans')} type="button">
+                <i className="fas fa-crown"></i> Planes SaaS
+              </button>
               <button className={tab === 'billing' ? 'menu-item active' : 'menu-item'} onClick={() => { setTab('billing'); loadPendingSubscriptions(); }} type="button">
                 <i className="fas fa-credit-card"></i> Billing
               </button>
@@ -8322,6 +8424,155 @@ async function updateUser(e) {
           </section>
         )}
 
+        {/* ======================== PLANS ======================== */}
+        {tab === 'plans' && me.role === 'admin' && (
+          <section className="panel-grid">
+
+            <section className="stripe-card stack">
+              <div className="section-title">
+                <i className="fas fa-crown"></i>
+                Nuevo plan
+              </div>
+
+              <form onSubmit={createPlan} className="form-grid">
+
+                <input
+                  placeholder="Nombre"
+                  value={newPlan.name}
+                  onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
+                />
+
+                <input
+                  placeholder="Slug"
+                  value={newPlan.slug}
+                  onChange={(e) => setNewPlan({ ...newPlan, slug: e.target.value })}
+                />
+
+                <input
+                  placeholder="Precio mensual"
+                  type="number"
+                  value={newPlan.price_monthly}
+                  onChange={(e) => setNewPlan({ ...newPlan, price_monthly: Number(e.target.value) })}
+                />
+
+                <input
+                  placeholder="Precio anual"
+                  type="number"
+                  value={newPlan.price_yearly}
+                  onChange={(e) => setNewPlan({ ...newPlan, price_yearly: Number(e.target.value) })}
+                />
+
+                <input
+                  placeholder="Grace days"
+                  type="number"
+                  value={newPlan.grace_days}
+                  onChange={(e) => setNewPlan({ ...newPlan, grace_days: Number(e.target.value) })}
+                />
+
+                <textarea
+                  rows={6}
+                  placeholder="Features JSON"
+                  value={newPlan.features}
+                  onChange={(e) => setNewPlan({ ...newPlan, features: e.target.value })}
+                />
+
+                <textarea
+                  rows={10}
+                  placeholder="Permissions JSON"
+                  value={newPlan.permissions}
+                  onChange={(e) => setNewPlan({ ...newPlan, permissions: e.target.value })}
+                />
+
+                <textarea
+                  rows={10}
+                  placeholder="Limits JSON"
+                  value={newPlan.limits}
+                  onChange={(e) => setNewPlan({ ...newPlan, limits: e.target.value })}
+                />
+
+                <label className="row">
+                  <input
+                    type="checkbox"
+                    checked={newPlan.is_free}
+                    onChange={(e) => setNewPlan({ ...newPlan, is_free: e.target.checked })}
+                  />
+                  Plan gratuito
+                </label>
+
+                <label className="row">
+                  <input
+                    type="checkbox"
+                    checked={newPlan.is_active}
+                    onChange={(e) => setNewPlan({ ...newPlan, is_active: e.target.checked })}
+                  />
+                  Activo
+                </label>
+
+                <button className="full">
+                  Crear plan
+                </button>
+
+              </form>
+            </section>
+
+            <section className="stripe-card stack">
+
+              <div className="section-title">
+                Planes
+              </div>
+
+              <div className="template-list">
+
+                {plans.map(plan => (
+
+                  <div key={plan.id} className="template-card">
+
+                    <div className="row between">
+                      <strong>{plan.name}</strong>
+
+                      <span className="pill">
+                        ${plan.price_monthly}/mes
+                      </span>
+                    </div>
+
+                    <div className="muted tiny">
+                      {plan.description}
+                    </div>
+
+                    <div className="row" style={{ marginTop: '1rem' }}>
+
+                      <button
+                        className="secondary tiny-btn"
+                        onClick={() => setEditingPlan(plan)}
+                      >
+                        <i className="fas fa-pen"></i>
+                        Editar
+                      </button>
+
+                      <button
+                        className="danger tiny-btn"
+                        onClick={() => {
+                          setPlanToDelete(plan)
+                          setShowDeletePlanModal(true)
+                        }}
+                      >
+                        <i className="fas fa-trash"></i>
+                        Eliminar
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+            </section>
+
+          </section>
+        )}
+
         {/* ======================== BILLING (admin only) ======================== */}
         {tab === 'billing' && me.role === 'admin' && (
           <div className="stack gap-lg">
@@ -8557,6 +8808,106 @@ async function updateUser(e) {
     </div>
   </div>
 )}
+
+        {/* MODAL EDITAR PLAN */}
+        {editingPlan && (
+          <div className="modal-overlay">
+            <form onSubmit={updatePlan} className="modal-card-pro stack">
+              <h2>Editar plan</h2>
+
+              <input
+                value={editingPlan.name || ''}
+                onChange={(e) => setEditingPlan({
+                  ...editingPlan,
+                  name: e.target.value
+                })}
+              />
+
+              <input
+                value={editingPlan.slug || ''}
+                onChange={(e) => setEditingPlan({
+                  ...editingPlan,
+                  slug: e.target.value
+                })}
+              />
+
+              <textarea
+                rows={6}
+                value={editingPlan.features || '[]'}
+                onChange={(e) => setEditingPlan({
+                  ...editingPlan,
+                  features: e.target.value
+                })}
+              />
+
+              <textarea
+                rows={10}
+                value={editingPlan.permissions || '{}'}
+                onChange={(e) => setEditingPlan({
+                  ...editingPlan,
+                  permissions: e.target.value
+                })}
+              />
+
+              <textarea
+                rows={10}
+                value={editingPlan.limits || '{}'}
+                onChange={(e) => setEditingPlan({
+                  ...editingPlan,
+                  limits: e.target.value
+                })}
+              />
+
+              <div className="row">
+                <button type="submit">
+                  Guardar
+                </button>
+
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => setEditingPlan(null)}
+                >
+                  Cancelar
+                </button>
+              </div>
+
+            </form>
+          </div>
+        )}
+
+        {/* MODAL ELIMINAR PLAN */}
+        {showDeletePlanModal && planToDelete && (
+          <div className="modal-overlay">
+            <div className="modal-card-pro stack">
+              <h2>Eliminar plan</h2>
+
+              <p>
+                ¿Seguro que deseas eliminar el plan:
+                <strong> {planToDelete.name}</strong>?
+              </p>
+
+              <div className="row">
+                <button
+                  className="danger"
+                  onClick={() => deletePlan(planToDelete.id)}
+                >
+                  Eliminar
+                </button>
+
+                <button
+                  className="secondary"
+                  onClick={() => {
+                    setShowDeletePlanModal(false)
+                    setPlanToDelete(null)
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
     
