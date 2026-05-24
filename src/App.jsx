@@ -4004,15 +4004,18 @@ export default function App() {
           background:#000;
         }
 
-        .social-history-wrapper{
-          width:100%;
-          overflow-x:auto;
-          border-radius:20px;
-        }
+        .social-history-full{
+            width:100%;
+            display:block;
+          }
 
-        .social-posts-table{
-          width:100%;
-        }
+          .social-history-full .stripe-card{
+            width:100%;
+          }
+
+          .social-history-full table{
+            width:100%;
+          }
 
         .selected-social-video small{
           display:block;
@@ -7486,7 +7489,7 @@ export default function App() {
               </div>
             </section>
 
-            <div className="panel-grid">
+            <div className="social-history-full">
               <section className="stripe-card stack">
                 <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
                 <table>
