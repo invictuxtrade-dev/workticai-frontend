@@ -4147,6 +4147,38 @@ export default function App() {
           word-break:break-all;
           margin-top:4px;
         }
+
+        /* Usage mini cards styles */
+        .usage-mini-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 1rem;
+          padding: 1rem;
+        }
+
+        .usage-mini-card strong {
+          color: #0f172a;
+        }
+
+        .usage-mini-card span {
+          font-size: .8rem;
+          font-weight: 800;
+          color: #7430e2;
+        }
+
+        .usage-bar {
+          margin-top: .75rem;
+          height: 8px;
+          border-radius: 999px;
+          background: #e2e8f0;
+          overflow: hidden;
+        }
+
+        .usage-bar > div {
+          height: 100%;
+          border-radius: 999px;
+          background: linear-gradient(135deg,#7430e2,#2563eb);
+        }
       `
       document.head.appendChild(style)
     }
@@ -4162,6 +4194,67 @@ export default function App() {
       window.removeEventListener('wsos:session-expired', onExpired)
     }
   }, [])
+
+  // ======================== PERMISOS Y PLANES MEJORADOS ========================
+  function hasFeature(feature) {
+    if (isAdmin) return true
+    return planPermissions?.[feature] === true
+  }
+
+  function canUseFeature(feature) {
+    return hasFeature(feature)
+  }
+
+  function getLimit(metric) {
+    if (isAdmin) return Infinity
+    return Number(planLimits?.[metric] || 0)
+  }
+
+  function getUsage(metric) {
+    const nowMonth = new Date().toISOString().slice(0, 7)
+
+    const inMonth = (date) => {
+      if (!date) return true
+      return String(date).slice(0, 7) === nowMonth
+    }
+
+    const map = {
+      bots: bots.length,
+      users: users.filter(u => u.role !== 'admin').length,
+      templates: templates.length,
+      landing_pages: landings.length,
+      social_posts_month: socialPosts.filter(p => inMonth(p.created_at)).length,
+      ai_videos_month: videoJobs.filter(v => inMonth(v.created_at)).length,
+      group_bots: groupBots.length,
+      ai_images_month: 0,
+      ads_campaigns_month: 0
+    }
+
+    return Number(map[metric] || 0)
+  }
+
+  function isLimitReached(metric) {
+    if (isAdmin) return false
+    const limit = getLimit(metric)
+    if (!limit || limit <= 0) return true
+    return getUsage(metric) >= limit
+  }
+
+  function requireFeature(feature, label = 'esta función') {
+    if (hasFeature(feature)) return true
+    showNotice(`${label} requiere un plan superior.`)
+    setForcePlanScreen(true)
+    return false
+  }
+
+  function requireLimit(metric, label = 'este recurso') {
+    if (isAdmin) return true
+    if (!isLimitReached(metric)) return true
+
+    showNotice(`Alcanzaste el límite mensual de ${label}. Mejora tu plan para continuar.`)
+    setForcePlanScreen(true)
+    return false
+  }
 
   // ======================== ESTADOS PRINCIPALES ========================
   const [me, setMe] = useState(null)
@@ -4415,18 +4508,6 @@ export default function App() {
   const isAdmin = me?.role === 'admin'
   const activePlanSlug = subscription?.plan_slug || me?.plan || 'free'
   const isFreePlan = activePlanSlug === 'free'
-
-  function canUseFeature(feature) {
-    if (isAdmin) return true
-    return planPermissions?.[feature] === true
-  }
-
-  function requireFeature(feature, label = 'esta función') {
-    if (canUseFeature(feature)) return true
-    showNotice(`${label} requiere un plan superior.`)
-    setForcePlanScreen(true)
-    return false
-  }
 
   const activeBots = useMemo(
     () => bots.filter((b) => b.status === 'connected' || b.status === 'waiting_qr'),
@@ -4775,6 +4856,7 @@ export default function App() {
 
   async function createGroupBot() {
     if (!requireFeature('groups_ai', 'Grupos IA')) return
+    if (!requireLimit('group_bots', 'bots de grupos')) return
     
     if (!groupBotForm.name.trim()) {
       showNotice('Escribe un nombre para el bot de grupo')
@@ -5205,6 +5287,7 @@ export default function App() {
   // ======================== FUNCIONES ADS IA ========================
   const generateAdsCampaign = useCallback(async () => {
     if (!requireFeature('ads_ai', 'Ads IA')) return
+    if (!requireLimit('ads_campaigns_month', 'campañas Ads IA')) return
     
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
@@ -5255,10 +5338,11 @@ export default function App() {
     } finally {
       setAdsLoading(false)
     }
-  }, [adsForm, me, selectedClientId, showNotice, requireFeature])
+  }, [adsForm, me, selectedClientId, showNotice, requireFeature, requireLimit])
 
   async function generateAdsEcosystem() {
     if (!requireFeature('ads_ai', 'Ecosistema Ads IA')) return
+    if (!requireLimit('ads_campaigns_month', 'campañas Ads IA')) return
     
     if (!adsForm.business_name.trim()) {
       showNotice('Escribe el nombre del negocio')
@@ -5329,6 +5413,7 @@ export default function App() {
       showNotice('Describe el contenido de la landing (campo prompt)')
       return
     }
+    if (!requireLimit('landing_pages', 'landings')) return
     if (landingForm.tracking_mode === 'external') {
       if (!landingForm.tracking_base_url.trim()) {
         showNotice('Debes indicar la URL base del backend para el tracking externo')
@@ -5974,6 +6059,7 @@ export default function App() {
       showNotice('Describe la imagen que quieres generar')
       return
     }
+    if (!requireLimit('ai_images_month', 'imágenes IA')) return
     setSocialImageLoading(true)
     try {
       const res = await api('/api/social/generate-image', {
@@ -6026,6 +6112,7 @@ export default function App() {
   // ======================== AI VIDEO ENGINE FUNCTIONS ========================
   async function generateAIVideo() {
     if (!requireFeature('video_ai', 'Video AI')) return
+    if (!requireLimit('ai_videos_month', 'videos IA')) return
     
     if (!selectedClientId) {
       showNotice('Selecciona un cliente primero')
@@ -6535,6 +6622,7 @@ export default function App() {
 
   async function createUser(e) {
     e.preventDefault()
+    if (!requireLimit('users', 'usuarios')) return
     setBusy(true)
     try {
       await api('/api/users', { method: 'POST', body: JSON.stringify({ ...newUser, client_id: newUser.client_id || selectedClientId }) })
@@ -6637,6 +6725,7 @@ async function updateUser(e) {
 
   async function createBot(e) {
     e.preventDefault()
+    if (!requireLimit('bots', 'bots')) return
     const clientId = selectedClientId || clients[0]?.id || ''
     if (!clientId) return showNotice('Selecciona un cliente')
     if (!newBotName.trim()) return showNotice('Escribe un nombre')
@@ -7124,6 +7213,54 @@ async function updateUser(e) {
         {/* ======================== DASHBOARD ======================== */}
         {tab === 'dashboard' && (
           <section className="stack gap-lg">
+            {/* Tarjetas de uso del plan - solo para clientes no admin */}
+            {!isAdmin && (
+              <div className="stripe-card stack">
+                <div className="row between center">
+                  <div>
+                    <div className="section-title">
+                      <i className="fas fa-gauge-high"></i> Uso del plan
+                    </div>
+                    <p className="muted">Plan actual: <strong>{currentPlan?.name || activePlanSlug}</strong></p>
+                  </div>
+                  <button type="button" onClick={() => setForcePlanScreen(true)}>
+                    <i className="fas fa-crown"></i>
+                    Mejorar plan
+                  </button>
+                </div>
+
+                <div className="metric-grid">
+                  {[
+                    ['Bots', 'bots'],
+                    ['Usuarios', 'users'],
+                    ['Landings', 'landing_pages'],
+                    ['Plantillas', 'templates'],
+                    ['Posts sociales', 'social_posts_month'],
+                    ['Videos IA', 'ai_videos_month'],
+                    ['Grupos IA', 'group_bots']
+                  ].map(([label, metric]) => {
+                    const used = getUsage(metric)
+                    const limit = getLimit(metric)
+                    const pct = limit > 0 && Number.isFinite(limit)
+                      ? Math.min(100, Math.round((used / limit) * 100))
+                      : 0
+
+                    return (
+                      <div key={metric} className="usage-mini-card">
+                        <div className="row between">
+                          <strong>{label}</strong>
+                          <span>{used}/{limit || 0}</span>
+                        </div>
+                        <div className="usage-bar">
+                          <div style={{ width: `${pct}%` }}></div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="metric-grid">
               {[
                 ['Clientes', metrics.clients], ['Bots', metrics.bots], ['Leads', metrics.leads],
@@ -7545,7 +7682,7 @@ async function updateUser(e) {
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
-                                            </td>
+                       </td>
                     </tr>
                   )}
                 </tbody>
