@@ -6649,6 +6649,15 @@ export default function App() {
         return
       }
 
+      
+      if (tab === 'agenda_ai') {
+        if (!selectedClientId) return
+        await loadAgenda()
+        await loadAgendaMetrics()
+        await loadAppointmentAgents()
+        return
+      }
+
       if (tab === 'funnel') {
         await loadFunnelMetrics()
         return
@@ -6677,13 +6686,6 @@ export default function App() {
         return
       }
 
-      if (tab === 'agenda_ai') {
-        if (!selectedClientId) return
-        await loadAgenda()
-        await loadAgendaMetrics()
-        await loadAppointmentAgents()
-        return
-      }
     }, 30000)
 
     return () => clearInterval(t)
