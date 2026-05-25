@@ -7232,6 +7232,12 @@ async function updateUser(e) {
           <button className={tab === 'landing' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('landing')} type="button">
             <i className="fas fa-brain"></i> Landing IA
           </button>
+          <button
+            className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
+            onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
+            type="button">
+            <i className="fas fa-calendar-check"></i> Agenda AI
+          </button>
           <button className={tab === 'funnel' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('funnel')} type="button">
             <i className="fas fa-filter"></i> Funnel
           </button>
@@ -7269,13 +7275,6 @@ async function updateUser(e) {
             type="button"
           >
             <i className="fas fa-robot"></i> Asistente AI
-          </button>
-          <button
-            className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
-            onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
-            type="button"
-          >
-            <i className="fas fa-calendar-check"></i> Agenda AI
           </button>
           {me.role === 'admin' && (
             <>
