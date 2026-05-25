@@ -2,6 +2,10 @@ import React, { useEffect, useMemo, useState, useRef, memo, useCallback } from '
 import QRCode from 'qrcode'
 import { api, API_BASE, setToken, getToken } from './api'
 import VideoAIStudio from './components/VideoAIStudio'
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
 
 const emptyConfig = {
   system_prompt: '',
@@ -4179,6 +4183,61 @@ export default function App() {
           border-radius: 999px;
           background: linear-gradient(135deg,#7430e2,#2563eb);
         }
+
+        /* Pipeline styles para Agenda AI */
+        .pipeline-grid{
+          display:grid;
+          grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+          gap:1rem;
+        }
+
+        .pipeline-column{
+          background:#f8fafc;
+          border:1px solid #e2e8f0;
+          border-radius:1rem;
+          padding:1rem;
+          min-height:220px;
+        }
+
+        .pipeline-header{
+          font-weight:800;
+          margin-bottom:1rem;
+          color:#0f172a;
+        }
+
+        .pipeline-card{
+          background:#fff;
+          border:1px solid #e2e8f0;
+          border-radius:1rem;
+          padding:.85rem;
+          margin-bottom:.75rem;
+          display:flex;
+          flex-direction:column;
+          gap:.5rem;
+        }
+
+        .large-modal{
+          width:min(980px,95vw);
+        }
+
+        .metric-card {
+          background: white;
+          border-radius: 1rem;
+          padding: 1rem;
+          text-align: center;
+          border: 1px solid #e2e8f0;
+        }
+
+        .metric-card strong {
+          display: block;
+          font-size: 2rem;
+          color: #0f172a;
+        }
+
+        .metric-card span {
+          font-size: 0.8rem;
+          color: #64748b;
+        }
       `
       document.head.appendChild(style)
     }
@@ -4227,7 +4286,8 @@ export default function App() {
       ai_videos_month: videoJobs.filter(v => inMonth(v.created_at)).length,
       group_bots: groupBots.length,
       ai_images_month: 0,
-      ads_campaigns_month: 0
+      ads_campaigns_month: 0,
+      appointments_month: appointments.filter(a => inMonth(a.created_at)).length
     }
 
     return Number(map[metric] || 0)
@@ -4264,6 +4324,38 @@ export default function App() {
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [activeSection, setActiveSection] = useState('social-ai')
 
+  // Agenda AI states
+  const [appointments, setAppointments] = useState([])
+  const [agendaMetrics, setAgendaMetrics] = useState({})
+  const [appointmentAgents, setAppointmentAgents] = useState([])
+  const [appointmentSettings, setAppointmentSettings] = useState({})
+  const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false)
+
+  const [appointmentForm, setAppointmentForm] = useState({
+    title: '',
+    contact_name: '',
+    contact_phone: '',
+    contact_email: '',
+    status: 'scheduled',
+    meeting_type: 'call',
+    meeting_link: '',
+    location: '',
+    notes: '',
+    start_at: '',
+    end_at: '',
+    timezone: 'America/Bogota',
+    lead_score: 70
+  })
+
+  const [agentForm, setAgentForm] = useState({
+    name: '',
+    email: '',
+    whatsapp: '',
+    role: 'sales',
+    color: '#7430e2'
+  })
+
   // Assistant AI states MEJORADOS
   const [assistantMessages, setAssistantMessages] = useState([])
   const [assistantInput, setAssistantInput] = useState('')
@@ -4295,7 +4387,8 @@ export default function App() {
       video_ai: false,
       ads_ai: false,
       groups_ai: false,
-      assistant_ai: false
+      assistant_ai: false,
+      agenda_ai: false
     }, null, 2),
     limits: JSON.stringify({
       bots: 1,
@@ -4304,7 +4397,8 @@ export default function App() {
       funnels: 1,
       social_posts_month: 20,
       ai_images_month: 10,
-      ai_videos_month: 0
+      ai_videos_month: 0,
+      appointments_month: 5
     }, null, 2),
     features: JSON.stringify([], null, 2),
     grace_days: 1,
@@ -4611,6 +4705,122 @@ export default function App() {
     return (div.textContent || div.innerText || '')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
+  }
+
+  // ======================== AGENDA AI FUNCTIONS ========================
+  async function loadAgenda() {
+    try {
+      const data = await api('/api/agenda/appointments')
+      setAppointments(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function loadAgendaMetrics() {
+    try {
+      const data = await api('/api/agenda/metrics')
+      setAgendaMetrics(data || {})
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function loadAppointmentAgents() {
+    try {
+      const data = await api('/api/agenda/agents')
+      setAppointmentAgents(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function createAppointment() {
+    if (!requireFeature('agenda_ai', 'Agenda AI')) return
+
+    if (!requireLimit('appointments_month', 'citas mensuales')) {
+      return
+    }
+
+    try {
+      setBusy(true)
+
+      await api('/api/agenda/appointments', {
+        method: 'POST',
+        body: JSON.stringify(appointmentForm)
+      })
+
+      showNotice('Cita creada')
+
+      setShowAppointmentModal(false)
+
+      setAppointmentForm({
+        title: '',
+        contact_name: '',
+        contact_phone: '',
+        contact_email: '',
+        status: 'scheduled',
+        meeting_type: 'call',
+        meeting_link: '',
+        location: '',
+        notes: '',
+        start_at: '',
+        end_at: '',
+        timezone: 'America/Bogota',
+        lead_score: 70
+      })
+
+      await loadAgenda()
+      await loadAgendaMetrics()
+    } catch (err) {
+      showNotice(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function deleteAppointment(id) {
+    if (!window.confirm('¿Eliminar cita?')) return
+
+    try {
+      await api(`/api/agenda/appointments/${id}`, {
+        method: 'DELETE'
+      })
+
+      showNotice('Cita eliminada')
+
+      await loadAgenda()
+      await loadAgendaMetrics()
+    } catch (err) {
+      showNotice(err.message)
+    }
+  }
+
+  async function createAppointmentAgent() {
+    try {
+      setBusy(true)
+
+      await api('/api/agenda/agents', {
+        method: 'POST',
+        body: JSON.stringify(agentForm)
+      })
+
+      showNotice('Agente creado')
+
+      setAgentForm({
+        name: '',
+        email: '',
+        whatsapp: '',
+        role: 'sales',
+        color: '#7430e2'
+      })
+
+      await loadAppointmentAgents()
+    } catch (err) {
+      showNotice(err.message)
+    } finally {
+      setBusy(false)
+    }
   }
 
   // ======================== FUNCIONES VIDEO AI NUEVAS ========================
@@ -6330,6 +6540,15 @@ export default function App() {
     }
   }, [me, forcePlanScreen, selectedClientId])
 
+  // Cargar datos de agenda cuando el usuario está autenticado
+  useEffect(() => {
+    if (me && !forcePlanScreen && selectedClientId) {
+      loadAgenda()
+      loadAgendaMetrics()
+      loadAppointmentAgents()
+    }
+  }, [me, forcePlanScreen, selectedClientId])
+
   useEffect(() => {
     if (!selectedClientId && clients.length > 0) {
       setSelectedClientId(clients[0].id)
@@ -6364,6 +6583,9 @@ export default function App() {
     loadJoinQueue()
     loadFacebookLogs()
     loadAIVideos()
+    loadAgenda()
+    loadAgendaMetrics()
+    loadAppointmentAgents()
   }, [selectedClientId, forcePlanScreen])
 
   useEffect(() => {
@@ -6376,6 +6598,9 @@ export default function App() {
     loadGrowthSettings()
     loadJoinQueue()
     loadFacebookLogs()
+    loadAgenda()
+    loadAgendaMetrics()
+    loadAppointmentAgents()
   }, [me, forcePlanScreen, selectedClientId])
 
   // Assistant effect mejorado
@@ -6449,6 +6674,14 @@ export default function App() {
         await loadGrowthSettings()
         await loadJoinQueue()
         await loadFacebookLogs()
+        return
+      }
+
+      if (tab === 'agenda_ai') {
+        if (!selectedClientId) return
+        await loadAgenda()
+        await loadAgendaMetrics()
+        await loadAppointmentAgents()
         return
       }
     }, 30000)
@@ -7035,6 +7268,13 @@ async function updateUser(e) {
           >
             <i className="fas fa-robot"></i> Asistente AI
           </button>
+          <button
+            className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
+            onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
+            type="button"
+          >
+            <i className="fas fa-calendar-check"></i> Agenda AI
+          </button>
           {me.role === 'admin' && (
             <>
               <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
@@ -7072,6 +7312,366 @@ async function updateUser(e) {
             )}
           </div>
         </header>
+
+        {/* ======================== AGENDA AI ======================== */}
+        {tab === 'agenda_ai' && (
+          <section className="stack">
+            
+            <section className="metric-grid">
+              <div className="metric-card">
+                <strong>{agendaMetrics.today || 0}</strong>
+                <span>Citas hoy</span>
+              </div>
+
+              <div className="metric-card">
+                <strong>{agendaMetrics.scheduled || 0}</strong>
+                <span>Agendadas</span>
+              </div>
+
+              <div className="metric-card">
+                <strong>{agendaMetrics.confirmed || 0}</strong>
+                <span>Confirmadas</span>
+              </div>
+
+              <div className="metric-card">
+                <strong>{agendaMetrics.completed || 0}</strong>
+                <span>Completadas</span>
+              </div>
+
+              <div className="metric-card">
+                <strong>{agendaMetrics.no_show || 0}</strong>
+                <span>No asistió</span>
+              </div>
+            </section>
+
+            <section className="panel-grid">
+              
+              <section className="stripe-card stack">
+                <div className="row between center">
+                  <div className="section-title">
+                    <i className="fas fa-calendar-check"></i>
+                    Agenda AI
+                  </div>
+
+                  <button
+                    onClick={() => setShowAppointmentModal(true)}
+                  >
+                    <i className="fas fa-plus"></i>
+                    Nueva cita
+                  </button>
+                </div>
+
+                <FullCalendar
+                  plugins={[
+                    dayGridPlugin,
+                    timeGridPlugin,
+                    interactionPlugin
+                  ]}
+                  initialView="timeGridWeek"
+                  editable={true}
+                  selectable={true}
+                  height={780}
+                  events={appointments.map(a => ({
+                    id: a.id,
+                    title: a.title || a.contact_name || 'Cita',
+                    start: a.start_at,
+                    end: a.end_at,
+                    extendedProps: a
+                  }))}
+                  eventClick={(info) => {
+                    const ap = info.event.extendedProps
+
+                    setSelectedAppointment(ap)
+
+                    setAppointmentForm({
+                      title: ap.title || '',
+                      contact_name: ap.contact_name || '',
+                      contact_phone: ap.contact_phone || '',
+                      contact_email: ap.contact_email || '',
+                      status: ap.status || 'scheduled',
+                      meeting_type: ap.meeting_type || 'call',
+                      meeting_link: ap.meeting_link || '',
+                      location: ap.location || '',
+                      notes: ap.notes || '',
+                      start_at: ap.start_at?.slice(0,16) || '',
+                      end_at: ap.end_at?.slice(0,16) || '',
+                      timezone: ap.timezone || 'America/Bogota',
+                      lead_score: ap.lead_score || 70
+                    })
+
+                    setShowAppointmentModal(true)
+                  }}
+                />
+              </section>
+
+              <section className="stack">
+
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    Pipeline IA
+                  </div>
+
+                  <div className="pipeline-grid">
+
+                    {[
+                      ['scheduled', 'Agendadas'],
+                      ['confirmed', 'Confirmadas'],
+                      ['completed', 'Completadas'],
+                      ['no_show', 'No asistió'],
+                      ['cancelled', 'Canceladas']
+                    ].map(([status, label]) => (
+                      <div key={status} className="pipeline-column">
+                        <div className="pipeline-header">
+                          {label}
+                        </div>
+
+                        {(appointments || [])
+                          .filter(a => a.status === status)
+                          .map(a => (
+                            <div
+                              key={a.id}
+                              className="pipeline-card"
+                            >
+                              <strong>
+                                {a.contact_name || 'Lead'}
+                              </strong>
+
+                              <div className="muted tiny">
+                                {a.title}
+                              </div>
+
+                              <div className="tiny muted">
+                                Score IA: {a.lead_score || 0}
+                              </div>
+
+                              <button
+                                className="danger tiny-btn"
+                                onClick={() => deleteAppointment(a.id)}
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                          ))}
+                      </div>
+                    ))}
+
+                  </div>
+                </section>
+
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    Agentes IA
+                  </div>
+
+                  <div className="form-grid">
+
+                    <input
+                      placeholder="Nombre"
+                      value={agentForm.name}
+                      onChange={e => setAgentForm({
+                        ...agentForm,
+                        name: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Email"
+                      value={agentForm.email}
+                      onChange={e => setAgentForm({
+                        ...agentForm,
+                        email: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="WhatsApp"
+                      value={agentForm.whatsapp}
+                      onChange={e => setAgentForm({
+                        ...agentForm,
+                        whatsapp: e.target.value
+                      })}
+                    />
+
+                    <button onClick={createAppointmentAgent}>
+                      Crear agente
+                    </button>
+                  </div>
+
+                  <div className="template-list">
+                    {appointmentAgents.map(agent => (
+                      <div key={agent.id} className="template-card">
+                        <div className="row between">
+                          <strong>{agent.name}</strong>
+
+                          <span
+                            className="pill"
+                            style={{
+                              background: agent.color
+                            }}
+                          >
+                            {agent.role}
+                          </span>
+                        </div>
+
+                        <div className="muted tiny">
+                          {agent.email}
+                        </div>
+
+                        <div className="muted tiny">
+                          {agent.whatsapp}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+              </section>
+            </section>
+
+            {showAppointmentModal && (
+              <div className="modal-overlay">
+                <div className="modal-card large-modal">
+
+                  <div className="row between center">
+                    <div className="section-title">
+                      Nueva cita
+                    </div>
+
+                    <button
+                      className="danger tiny-btn"
+                      onClick={() => {
+                        setShowAppointmentModal(false)
+                        setSelectedAppointment(null)
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="form-grid">
+
+                    <input
+                      placeholder="Título"
+                      value={appointmentForm.title}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        title: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Nombre contacto"
+                      value={appointmentForm.contact_name}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        contact_name: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="WhatsApp"
+                      value={appointmentForm.contact_phone}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        contact_phone: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Email"
+                      value={appointmentForm.contact_email}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        contact_email: e.target.value
+                      })}
+                    />
+
+                    <input
+                      type="datetime-local"
+                      value={appointmentForm.start_at}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        start_at: e.target.value
+                      })}
+                    />
+
+                    <input
+                      type="datetime-local"
+                      value={appointmentForm.end_at}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        end_at: e.target.value
+                      })}
+                    />
+
+                    <select
+                      value={appointmentForm.status}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        status: e.target.value
+                      })}
+                    >
+                      <option value="scheduled">Agendada</option>
+                      <option value="confirmed">Confirmada</option>
+                      <option value="completed">Completada</option>
+                      <option value="no_show">No asistió</option>
+                      <option value="cancelled">Cancelada</option>
+                    </select>
+
+                    <select
+                      value={appointmentForm.meeting_type}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        meeting_type: e.target.value
+                      })}
+                    >
+                      <option value="call">Llamada</option>
+                      <option value="zoom">Zoom</option>
+                      <option value="meet">Google Meet</option>
+                      <option value="presential">Presencial</option>
+                    </select>
+
+                    <input
+                      placeholder="Link reunión"
+                      value={appointmentForm.meeting_link}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        meeting_link: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Ubicación"
+                      value={appointmentForm.location}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        location: e.target.value
+                      })}
+                    />
+
+                    <textarea
+                      placeholder="Notas"
+                      value={appointmentForm.notes}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        notes: e.target.value
+                      })}
+                    />
+
+                  </div>
+
+                  <button
+                    className="full"
+                    onClick={createAppointment}
+                  >
+                    Guardar cita
+                  </button>
+
+                </div>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* ======================== ASSISTANT AI MEJORADO ======================== */}
         {tab === 'assistant' && (
@@ -7237,7 +7837,8 @@ async function updateUser(e) {
                     ['Plantillas', 'templates'],
                     ['Posts sociales', 'social_posts_month'],
                     ['Videos IA', 'ai_videos_month'],
-                    ['Grupos IA', 'group_bots']
+                    ['Grupos IA', 'group_bots'],
+                    ['Citas IA', 'appointments_month']
                   ].map(([label, metric]) => {
                     const used = getUsage(metric)
                     const limit = getLimit(metric)
@@ -7671,7 +8272,7 @@ async function updateUser(e) {
                         <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
                         <td>{lead.bot_name}</td>
                         <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                        <td>
+                                                 <td>
                           <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
                             Ver chat
                           </button>
@@ -7682,7 +8283,7 @@ async function updateUser(e) {
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
                         No hay leads
-                       </td>
+                      </td>
                     </tr>
                   )}
                 </tbody>
