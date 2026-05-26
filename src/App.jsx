@@ -8346,138 +8346,190 @@ async function updateUser(e) {
                       ))}
                     </div>
                   </div>
-                  {/* ======================== AGENDA AI SECTION EN BOT ======================== */}
+                 {/* ======================== AGENDA AI SECTION EN BOT ======================== */}
                   <section className="stripe-card stack" style={{ marginTop: '1.5rem' }}>
                     <div className="row between center">
                       <div className="section-title">
                         <i className="fas fa-calendar-check"></i>
                         Agenda AI
                       </div>
+                    </div>
 
-                      <label className="switch-row">
-                        <input
-                          type="checkbox"
-                          checked={!!botAgendaSettings.enabled}
+                    <div className="agenda-help-card">
+                      <div>
+                        <strong>¿Cómo funciona?</strong>
+                        <p>
+                          Cuando este bot detecte que un lead quiere una cita, revisará estos horarios,
+                          validará disponibilidad y creará la cita automáticamente.
+                        </p>
+                      </div>
+
+                      <div className="agenda-example">
+                        <span>Ejemplo para probar por WhatsApp:</span>
+                        <code>Hola, quiero agendar una cita mañana a las 3</code>
+                      </div>
+                    </div>
+
+                    <label className="switch-row agenda-toggle">
+                      <input
+                        type="checkbox"
+                        checked={!!botAgendaSettings.enabled}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            enabled: e.target.checked
+                          })
+                        }
+                      />
+                      <span>Activar agenda automática para este bot</span>
+                    </label>
+
+                    <div className="agenda-config-grid">
+                      <label className="field-label">
+                        <span>Tipo de cita</span>
+                        <select
+                          value={botAgendaSettings.goal || 'sales_call'}
                           onChange={e =>
                             setBotAgendaSettings({
                               ...botAgendaSettings,
-                              enabled: e.target.checked
+                              goal: e.target.value
+                            })
+                          }
+                        >
+                          <option value="sales_call">Llamada comercial</option>
+                          <option value="zoom">Zoom</option>
+                          <option value="meet">Google Meet</option>
+                          <option value="support_call">Soporte</option>
+                        </select>
+                        <small>Define el objetivo principal de la cita.</small>
+                      </label>
+
+                      <label className="field-label">
+                        <span>Duración de la cita</span>
+                        <input
+                          type="number"
+                          min="5"
+                          placeholder="30"
+                          value={botAgendaSettings.duration_mins || 30}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              duration_mins: Number(e.target.value)
                             })
                           }
                         />
-
-                        <span>
-                          Activar agenda automática
-                        </span>
+                        <small>Tiempo en minutos. Recomendado: 30.</small>
                       </label>
-                    </div>
 
-                    <div className="form-grid">
-                      <select
-                        value={botAgendaSettings.goal || 'sales_call'}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            goal: e.target.value
-                          })
-                        }
-                      >
-                        <option value="sales_call">Llamada comercial</option>
-                        <option value="zoom">Zoom</option>
-                        <option value="meet">Google Meet</option>
-                        <option value="support_call">Soporte</option>
-                      </select>
+                      <label className="field-label">
+                        <span>Buffer entre citas</span>
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="10"
+                          value={botAgendaSettings.buffer_mins ?? 10}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              buffer_mins: Number(e.target.value)
+                            })
+                          }
+                        />
+                        <small>Espacio libre entre reuniones. Recomendado: 10 o 15.</small>
+                      </label>
 
-                      <input
-                        type="number"
-                        placeholder="Duración (min)"
-                        value={botAgendaSettings.duration_mins || 30}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            duration_mins: Number(e.target.value)
-                          })
-                        }
-                      />
+                      <label className="field-label">
+                        <span>Días disponibles</span>
+                        <input
+                          placeholder="mon,tue,wed,thu,fri"
+                          value={botAgendaSettings.available_days || 'mon,tue,wed,thu,fri'}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              available_days: e.target.value
+                            })
+                          }
+                        />
+                        <small>Usa: mon,tue,wed,thu,fri,sat,sun.</small>
+                      </label>
 
-                      <input
-                        type="number"
-                        placeholder="Buffer (min)"
-                        value={botAgendaSettings.buffer_mins || 0}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            buffer_mins: Number(e.target.value)
-                          })
-                        }
-                      />
+                      <label className="field-label">
+                        <span>Hora de inicio</span>
+                        <input
+                          type="time"
+                          value={botAgendaSettings.start_time || '09:00'}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              start_time: e.target.value
+                            })
+                          }
+                        />
+                        <small>Desde qué hora puede agendar el bot.</small>
+                      </label>
 
-                      <input
-                        placeholder="Días disponibles"
-                        value={botAgendaSettings.available_days || ''}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            available_days: e.target.value
-                          })
-                        }
-                      />
+                      <label className="field-label">
+                        <span>Hora final</span>
+                        <input
+                          type="time"
+                          value={botAgendaSettings.end_time || '18:00'}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              end_time: e.target.value
+                            })
+                          }
+                        />
+                        <small>Hasta qué hora puede agendar el bot.</small>
+                      </label>
 
-                      <input
-                        type="time"
-                        value={botAgendaSettings.start_time || '09:00'}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            start_time: e.target.value
-                          })
-                        }
-                      />
+                      <label className="field-label">
+                        <span>WhatsApp para notificaciones</span>
+                        <input
+                          placeholder="573118777641"
+                          value={botAgendaSettings.notify_whatsapp || ''}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              notify_whatsapp: e.target.value
+                            })
+                          }
+                        />
+                        <small>Número que recibe avisos cuando se agenda una cita.</small>
+                      </label>
 
-                      <input
-                        type="time"
-                        value={botAgendaSettings.end_time || '18:00'}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            end_time: e.target.value
-                          })
-                        }
-                      />
+                      <label className="field-label">
+                        <span>Email para notificaciones</span>
+                        <input
+                          type="email"
+                          placeholder="gerencia@empresa.com"
+                          value={botAgendaSettings.notify_email || ''}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              notify_email: e.target.value
+                            })
+                          }
+                        />
+                        <small>Correo donde llegará el aviso de nueva cita.</small>
+                      </label>
 
-                      <input
-                        placeholder="WhatsApp notificaciones"
-                        value={botAgendaSettings.notify_whatsapp || ''}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            notify_whatsapp: e.target.value
-                          })
-                        }
-                      />
-
-                      <input
-                        placeholder="Email notificaciones"
-                        value={botAgendaSettings.notify_email || ''}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            notify_email: e.target.value
-                          })
-                        }
-                      />
-
-                      <input
-                        type="number"
-                        placeholder="Recordatorio antes (min)"
-                        value={botAgendaSettings.reminder_before_mins || 60}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            reminder_before_mins: Number(e.target.value)
-                          })
-                        }
-                      />
+                      <label className="field-label">
+                        <span>Recordatorio antes de la cita</span>
+                        <input
+                          type="number"
+                          min="5"
+                          placeholder="60"
+                          value={botAgendaSettings.reminder_before_mins || 60}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              reminder_before_mins: Number(e.target.value)
+                            })
+                          }
+                        />
+                        <small>Minutos antes. Ejemplo: 60 = 1 hora antes.</small>
+                      </label>
                     </div>
 
                     <button
