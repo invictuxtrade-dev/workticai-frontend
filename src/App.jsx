@@ -6745,1124 +6745,291 @@ export default function App() {
   }
 }
 
-/* ======================== DASHBOARD PREMIUM ULTRA ======================== */
-.dashboard-premium-ultra {
-  animation: dashboardFadeIn 0.5s ease-out;
-}
 
-@keyframes dashboardFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* HEADER PREMIUM */
-.dashboard-premium-header {
-  position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  border-radius: 1.5rem;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.header-glow-bg {
-  position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 50%;
-  height: 160%;
-  background: radial-gradient(circle, rgba(116, 48, 226, 0.4), transparent);
-  filter: blur(80px);
-}
-
-.header-premium-content {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 1.5rem;
-  backdrop-filter: blur(10px);
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.header-welcome {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.welcome-icon {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  color: white;
-  box-shadow: 0 8px 16px rgba(116, 48, 226, 0.3);
-}
-
-.welcome-pulse {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 14px;
-  background: rgba(116, 48, 226, 0.5);
-  animation: welcomePulse 2s infinite;
-}
-
-@keyframes welcomePulse {
-  0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.welcome-text h1 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-}
-
-.welcome-text p {
-  color: #94a3b8;
-  font-size: 0.7rem;
-  margin: 0.1rem 0 0;
-}
-
-.header-date {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem 1rem;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: white;
-  font-size: 0.75rem;
-}
-
-/* MÉTRICAS PRINCIPALES */
-.dashboard-metrics-premium {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.metric-premium-card-main {
-  background: white;
-  border-radius: 1rem;
-  padding: 0.8rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.metric-premium-card-main::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #7430e2, #2563eb);
-}
-
-.metric-premium-card-main:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: #c4b5fd;
-}
-
-.metric-premium-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-}
-
-.metric-premium-data {
-  flex: 1;
-}
-
-.metric-premium-value {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-  line-height: 1.2;
-}
-
-.metric-premium-label {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.metric-premium-trend {
-  background: #f1f5f9;
-  padding: 0.2rem 0.4rem;
-  border-radius: 20px;
-  font-size: 0.6rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.15rem;
-}
-
-.metric-premium-trend.up {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-/* GRÁFICAS */
-.dashboard-charts-premium {
-  display: grid;
-  grid-template-columns: 1fr 0.8fr;
-  gap: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.chart-premium-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.chart-premium-card:hover {
-  border-color: #c4b5fd;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
-.chart-premium-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.header-icon-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.header-icon-title i {
-  color: #7430e2;
-  font-size: 0.9rem;
-}
-
-.header-icon-title h3 {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.chart-premium-legend {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.65rem;
-  color: #64748b;
-}
-
-.legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.chart-premium-body {
-  padding: 1rem;
-}
-
-/* Barras de etapas */
-.stage-bar-premium {
-  margin-bottom: 0.8rem;
-}
-
-.stage-bar-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.3rem;
-}
-
-.stage-icon-badge {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-}
-
-.stage-details {
-  flex: 1;
-}
-
-.stage-name {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: block;
-}
-
-.stage-desc {
-  font-size: 0.55rem;
-  color: #64748b;
-}
-
-.stage-numbers {
-  text-align: right;
-}
-
-.stage-count {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-}
-
-.stage-percent {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.stage-bar-track {
-  background: #e2e8f0;
-  border-radius: 20px;
-  height: 8px;
-  overflow: hidden;
-}
-
-.stage-bar-fill {
-  height: 100%;
-  border-radius: 20px;
-  transition: width 0.5s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.stage-bar-fill .bar-value {
-  display: none;
-}
-
-/* Gráfica de mensajes */
-.messages-chart {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  height: 160px;
-  gap: 0.5rem;
-}
-
-.message-bar-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.message-bar-container {
-  width: 100%;
-  height: 120px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.message-bar {
-  width: 80%;
-  background: linear-gradient(180deg, #7430e2, #2563eb);
-  border-radius: 8px 8px 4px 4px;
-  transition: height 0.5s ease;
-  position: relative;
-  min-height: 4px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 4px;
-}
-
-.message-count {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: white;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
-}
-
-.message-day {
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.chart-premium-footer {
-  padding: 0.8rem 1rem;
+/* ======================== AGENDA AI EN DASHBOARD ======================== */
+.agenda-bot-section {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
   border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
+  padding: 1rem;
+}
+
+.agenda-bot-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.total-messages {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.trend-badge {
-  font-size: 0.6rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.trend-badge.up {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-/* PLAN USAGE */
-.plan-usage-premium {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.plan-usage-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  background: #f8fafc;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid #e2e8f0;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.8rem;
 }
 
-.header-left {
+.agenda-bot-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.header-left i {
+.agenda-bot-title i {
   color: #7430e2;
   font-size: 0.9rem;
 }
 
-.header-left h3 {
+.agenda-bot-title span {
   font-size: 0.8rem;
   font-weight: 700;
   color: #0f172a;
-  margin: 0;
 }
 
-.plan-badge {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  color: white;
-  padding: 0.2rem 0.6rem;
+.agenda-bot-badge {
+  background: #e0e7ff;
+  color: #4f46e5;
+  padding: 0.15rem 0.4rem;
   border-radius: 20px;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
 }
 
-.upgrade-btn {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 40px;
-  font-size: 0.7rem;
-  gap: 0.3rem;
-}
-
-.plan-usage-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.8rem;
-  padding: 1rem;
-}
-
-.usage-premium-item {
+.agenda-toggle-premium {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: #f8fafc;
-  padding: 0.6rem;
-  border-radius: 0.8rem;
-}
-
-.usage-icon {
-  width: 32px;
-  height: 32px;
-  background: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #7430e2;
-  font-size: 0.8rem;
-}
-
-.usage-info {
-  flex: 1;
-}
-
-.usage-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: block;
-  margin-bottom: 0.2rem;
-}
-
-.usage-bar-container {
-  background: #e2e8f0;
-  border-radius: 10px;
-  height: 4px;
-  overflow: hidden;
-  margin-bottom: 0.2rem;
-}
-
-.usage-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #7430e2, #2563eb);
-  border-radius: 10px;
-  transition: width 0.3s;
-}
-
-.usage-stats {
-  display: flex;
-  gap: 0.2rem;
-}
-
-.usage-used {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.usage-limit {
-  font-size: 0.6rem;
-  color: #94a3b8;
-}
-
-/* BOTS SECTION */
-.bots-section-premium {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.bots-premium-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.bots-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.status-led {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.status-led.active {
-  background: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-}
-
-.status-led.inactive {
-  background: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-}
-
-.header-title h3 {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 0.2rem 0.5rem;
-  gap: 0.3rem;
-}
-
-.search-box i {
-  color: #94a3b8;
-  font-size: 0.7rem;
-}
-
-.search-box input {
-  border: none;
-  padding: 0.2rem;
-  font-size: 0.7rem;
-  width: 120px;
-}
-
-.search-box input:focus {
-  outline: none;
-}
-
-.bots-count {
-  background: #e2e8f0;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.create-bot-form {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.create-bot-form input {
-  flex: 1;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 0.7rem;
-}
-
-.create-bot-form button {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.7rem;
-  background: #7430e2;
-}
-
-.bots-grid-list {
-  padding: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  max-height: 380px;
-  overflow-y: auto;
-}
-
-.bot-premium-item {
-  background: #f8fafc;
-  border-radius: 0.8rem;
-  padding: 0.6rem;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s;
   cursor: pointer;
 }
 
-.bot-premium-item:hover {
-  border-color: #c4b5fd;
-  transform: translateX(3px);
+.agenda-toggle-premium input {
+  display: none;
 }
 
-.bot-premium-item.selected {
-  border-color: #7430e2;
-  background: linear-gradient(135deg, #f8f5ff, #ffffff);
-  box-shadow: 0 4px 12px rgba(116, 48, 226, 0.1);
+.agenda-toggle-premium .toggle-slider {
+  width: 44px;
+  height: 22px;
+  background: #cbd5e1;
+  border-radius: 30px;
+  position: relative;
+  transition: 0.3s;
 }
 
-.bot-premium-item.inactive {
-  opacity: 0.8;
-}
-
-.bot-item-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.5rem;
-}
-
-.bot-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.9rem;
-}
-
-.bot-info {
-  flex: 1;
-}
-
-.bot-info strong {
-  font-size: 0.75rem;
-  color: #0f172a;
-  display: block;
-}
-
-.bot-info span {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.bot-status {
-  font-size: 0.6rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-}
-
-.bot-status.active {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-.bot-status.inactive {
-  background: #fee2e2;
-  color: #ef4444;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
+.agenda-toggle-premium .toggle-slider:before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
   border-radius: 50%;
-  background: currentColor;
+  top: 2px;
+  left: 3px;
+  transition: 0.3s;
 }
 
-.bot-item-actions {
-  display: flex;
-  gap: 0.4rem;
-  justify-content: flex-end;
-}
-
-.bot-item-actions button {
-  padding: 0.3rem;
-  border-radius: 0.4rem;
-  font-size: 0.65rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bot-item-actions button:hover {
-  transform: none;
-}
-
-.action-edit:hover {
-  background: #e0e7ff;
-  color: #4f46e5;
-  border-color: #c4b5fd;
-}
-
-.action-stop:hover {
-  background: #fee2e2;
-  color: #ef4444;
-  border-color: #fecaca;
-}
-
-.action-start:hover {
-  background: #dcfce7;
-  color: #10b981;
-  border-color: #bbf7d0;
-}
-
-.action-delete:hover {
-  background: #fee2e2;
-  color: #ef4444;
-  border-color: #fecaca;
-}
-
-.empty-bots {
-  text-align: center;
-  padding: 2rem;
-  color: #64748b;
-}
-
-.empty-bots i {
-  font-size: 2rem;
-  color: #cbd5e1;
-  margin-bottom: 0.5rem;
-}
-
-.empty-bots p {
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-.empty-bots span {
-  font-size: 0.65rem;
-}
-
-.bots-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-
-.bots-pagination button {
-  padding: 0.2rem 0.5rem;
-  font-size: 0.65rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-}
-
-/* BOT SELECCIONADO */
-.selected-bot-premium {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.selected-bot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: linear-gradient(135deg, #f8fafc, #ffffff);
-  border-bottom: 1px solid #e2e8f0;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.bot-selected-info {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.bot-selected-avatar {
-  width: 48px;
-  height: 48px;
+.agenda-toggle-premium input:checked + .toggle-slider {
   background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.3rem;
 }
 
-.bot-selected-info h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
+.agenda-toggle-premium input:checked + .toggle-slider:before {
+  transform: translateX(20px);
 }
 
-.bot-selected-info p {
-  font-size: 0.65rem;
-  color: #64748b;
-  margin: 0;
-}
-
-.bot-selected-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-stop-large, .action-start-large, .action-edit-large {
-  padding: 0.4rem 1rem;
+.agenda-toggle-premium .toggle-label {
   font-size: 0.7rem;
-  gap: 0.3rem;
-}
-
-.action-stop-large {
-  background: #ef4444;
-}
-
-.action-start-large {
-  background: #10b981;
-}
-
-.selected-bot-body {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-
-.bot-qr-section {
-  text-align: center;
-  min-width: 160px;
-}
-
-.qr-container {
-  background: white;
-  padding: 0.5rem;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 0.5rem;
-}
-
-.qr-premium {
-  width: 120px;
-  height: 120px;
-  object-fit: contain;
-}
-
-.qr-placeholder {
-  width: 120px;
-  height: 120px;
-  background: #f8fafc;
-  border-radius: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  color: #94a3b8;
-}
-
-.qr-placeholder i {
-  font-size: 2rem;
-}
-
-.qr-placeholder span {
-  font-size: 0.6rem;
-}
-
-.qr-info {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.6rem;
-  color: #64748b;
-  background: #f8fafc;
-  padding: 0.3rem 0.5rem;
-  border-radius: 0.5rem;
-}
-
-.bot-metrics-section {
-  flex: 1;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-around;
-}
-
-.bot-metric-item {
-  text-align: center;
-  flex: 1;
-}
-
-.metric-icon-small {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  margin: 0 auto 0.5rem;
-}
-
-.metric-data {
-  text-align: center;
-}
-
-.metric-value-small {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-}
-
-.metric-label-small {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.bot-leads-chart {
-  padding: 1rem;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-
-.chart-title-mini {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
-}
-
-.chart-title-mini i {
-  color: #7430e2;
-  font-size: 0.8rem;
-}
-
-.chart-title-mini span {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.bot-stage-bars {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.bot-stage-item {
-  flex: 1;
-  min-width: 60px;
-}
-
-.bot-stage-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.6rem;
-  margin-bottom: 0.2rem;
-}
-
-.bot-stage-label {
-  font-weight: 700;
+  font-weight: 600;
   color: #475569;
 }
 
-.bot-stage-count {
-  font-weight: 800;
-  color: #0f172a;
+.agenda-bot-grid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1rem;
 }
 
-.bot-stage-track {
-  background: #e2e8f0;
-  border-radius: 10px;
-  height: 4px;
-  overflow: hidden;
+.agenda-bot-config {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
-.bot-stage-fill {
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.3s;
+.config-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
 }
 
-.no-bot-selected-premium {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  text-align: center;
-  padding: 3rem;
+.config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.config-item.full {
+  grid-column: span 4;
+}
+
+.config-item label {
+  font-size: 0.6rem;
+  font-weight: 700;
   color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
-.no-bot-selected-premium i {
-  font-size: 3rem;
-  color: #cbd5e1;
-  margin-bottom: 1rem;
+.config-item label i {
+  font-size: 0.55rem;
 }
 
-.no-bot-selected-premium h4 {
-  font-size: 1rem;
-  color: #0f172a;
-  margin-bottom: 0.3rem;
+.config-item select,
+.config-item input {
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  font-size: 0.7rem;
+  background: white;
 }
 
-.no-bot-selected-premium p {
+.days-selector-mini {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.day-chip-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.7rem;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .dashboard-metrics-premium {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .dashboard-charts-premium {
+.day-chip-mini.active {
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  border-color: #7430e2;
+  color: white;
+}
+
+.agenda-bot-slots {
+  background: #f8fafc;
+  border-radius: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+}
+
+.slots-header-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.slots-header-mini i {
+  color: #7430e2;
+}
+
+.refresh-slots-mini {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  padding: 0.2rem;
+  font-size: 0.65rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.slots-list-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.slot-item-mini {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  font-size: 0.65rem;
+}
+
+.slot-date-mini {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.slot-time-mini {
+  color: #64748b;
+}
+
+.empty-slots-mini {
+  text-align: center;
+  padding: 0.8rem;
+  color: #94a3b8;
+  font-size: 0.65rem;
+}
+
+.save-agenda-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  border: none;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  font-size: 0.7rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-agenda-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(116, 48, 226, 0.3);
+}
+
+.save-agenda-btn:disabled {
+  opacity: 0.6;
+  transform: none;
+}
+
+/* RESPONSIVE para Agenda AI en Dashboard */
+@media (max-width: 900px) {
+  .agenda-bot-grid {
     grid-template-columns: 1fr;
   }
   
-  .bots-section-premium {
-    grid-template-columns: 1fr;
-  }
-  
-  .plan-usage-grid {
+  .config-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .config-item.full {
+    grid-column: span 2;
   }
 }
 
-@media (max-width: 768px) {
-  .dashboard-metrics-premium {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .plan-usage-grid {
+@media (max-width: 600px) {
+  .config-row {
     grid-template-columns: 1fr;
   }
   
-  .selected-bot-body {
-    flex-direction: column;
-    align-items: center;
+  .config-item.full {
+    grid-column: span 1;
   }
   
-  .bot-metrics-section {
-    width: 100%;
-  }
-  
-  .header-premium-content {
+  .agenda-bot-header {
     flex-direction: column;
-    text-align: center;
-  }
-  
-  .bot-stage-bars {
-    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -11647,7 +10814,7 @@ async function updateUser(e) {
           </section>
         )}
 
-  {/* ======================== DASHBOARD PREMIUM ULTRA ======================== */}
+       {/* ======================== DASHBOARD PREMIUM ULTRA ======================== */}
 {tab === 'dashboard' && (
   <section className="dashboard-premium-ultra">
     
@@ -12066,7 +11233,7 @@ async function updateUser(e) {
       </div>
     </div>
 
-    {/* BOT SELECCIONADO - DETALLE PREMIUM CON AGENDA AI */}
+    {/* BOT SELECCIONADO - DETALLE PREMIUM */}
     {selectedBot ? (
       <div className="selected-bot-premium">
         <div className="selected-bot-header">
@@ -12180,244 +11347,6 @@ async function updateUser(e) {
                 </div>
               )
             })}
-          </div>
-        </div>
-
-        {/* ======================== AGENDA AI SECTION EN BOT ======================== */}
-        <div className="agenda-bot-section">
-          <div className="agenda-bot-header">
-            <div className="agenda-bot-title">
-              <i className="fas fa-calendar-check"></i>
-              <span>Agenda AI</span>
-              <span className="agenda-bot-badge">Automatización inteligente</span>
-            </div>
-            <label className="agenda-toggle-premium">
-              <input
-                type="checkbox"
-                checked={!!botAgendaSettings.enabled}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    enabled: e.target.checked
-                  })
-                }
-              />
-              <span className="toggle-slider"></span>
-              <span className="toggle-label">Activar agenda</span>
-            </label>
-          </div>
-
-          <div className="agenda-bot-grid">
-            <div className="agenda-bot-config">
-              <div className="config-row">
-                <div className="config-item">
-                  <label><i className="fas fa-phone-alt"></i> Tipo de cita</label>
-                  <select
-                    value={botAgendaSettings.goal || 'sales_call'}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        goal: e.target.value
-                      })
-                    }
-                  >
-                    <option value="sales_call">📞 Llamada comercial</option>
-                    <option value="zoom">🎥 Zoom</option>
-                    <option value="meet">📧 Google Meet</option>
-                    <option value="support_call">🛠️ Soporte</option>
-                  </select>
-                </div>
-                <div className="config-item">
-                  <label><i className="fas fa-hourglass-half"></i> Duración (min)</label>
-                  <input
-                    type="number"
-                    min="5"
-                    step="5"
-                    value={botAgendaSettings.duration_mins || 30}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        duration_mins: Number(e.target.value)
-                      })
-                    }
-                  />
-                </div>
-                <div className="config-item">
-                  <label><i className="fas fa-pause-circle"></i> Buffer (min)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="5"
-                    value={botAgendaSettings.buffer_mins ?? 10}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        buffer_mins: Number(e.target.value)
-                      })
-                    }
-                  />
-                </div>
-                <div className="config-item">
-                  <label><i className="fas fa-bell"></i> Recordatorio (min)</label>
-                  <input
-                    type="number"
-                    min="5"
-                    step="15"
-                    value={botAgendaSettings.reminder_before_mins || 60}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        reminder_before_mins: Number(e.target.value)
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="config-row">
-                <div className="config-item full">
-                  <label><i className="fas fa-calendar-week"></i> Días disponibles</label>
-                  <div className="days-selector-mini">
-                    {[
-                      { key: 'mon', label: 'L' },
-                      { key: 'tue', label: 'M' },
-                      { key: 'wed', label: 'M' },
-                      { key: 'thu', label: 'J' },
-                      { key: 'fri', label: 'V' },
-                      { key: 'sat', label: 'S' },
-                      { key: 'sun', label: 'D' }
-                    ].map(day => {
-                      const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
-                      const isActive = currentDays.includes(day.key)
-                      return (
-                        <button
-                          key={day.key}
-                          type="button"
-                          className={`day-chip-mini ${isActive ? 'active' : ''}`}
-                          onClick={() => {
-                            let newDays = [...currentDays]
-                            if (isActive) {
-                              newDays = newDays.filter(d => d !== day.key)
-                            } else {
-                              newDays.push(day.key)
-                            }
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              available_days: newDays.join(',')
-                            })
-                          }}
-                        >
-                          {day.label}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <div className="config-row">
-                <div className="config-item">
-                  <label><i className="fas fa-sun"></i> Hora inicio</label>
-                  <input
-                    type="time"
-                    value={botAgendaSettings.start_time || '09:00'}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        start_time: e.target.value
-                      })
-                    }
-                  />
-                </div>
-                <div className="config-item">
-                  <label><i className="fas fa-moon"></i> Hora fin</label>
-                  <input
-                    type="time"
-                    value={botAgendaSettings.end_time || '18:00'}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        end_time: e.target.value
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="config-row">
-                <div className="config-item">
-                  <label><i className="fab fa-whatsapp"></i> WhatsApp notif.</label>
-                  <input
-                    placeholder="573118777641"
-                    value={botAgendaSettings.notify_whatsapp || ''}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        notify_whatsapp: e.target.value
-                      })
-                    }
-                  />
-                </div>
-                <div className="config-item">
-                  <label><i className="fas fa-envelope"></i> Email notif.</label>
-                  <input
-                    type="email"
-                    placeholder="gerencia@empresa.com"
-                    value={botAgendaSettings.notify_email || ''}
-                    onChange={e =>
-                      setBotAgendaSettings({
-                        ...botAgendaSettings,
-                        notify_email: e.target.value
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="agenda-bot-slots">
-              <div className="slots-header-mini">
-                <i className="fas fa-calendar-alt"></i>
-                <span>Próximos espacios disponibles</span>
-                <button
-                  type="button"
-                  className="refresh-slots-mini"
-                  onClick={() => loadAgendaSlots(selectedBot.id)}
-                >
-                  <i className="fas fa-sync-alt"></i>
-                </button>
-              </div>
-              <div className="slots-list-mini">
-                {(agendaSlots || []).length > 0 ? (
-                  (agendaSlots || []).slice(0, 3).map((slot, idx) => (
-                    <div key={idx} className="slot-item-mini">
-                      <div className="slot-date-mini">
-                        {new Date(slot.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                      </div>
-                      <div className="slot-time-mini">
-                        {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="empty-slots-mini">
-                    <i className="fas fa-calendar-times"></i>
-                    <span>No hay espacios</span>
-                  </div>
-                )}
-              </div>
-              <button
-                className="save-agenda-btn"
-                onClick={() => saveBotAgendaSettings(selectedBot.id)}
-                disabled={agendaLoading}
-              >
-                {agendaLoading ? (
-                  <><i className="fas fa-circle-notch fa-spin"></i> Guardando...</>
-                ) : (
-                  <><i className="fas fa-save"></i> Guardar Agenda AI</>
-                )}
-              </button>
-            </div>
           </div>
         </div>
       </div>
