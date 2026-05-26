@@ -10661,348 +10661,93 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== FUNNEL PREMIUM ULTRA ======================== */}
-{tab === 'funnel' && (
-  <section className="funnel-premium-dashboard">
-    
-    {/* HEADER PREMIUM */}
-    <div className="funnel-premium-hero">
-      <div className="funnel-hero-glow"></div>
-      <div className="funnel-hero-content">
-        <div className="funnel-hero-icon">
-          <i className="fas fa-funnel-dollar"></i>
-          <div className="funnel-hero-pulse"></div>
-        </div>
-        <div className="funnel-hero-text">
-          <h1>Embudo de conversión</h1>
-          <p>Analiza el rendimiento de tu funnel en tiempo real</p>
-        </div>
-        <div className="funnel-hero-stats">
-          <div className="funnel-stat-item">
-            <span className="stat-value">{funnelMetrics.landing_views || 0}</span>
-            <span className="stat-label">Visitas</span>
-          </div>
-          <div className="funnel-stat-divider"></div>
-          <div className="funnel-stat-item">
-            <span className="stat-value">{funnelMetrics.whatsapp_clicks || 0}</span>
-            <span className="stat-label">Clicks WA</span>
-          </div>
-          <div className="funnel-stat-divider"></div>
-          <div className="funnel-stat-item">
-            <span className="stat-value">{metrics.leads || 0}</span>
-            <span className="stat-label">Leads</span>
-          </div>
-          <div className="funnel-stat-divider"></div>
-          <div className="funnel-stat-item">
-            <span className="stat-value">{metrics.closed_leads || 0}</span>
-            <span className="stat-label">Cerrados</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* MÉTRICAS CLAVE */}
-    <div className="funnel-metrics-grid">
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#eff6ff' }}>
-          <i className="fas fa-eye" style={{ color: '#3b82f6' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{funnelMetrics.landing_views || 0}</span>
-          <span className="metric-label">Visitas a landing</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+12%</span>
-        </div>
-      </div>
-
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#dcfce7' }}>
-          <i className="fab fa-whatsapp" style={{ color: '#22c55e' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</span>
-          <span className="metric-label">Clicks a WhatsApp</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+8%</span>
-        </div>
-      </div>
-
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#fef3c7' }}>
-          <i className="fas fa-users" style={{ color: '#f59e0b' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{metrics.leads || 0}</span>
-          <span className="metric-label">Leads generados</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+5%</span>
-        </div>
-      </div>
-
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#f3e8ff' }}>
-          <i className="fas fa-trophy" style={{ color: '#8b5cf6' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{metrics.closed_leads || 0}</span>
-          <span className="metric-label">Ventas cerradas</span>
-        </div>
-        <div className="metric-trend">
-          <i className="fas fa-chart-line"></i>
-          <span>+3%</span>
-        </div>
-      </div>
-    </div>
-
-    {/* EMBUDO VISUAL 3D */}
-    <div className="funnel-visual-container">
-      <div className="funnel-title-section">
-        <i className="fas fa-chart-line"></i>
-        <h3>Embudo de conversión</h3>
-        <span className="funnel-badge">Tasa conversión: {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
-      </div>
-      
-      <div className="funnel-steps-container">
-        {[
-          { label: 'Visitas', value: funnelMetrics.landing_views || 0, icon: 'fa-eye', color: '#3b82f6', bg: '#eff6ff' },
-          { label: 'Clicks WA', value: funnelMetrics.whatsapp_clicks || 0, icon: 'fa-message', color: '#22c55e', bg: '#dcfce7' },
-          { label: 'Leads', value: metrics.leads || 0, icon: 'fa-user-plus', color: '#f59e0b', bg: '#fef3c7' },
-          { label: 'Interesados', value: leads.filter(l => l.stage === 'interested').length, icon: 'fa-fire', color: '#ef4444', bg: '#fee2e2' },
-          { label: 'Hot leads', value: leads.filter(l => l.stage === 'hot').length, icon: 'fa-bolt', color: '#8b5cf6', bg: '#f3e8ff' },
-          { label: 'Cerrados', value: metrics.closed_leads || 0, icon: 'fa-trophy', color: '#10b981', bg: '#dcfce7' }
-        ].map((step, idx, arr) => {
-          const prevValue = idx > 0 ? arr[idx-1].value : step.value
-          const conversionRate = prevValue > 0 ? (step.value / prevValue) * 100 : 100
-          const widthPercent = (step.value / (arr[0].value || 1)) * 100
-          
-          return (
-            <div key={step.label} className="funnel-step-premium">
-              <div className="funnel-step-icon" style={{ background: step.bg, color: step.color }}>
-                <i className={`fas ${step.icon}`}></i>
-              </div>
-              <div className="funnel-step-info">
-                <div className="step-header">
-                  <span className="step-label">{step.label}</span>
-                  <span className="step-value">{step.value}</span>
-                </div>
-                <div className="step-bar-container">
-                  <div className="step-bar" style={{ width: `${widthPercent}%`, background: step.color }}>
-                    <span className="step-percentage">{conversionRate.toFixed(0)}%</span>
+        {/* ======================== FUNNEL ======================== */}
+        {tab === 'funnel' && (
+          <section className="stack gap-lg">
+            <div className="metric-grid">
+              <div className="stripe-card metric"><div className="metric-label">Visitas landing</div><div className="metric-value">{funnelMetrics.landing_views || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Clicks WhatsApp</div><div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Leads</div><div className="metric-value">{metrics.leads || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Cerrados</div><div className="metric-value">{metrics.closed_leads || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">CTR</div><div className="metric-value">{Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Conversión</div><div className="metric-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</div></div>
+            </div>
+            <div className="stripe-card">
+              <div className="section-title">Embudo de conversión</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1rem' }}>
+                {[
+                  ['Visitas', funnelMetrics.landing_views],
+                  ['Clicks WA', funnelMetrics.whatsapp_clicks],
+                  ['Leads', metrics.leads],
+                  ['Interesados', leads.filter(l => l.stage === 'interested').length],
+                  ['Hot', leads.filter(l => l.stage === 'hot').length],
+                  ['Cerrados', metrics.closed_leads]
+                ].map(([label, val], i) => (
+                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#7430e2', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
+                    {label}: {val || 0}
                   </div>
-                </div>
-                <div className="step-footer">
-                  <span className="step-conversion">
-                    <i className="fas fa-arrow-right"></i>
-                    Conversión: {conversionRate.toFixed(0)}%
-                  </span>
-                </div>
+                ))}
               </div>
             </div>
-          )
-        })}
-      </div>
-    </div>
-
-    {/* GRÁFICAS Y ESTADÍSTICAS AVANZADAS */}
-    <div className="funnel-charts-row">
-      {/* Leads por etapa - Gráfica de barras premium */}
-      <div className="funnel-chart-card">
-        <div className="chart-card-header">
-          <i className="fas fa-chart-simple"></i>
-          <h4>Leads por etapa</h4>
-          <span className="chart-badge">Distribución actual</span>
-        </div>
-        <div className="stage-bars-container">
-          {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
-            const count = leads.filter(l => l.stage === stage).length
-            const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
-            const percentage = (count / maxCount) * 100
-            const percentTotal = Math.round((count / (leads.length || 1)) * 100)
-            
-            const stageConfig = {
-              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', bg: '#eff6ff' },
-              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', bg: '#f5f3ff' },
-              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', bg: '#fffbeb' },
-              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', bg: '#fef2f2' },
-              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', bg: '#ecfdf5' }
-            }
-            const config = stageConfig[stage]
-            
-            return (
-              <div key={stage} className="stage-bar-item">
-                <div className="stage-bar-header">
-                  <div className="stage-icon" style={{ background: config.bg, color: config.color }}>
-                    <i className={`fas ${config.icon}`}></i>
-                  </div>
-                  <span className="stage-name">{config.label}</span>
-                  <span className="stage-count">{count}</span>
-                  <span className="stage-percent">{percentTotal}%</span>
-                </div>
-                <div className="stage-bar-track">
-                  <div className="stage-bar-fill" style={{ width: `${percentage}%`, background: config.color }}>
-                    <span className="bar-value">{count}</span>
-                  </div>
-                </div>
+            <div className="stripe-card">
+              <div className="chart-title">Leads por etapa</div>
+              <div className="bar-container">
+                {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
+                  const count = leads.filter(l => l.stage === stage).length
+                  return (
+                    <div key={stage} className="bar-item">
+                      <div className="bar-label">{stage}</div>
+                      <div className="bar-fill" style={{ width: `${Math.min(100, count * 10)}%` }}></div>
+                      <div className="bar-value">{count}</div>
+                    </div>
+                  )
+                })}
               </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Tasa de conversión - Gráfica de anillo */}
-      <div className="funnel-chart-card">
-        <div className="chart-card-header">
-          <i className="fas fa-chart-pie"></i>
-          <h4>Tasa de conversión</h4>
-          <span className="chart-badge">Efectividad</span>
-        </div>
-        <div className="conversion-ring-container">
-          <div className="ring-chart">
-            <svg viewBox="0 0 120 120" className="ring-svg">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" strokeWidth="10"/>
-              <circle 
-                cx="60" cy="60" r="52" fill="none" 
-                stroke="url(#ringGradient)" 
-                strokeWidth="10"
-                strokeDasharray={`${((metrics.closed_leads || 0) / (metrics.leads || 1)) * 327} 327`}
-                strokeLinecap="round"
-                transform="rotate(-90 60 60)"
-              />
-              <defs>
-                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#10b981"/>
-                  <stop offset="100%" stopColor="#34d399"/>
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="ring-inner">
-              <span className="ring-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
-              <span className="ring-label">Conversión</span>
             </div>
-          </div>
-          <div className="ring-stats">
-            <div className="ring-stat">
-              <span className="stat-dot" style={{ background: '#10b981' }}></span>
-              <span>Cerrados: {metrics.closed_leads || 0}</span>
-            </div>
-            <div className="ring-stat">
-              <span className="stat-dot" style={{ background: '#ef4444' }}></span>
-              <span>En funnel: {(metrics.leads || 0) - (metrics.closed_leads || 0)}</span>
-            </div>
-            <div className="ring-stat">
-              <span className="stat-dot" style={{ background: '#f59e0b' }}></span>
-              <span>Tasa cierre: {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* TABLA DE LEADS PREMIUM */}
-    <div className="funnel-table-card">
-      <div className="table-card-header">
-        <div className="table-header-left">
-          <i className="fas fa-users-viewfinder"></i>
-          <h4>Leads y conversaciones activas</h4>
-        </div>
-        <div className="table-header-right">
-          <div className="search-wrapper">
-            <i className="fas fa-search"></i>
-            <input 
-              type="text" 
-              placeholder="Buscar lead..." 
-              value={searchLead} 
-              onChange={e => setSearchLead(e.target.value)}
-              className="table-search"
-            />
-          </div>
-          <button className="refresh-btn" onClick={() => loadInboxLeads()}>
-            <i className="fas fa-sync-alt"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div className="table-responsive">
-        <table className="funnel-premium-table">
-          <thead>
-            <tr>
-              <th><i className="fas fa-user"></i> Nombre</th>
-              <th><i className="fab fa-whatsapp"></i> Teléfono</th>
-              <th><i className="fas fa-chart-simple"></i> Stage</th>
-              <th><i className="fas fa-robot"></i> Bot</th>
-              <th><i className="fas fa-message"></i> Último mensaje</th>
-              <th><i className="fas fa-cog"></i> Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLeads.length > 0 ? (
-              filteredLeads.slice(0, 10).map(lead => {
-                const stageColors = {
-                  new: { color: '#3b82f6', bg: '#eff6ff', label: 'Nuevo' },
-                  qualified: { color: '#8b5cf6', bg: '#f5f3ff', label: 'Calificado' },
-                  interested: { color: '#f59e0b', bg: '#fffbeb', label: 'Interesado' },
-                  hot: { color: '#ef4444', bg: '#fef2f2', label: 'Hot' },
-                  closed: { color: '#10b981', bg: '#ecfdf5', label: 'Cerrado' }
-                }
-                const stageStyle = stageColors[lead.stage] || stageColors.new
-                
-                return (
-                  <tr key={lead.id} className="lead-row" onClick={() => setSelectedLeadId(lead.id)} style={{ cursor: 'pointer' }}>
-                    <td className="lead-name">
-                      <div className="lead-avatar" style={{ background: stageStyle.bg, color: stageStyle.color }}>
-                        {(lead.display_name || lead.phone || 'U').charAt(0).toUpperCase()}
-                      </div>
-                      <span>{lead.display_name || '—'}</span>
-                    </td>
-                    <td className="lead-phone">{lead.phone}</td>
-                    <td>
-                      <span className="stage-pill" style={{ background: stageStyle.bg, color: stageStyle.color }}>
-                        {stageStyle.label}
-                      </span>
-                    </td>
-                    <td className="lead-bot">{lead.bot_name}</td>
-                    <td className="lead-message">{lead.last_inbound_text?.slice(0, 50)}...</td>
-                    <td>
-                      <button className="chat-action-btn" onClick={(e) => { e.stopPropagation(); setSelectedLeadId(lead.id); setTab('inbox'); }}>
-                        <i className="fas fa-comment-dots"></i>
-                        <span>Chat</span>
-                      </button>
-                    </td>
+            <div className="stripe-card">
+              <div className="row between">
+                <div className="section-title">Leads y conversaciones</div>
+                <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
+              </div>
+              <table className="leads-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Stage</th>
+                    <th>Bot</th>
+                    <th>Último mensaje</th>
+                    <th>Acción</th>
                   </tr>
-                )
-              })
-            ) : (
-              <tr className="empty-row">
-                <td colSpan="6">
-                  <div className="empty-leads">
-                    <i className="fas fa-inbox"></i>
-                    <p>No hay leads registrados</p>
-                    <span>Comienza a generar leads para verlos aquí</span>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      
-      {filteredLeads.length > 10 && (
-        <div className="table-footer">
-          <button className="view-all-btn" onClick={() => setTab('inbox')}>
-            Ver todos los leads ({filteredLeads.length})
-            <i className="fas fa-arrow-right"></i>
-          </button>
-        </div>
-      )}
-    </div>
-  </section>
-)}
+                </thead>
+                <tbody>
+                  {filteredLeads.length > 0 ? (
+                    filteredLeads.map(lead => (
+                      <tr key={lead.id}>
+                        <td>{lead.display_name || '—'}</td>
+                        <td>{lead.phone}</td>
+                        <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
+                        <td>{lead.bot_name}</td>
+                        <td>{lead.last_inbound_text?.slice(0, 40)}</td>
+                                                 <td>
+                          <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
+                            Ver chat
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                        No hay leads
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         {/* ======================== SOCIAL IA con PremiumGate ======================== */}
         {tab === 'social' && !canUseFeature('social_ai') && (
