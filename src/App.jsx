@@ -4256,6 +4256,94 @@ export default function App() {
           cursor: pointer;
         }
 
+        .bot-card-pro {
+        background:
+          radial-gradient(circle at top left, rgba(116,48,226,.08), transparent 35%),
+          #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1.25rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: .9rem;
+        transition: .2s ease;
+        box-shadow: 0 10px 28px rgba(15,23,42,.04);
+      }
+
+      .bot-card-pro:hover {
+        border-color: #7430e2;
+        box-shadow: 0 20px 40px rgba(116,48,226,.12);
+        transform: translateY(-2px);
+      }
+
+      .bot-card-pro.selected {
+        border-color: #7430e2;
+        background:
+          radial-gradient(circle at top left, rgba(116,48,226,.16), transparent 40%),
+          #f8f5ff;
+        box-shadow: 0 25px 50px rgba(116,48,226,.18);
+      }
+
+      .bot-card-pro.inactive {
+        opacity: .88;
+      }
+
+      .bot-card-pro-head {
+        display: grid;
+        grid-template-columns: 42px 1fr auto;
+        gap: .75rem;
+        align-items: center;
+      }
+
+      .bot-icon-pro {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg,#7430e2,#2563eb);
+        color: white;
+        box-shadow: 0 12px 28px rgba(116,48,226,.28);
+      }
+
+      .bot-icon-pro.inactive {
+        background: linear-gradient(135deg,#94a3b8,#64748b);
+      }
+
+      .bot-main-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .bot-main-info strong {
+        color: #0f172a;
+        font-size: .95rem;
+      }
+
+      .bot-main-info span {
+        color: #64748b;
+        font-size: .78rem;
+        word-break: break-all;
+      }
+
+      .bot-card-pro-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: .55rem;
+      }
+
+      .bot-card-pro-actions button {
+        justify-content: center;
+        min-height: 38px;
+      }
+
+      @media (max-width: 900px) {
+        .bot-card-pro-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -8066,17 +8154,69 @@ async function updateUser(e) {
                   <button disabled={busy || !selectedClientId}>Crear bot</button>
                 </form>
                 <div className="list two-col">
-                  {paginatedActiveBots.map(bot => (
-                    <div key={bot.id} className="bot-card active" onClick={() => setSelectedBotId(bot.id)}>
-                      <strong>{bot.name}</strong> <span>{bot.status}</span>
-                      <small>{bot.phone || 'Sin número'}</small>
-                      <div className="row gap-sm" onClick={e => e.stopPropagation()}>
-                        <button type="button" onClick={() => renameBot(bot)}>Editar</button>
-                        <button type="button" className="secondary" onClick={() => stopBot(bot.id)}>Apagar</button>
-                        <button type="button" className="danger tiny-btn" onClick={() => deleteBot(bot)}>Eliminar</button>
+                  {paginatedActiveBots.map(bot => {
+                  const isSelected = selectedBotId === bot.id
+
+                  return (
+                    <div
+                      key={bot.id}
+                      className={`bot-card-pro ${isSelected ? 'selected' : ''}`}
+                    >
+                      <div className="bot-card-pro-head">
+                        <div className="bot-icon-pro">
+                          <i className="fas fa-robot"></i>
+                        </div>
+
+                        <div className="bot-main-info">
+                          <strong>{bot.name}</strong>
+                          <span>{bot.phone || 'Sin número'}</span>
+                        </div>
+
+                        <span className={`pill ${bot.status}`}>
+                          {bot.status}
+                        </span>
+                      </div>
+
+                      <div className="bot-card-pro-actions">
+                        <button
+                          type="button"
+                          className={isSelected ? 'secondary' : ''}
+                          onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
+                        >
+                          <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
+                          {isSelected ? 'Quitar selección' : 'Seleccionar'}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="secondary"
+                          onClick={() => renameBot(bot)}
+                        >
+                          <i className="fas fa-pen"></i>
+                          Editar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="secondary"
+                          onClick={() => stopBot(bot.id)}
+                        >
+                          <i className="fas fa-power-off"></i>
+                          Apagar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="danger"
+                          onClick={() => deleteBot(bot)}
+                        >
+                          <i className="fas fa-trash"></i>
+                          Eliminar
+                        </button>
                       </div>
                     </div>
-                  ))}
+                  )
+                })}
                   {paginatedActiveBots.length === 0 && <div className="empty-box">No hay bots activos</div>}
                 </div>
                 <div className="pagination">
@@ -8092,17 +8232,73 @@ async function updateUser(e) {
                   <span className="pill disconnected">{filteredInactiveBots.length}</span>
                 </div>
                 <div className="list two-col">
-                  {paginatedInactiveBots.map(bot => (
-                    <div key={bot.id} className="bot-card" onClick={() => setSelectedBotId(bot.id)}>
-                      <strong>{bot.name}</strong> <span>{bot.status}</span>
-                      <small>{bot.phone || 'Sin número'}</small>
-                      <div className="row gap-sm" onClick={e => e.stopPropagation()}>
-                        <button type="button" onClick={async () => { await api(`/api/bots/${bot.id}/start`, { method: 'POST' }); await loadBots(selectedClientId); await loadQr(bot.id); showNotice('Bot encendido') }}>Encender</button>
-                        <button type="button" onClick={() => renameBot(bot)}>Editar</button>
-                        <button type="button" className="danger tiny-btn" onClick={() => deleteBot(bot)}>Eliminar</button>
+                  {paginatedInactiveBots.map(bot => {
+                    const isSelected = selectedBotId === bot.id
+
+                    return (
+                      <div
+                        key={bot.id}
+                        className={`bot-card-pro inactive ${isSelected ? 'selected' : ''}`}
+                      >
+                        <div className="bot-card-pro-head">
+                          <div className="bot-icon-pro inactive">
+                            <i className="fas fa-robot"></i>
+                          </div>
+
+                          <div className="bot-main-info">
+                            <strong>{bot.name}</strong>
+                            <span>{bot.phone || 'Sin número'}</span>
+                          </div>
+
+                          <span className={`pill ${bot.status}`}>
+                            {bot.status}
+                          </span>
+                        </div>
+
+                        <div className="bot-card-pro-actions">
+                          <button
+                            type="button"
+                            className={isSelected ? 'secondary' : ''}
+                            onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
+                          >
+                            <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
+                            {isSelected ? 'Quitar selección' : 'Seleccionar'}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await api(`/api/bots/${bot.id}/start`, { method: 'POST' })
+                              await loadBots(selectedClientId)
+                              await loadQr(bot.id)
+                              showNotice('Bot encendido')
+                            }}
+                          >
+                            <i className="fas fa-play"></i>
+                            Encender
+                          </button>
+
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() => renameBot(bot)}
+                          >
+                            <i className="fas fa-pen"></i>
+                            Editar
+                          </button>
+
+                          <button
+                            type="button"
+                            className="danger"
+                            onClick={() => deleteBot(bot)}
+                          >
+                            <i className="fas fa-trash"></i>
+                            Eliminar
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                   {paginatedInactiveBots.length === 0 && <div className="empty-box">No hay bots inactivos</div>}
                 </div>
                 <div className="pagination">
