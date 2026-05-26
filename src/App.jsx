@@ -5947,6 +5947,804 @@ export default function App() {
   }
 }   
 
+/* ======================== FUNNEL PREMIUM ULTRA ======================== */
+.funnel-premium-dashboard {
+  animation: funnelFadeIn 0.5s ease-out;
+}
+
+@keyframes funnelFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER PREMIUM */
+.funnel-premium-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  border-radius: 1.5rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.funnel-hero-glow {
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 50%;
+  height: 160%;
+  background: radial-gradient(circle, rgba(116, 48, 226, 0.4), transparent);
+  filter: blur(80px);
+}
+
+.funnel-hero-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  backdrop-filter: blur(10px);
+  flex-wrap: wrap;
+}
+
+.funnel-hero-icon {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 10px 20px rgba(116, 48, 226, 0.3);
+}
+
+.funnel-hero-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: rgba(116, 48, 226, 0.5);
+  animation: funnelPulse 2s infinite;
+}
+
+@keyframes funnelPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.funnel-hero-text h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.funnel-hero-text p {
+  color: #94a3b8;
+  font-size: 0.7rem;
+  margin: 0.1rem 0 0;
+}
+
+.funnel-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
+  margin-left: auto;
+}
+
+.funnel-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.funnel-stat-item .stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.funnel-stat-item .stat-label {
+  font-size: 0.6rem;
+  color: #94a3b8;
+}
+
+.funnel-stat-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* MÉTRICAS CLAVE */
+.funnel-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.funnel-metric-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.funnel-metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7430e2, #2563eb);
+}
+
+.funnel-metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #c4b5fd;
+}
+
+.metric-icon-bg {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-content .metric-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: block;
+  line-height: 1.2;
+}
+
+.metric-content .metric-label {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+.metric-trend {
+  background: #f1f5f9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.metric-trend.up {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+/* EMBUDO VISUAL */
+.funnel-visual-container {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.funnel-title-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.funnel-title-section i {
+  color: #7430e2;
+  font-size: 1rem;
+}
+
+.funnel-title-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  flex: 1;
+}
+
+.funnel-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.funnel-steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.funnel-step-premium {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f8fafc;
+  border-radius: 0.8rem;
+  padding: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.funnel-step-premium:hover {
+  background: #f1f5f9;
+  transform: translateX(5px);
+}
+
+.funnel-step-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.funnel-step-info {
+  flex: 1;
+}
+
+.step-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.step-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.step-value {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.step-bar-container {
+  background: #e2e8f0;
+  border-radius: 20px;
+  height: 28px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+
+.step-bar {
+  height: 100%;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.6rem;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.step-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.step-percentage {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.step-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.step-conversion {
+  font-size: 0.6rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* GRÁFICAS */
+.funnel-charts-row {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.funnel-chart-card {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.funnel-chart-card:hover {
+  border-color: #c4b5fd;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.chart-card-header i {
+  color: #7430e2;
+  font-size: 0.9rem;
+}
+
+.chart-card-header h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  flex: 1;
+}
+
+.chart-badge {
+  font-size: 0.6rem;
+  background: #e0e7ff;
+  color: #4f46e5;
+  padding: 0.15rem 0.4rem;
+  border-radius: 20px;
+}
+
+/* Leads por etapa - Barras */
+.stage-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.stage-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.stage-bar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stage-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.stage-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #475569;
+  flex: 1;
+}
+
+.stage-count {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.stage-percent {
+  font-size: 0.65rem;
+  color: #64748b;
+  min-width: 40px;
+  text-align: right;
+}
+
+.stage-bar-track {
+  background: #e2e8f0;
+  border-radius: 20px;
+  height: 24px;
+  overflow: hidden;
+}
+
+.stage-bar-fill {
+  height: 100%;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  transition: width 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stage-bar-fill .bar-value {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+/* Anillo de conversión */
+.conversion-ring-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ring-chart {
+  position: relative;
+  width: 130px;
+  height: 130px;
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.ring-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: block;
+}
+
+.ring-label {
+  font-size: 0.6rem;
+  color: #64748b;
+}
+
+.ring-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ring-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  color: #475569;
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* TABLA DE LEADS PREMIUM */
+.funnel-table-card {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.table-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.table-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-header-left i {
+  color: #7430e2;
+  font-size: 0.9rem;
+}
+
+.table-header-left h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.table-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.search-wrapper i {
+  color: #94a3b8;
+  font-size: 0.7rem;
+}
+
+.table-search {
+  border: none;
+  padding: 0.3rem;
+  font-size: 0.7rem;
+  width: 150px;
+}
+
+.table-search:focus {
+  outline: none;
+}
+
+.refresh-btn {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.5rem;
+  color: #64748b;
+  font-size: 0.7rem;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.funnel-premium-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.funnel-premium-table th {
+  text-align: left;
+  padding: 0.8rem;
+  background: #ffffff;
+  color: #64748b;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.funnel-premium-table th i {
+  margin-right: 0.3rem;
+  font-size: 0.7rem;
+}
+
+.funnel-premium-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.lead-row {
+  transition: all 0.2s ease;
+}
+
+.lead-row:hover {
+  background: #f8fafc;
+}
+
+.lead-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lead-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.lead-phone {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.lead-bot {
+  color: #64748b;
+}
+
+.lead-message {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #64748b;
+}
+
+.stage-pill {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.chat-action-btn {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.65rem;
+  gap: 0.3rem;
+}
+
+.chat-action-btn:hover {
+  background: #7430e2;
+  border-color: #7430e2;
+  color: white;
+}
+
+.empty-row td {
+  padding: 2rem;
+}
+
+.empty-leads {
+  text-align: center;
+  color: #64748b;
+}
+
+.empty-leads i {
+  font-size: 2rem;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+}
+
+.empty-leads p {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.empty-leads span {
+  font-size: 0.65rem;
+}
+
+.table-footer {
+  padding: 0.8rem;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.view-all-btn {
+  background: transparent;
+  border: none;
+  color: #7430e2;
+  font-weight: 600;
+  font-size: 0.7rem;
+  gap: 0.3rem;
+}
+
+.view-all-btn:hover {
+  background: transparent;
+  transform: none;
+  color: #2563eb;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .funnel-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .funnel-charts-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .funnel-hero-stats {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .funnel-hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .funnel-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .table-header-right {
+    width: 100%;
+  }
+  
+  .search-wrapper {
+    flex: 1;
+  }
+  
+  .table-search {
+    width: 100%;
+  }
+  
+  .funnel-premium-table {
+    font-size: 0.7rem;
+  }
+  
+  .lead-message {
+    max-width: 120px;
+  }
+}
+
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -10661,93 +11459,348 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== FUNNEL ======================== */}
-        {tab === 'funnel' && (
-          <section className="stack gap-lg">
-            <div className="metric-grid">
-              <div className="stripe-card metric"><div className="metric-label">Visitas landing</div><div className="metric-value">{funnelMetrics.landing_views || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Clicks WhatsApp</div><div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Leads</div><div className="metric-value">{metrics.leads || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Cerrados</div><div className="metric-value">{metrics.closed_leads || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">CTR</div><div className="metric-value">{Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Conversión</div><div className="metric-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</div></div>
-            </div>
-            <div className="stripe-card">
-              <div className="section-title">Embudo de conversión</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1rem' }}>
-                {[
-                  ['Visitas', funnelMetrics.landing_views],
-                  ['Clicks WA', funnelMetrics.whatsapp_clicks],
-                  ['Leads', metrics.leads],
-                  ['Interesados', leads.filter(l => l.stage === 'interested').length],
-                  ['Hot', leads.filter(l => l.stage === 'hot').length],
-                  ['Cerrados', metrics.closed_leads]
-                ].map(([label, val], i) => (
-                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#7430e2', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
-                    {label}: {val || 0}
+        {/* ======================== FUNNEL PREMIUM ULTRA ======================== */}
+{tab === 'funnel' && (
+  <section className="funnel-premium-dashboard">
+    
+    {/* HEADER PREMIUM */}
+    <div className="funnel-premium-hero">
+      <div className="funnel-hero-glow"></div>
+      <div className="funnel-hero-content">
+        <div className="funnel-hero-icon">
+          <i className="fas fa-funnel-dollar"></i>
+          <div className="funnel-hero-pulse"></div>
+        </div>
+        <div className="funnel-hero-text">
+          <h1>Embudo de conversión</h1>
+          <p>Analiza el rendimiento de tu funnel en tiempo real</p>
+        </div>
+        <div className="funnel-hero-stats">
+          <div className="funnel-stat-item">
+            <span className="stat-value">{funnelMetrics.landing_views || 0}</span>
+            <span className="stat-label">Visitas</span>
+          </div>
+          <div className="funnel-stat-divider"></div>
+          <div className="funnel-stat-item">
+            <span className="stat-value">{funnelMetrics.whatsapp_clicks || 0}</span>
+            <span className="stat-label">Clicks WA</span>
+          </div>
+          <div className="funnel-stat-divider"></div>
+          <div className="funnel-stat-item">
+            <span className="stat-value">{metrics.leads || 0}</span>
+            <span className="stat-label">Leads</span>
+          </div>
+          <div className="funnel-stat-divider"></div>
+          <div className="funnel-stat-item">
+            <span className="stat-value">{metrics.closed_leads || 0}</span>
+            <span className="stat-label">Cerrados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* MÉTRICAS CLAVE */}
+    <div className="funnel-metrics-grid">
+      <div className="funnel-metric-card">
+        <div className="metric-icon-bg" style={{ background: '#eff6ff' }}>
+          <i className="fas fa-eye" style={{ color: '#3b82f6' }}></i>
+        </div>
+        <div className="metric-content">
+          <span className="metric-value">{funnelMetrics.landing_views || 0}</span>
+          <span className="metric-label">Visitas a landing</span>
+        </div>
+        <div className="metric-trend up">
+          <i className="fas fa-arrow-up"></i>
+          <span>+12%</span>
+        </div>
+      </div>
+
+      <div className="funnel-metric-card">
+        <div className="metric-icon-bg" style={{ background: '#dcfce7' }}>
+          <i className="fab fa-whatsapp" style={{ color: '#22c55e' }}></i>
+        </div>
+        <div className="metric-content">
+          <span className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</span>
+          <span className="metric-label">Clicks a WhatsApp</span>
+        </div>
+        <div className="metric-trend up">
+          <i className="fas fa-arrow-up"></i>
+          <span>+8%</span>
+        </div>
+      </div>
+
+      <div className="funnel-metric-card">
+        <div className="metric-icon-bg" style={{ background: '#fef3c7' }}>
+          <i className="fas fa-users" style={{ color: '#f59e0b' }}></i>
+        </div>
+        <div className="metric-content">
+          <span className="metric-value">{metrics.leads || 0}</span>
+          <span className="metric-label">Leads generados</span>
+        </div>
+        <div className="metric-trend up">
+          <i className="fas fa-arrow-up"></i>
+          <span>+5%</span>
+        </div>
+      </div>
+
+      <div className="funnel-metric-card">
+        <div className="metric-icon-bg" style={{ background: '#f3e8ff' }}>
+          <i className="fas fa-trophy" style={{ color: '#8b5cf6' }}></i>
+        </div>
+        <div className="metric-content">
+          <span className="metric-value">{metrics.closed_leads || 0}</span>
+          <span className="metric-label">Ventas cerradas</span>
+        </div>
+        <div className="metric-trend">
+          <i className="fas fa-chart-line"></i>
+          <span>+3%</span>
+        </div>
+      </div>
+    </div>
+
+    {/* EMBUDO VISUAL 3D */}
+    <div className="funnel-visual-container">
+      <div className="funnel-title-section">
+        <i className="fas fa-chart-line"></i>
+        <h3>Embudo de conversión</h3>
+        <span className="funnel-badge">Tasa conversión: {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
+      </div>
+      
+      <div className="funnel-steps-container">
+        {[
+          { label: 'Visitas', value: funnelMetrics.landing_views || 0, icon: 'fa-eye', color: '#3b82f6', bg: '#eff6ff' },
+          { label: 'Clicks WA', value: funnelMetrics.whatsapp_clicks || 0, icon: 'fa-message', color: '#22c55e', bg: '#dcfce7' },
+          { label: 'Leads', value: metrics.leads || 0, icon: 'fa-user-plus', color: '#f59e0b', bg: '#fef3c7' },
+          { label: 'Interesados', value: leads.filter(l => l.stage === 'interested').length, icon: 'fa-fire', color: '#ef4444', bg: '#fee2e2' },
+          { label: 'Hot leads', value: leads.filter(l => l.stage === 'hot').length, icon: 'fa-bolt', color: '#8b5cf6', bg: '#f3e8ff' },
+          { label: 'Cerrados', value: metrics.closed_leads || 0, icon: 'fa-trophy', color: '#10b981', bg: '#dcfce7' }
+        ].map((step, idx, arr) => {
+          const prevValue = idx > 0 ? arr[idx-1].value : step.value
+          const conversionRate = prevValue > 0 ? (step.value / prevValue) * 100 : 100
+          const widthPercent = (step.value / (arr[0].value || 1)) * 100
+          
+          return (
+            <div key={step.label} className="funnel-step-premium">
+              <div className="funnel-step-icon" style={{ background: step.bg, color: step.color }}>
+                <i className={`fas ${step.icon}`}></i>
+              </div>
+              <div className="funnel-step-info">
+                <div className="step-header">
+                  <span className="step-label">{step.label}</span>
+                  <span className="step-value">{step.value}</span>
+                </div>
+                <div className="step-bar-container">
+                  <div className="step-bar" style={{ width: `${widthPercent}%`, background: step.color }}>
+                    <span className="step-percentage">{conversionRate.toFixed(0)}%</span>
                   </div>
-                ))}
+                </div>
+                <div className="step-footer">
+                  <span className="step-conversion">
+                    <i className="fas fa-arrow-right"></i>
+                    Conversión: {conversionRate.toFixed(0)}%
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="stripe-card">
-              <div className="chart-title">Leads por etapa</div>
-              <div className="bar-container">
-                {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
-                  const count = leads.filter(l => l.stage === stage).length
-                  return (
-                    <div key={stage} className="bar-item">
-                      <div className="bar-label">{stage}</div>
-                      <div className="bar-fill" style={{ width: `${Math.min(100, count * 10)}%` }}></div>
-                      <div className="bar-value">{count}</div>
-                    </div>
-                  )
-                })}
+          )
+        })}
+      </div>
+    </div>
+
+    {/* GRÁFICAS Y ESTADÍSTICAS AVANZADAS */}
+    <div className="funnel-charts-row">
+      {/* Leads por etapa - Gráfica de barras premium */}
+      <div className="funnel-chart-card">
+        <div className="chart-card-header">
+          <i className="fas fa-chart-simple"></i>
+          <h4>Leads por etapa</h4>
+          <span className="chart-badge">Distribución actual</span>
+        </div>
+        <div className="stage-bars-container">
+          {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
+            const count = leads.filter(l => l.stage === stage).length
+            const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
+            const percentage = (count / maxCount) * 100
+            const percentTotal = Math.round((count / (leads.length || 1)) * 100)
+            
+            const stageConfig = {
+              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', bg: '#eff6ff' },
+              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', bg: '#f5f3ff' },
+              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', bg: '#fffbeb' },
+              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', bg: '#fef2f2' },
+              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', bg: '#ecfdf5' }
+            }
+            const config = stageConfig[stage]
+            
+            return (
+              <div key={stage} className="stage-bar-item">
+                <div className="stage-bar-header">
+                  <div className="stage-icon" style={{ background: config.bg, color: config.color }}>
+                    <i className={`fas ${config.icon}`}></i>
+                  </div>
+                  <span className="stage-name">{config.label}</span>
+                  <span className="stage-count">{count}</span>
+                  <span className="stage-percent">{percentTotal}%</span>
+                </div>
+                <div className="stage-bar-track">
+                  <div className="stage-bar-fill" style={{ width: `${percentage}%`, background: config.color }}>
+                    <span className="bar-value">{count}</span>
+                  </div>
+                </div>
               </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Tasa de conversión - Gráfica de anillo */}
+      <div className="funnel-chart-card">
+        <div className="chart-card-header">
+          <i className="fas fa-chart-pie"></i>
+          <h4>Tasa de conversión</h4>
+          <span className="chart-badge">Efectividad</span>
+        </div>
+        <div className="conversion-ring-container">
+          <div className="ring-chart">
+            <svg viewBox="0 0 120 120" className="ring-svg">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" strokeWidth="10"/>
+              <circle 
+                cx="60" cy="60" r="52" fill="none" 
+                stroke="url(#ringGradient)" 
+                strokeWidth="10"
+                strokeDasharray={`${((metrics.closed_leads || 0) / (metrics.leads || 1)) * 327} 327`}
+                strokeLinecap="round"
+                transform="rotate(-90 60 60)"
+              />
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#10b981"/>
+                  <stop offset="100%" stopColor="#34d399"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="ring-inner">
+              <span className="ring-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
+              <span className="ring-label">Conversión</span>
             </div>
-            <div className="stripe-card">
-              <div className="row between">
-                <div className="section-title">Leads y conversaciones</div>
-                <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
-              </div>
-              <table className="leads-table">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Stage</th>
-                    <th>Bot</th>
-                    <th>Último mensaje</th>
-                    <th>Acción</th>
+          </div>
+          <div className="ring-stats">
+            <div className="ring-stat">
+              <span className="stat-dot" style={{ background: '#10b981' }}></span>
+              <span>Cerrados: {metrics.closed_leads || 0}</span>
+            </div>
+            <div className="ring-stat">
+              <span className="stat-dot" style={{ background: '#ef4444' }}></span>
+              <span>En funnel: {(metrics.leads || 0) - (metrics.closed_leads || 0)}</span>
+            </div>
+            <div className="ring-stat">
+              <span className="stat-dot" style={{ background: '#f59e0b' }}></span>
+              <span>Tasa cierre: {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* TABLA DE LEADS PREMIUM */}
+    <div className="funnel-table-card">
+      <div className="table-card-header">
+        <div className="table-header-left">
+          <i className="fas fa-users-viewfinder"></i>
+          <h4>Leads y conversaciones activas</h4>
+        </div>
+        <div className="table-header-right">
+          <div className="search-wrapper">
+            <i className="fas fa-search"></i>
+            <input 
+              type="text" 
+              placeholder="Buscar lead..." 
+              value={searchLead} 
+              onChange={e => setSearchLead(e.target.value)}
+              className="table-search"
+            />
+          </div>
+          <button className="refresh-btn" onClick={() => loadInboxLeads()}>
+            <i className="fas fa-sync-alt"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div className="table-responsive">
+        <table className="funnel-premium-table">
+          <thead>
+            <tr>
+              <th><i className="fas fa-user"></i> Nombre</th>
+              <th><i className="fab fa-whatsapp"></i> Teléfono</th>
+              <th><i className="fas fa-chart-simple"></i> Stage</th>
+              <th><i className="fas fa-robot"></i> Bot</th>
+              <th><i className="fas fa-message"></i> Último mensaje</th>
+              <th><i className="fas fa-cog"></i> Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredLeads.length > 0 ? (
+              filteredLeads.slice(0, 10).map(lead => {
+                const stageColors = {
+                  new: { color: '#3b82f6', bg: '#eff6ff', label: 'Nuevo' },
+                  qualified: { color: '#8b5cf6', bg: '#f5f3ff', label: 'Calificado' },
+                  interested: { color: '#f59e0b', bg: '#fffbeb', label: 'Interesado' },
+                  hot: { color: '#ef4444', bg: '#fef2f2', label: 'Hot' },
+                  closed: { color: '#10b981', bg: '#ecfdf5', label: 'Cerrado' }
+                }
+                const stageStyle = stageColors[lead.stage] || stageColors.new
+                
+                return (
+                  <tr key={lead.id} className="lead-row" onClick={() => setSelectedLeadId(lead.id)} style={{ cursor: 'pointer' }}>
+                    <td className="lead-name">
+                      <div className="lead-avatar" style={{ background: stageStyle.bg, color: stageStyle.color }}>
+                        {(lead.display_name || lead.phone || 'U').charAt(0).toUpperCase()}
+                      </div>
+                      <span>{lead.display_name || '—'}</span>
+                    </td>
+                    <td className="lead-phone">{lead.phone}</td>
+                    <td>
+                      <span className="stage-pill" style={{ background: stageStyle.bg, color: stageStyle.color }}>
+                        {stageStyle.label}
+                      </span>
+                    </td>
+                    <td className="lead-bot">{lead.bot_name}</td>
+                    <td className="lead-message">{lead.last_inbound_text?.slice(0, 50)}...</td>
+                    <td>
+                      <button className="chat-action-btn" onClick={(e) => { e.stopPropagation(); setSelectedLeadId(lead.id); setTab('inbox'); }}>
+                        <i className="fas fa-comment-dots"></i>
+                        <span>Chat</span>
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredLeads.length > 0 ? (
-                    filteredLeads.map(lead => (
-                      <tr key={lead.id}>
-                        <td>{lead.display_name || '—'}</td>
-                        <td>{lead.phone}</td>
-                        <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
-                        <td>{lead.bot_name}</td>
-                        <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                                                 <td>
-                          <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
-                            Ver chat
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
-                        No hay leads
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
+                )
+              })
+            ) : (
+              <tr className="empty-row">
+                <td colSpan="6">
+                  <div className="empty-leads">
+                    <i className="fas fa-inbox"></i>
+                    <p>No hay leads registrados</p>
+                    <span>Comienza a generar leads para verlos aquí</span>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      
+      {filteredLeads.length > 10 && (
+        <div className="table-footer">
+          <button className="view-all-btn" onClick={() => setTab('inbox')}>
+            Ver todos los leads ({filteredLeads.length})
+            <i className="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      )}
+    </div>
+  </section>
+)}
 
         {/* ======================== SOCIAL IA con PremiumGate ======================== */}
         {tab === 'social' && !canUseFeature('social_ai') && (
