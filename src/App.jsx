@@ -4436,9 +4436,45 @@ export default function App() {
 /* GRID DE DOS COLUMNAS ASIMÉTRICAS */
 .agenda-premium-v2-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
   gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  align-items: start;
+}
+  .agenda-premium-v2 {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.agenda-col-left,
+.agenda-col-right {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.reminder-card-v2,
+.notifications-card-v2,
+.meeting-type-card-v2 {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.channel-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.channel-input input {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 1250px) {
+  .agenda-premium-v2-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* TARJETA DE ACTIVACIÓN */
