@@ -11647,7 +11647,7 @@ async function updateUser(e) {
           </section>
         )}
 
-       {/* ======================== DASHBOARD PREMIUM ULTRA ======================== */}
+  {/* ======================== DASHBOARD PREMIUM ULTRA ======================== */}
 {tab === 'dashboard' && (
   <section className="dashboard-premium-ultra">
     
@@ -12066,7 +12066,7 @@ async function updateUser(e) {
       </div>
     </div>
 
-    {/* BOT SELECCIONADO - DETALLE PREMIUM */}
+    {/* BOT SELECCIONADO - DETALLE PREMIUM CON AGENDA AI */}
     {selectedBot ? (
       <div className="selected-bot-premium">
         <div className="selected-bot-header">
@@ -12180,6 +12180,244 @@ async function updateUser(e) {
                 </div>
               )
             })}
+          </div>
+        </div>
+
+        {/* ======================== AGENDA AI SECTION EN BOT ======================== */}
+        <div className="agenda-bot-section">
+          <div className="agenda-bot-header">
+            <div className="agenda-bot-title">
+              <i className="fas fa-calendar-check"></i>
+              <span>Agenda AI</span>
+              <span className="agenda-bot-badge">Automatización inteligente</span>
+            </div>
+            <label className="agenda-toggle-premium">
+              <input
+                type="checkbox"
+                checked={!!botAgendaSettings.enabled}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    enabled: e.target.checked
+                  })
+                }
+              />
+              <span className="toggle-slider"></span>
+              <span className="toggle-label">Activar agenda</span>
+            </label>
+          </div>
+
+          <div className="agenda-bot-grid">
+            <div className="agenda-bot-config">
+              <div className="config-row">
+                <div className="config-item">
+                  <label><i className="fas fa-phone-alt"></i> Tipo de cita</label>
+                  <select
+                    value={botAgendaSettings.goal || 'sales_call'}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        goal: e.target.value
+                      })
+                    }
+                  >
+                    <option value="sales_call">📞 Llamada comercial</option>
+                    <option value="zoom">🎥 Zoom</option>
+                    <option value="meet">📧 Google Meet</option>
+                    <option value="support_call">🛠️ Soporte</option>
+                  </select>
+                </div>
+                <div className="config-item">
+                  <label><i className="fas fa-hourglass-half"></i> Duración (min)</label>
+                  <input
+                    type="number"
+                    min="5"
+                    step="5"
+                    value={botAgendaSettings.duration_mins || 30}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        duration_mins: Number(e.target.value)
+                      })
+                    }
+                  />
+                </div>
+                <div className="config-item">
+                  <label><i className="fas fa-pause-circle"></i> Buffer (min)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="5"
+                    value={botAgendaSettings.buffer_mins ?? 10}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        buffer_mins: Number(e.target.value)
+                      })
+                    }
+                  />
+                </div>
+                <div className="config-item">
+                  <label><i className="fas fa-bell"></i> Recordatorio (min)</label>
+                  <input
+                    type="number"
+                    min="5"
+                    step="15"
+                    value={botAgendaSettings.reminder_before_mins || 60}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        reminder_before_mins: Number(e.target.value)
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="config-row">
+                <div className="config-item full">
+                  <label><i className="fas fa-calendar-week"></i> Días disponibles</label>
+                  <div className="days-selector-mini">
+                    {[
+                      { key: 'mon', label: 'L' },
+                      { key: 'tue', label: 'M' },
+                      { key: 'wed', label: 'M' },
+                      { key: 'thu', label: 'J' },
+                      { key: 'fri', label: 'V' },
+                      { key: 'sat', label: 'S' },
+                      { key: 'sun', label: 'D' }
+                    ].map(day => {
+                      const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
+                      const isActive = currentDays.includes(day.key)
+                      return (
+                        <button
+                          key={day.key}
+                          type="button"
+                          className={`day-chip-mini ${isActive ? 'active' : ''}`}
+                          onClick={() => {
+                            let newDays = [...currentDays]
+                            if (isActive) {
+                              newDays = newDays.filter(d => d !== day.key)
+                            } else {
+                              newDays.push(day.key)
+                            }
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              available_days: newDays.join(',')
+                            })
+                          }}
+                        >
+                          {day.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="config-row">
+                <div className="config-item">
+                  <label><i className="fas fa-sun"></i> Hora inicio</label>
+                  <input
+                    type="time"
+                    value={botAgendaSettings.start_time || '09:00'}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        start_time: e.target.value
+                      })
+                    }
+                  />
+                </div>
+                <div className="config-item">
+                  <label><i className="fas fa-moon"></i> Hora fin</label>
+                  <input
+                    type="time"
+                    value={botAgendaSettings.end_time || '18:00'}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        end_time: e.target.value
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="config-row">
+                <div className="config-item">
+                  <label><i className="fab fa-whatsapp"></i> WhatsApp notif.</label>
+                  <input
+                    placeholder="573118777641"
+                    value={botAgendaSettings.notify_whatsapp || ''}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        notify_whatsapp: e.target.value
+                      })
+                    }
+                  />
+                </div>
+                <div className="config-item">
+                  <label><i className="fas fa-envelope"></i> Email notif.</label>
+                  <input
+                    type="email"
+                    placeholder="gerencia@empresa.com"
+                    value={botAgendaSettings.notify_email || ''}
+                    onChange={e =>
+                      setBotAgendaSettings({
+                        ...botAgendaSettings,
+                        notify_email: e.target.value
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="agenda-bot-slots">
+              <div className="slots-header-mini">
+                <i className="fas fa-calendar-alt"></i>
+                <span>Próximos espacios disponibles</span>
+                <button
+                  type="button"
+                  className="refresh-slots-mini"
+                  onClick={() => loadAgendaSlots(selectedBot.id)}
+                >
+                  <i className="fas fa-sync-alt"></i>
+                </button>
+              </div>
+              <div className="slots-list-mini">
+                {(agendaSlots || []).length > 0 ? (
+                  (agendaSlots || []).slice(0, 3).map((slot, idx) => (
+                    <div key={idx} className="slot-item-mini">
+                      <div className="slot-date-mini">
+                        {new Date(slot.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                      </div>
+                      <div className="slot-time-mini">
+                        {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="empty-slots-mini">
+                    <i className="fas fa-calendar-times"></i>
+                    <span>No hay espacios</span>
+                  </div>
+                )}
+              </div>
+              <button
+                className="save-agenda-btn"
+                onClick={() => saveBotAgendaSettings(selectedBot.id)}
+                disabled={agendaLoading}
+              >
+                {agendaLoading ? (
+                  <><i className="fas fa-circle-notch fa-spin"></i> Guardando...</>
+                ) : (
+                  <><i className="fas fa-save"></i> Guardar Agenda AI</>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
