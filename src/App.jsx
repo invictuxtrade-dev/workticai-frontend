@@ -9392,9 +9392,7 @@ async function updateUser(e) {
             </div>
             <button className="btn-mini" onClick={createAppointmentAgent}>
               <i className="fas fa-plus"></i>
-              <span style="
-                color: blue;
-            ">Agregar</span>
+              <span>Agregar</span>
             </button>
           </div>
           <div className="agents-list">
