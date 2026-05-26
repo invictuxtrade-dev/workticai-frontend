@@ -5947,142 +5947,133 @@ export default function App() {
   }
 }   
 
-/* ======================== FUNNEL PREMIUM ULTRA ======================== */
-.funnel-premium-dashboard {
-  animation: funnelFadeIn 0.5s ease-out;
+
+/* ======================== DASHBOARD PREMIUM ULTRA ======================== */
+.dashboard-premium-container {
+  animation: dashboardFadeIn 0.4s ease-out;
 }
 
-@keyframes funnelFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+@keyframes dashboardFadeIn {
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* HEADER PREMIUM */
-.funnel-premium-hero {
+.dashboard-premium-header {
   position: relative;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   margin-bottom: 1.5rem;
   overflow: hidden;
 }
 
-.funnel-hero-glow {
+.header-bg-glow {
   position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 50%;
-  height: 160%;
-  background: radial-gradient(circle, rgba(116, 48, 226, 0.4), transparent);
-  filter: blur(80px);
+  top: -50%;
+  right: -20%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(116, 48, 226, 0.35), transparent);
+  filter: blur(70px);
 }
 
-.funnel-hero-content {
+.header-premium-content {
   position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-welcome-section {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.2rem 1.5rem;
-  backdrop-filter: blur(10px);
-  flex-wrap: wrap;
 }
 
-.funnel-hero-icon {
+.welcome-icon-wrapper {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 16px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: white;
-  box-shadow: 0 10px 20px rgba(116, 48, 226, 0.3);
 }
 
-.funnel-hero-pulse {
+.welcome-icon-glow {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 14px;
   background: rgba(116, 48, 226, 0.5);
-  animation: funnelPulse 2s infinite;
+  animation: iconPulse 2s infinite;
 }
 
-@keyframes funnelPulse {
-  0% { transform: scale(1); opacity: 0.6; }
+@keyframes iconPulse {
+  0% { transform: scale(1); opacity: 0.5; }
   100% { transform: scale(1.3); opacity: 0; }
 }
 
-.funnel-hero-text h1 {
+.welcome-text h1 {
   font-size: 1.2rem;
   font-weight: 700;
   color: white;
   margin: 0;
 }
 
-.funnel-hero-text p {
+.user-name-highlight {
+  background: linear-gradient(135deg, #c084fc, #818cf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.welcome-text p {
   color: #94a3b8;
   font-size: 0.7rem;
-  margin: 0.1rem 0 0;
+  margin: 0.2rem 0 0;
 }
 
-.funnel-hero-stats {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  background: rgba(255, 255, 255, 0.08);
+.date-badge {
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 40px;
-  margin-left: auto;
-}
-
-.funnel-stat-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-}
-
-.funnel-stat-item .stat-value {
-  font-size: 1rem;
-  font-weight: 700;
+  gap: 0.5rem;
   color: white;
+  font-size: 0.7rem;
 }
 
-.funnel-stat-item .stat-label {
-  font-size: 0.6rem;
-  color: #94a3b8;
-}
-
-.funnel-stat-divider {
-  width: 1px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* MÉTRICAS CLAVE */
-.funnel-metrics-grid {
+/* MÉTRICAS */
+.dashboard-metrics-premium {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.funnel-metric-card {
+.metric-card-premium {
   background: white;
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.75rem;
   border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.funnel-metric-card::before {
+.metric-card-premium::before {
   content: '';
   position: absolute;
   top: 0;
@@ -6092,27 +6083,28 @@ export default function App() {
   background: linear-gradient(90deg, #7430e2, #2563eb);
 }
 
-.funnel-metric-card:hover {
+.metric-card-premium:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
   border-color: #c4b5fd;
 }
 
-.metric-icon-bg {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+.metric-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  color: white;
 }
 
-.metric-content {
+.metric-info {
   flex: 1;
 }
 
-.metric-content .metric-value {
+.metric-value {
   font-size: 1.3rem;
   font-weight: 800;
   color: #0f172a;
@@ -6120,16 +6112,16 @@ export default function App() {
   line-height: 1.2;
 }
 
-.metric-content .metric-label {
+.metric-label {
   font-size: 0.65rem;
   color: #64748b;
 }
 
 .metric-trend {
   background: #f1f5f9;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 20px;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -6141,220 +6133,76 @@ export default function App() {
   color: #10b981;
 }
 
-/* EMBUDO VISUAL */
-.funnel-visual-container {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  padding: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.funnel-title-section {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 1.2rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.funnel-title-section i {
-  color: #7430e2;
-  font-size: 1rem;
-}
-
-.funnel-title-section h3 {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-  flex: 1;
-}
-
-.funnel-badge {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.funnel-steps-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.funnel-step-premium {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: #f8fafc;
-  border-radius: 0.8rem;
-  padding: 0.8rem;
-  transition: all 0.3s ease;
-}
-
-.funnel-step-premium:hover {
-  background: #f1f5f9;
-  transform: translateX(5px);
-}
-
-.funnel-step-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-}
-
-.funnel-step-info {
-  flex: 1;
-}
-
-.step-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.4rem;
-}
-
-.step-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.step-value {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.step-bar-container {
-  background: #e2e8f0;
-  border-radius: 20px;
-  height: 28px;
-  overflow: hidden;
-  margin-bottom: 0.3rem;
-}
-
-.step-bar {
-  height: 100%;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 0.6rem;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.step-bar::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  animation: shimmer 2s infinite;
-}
-
-.step-percentage {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: white;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
-  position: relative;
-  z-index: 1;
-}
-
-.step-footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.step-conversion {
-  font-size: 0.6rem;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
 /* GRÁFICAS */
-.funnel-charts-row {
+.dashboard-charts-grid {
   display: grid;
-  grid-template-columns: 1fr 0.8fr;
+  grid-template-columns: 1fr 0.9fr;
   gap: 1.2rem;
   margin-bottom: 1.5rem;
 }
 
-.funnel-chart-card {
+.chart-card-premium {
   background: white;
   border-radius: 1rem;
   border: 1px solid #e2e8f0;
-  padding: 1.2rem;
+  overflow: hidden;
   transition: all 0.3s ease;
 }
 
-.funnel-chart-card:hover {
+.chart-card-premium:hover {
   border-color: #c4b5fd;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-.chart-card-header {
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.chart-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #f1f5f9;
 }
 
-.chart-card-header i {
+.chart-title i {
   color: #7430e2;
   font-size: 0.9rem;
 }
 
-.chart-card-header h4 {
-  font-size: 0.8rem;
+.chart-title h3 {
+  font-size: 0.85rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
-  flex: 1;
 }
 
 .chart-badge {
   font-size: 0.6rem;
   background: #e0e7ff;
   color: #4f46e5;
-  padding: 0.15rem 0.4rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 20px;
 }
 
-/* Leads por etapa - Barras */
-.stage-bars-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+.chart-body {
+  padding: 1rem;
 }
 
-.stage-bar-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+/* Barras de etapas */
+.stage-bar-premium {
+  margin-bottom: 0.9rem;
 }
 
 .stage-bar-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem;
 }
 
 .stage-icon {
@@ -6367,393 +6215,779 @@ export default function App() {
   font-size: 0.7rem;
 }
 
-.stage-name {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #475569;
+.stage-info {
   flex: 1;
 }
 
-.stage-count {
+.stage-name {
   font-size: 0.7rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: block;
+}
+
+.stage-desc {
+  font-size: 0.55rem;
+  color: #64748b;
+}
+
+.stage-numbers {
+  text-align: right;
+}
+
+.stage-count {
+  font-size: 0.8rem;
   font-weight: 800;
   color: #0f172a;
+  display: block;
 }
 
 .stage-percent {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #64748b;
-  min-width: 40px;
-  text-align: right;
 }
 
 .stage-bar-track {
   background: #e2e8f0;
   border-radius: 20px;
-  height: 24px;
+  height: 8px;
   overflow: hidden;
 }
 
 .stage-bar-fill {
   height: 100%;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 0.5rem;
   transition: width 0.5s ease;
   position: relative;
-  overflow: hidden;
 }
 
-.stage-bar-fill .bar-value {
+.stage-bar-fill .fill-value {
+  display: none;
+}
+
+/* Gráfica de mensajes */
+.messages-chart-premium {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 160px;
+  gap: 0.5rem;
+}
+
+.message-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.message-bar {
+  width: 80%;
+  background: linear-gradient(180deg, #7430e2, #2563eb);
+  border-radius: 8px 8px 4px 4px;
+  transition: height 0.5s ease;
+  position: relative;
+  min-height: 4px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.message-count {
   font-size: 0.6rem;
   font-weight: 800;
   color: white;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 
-/* Anillo de conversión */
-.conversion-ring-container {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.ring-chart {
-  position: relative;
-  width: 130px;
-  height: 130px;
-}
-
-.ring-svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.ring-inner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.ring-value {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-}
-
-.ring-label {
-  font-size: 0.6rem;
+.message-day {
+  font-size: 0.65rem;
+  font-weight: 600;
   color: #64748b;
 }
 
-.ring-stats {
+.chart-footer {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.ring-stat {
+.chart-footer .total {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.chart-footer .trend {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
   display: flex;
   align-items: center;
+  gap: 0.2rem;
+}
+
+.trend.up {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+/* PLAN USAGE */
+.plan-usage-premium-card {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.plan-usage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.plan-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.plan-info i {
+  color: #7430e2;
+  font-size: 1rem;
+}
+
+.plan-info h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.plan-name {
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.upgrade-plan-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
   font-size: 0.7rem;
-  color: #475569;
+  gap: 0.3rem;
 }
 
-.stat-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
+.plan-usage-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  padding: 1rem;
 }
 
-/* TABLA DE LEADS PREMIUM */
-.funnel-table-card {
+.usage-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f8fafc;
+  padding: 0.6rem;
+  border-radius: 0.8rem;
+}
+
+.usage-icon {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7430e2;
+  font-size: 0.8rem;
+}
+
+.usage-details {
+  flex: 1;
+}
+
+.usage-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.usage-bar {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 4px;
+  overflow: hidden;
+  margin-bottom: 0.2rem;
+}
+
+.usage-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7430e2, #2563eb);
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+.usage-numbers {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.used {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.limit {
+  font-size: 0.6rem;
+  color: #94a3b8;
+}
+
+/* BOTS SECTION */
+.bots-premium-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.bots-card {
   background: white;
   border-radius: 1rem;
   border: 1px solid #e2e8f0;
   overflow: hidden;
 }
 
-.table-card-header {
+.bots-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 0.8rem 1rem;
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
-  flex-wrap: wrap;
-  gap: 0.8rem;
 }
 
-.table-header-left {
+.header-left {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.table-header-left i {
-  color: #7430e2;
-  font-size: 0.9rem;
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
 
-.table-header-left h4 {
-  font-size: 0.8rem;
+.status-indicator.active {
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.status-indicator.inactive {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.header-left h3 {
+  font-size: 0.85rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
 }
 
-.table-header-right {
+.header-right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.search-wrapper {
+.search-box {
   display: flex;
   align-items: center;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.5rem;
+  gap: 0.3rem;
 }
 
-.search-wrapper i {
+.search-box i {
   color: #94a3b8;
   font-size: 0.7rem;
 }
 
-.table-search {
+.search-box input {
   border: none;
-  padding: 0.3rem;
+  padding: 0.2rem;
   font-size: 0.7rem;
-  width: 150px;
+  width: 120px;
 }
 
-.table-search:focus {
+.search-box input:focus {
   outline: none;
 }
 
-.refresh-btn {
-  background: transparent;
-  border: 1px solid #e2e8f0;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.5rem;
-  color: #64748b;
-  font-size: 0.7rem;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-.funnel-premium-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.75rem;
-}
-
-.funnel-premium-table th {
-  text-align: left;
-  padding: 0.8rem;
-  background: #ffffff;
-  color: #64748b;
-  font-weight: 600;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.funnel-premium-table th i {
-  margin-right: 0.3rem;
-  font-size: 0.7rem;
-}
-
-.funnel-premium-table td {
-  padding: 0.8rem;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.lead-row {
-  transition: all 0.2s ease;
-}
-
-.lead-row:hover {
-  background: #f8fafc;
-}
-
-.lead-name {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.lead-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.bots-count {
+  background: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
   font-size: 0.7rem;
   font-weight: 700;
 }
 
-.lead-phone {
-  font-weight: 500;
+.create-bot-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.create-bot-form input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.7rem;
+}
+
+.create-bot-form button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.7rem;
+  background: #7430e2;
+}
+
+.bots-list {
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.bot-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f8fafc;
+  border-radius: 0.8rem;
+  padding: 0.6rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.bot-item:hover {
+  border-color: #c4b5fd;
+  transform: translateX(3px);
+}
+
+.bot-item.selected {
+  border-color: #7430e2;
+  background: linear-gradient(135deg, #f8f5ff, #ffffff);
+  box-shadow: 0 4px 12px rgba(116, 48, 226, 0.1);
+}
+
+.bot-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.bot-avatar.active {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bot-avatar.inactive {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+}
+
+.bot-details {
+  flex: 1;
+}
+
+.bot-details strong {
+  font-size: 0.75rem;
   color: #0f172a;
+  display: block;
 }
 
-.lead-bot {
+.bot-details span {
+  font-size: 0.6rem;
   color: #64748b;
 }
 
-.lead-message {
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #64748b;
-}
-
-.stage-pill {
-  display: inline-block;
+.bot-status-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.2rem 0.5rem;
   border-radius: 20px;
-  font-size: 0.65rem;
-  font-weight: 600;
 }
 
-.chat-action-btn {
-  background: transparent;
-  border: 1px solid #e2e8f0;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.5rem;
-  font-size: 0.65rem;
+.bot-status-badge.active {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+.bot-status-badge.inactive {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.bot-status-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.bot-actions {
+  display: flex;
   gap: 0.3rem;
 }
 
-.chat-action-btn:hover {
-  background: #7430e2;
-  border-color: #7430e2;
-  color: white;
+.bot-actions button {
+  padding: 0.25rem;
+  border-radius: 0.4rem;
+  font-size: 0.6rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.empty-row td {
-  padding: 2rem;
+.bot-actions button:hover {
+  transform: none;
 }
 
-.empty-leads {
+.bot-actions .edit:hover {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.bot-actions .stop:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.bot-actions .start:hover {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+.bot-actions .delete:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.empty-state {
   text-align: center;
+  padding: 2rem;
   color: #64748b;
 }
 
-.empty-leads i {
+.empty-state i {
   font-size: 2rem;
   color: #cbd5e1;
   margin-bottom: 0.5rem;
 }
 
-.empty-leads p {
+.empty-state p {
   font-size: 0.8rem;
   margin: 0;
 }
 
-.empty-leads span {
+.empty-state span {
   font-size: 0.65rem;
 }
 
-.table-footer {
-  padding: 0.8rem;
-  text-align: center;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem;
   border-top: 1px solid #e2e8f0;
   background: #f8fafc;
 }
 
-.view-all-btn {
-  background: transparent;
-  border: none;
-  color: #7430e2;
-  font-weight: 600;
+.pagination button {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+}
+
+/* BOT SELECCIONADO */
+.selected-bot-premium-card {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.selected-bot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.bot-info-section {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.bot-avatar-large {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.bot-info-section h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.bot-info-section p {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.bot-actions-section {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-stop, .btn-start, .btn-edit {
+  padding: 0.4rem 1rem;
   font-size: 0.7rem;
   gap: 0.3rem;
 }
 
-.view-all-btn:hover {
-  background: transparent;
-  transform: none;
-  color: #2563eb;
+.btn-stop {
+  background: #ef4444;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .funnel-metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .funnel-charts-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .funnel-hero-stats {
-    margin-left: 0;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .funnel-hero-content {
-    flex-direction: column;
-    text-align: center;
-  }
+.btn-start {
+  background: #10b981;
 }
 
-@media (max-width: 768px) {
-  .funnel-metrics-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .table-card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .table-header-right {
-    width: 100%;
-  }
-  
-  .search-wrapper {
-    flex: 1;
-  }
-  
-  .table-search {
-    width: 100%;
-  }
-  
-  .funnel-premium-table {
-    font-size: 0.7rem;
-  }
-  
-  .lead-message {
-    max-width: 120px;
-  }
-}
-
-
-/* ======================== AGENDA AI EN DASHBOARD ======================== */
-.agenda-bot-section {
-  background: linear-gradient(135deg, #f8fafc, #ffffff);
-  border-top: 1px solid #e2e8f0;
+.selected-bot-stats {
+  display: flex;
+  gap: 1.5rem;
   padding: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.agenda-bot-header {
+.qr-section {
+  text-align: center;
+  min-width: 140px;
+}
+
+.qr-code {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  background: white;
+  padding: 0.3rem;
+  border-radius: 0.8rem;
+  border: 1px solid #e2e8f0;
+}
+
+.qr-placeholder {
+  width: 100px;
+  height: 100px;
+  background: #f8fafc;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  color: #94a3b8;
+}
+
+.qr-placeholder i {
+  font-size: 1.5rem;
+}
+
+.qr-placeholder span {
+  font-size: 0.6rem;
+}
+
+.qr-info {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6rem;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.metrics-section {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.stat-card {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  margin: 0 auto 0.5rem;
+}
+
+.stat-data {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  color: #64748b;
+}
+
+/* Leads por etapa del bot */
+.bot-leads-section {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.section-title-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.section-title-mini i {
+  color: #7430e2;
+  font-size: 0.8rem;
+}
+
+.section-title-mini span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.bot-stages {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.stage-item {
+  flex: 1;
+  min-width: 70px;
+}
+
+.stage-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  margin-bottom: 0.2rem;
+}
+
+.stage-name {
+  font-weight: 700;
+  color: #475569;
+}
+
+.stage-count {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.stage-track {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.stage-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+/* AGENDA AI INTEGRADA */
+.agenda-bot-integrated {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+}
+
+.agenda-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -6761,27 +6995,27 @@ export default function App() {
   padding-bottom: 0.5rem;
   border-bottom: 1px solid #e2e8f0;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 0.5rem;
 }
 
-.agenda-bot-title {
+.agenda-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.agenda-bot-title i {
+.agenda-title i {
   color: #7430e2;
   font-size: 0.9rem;
 }
 
-.agenda-bot-title span {
+.agenda-title span {
   font-size: 0.8rem;
   font-weight: 700;
   color: #0f172a;
 }
 
-.agenda-bot-badge {
+.agenda-badge {
   background: #e0e7ff;
   color: #4f46e5;
   padding: 0.15rem 0.4rem;
@@ -6790,18 +7024,18 @@ export default function App() {
   font-weight: 700;
 }
 
-.agenda-toggle-premium {
+.toggle-switch {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   cursor: pointer;
 }
 
-.agenda-toggle-premium input {
+.toggle-switch input {
   display: none;
 }
 
-.agenda-toggle-premium .toggle-slider {
+.toggle-switch .toggle-slider {
   width: 44px;
   height: 22px;
   background: #cbd5e1;
@@ -6810,7 +7044,7 @@ export default function App() {
   transition: 0.3s;
 }
 
-.agenda-toggle-premium .toggle-slider:before {
+.toggle-switch .toggle-slider:before {
   content: '';
   position: absolute;
   width: 18px;
@@ -6822,49 +7056,48 @@ export default function App() {
   transition: 0.3s;
 }
 
-.agenda-toggle-premium input:checked + .toggle-slider {
+.toggle-switch input:checked + .toggle-slider {
   background: linear-gradient(135deg, #7430e2, #2563eb);
 }
 
-.agenda-toggle-premium input:checked + .toggle-slider:before {
+.toggle-switch input:checked + .toggle-slider:before {
   transform: translateX(20px);
 }
 
-.agenda-toggle-premium .toggle-label {
+.toggle-switch .toggle-label {
   font-size: 0.7rem;
   font-weight: 600;
   color: #475569;
 }
 
-.agenda-bot-grid {
-  display: grid;
-  grid-template-columns: 1fr 260px;
-  gap: 1rem;
-}
-
-.agenda-bot-config {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.config-row {
+.agenda-config-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.6rem;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
-.config-item {
+.agenda-config-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.agenda-notifications-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.config-field {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 }
 
-.config-item.full {
-  grid-column: span 4;
-}
-
-.config-item label {
+.config-field label {
   font-size: 0.6rem;
   font-weight: 700;
   color: #64748b;
@@ -6873,12 +7106,12 @@ export default function App() {
   gap: 0.2rem;
 }
 
-.config-item label i {
+.config-field label i {
   font-size: 0.55rem;
 }
 
-.config-item select,
-.config-item input {
+.config-field select,
+.config-field input {
   padding: 0.4rem;
   border-radius: 0.5rem;
   border: 1px solid #e2e8f0;
@@ -6886,13 +7119,17 @@ export default function App() {
   background: white;
 }
 
-.days-selector-mini {
+.days-field {
+  grid-column: span 1;
+}
+
+.days-selector {
   display: flex;
   gap: 0.3rem;
   flex-wrap: wrap;
 }
 
-.day-chip-mini {
+.day-chip {
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -6908,20 +7145,20 @@ export default function App() {
   font-size: 0.7rem;
 }
 
-.day-chip-mini.active {
+.day-chip.active {
   background: linear-gradient(135deg, #7430e2, #2563eb);
   border-color: #7430e2;
   color: white;
 }
 
-.agenda-bot-slots {
+.agenda-slots-section {
   background: #f8fafc;
   border-radius: 0.8rem;
   padding: 0.8rem;
   border: 1px solid #e2e8f0;
 }
 
-.slots-header-mini {
+.slots-header {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -6931,11 +7168,11 @@ export default function App() {
   color: #0f172a;
 }
 
-.slots-header-mini i {
+.slots-header i {
   color: #7430e2;
 }
 
-.refresh-slots-mini {
+.refresh-slots {
   margin-left: auto;
   background: transparent;
   border: none;
@@ -6945,16 +7182,16 @@ export default function App() {
   cursor: pointer;
 }
 
-.slots-list-mini {
+.slots-list {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
   margin-bottom: 0.8rem;
-  max-height: 100px;
+  max-height: 120px;
   overflow-y: auto;
 }
 
-.slot-item-mini {
+.slot-item {
   background: white;
   border-radius: 0.5rem;
   padding: 0.4rem;
@@ -6965,16 +7202,16 @@ export default function App() {
   font-size: 0.65rem;
 }
 
-.slot-date-mini {
+.slot-date {
   font-weight: 700;
   color: #0f172a;
 }
 
-.slot-time-mini {
+.slot-time {
   color: #64748b;
 }
 
-.empty-slots-mini {
+.empty-slots {
   text-align: center;
   padding: 0.8rem;
   color: #94a3b8;
@@ -6985,7 +7222,7 @@ export default function App() {
   width: 100%;
   background: linear-gradient(135deg, #7430e2, #2563eb);
   border: none;
-  padding: 0.4rem;
+  padding: 0.5rem;
   border-radius: 0.5rem;
   font-size: 0.7rem;
   color: white;
@@ -7003,36 +7240,82 @@ export default function App() {
   transform: none;
 }
 
-/* RESPONSIVE para Agenda AI en Dashboard */
-@media (max-width: 900px) {
-  .agenda-bot-grid {
+.no-bot-selected {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+}
+
+.no-bot-selected i {
+  font-size: 3rem;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.no-bot-selected h4 {
+  font-size: 1rem;
+  color: #0f172a;
+  margin-bottom: 0.3rem;
+}
+
+.no-bot-selected p {
+  font-size: 0.7rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .dashboard-metrics-premium {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .dashboard-charts-grid {
     grid-template-columns: 1fr;
   }
-  
-  .config-row {
+  .bots-premium-section {
+    grid-template-columns: 1fr;
+  }
+  .plan-usage-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  .config-item.full {
-    grid-column: span 2;
+  .agenda-config-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-}
-
-@media (max-width: 600px) {
-  .config-row {
+  .agenda-config-row {
     grid-template-columns: 1fr;
   }
-  
-  .config-item.full {
-    grid-column: span 1;
-  }
-  
-  .agenda-bot-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
+@media (max-width: 768px) {
+  .dashboard-metrics-premium {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .plan-usage-grid {
+    grid-template-columns: 1fr;
+  }
+  .selected-bot-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+  .metrics-section {
+    width: 100%;
+  }
+  .header-premium-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .agenda-config-grid {
+    grid-template-columns: 1fr;
+  }
+  .agenda-notifications-row {
+    grid-template-columns: 1fr;
+  }
+  .bot-stages {
+    flex-direction: column;
+  }
+}
+  
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -10816,131 +11099,131 @@ async function updateUser(e) {
 
        {/* ======================== DASHBOARD PREMIUM ULTRA ======================== */}
 {tab === 'dashboard' && (
-  <section className="dashboard-premium-ultra">
+  <section className="dashboard-premium-container">
     
-    {/* HEADER PREMIUM CON SALUDO */}
+    {/* ========== HEADER PREMIUM CON EFECTO GLASS ========== */}
     <div className="dashboard-premium-header">
-      <div className="header-glow-bg"></div>
+      <div className="header-bg-glow"></div>
       <div className="header-premium-content">
-        <div className="header-welcome">
-          <div className="welcome-icon">
+        <div className="header-welcome-section">
+          <div className="welcome-icon-wrapper">
+            <div className="welcome-icon-glow"></div>
             <i className="fas fa-chart-line"></i>
-            <div className="welcome-pulse"></div>
           </div>
           <div className="welcome-text">
-            <h1>Bienvenido, {me?.name || 'Usuario'}</h1>
-            <p>Panel de control principal · Resumen ejecutivo de tu negocio</p>
+            <h1>Bienvenido, <span className="user-name-highlight">{me?.name || 'Usuario'}</span></h1>
+            <p>Panel de control · Gestión inteligente de tu negocio</p>
           </div>
         </div>
-        <div className="header-date">
-          <i className="fas fa-calendar-alt"></i>
-          <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        <div className="header-stats-section">
+          <div className="date-badge">
+            <i className="fas fa-calendar-alt"></i>
+            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    {/* MÉTRICAS PRINCIPALES - GRID 2x3 */}
+    {/* ========== MÉTRICAS PRINCIPALES ========== */}
     <div className="dashboard-metrics-premium">
-      <div className="metric-premium-card-main">
-        <div className="metric-premium-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
           <i className="fas fa-building"></i>
         </div>
-        <div className="metric-premium-data">
-          <span className="metric-premium-value">{metrics.clients || 0}</span>
-          <span className="metric-premium-label">Clientes activos</span>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.clients || 0}</span>
+          <span className="metric-label">Clientes activos</span>
         </div>
-        <div className="metric-premium-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+8%</span>
-        </div>
-      </div>
-
-      <div className="metric-premium-card-main">
-        <div className="metric-premium-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
-          <i className="fas fa-robot"></i>
-        </div>
-        <div className="metric-premium-data">
-          <span className="metric-premium-value">{metrics.bots || 0}</span>
-          <span className="metric-premium-label">Bots activos</span>
-        </div>
-        <div className="metric-premium-trend up">
+        <div className="metric-trend up">
           <i className="fas fa-arrow-up"></i>
           <span>+12%</span>
         </div>
       </div>
 
-      <div className="metric-premium-card-main">
-        <div className="metric-premium-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #11998e, #38ef7d)' }}>
+          <i className="fas fa-robot"></i>
+        </div>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.bots || 0}</span>
+          <span className="metric-label">Bots activos</span>
+        </div>
+        <div className="metric-trend up">
+          <i className="fas fa-arrow-up"></i>
+          <span>+8%</span>
+        </div>
+      </div>
+
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
           <i className="fas fa-users"></i>
         </div>
-        <div className="metric-premium-data">
-          <span className="metric-premium-value">{metrics.leads || 0}</span>
-          <span className="metric-premium-label">Leads totales</span>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.leads || 0}</span>
+          <span className="metric-label">Leads totales</span>
         </div>
-        <div className="metric-premium-trend up">
+        <div className="metric-trend up">
           <i className="fas fa-arrow-up"></i>
           <span>+15%</span>
         </div>
       </div>
 
-      <div className="metric-premium-card-main">
-        <div className="metric-premium-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
           <i className="fas fa-fire"></i>
         </div>
-        <div className="metric-premium-data">
-          <span className="metric-premium-value">{metrics.hot_leads || 0}</span>
-          <span className="metric-premium-label">Hot leads</span>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.hot_leads || 0}</span>
+          <span className="metric-label">Hot leads</span>
         </div>
-        <div className="metric-premium-trend">
+        <div className="metric-trend">
           <i className="fas fa-chart-line"></i>
           <span>+5%</span>
         </div>
       </div>
 
-      <div className="metric-premium-card-main">
-        <div className="metric-premium-icon" style={{ background: '#f3e8ff', color: '#8b5cf6' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)' }}>
           <i className="fas fa-trophy"></i>
         </div>
-        <div className="metric-premium-data">
-          <span className="metric-premium-value">{metrics.closed_leads || 0}</span>
-          <span className="metric-premium-label">Ventas cerradas</span>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.closed_leads || 0}</span>
+          <span className="metric-label">Ventas cerradas</span>
         </div>
-        <div className="metric-premium-trend up">
+        <div className="metric-trend up">
           <i className="fas fa-arrow-up"></i>
           <span>+3%</span>
         </div>
       </div>
 
-      <div className="metric-premium-card-main">
-        <div className="metric-premium-icon" style={{ background: '#cffafe', color: '#06b6d4' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
           <i className="fas fa-envelope"></i>
         </div>
-        <div className="metric-premium-data">
-          <span className="metric-premium-value">{metrics.messages_24h || 0}</span>
-          <span className="metric-premium-label">Mensajes 24h</span>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.messages_24h || 0}</span>
+          <span className="metric-label">Mensajes 24h</span>
         </div>
-        <div className="metric-premium-trend up">
+        <div className="metric-trend up">
           <i className="fas fa-arrow-up"></i>
           <span>+22%</span>
         </div>
       </div>
     </div>
 
-    {/* GRÁFICAS Y ESTADÍSTICAS AVANZADAS */}
-    <div className="dashboard-charts-premium">
-      {/* Leads por etapa */}
-      <div className="chart-premium-card">
-        <div className="chart-premium-header">
-          <div className="header-icon-title">
-            <i className="fas fa-chart-simple"></i>
+    {/* ========== GRÁFICAS PREMIUM ========== */}
+    <div className="dashboard-charts-grid">
+      
+      {/* LEADS POR ETAPA */}
+      <div className="chart-card-premium">
+        <div className="chart-header">
+          <div className="chart-title">
+            <i className="fas fa-chart-pie"></i>
             <h3>Distribución de leads</h3>
           </div>
-          <div className="chart-premium-legend">
-            <span className="legend-dot" style={{ background: '#3b82f6' }}></span>
-            <span>Por etapa del embudo</span>
-          </div>
+          <div className="chart-badge">Por etapa del embudo</div>
         </div>
-        <div className="chart-premium-body">
+        <div className="chart-body">
           {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
             const count = leads.filter(l => l.stage === stage).length
             const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
@@ -10958,11 +11241,11 @@ async function updateUser(e) {
             
             return (
               <div key={stage} className="stage-bar-premium">
-                <div className="stage-bar-info">
-                  <div className="stage-icon-badge" style={{ background: `${config.color}15`, color: config.color }}>
+                <div className="stage-bar-header">
+                  <div className="stage-icon" style={{ background: `${config.color}15`, color: config.color }}>
                     <i className={`fas ${config.icon}`}></i>
                   </div>
-                  <div className="stage-details">
+                  <div className="stage-info">
                     <span className="stage-name">{config.label}</span>
                     <span className="stage-desc">{config.desc}</span>
                   </div>
@@ -10973,7 +11256,7 @@ async function updateUser(e) {
                 </div>
                 <div className="stage-bar-track">
                   <div className="stage-bar-fill" style={{ width: `${percentage}%`, background: config.color }}>
-                    <span className="bar-value">{count}</span>
+                    <span className="fill-value">{count}</span>
                   </div>
                 </div>
               </div>
@@ -10982,29 +11265,24 @@ async function updateUser(e) {
         </div>
       </div>
 
-      {/* Mensajes últimos 7 días */}
-      <div className="chart-premium-card">
-        <div className="chart-premium-header">
-          <div className="header-icon-title">
+      {/* MENSAJES ÚLTIMOS 7 DÍAS */}
+      <div className="chart-card-premium">
+        <div className="chart-header">
+          <div className="chart-title">
             <i className="fas fa-message"></i>
             <h3>Actividad de mensajes</h3>
           </div>
-          <div className="chart-premium-legend">
-            <span className="legend-dot" style={{ background: '#7430e2' }}></span>
-            <span>Últimos 7 días</span>
-          </div>
+          <div className="chart-badge">Últimos 7 días</div>
         </div>
-        <div className="chart-premium-body">
-          <div className="messages-chart">
+        <div className="chart-body">
+          <div className="messages-chart-premium">
             {messagesLast7Days.days.map((day, idx) => {
               const maxCount = Math.max(...messagesLast7Days.counts, 1)
               const height = (messagesLast7Days.counts[idx] / maxCount) * 100
               return (
-                <div key={day} className="message-bar-item">
-                  <div className="message-bar-container">
-                    <div className="message-bar" style={{ height: `${height}%` }}>
-                      <span className="message-count">{messagesLast7Days.counts[idx]}</span>
-                    </div>
+                <div key={day} className="message-bar-wrapper">
+                  <div className="message-bar" style={{ height: `${height}%` }}>
+                    <span className="message-count">{messagesLast7Days.counts[idx]}</span>
                   </div>
                   <span className="message-day">{day}</span>
                 </div>
@@ -11012,25 +11290,25 @@ async function updateUser(e) {
             })}
           </div>
         </div>
-        <div className="chart-premium-footer">
-          <span className="total-messages">Total: {messagesLast7Days.counts.reduce((a,b) => a+b, 0)} mensajes</span>
-          <span className="trend-badge up">
+        <div className="chart-footer">
+          <span className="total">Total: {messagesLast7Days.counts.reduce((a,b) => a+b, 0)} mensajes</span>
+          <span className="trend up">
             <i className="fas fa-arrow-up"></i> +18% vs semana anterior
           </span>
         </div>
       </div>
     </div>
 
-    {/* TARJETAS DE USO DEL PLAN - solo para clientes */}
+    {/* ========== PLAN USAGE SOLO PARA CLIENTES ========== */}
     {!isAdmin && (
-      <div className="plan-usage-premium">
+      <div className="plan-usage-premium-card">
         <div className="plan-usage-header">
-          <div className="header-left">
-            <i className="fas fa-gauge-high"></i>
-            <h3>Uso del plan actual</h3>
-            <span className="plan-badge">{currentPlan?.name || activePlanSlug}</span>
+          <div className="plan-info">
+            <i className="fas fa-gem"></i>
+            <h3>Uso del plan</h3>
+            <span className="plan-name">{currentPlan?.name || activePlanSlug}</span>
           </div>
-          <button className="upgrade-btn" onClick={() => setForcePlanScreen(true)}>
+          <button className="upgrade-plan-btn" onClick={() => setForcePlanScreen(true)}>
             <i className="fas fa-crown"></i>
             <span>Mejorar plan</span>
             <i className="fas fa-arrow-right"></i>
@@ -11052,18 +11330,18 @@ async function updateUser(e) {
             const pct = limit > 0 && Number.isFinite(limit) ? Math.min(100, Math.round((used / limit) * 100)) : 0
             
             return (
-              <div key={metric} className="usage-premium-item">
+              <div key={metric} className="usage-item">
                 <div className="usage-icon">
                   <i className={icon}></i>
                 </div>
-                <div className="usage-info">
+                <div className="usage-details">
                   <span className="usage-label">{label}</span>
-                  <div className="usage-bar-container">
+                  <div className="usage-bar">
                     <div className="usage-bar-fill" style={{ width: `${pct}%` }}></div>
                   </div>
-                  <div className="usage-stats">
-                    <span className="usage-used">{used}</span>
-                    <span className="usage-limit">/ {limit || '∞'}</span>
+                  <div className="usage-numbers">
+                    <span className="used">{used}</span>
+                    <span className="limit">/ {limit || '∞'}</span>
                   </div>
                 </div>
               </div>
@@ -11073,17 +11351,17 @@ async function updateUser(e) {
       </div>
     )}
 
-    {/* BOTS ACTIVOS E INACTIVOS */}
-    <div className="bots-section-premium">
+    {/* ========== SECCIÓN DE BOTS ========== */}
+    <div className="bots-premium-section">
       
       {/* BOTS ACTIVOS */}
-      <div className="bots-premium-card">
+      <div className="bots-card">
         <div className="bots-card-header">
-          <div className="header-title">
-            <div className="status-led active"></div>
+          <div className="header-left">
+            <div className="status-indicator active"></div>
             <h3>Bots activos</h3>
           </div>
-          <div className="header-actions">
+          <div className="header-right">
             <div className="search-box">
               <i className="fas fa-search"></i>
               <input 
@@ -11099,7 +11377,7 @@ async function updateUser(e) {
         
         <form onSubmit={createBot} className="create-bot-form">
           <input 
-            className="grow" 
+            type="text" 
             value={newBotName} 
             onChange={e => setNewBotName(e.target.value)} 
             placeholder="Nombre del nuevo bot"
@@ -11110,41 +11388,34 @@ async function updateUser(e) {
           </button>
         </form>
         
-        <div className="bots-grid-list">
+        <div className="bots-list">
           {paginatedActiveBots.length > 0 ? (
-            paginatedActiveBots.map(bot => {
-              const isSelected = selectedBotId === bot.id
-              return (
-                <div key={bot.id} className={`bot-premium-item ${isSelected ? 'selected' : ''}`} onClick={() => setSelectedBotId(bot.id)}>
-                  <div className="bot-item-header">
-                    <div className="bot-avatar" style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
-                      <i className="fas fa-robot"></i>
-                    </div>
-                    <div className="bot-info">
-                      <strong>{bot.name}</strong>
-                      <span>{bot.phone || 'Sin número'}</span>
-                    </div>
-                    <span className={`bot-status active`}>
-                      <span className="status-dot"></span>
-                      {bot.status}
-                    </span>
-                  </div>
-                  <div className="bot-item-actions" onClick={e => e.stopPropagation()}>
-                    <button className="action-edit" onClick={() => renameBot(bot)}>
-                      <i className="fas fa-pen"></i>
-                    </button>
-                    <button className="action-stop" onClick={() => stopBot(bot.id)}>
-                      <i className="fas fa-power-off"></i>
-                    </button>
-                    <button className="action-delete" onClick={() => deleteBot(bot)}>
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
+            paginatedActiveBots.map(bot => (
+              <div 
+                key={bot.id} 
+                className={`bot-item ${selectedBotId === bot.id ? 'selected' : ''}`}
+                onClick={() => setSelectedBotId(bot.id)}
+              >
+                <div className="bot-avatar active">
+                  <i className="fas fa-robot"></i>
                 </div>
-              )
-            })
+                <div className="bot-details">
+                  <strong>{bot.name}</strong>
+                  <span>{bot.phone || 'Sin número'}</span>
+                </div>
+                <div className="bot-status-badge active">
+                  <span className="dot"></span>
+                  {bot.status}
+                </div>
+                <div className="bot-actions" onClick={e => e.stopPropagation()}>
+                  <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
+                  <button className="stop" onClick={() => stopBot(bot.id)}><i className="fas fa-power-off"></i></button>
+                  <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
+                </div>
+              </div>
+            ))
           ) : (
-            <div className="empty-bots">
+            <div className="empty-state">
               <i className="fas fa-robot"></i>
               <p>No hay bots activos</p>
               <span>Crea tu primer bot para comenzar</span>
@@ -11153,7 +11424,7 @@ async function updateUser(e) {
         </div>
         
         {filteredActiveBots.length > pageSize && (
-          <div className="bots-pagination">
+          <div className="pagination">
             <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
               <i className="fas fa-chevron-left"></i>
             </button>
@@ -11166,52 +11437,47 @@ async function updateUser(e) {
       </div>
 
       {/* BOTS INACTIVOS */}
-      <div className="bots-premium-card">
+      <div className="bots-card">
         <div className="bots-card-header">
-          <div className="header-title">
-            <div className="status-led inactive"></div>
+          <div className="header-left">
+            <div className="status-indicator inactive"></div>
             <h3>Bots inactivos</h3>
           </div>
-          <div className="header-actions">
+          <div className="header-right">
             <span className="bots-count">{filteredInactiveBots.length}</span>
           </div>
         </div>
         
-        <div className="bots-grid-list">
+        <div className="bots-list">
           {paginatedInactiveBots.length > 0 ? (
-            paginatedInactiveBots.map(bot => {
-              const isSelected = selectedBotId === bot.id
-              return (
-                <div key={bot.id} className={`bot-premium-item inactive ${isSelected ? 'selected' : ''}`} onClick={() => setSelectedBotId(bot.id)}>
-                  <div className="bot-item-header">
-                    <div className="bot-avatar" style={{ background: 'linear-gradient(135deg, #94a3b8, #64748b)' }}>
-                      <i className="fas fa-robot"></i>
-                    </div>
-                    <div className="bot-info">
-                      <strong>{bot.name}</strong>
-                      <span>{bot.phone || 'Sin número'}</span>
-                    </div>
-                    <span className={`bot-status inactive`}>
-                      <span className="status-dot"></span>
-                      {bot.status}
-                    </span>
-                  </div>
-                  <div className="bot-item-actions" onClick={e => e.stopPropagation()}>
-                    <button className="action-start" onClick={async () => { await api(`/api/bots/${bot.id}/start`, { method: 'POST' }); await loadBots(selectedClientId); await loadQr(bot.id); showNotice('Bot encendido') }}>
-                      <i className="fas fa-play"></i>
-                    </button>
-                    <button className="action-edit" onClick={() => renameBot(bot)}>
-                      <i className="fas fa-pen"></i>
-                    </button>
-                    <button className="action-delete" onClick={() => deleteBot(bot)}>
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
+            paginatedInactiveBots.map(bot => (
+              <div 
+                key={bot.id} 
+                className={`bot-item ${selectedBotId === bot.id ? 'selected' : ''}`}
+                onClick={() => setSelectedBotId(bot.id)}
+              >
+                <div className="bot-avatar inactive">
+                  <i className="fas fa-robot"></i>
                 </div>
-              )
-            })
+                <div className="bot-details">
+                  <strong>{bot.name}</strong>
+                  <span>{bot.phone || 'Sin número'}</span>
+                </div>
+                <div className="bot-status-badge inactive">
+                  <span className="dot"></span>
+                  {bot.status}
+                </div>
+                <div className="bot-actions" onClick={e => e.stopPropagation()}>
+                  <button className="start" onClick={async () => { await api(`/api/bots/${bot.id}/start`, { method: 'POST' }); await loadBots(selectedClientId); await loadQr(bot.id); showNotice('Bot encendido') }}>
+                    <i className="fas fa-play"></i>
+                  </button>
+                  <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
+                  <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
+                </div>
+              </div>
+            ))
           ) : (
-            <div className="empty-bots">
+            <div className="empty-state">
               <i className="fas fa-robot"></i>
               <p>No hay bots inactivos</p>
               <span>Todos tus bots están activos</span>
@@ -11220,7 +11486,7 @@ async function updateUser(e) {
         </div>
         
         {filteredInactiveBots.length > pageSize && (
-          <div className="bots-pagination">
+          <div className="pagination">
             <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
               <i className="fas fa-chevron-left"></i>
             </button>
@@ -11233,96 +11499,94 @@ async function updateUser(e) {
       </div>
     </div>
 
-    {/* BOT SELECCIONADO - DETALLE PREMIUM */}
+    {/* ========== BOT SELECCIONADO - DETALLE PREMIUM ========== */}
     {selectedBot ? (
-      <div className="selected-bot-premium">
+      <div className="selected-bot-premium-card">
         <div className="selected-bot-header">
-          <div className="bot-selected-info">
-            <div className="bot-selected-avatar">
+          <div className="bot-info-section">
+            <div className="bot-avatar-large">
               <i className="fas fa-microchip"></i>
             </div>
             <div>
-              <h3>{selectedBot.name}</h3>
-              <p>Bot seleccionado · Configuración y métricas</p>
+              <h2>{selectedBot.name}</h2>
+              <p>Bot seleccionado · Configuración y métricas en tiempo real</p>
             </div>
           </div>
-          <div className="bot-selected-actions">
+          <div className="bot-actions-section">
             {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
-              <button className="action-stop-large" onClick={() => stopBot(selectedBot.id)} disabled={busy}>
+              <button className="btn-stop" onClick={() => stopBot(selectedBot.id)} disabled={busy}>
                 <i className="fas fa-power-off"></i>
                 <span>Apagar bot</span>
               </button>
             ) : (
-              <button className="action-start-large" onClick={startBot} disabled={busy}>
+              <button className="btn-start" onClick={startBot} disabled={busy}>
                 <i className="fas fa-play"></i>
                 <span>Encender bot</span>
               </button>
             )}
-            <button className="action-edit-large" onClick={() => renameBot(selectedBot)} disabled={busy}>
+            <button className="btn-edit" onClick={() => renameBot(selectedBot)} disabled={busy}>
               <i className="fas fa-pen"></i>
               <span>Editar</span>
             </button>
           </div>
         </div>
         
-        <div className="selected-bot-body">
-          <div className="bot-qr-section">
-            <div className="qr-container">
-              {qrDataUrlBot ? (
-                <img className="qr-premium" src={qrDataUrlBot} alt="QR Code" />
-              ) : (
-                <div className="qr-placeholder">
-                  <i className="fas fa-qrcode"></i>
-                  <span>Sin QR pendiente</span>
-                </div>
-              )}
-            </div>
+        <div className="selected-bot-stats">
+          <div className="qr-section">
+            {qrDataUrlBot ? (
+              <img className="qr-code" src={qrDataUrlBot} alt="QR Code" />
+            ) : (
+              <div className="qr-placeholder">
+                <i className="fas fa-qrcode"></i>
+                <span>Sin QR pendiente</span>
+              </div>
+            )}
             <div className="qr-info">
               <i className="fas fa-info-circle"></i>
               <p>Escanea este código QR con WhatsApp para conectar el bot</p>
             </div>
           </div>
           
-          <div className="bot-metrics-section">
-            <div className="bot-metric-item">
-              <div className="metric-icon-small" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+          <div className="metrics-section">
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
                 <i className="fas fa-users"></i>
               </div>
-              <div className="metric-data">
-                <span className="metric-value-small">{leads.filter(l => l.bot_id === selectedBot.id).length}</span>
-                <span className="metric-label-small">Total leads</span>
+              <div className="stat-data">
+                <span className="stat-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</span>
+                <span className="stat-label">Total leads</span>
               </div>
             </div>
-            <div className="bot-metric-item">
-              <div className="metric-icon-small" style={{ background: '#dcfce7', color: '#22c55e' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
                 <i className="fas fa-comments"></i>
               </div>
-              <div className="metric-data">
-                <span className="metric-value-small">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</span>
-                <span className="metric-label-small">Activos</span>
+              <div className="stat-data">
+                <span className="stat-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</span>
+                <span className="stat-label">Activos</span>
               </div>
             </div>
-            <div className="bot-metric-item">
-              <div className="metric-icon-small" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
                 <i className="fas fa-chart-line"></i>
               </div>
-              <div className="metric-data">
-                <span className="metric-value-small">
+              <div className="stat-data">
+                <span className="stat-value">
                   {Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%
                 </span>
-                <span className="metric-label-small">Tasa cierre</span>
+                <span className="stat-label">Tasa cierre</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Leads por etapa del bot seleccionado */}
-        <div className="bot-leads-chart">
-          <div className="chart-title-mini">
+        {/* LEADS POR ETAPA DEL BOT */}
+        <div className="bot-leads-section">
+          <div className="section-title-mini">
             <i className="fas fa-chart-simple"></i>
             <span>Leads por etapa</span>
           </div>
-          <div className="bot-stage-bars">
+          <div className="bot-stages">
             {botLeadsByStage.stages.map((stage, idx) => {
               const count = botLeadsByStage.counts[idx]
               const maxCount = Math.max(...botLeadsByStage.counts, 1)
@@ -11331,27 +11595,249 @@ async function updateUser(e) {
               const stageColors = {
                 new: '#3b82f6', qualified: '#8b5cf6', interested: '#f59e0b', hot: '#ef4444', closed: '#10b981'
               }
-              const stageLabels = {
-                new: 'Nuevos', qualified: 'Calif', interested: 'Inter', hot: 'Hot', closed: 'Closed'
+              const stageNames = {
+                new: 'Nuevos', qualified: 'Calificados', interested: 'Interesados', hot: 'Hot', closed: 'Cerrados'
               }
               
               return (
-                <div key={stage} className="bot-stage-item">
-                  <div className="bot-stage-header">
-                    <span className="bot-stage-label">{stageLabels[stage] || stage}</span>
-                    <span className="bot-stage-count">{count}</span>
+                <div key={stage} className="stage-item">
+                  <div className="stage-header">
+                    <span className="stage-name">{stageNames[stage]}</span>
+                    <span className="stage-count">{count}</span>
                   </div>
-                  <div className="bot-stage-track">
-                    <div className="bot-stage-fill" style={{ width: `${percentage}%`, background: stageColors[stage] }}></div>
+                  <div className="stage-track">
+                    <div className="stage-fill" style={{ width: `${percentage}%`, background: stageColors[stage] }}></div>
                   </div>
                 </div>
               )
             })}
           </div>
         </div>
+
+        {/* ========== AGENDA AI DEL BOT (INTEGRADA) ========== */}
+        <div className="agenda-bot-integrated">
+          <div className="agenda-header">
+            <div className="agenda-title">
+              <i className="fas fa-calendar-check"></i>
+              <span>Agenda AI</span>
+              <span className="agenda-badge">Automatización</span>
+            </div>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={!!botAgendaSettings.enabled}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    enabled: e.target.checked
+                  })
+                }
+              />
+              <span className="toggle-slider"></span>
+              <span className="toggle-label">Activar agenda</span>
+            </label>
+          </div>
+
+          <div className="agenda-config-grid">
+            <div className="config-field">
+              <label><i className="fas fa-phone-alt"></i> Tipo de cita</label>
+              <select
+                value={botAgendaSettings.goal || 'sales_call'}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    goal: e.target.value
+                  })
+                }
+              >
+                <option value="sales_call">📞 Llamada comercial</option>
+                <option value="zoom">🎥 Zoom</option>
+                <option value="meet">📧 Google Meet</option>
+                <option value="support_call">🛠️ Soporte</option>
+              </select>
+            </div>
+            <div className="config-field">
+              <label><i className="fas fa-hourglass-half"></i> Duración (min)</label>
+              <input
+                type="number"
+                min="5"
+                step="5"
+                value={botAgendaSettings.duration_mins || 30}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    duration_mins: Number(e.target.value)
+                  })
+                }
+              />
+            </div>
+            <div className="config-field">
+              <label><i className="fas fa-pause-circle"></i> Buffer (min)</label>
+              <input
+                type="number"
+                min="0"
+                step="5"
+                value={botAgendaSettings.buffer_mins ?? 10}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    buffer_mins: Number(e.target.value)
+                  })
+                }
+              />
+            </div>
+            <div className="config-field">
+              <label><i className="fas fa-bell"></i> Recordatorio (min)</label>
+              <input
+                type="number"
+                min="5"
+                step="15"
+                value={botAgendaSettings.reminder_before_mins || 60}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    reminder_before_mins: Number(e.target.value)
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="agenda-config-row">
+            <div className="config-field days-field">
+              <label><i className="fas fa-calendar-week"></i> Días disponibles</label>
+              <div className="days-selector">
+                {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, idx) => {
+                  const dayKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'][idx]
+                  const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
+                  const isActive = currentDays.includes(dayKey)
+                  return (
+                    <button
+                      key={dayKey}
+                      type="button"
+                      className={`day-chip ${isActive ? 'active' : ''}`}
+                      onClick={() => {
+                        let newDays = [...currentDays]
+                        if (isActive) {
+                          newDays = newDays.filter(d => d !== dayKey)
+                        } else {
+                          newDays.push(dayKey)
+                        }
+                        setBotAgendaSettings({
+                          ...botAgendaSettings,
+                          available_days: newDays.join(',')
+                        })
+                      }}
+                    >
+                      {day}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="config-field">
+              <label><i className="fas fa-sun"></i> Hora inicio</label>
+              <input
+                type="time"
+                value={botAgendaSettings.start_time || '09:00'}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    start_time: e.target.value
+                  })
+                }
+              />
+            </div>
+            <div className="config-field">
+              <label><i className="fas fa-moon"></i> Hora fin</label>
+              <input
+                type="time"
+                value={botAgendaSettings.end_time || '18:00'}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    end_time: e.target.value
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="agenda-notifications-row">
+            <div className="config-field">
+              <label><i className="fab fa-whatsapp"></i> WhatsApp notificaciones</label>
+              <input
+                placeholder="573118777641"
+                value={botAgendaSettings.notify_whatsapp || ''}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    notify_whatsapp: e.target.value
+                  })
+                }
+              />
+            </div>
+            <div className="config-field">
+              <label><i className="fas fa-envelope"></i> Email notificaciones</label>
+              <input
+                type="email"
+                placeholder="gerencia@empresa.com"
+                value={botAgendaSettings.notify_email || ''}
+                onChange={e =>
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    notify_email: e.target.value
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="agenda-slots-section">
+            <div className="slots-header">
+              <i className="fas fa-calendar-alt"></i>
+              <span>Próximos espacios disponibles</span>
+              <button className="refresh-slots" onClick={() => loadAgendaSlots(selectedBot.id)}>
+                <i className="fas fa-sync-alt"></i>
+              </button>
+            </div>
+            <div className="slots-list">
+              {(agendaSlots || []).length > 0 ? (
+                (agendaSlots || []).slice(0, 4).map((slot, idx) => (
+                  <div key={idx} className="slot-item">
+                    <div className="slot-date">
+                      {new Date(slot.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                    </div>
+                    <div className="slot-time">
+                      {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      {' - '}
+                      {new Date(slot.end_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-slots">
+                  <i className="fas fa-calendar-times"></i>
+                  <span>No hay espacios disponibles</span>
+                </div>
+              )}
+            </div>
+            <button
+              className="save-agenda-btn"
+              onClick={() => saveBotAgendaSettings(selectedBot.id)}
+              disabled={agendaLoading}
+            >
+              {agendaLoading ? (
+                <><i className="fas fa-circle-notch fa-spin"></i> Guardando...</>
+              ) : (
+                <><i className="fas fa-save"></i> Guardar configuración</>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     ) : (
-      <div className="no-bot-selected-premium">
+      <div className="no-bot-selected">
         <i className="fas fa-robot"></i>
         <h4>No hay bot seleccionado</h4>
         <p>Selecciona un bot de la lista para ver sus métricas y configuración</p>
