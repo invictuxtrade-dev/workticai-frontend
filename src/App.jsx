@@ -4619,9 +4619,25 @@ export default function App() {
 
 .weekly-schedule {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: .55rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.day-chip {
+  min-width: 0;
+  width: 100%;
+  padding: .7rem .55rem;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.day-chip span,
+.day-chip small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .day-card-v2 {
