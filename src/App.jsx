@@ -4238,6 +4238,23 @@ export default function App() {
           font-size: 0.8rem;
           color: #64748b;
         }
+
+        /* Agenda AI Bot Switch Styles */
+        .switch-row {
+          display: flex;
+          align-items: center;
+          gap: .75rem;
+          background: #f8fafc;
+          padding: 0.5rem 1rem;
+          border-radius: 0.75rem;
+          border: 1px solid #e2e8f0;
+        }
+
+        .switch-row input {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
       `
       document.head.appendChild(style)
     }
@@ -4331,6 +4348,11 @@ export default function App() {
   const [appointmentSettings, setAppointmentSettings] = useState({})
   const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [showAppointmentModal, setShowAppointmentModal] = useState(false)
+
+  // NUEVOS STATES PARA AGENDA AI DEL BOT
+  const [botAgendaSettings, setBotAgendaSettings] = useState({})
+  const [agendaSlots, setAgendaSlots] = useState([])
+  const [agendaLoading, setAgendaLoading] = useState(false)
 
   const [appointmentForm, setAppointmentForm] = useState({
     title: '',
@@ -4730,6 +4752,59 @@ export default function App() {
     try {
       const data = await api('/api/agenda/agents')
       setAppointmentAgents(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  // ======================== NUEVAS FUNCIONES AGENDA AI PARA BOT ========================
+  async function loadBotAgendaSettings(botId) {
+    if (!botId) return
+
+    try {
+      setAgendaLoading(true)
+
+      const data = await api(`/agenda/settings?bot_id=${botId}`)
+
+      setBotAgendaSettings(data || {})
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setAgendaLoading(false)
+    }
+  }
+
+  async function saveBotAgendaSettings(botId) {
+    if (!requireFeature('agenda_ai', 'Agenda AI')) {
+      return
+    }
+
+    try {
+      setAgendaLoading(true)
+
+      await api('/agenda/settings', {
+        method: 'PUT',
+        body: JSON.stringify({
+          ...botAgendaSettings,
+          bot_id: botId
+        })
+      })
+
+      showNotice('Configuración Agenda AI guardada')
+    } catch (err) {
+      showNotice(err.message)
+    } finally {
+      setAgendaLoading(false)
+    }
+  }
+
+  async function loadAgendaSlots(botId) {
+    if (!botId) return
+
+    try {
+      const data = await api(`/agenda/slots?bot_id=${botId}`)
+
+      setAgendaSlots(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
     }
@@ -6549,6 +6624,17 @@ export default function App() {
     }
   }, [me, forcePlanScreen, selectedClientId])
 
+  // Efecto para cargar configuración de agenda del bot cuando se selecciona un bot
+  useEffect(() => {
+    if (selectedBotId) {
+      loadBotAgendaSettings(selectedBotId)
+      loadAgendaSlots(selectedBotId)
+    } else {
+      setBotAgendaSettings({})
+      setAgendaSlots([])
+    }
+  }, [selectedBotId])
+
   useEffect(() => {
     if (!selectedClientId && clients.length > 0) {
       setSelectedClientId(clients[0].id)
@@ -7999,6 +8085,170 @@ async function updateUser(e) {
                       ))}
                     </div>
                   </div>
+                  {/* ======================== AGENDA AI SECTION EN BOT ======================== */}
+                  <section className="stripe-card stack" style={{ marginTop: '1.5rem' }}>
+                    <div className="row between center">
+                      <div className="section-title">
+                        <i className="fas fa-calendar-check"></i>
+                        Agenda AI
+                      </div>
+
+                      <label className="switch-row">
+                        <input
+                          type="checkbox"
+                          checked={!!botAgendaSettings.enabled}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              enabled: e.target.checked
+                            })
+                          }
+                        />
+
+                        <span>
+                          Activar agenda automática
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="form-grid">
+                      <select
+                        value={botAgendaSettings.goal || 'sales_call'}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            goal: e.target.value
+                          })
+                        }
+                      >
+                        <option value="sales_call">Llamada comercial</option>
+                        <option value="zoom">Zoom</option>
+                        <option value="meet">Google Meet</option>
+                        <option value="support_call">Soporte</option>
+                      </select>
+
+                      <input
+                        type="number"
+                        placeholder="Duración (min)"
+                        value={botAgendaSettings.duration_mins || 30}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            duration_mins: Number(e.target.value)
+                          })
+                        }
+                      />
+
+                      <input
+                        type="number"
+                        placeholder="Buffer (min)"
+                        value={botAgendaSettings.buffer_mins || 0}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            buffer_mins: Number(e.target.value)
+                          })
+                        }
+                      />
+
+                      <input
+                        placeholder="Días disponibles"
+                        value={botAgendaSettings.available_days || ''}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            available_days: e.target.value
+                          })
+                        }
+                      />
+
+                      <input
+                        type="time"
+                        value={botAgendaSettings.start_time || '09:00'}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            start_time: e.target.value
+                          })
+                        }
+                      />
+
+                      <input
+                        type="time"
+                        value={botAgendaSettings.end_time || '18:00'}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            end_time: e.target.value
+                          })
+                        }
+                      />
+
+                      <input
+                        placeholder="WhatsApp notificaciones"
+                        value={botAgendaSettings.notify_whatsapp || ''}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            notify_whatsapp: e.target.value
+                          })
+                        }
+                      />
+
+                      <input
+                        placeholder="Email notificaciones"
+                        value={botAgendaSettings.notify_email || ''}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            notify_email: e.target.value
+                          })
+                        }
+                      />
+
+                      <input
+                        type="number"
+                        placeholder="Recordatorio antes (min)"
+                        value={botAgendaSettings.reminder_before_mins || 60}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            reminder_before_mins: Number(e.target.value)
+                          })
+                        }
+                      />
+                    </div>
+
+                    <button
+                      onClick={() => saveBotAgendaSettings(selectedBot.id)}
+                      disabled={agendaLoading}
+                    >
+                      <i className="fas fa-save"></i>
+                      Guardar Agenda AI
+                    </button>
+
+                    <section className="stack">
+                      <div className="section-title">
+                        Próximos espacios IA
+                      </div>
+
+                      <div className="template-list">
+                        {(agendaSlots || []).map((slot, idx) => (
+                          <div key={idx} className="template-card">
+                            <strong>
+                              {new Date(slot.start_at).toLocaleDateString()}
+                            </strong>
+                            <div className="muted tiny">
+                              {new Date(slot.start_at).toLocaleTimeString()}
+                            </div>
+                          </div>
+                        ))}
+                        {agendaSlots.length === 0 && (
+                          <div className="empty-box">No hay espacios agendados</div>
+                        )}
+                      </div>
+                    </section>
+                  </section>
                 </>
               ) : <div className="empty-box">Selecciona un bot</div>}
             </section>
