@@ -5949,7 +5949,7 @@ export default function App() {
   .input-group-premium.full-width {
     grid-column: span 1;
   }
-}
+
 
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
