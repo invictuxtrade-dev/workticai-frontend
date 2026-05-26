@@ -4344,6 +4344,435 @@ export default function App() {
         }
       }
 
+          /* AGENDA PREMIUM SECTION */
+    .agenda-premium-section {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border: 1px solid rgba(116, 48, 226, 0.15);
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+    }
+
+    .agenda-premium-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid rgba(116, 48, 226, 0.15);
+    }
+
+    .agenta-premium-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #7430e2, #4f1bb5);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      box-shadow: 0 10px 20px rgba(116, 48, 226, 0.3);
+    }
+
+    .agenda-premium-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .premium-badge {
+      background: linear-gradient(135deg, #7430e2, #2563eb);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .agenda-premium-subtitle {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin: 0.25rem 0 0;
+    }
+
+    .agenda-premium-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Tarjetas premium */
+    .agenda-info-premium,
+    .agenda-config-premium,
+    .agenda-schedule-premium,
+    .agenda-notify-premium {
+      background: white;
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .agenda-info-premium:hover,
+    .agenda-config-premium:hover,
+    .agenda-schedule-premium:hover,
+    .agenda-notify-premium:hover {
+      border-color: #c4b5fd;
+      box-shadow: 0 8px 25px rgba(116, 48, 226, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .info-header,
+    .config-header,
+    .schedule-header,
+    .notify-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.95rem;
+    }
+
+    .info-header i,
+    .config-header i,
+    .schedule-header i,
+    .notify-header i {
+      color: #7430e2;
+      font-size: 1.1rem;
+    }
+
+    .agenda-info-premium p {
+      color: #475569;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .info-tip {
+      background: #f0f9ff;
+      border-left: 3px solid #7430e2;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      display: flex;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .info-tip i {
+      color: #7430e2;
+      margin-top: 0.1rem;
+    }
+
+    .info-tip code {
+      background: #e0e7ff;
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #4f1bb5;
+      font-weight: 600;
+    }
+
+    /* Toggle premium */
+    .toggle-premium {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: #f1f5f9;
+      padding: 0.8rem 1rem;
+      border-radius: 1rem;
+      margin-bottom: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-premium:hover {
+      background: #eef2ff;
+    }
+
+    .toggle-premium input {
+      display: none;
+    }
+
+    .toggle-slider {
+      width: 44px;
+      height: 24px;
+      background: #cbd5e1;
+      border-radius: 30px;
+      position: relative;
+      transition: 0.3s;
+    }
+
+    .toggle-slider:before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 3px;
+      transition: 0.3s;
+    }
+
+    .toggle-premium input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #7430e2, #2563eb);
+    }
+
+    .toggle-premium input:checked + .toggle-slider:before {
+      transform: translateX(18px);
+    }
+
+    .toggle-label {
+      font-weight: 600;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Input groups premium */
+    .input-group-premium {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group-premium label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .input-group-premium label i {
+      color: #7430e2;
+      font-size: 0.8rem;
+    }
+
+    .input-group-premium input,
+    .input-group-premium select {
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.75rem;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .input-group-premium input:focus,
+    .input-group-premium select:focus {
+      outline: none;
+      border-color: #7430e2;
+      box-shadow: 0 0 0 3px rgba(116, 48, 226, 0.1);
+    }
+
+    .input-group-premium small {
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+
+    /* Days selector */
+    .days-selector {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .day-chip {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      border: 1.5px solid #e2e8f0;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .day-chip.active {
+      background: linear-gradient(135deg, #7430e2, #2563eb);
+      border-color: #7430e2;
+      color: white;
+      box-shadow: 0 4px 10px rgba(116, 48, 226, 0.3);
+    }
+
+    .day-chip:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Two columns layout */
+    .two-columns {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    /* Actions section */
+    .agenda-actions-premium {
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+
+    .btn-save-premium {
+      background: linear-gradient(135deg, #7430e2, #4f1bb5);
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 20px rgba(116, 48, 226, 0.3);
+    }
+
+    .btn-save-premium:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(116, 48, 226, 0.4);
+    }
+
+    .btn-save-premium:disabled {
+      opacity: 0.6;
+      transform: none;
+    }
+
+    /* Slots section */
+    .agenda-slots-premium {
+      background: #f8fafc;
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .slots-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .slots-header i {
+      color: #7430e2;
+      font-size: 1.1rem;
+    }
+
+    .refresh-slots {
+      margin-left: auto;
+      background: white;
+      border: 1px solid #e2e8f0;
+      color: #7430e2;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .refresh-slots:hover {
+      background: #f1f5f9;
+      transform: none;
+    }
+
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .slot-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 0.85rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+
+    .slot-card:hover {
+      border-color: #c4b5fd;
+      transform: translateX(4px);
+    }
+
+    .slot-date {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .slot-date i {
+      color: #7430e2;
+      font-size: 0.75rem;
+    }
+
+    .slot-time {
+      font-size: 0.75rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .empty-slots {
+      text-align: center;
+      padding: 2rem;
+      color: #64748b;
+    }
+
+    .empty-slots i {
+      font-size: 2rem;
+      color: #cbd5e1;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-slots p {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .empty-slots span {
+      font-size: 0.75rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1000px) {
+      .agenda-premium-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .two-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .agenda-premium-header {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -8347,220 +8776,322 @@ async function updateUser(e) {
                     </div>
                   </div>
                  {/* ======================== AGENDA AI SECTION EN BOT ======================== */}
-                  <section className="stripe-card stack" style={{ marginTop: '1.5rem' }}>
-                    <div className="row between center">
-                      <div className="section-title">
-                        <i className="fas fa-calendar-check"></i>
-                        Agenda AI
+                  <section className="agenda-premium-section">
+                    <div className="agenda-premium-header">
+                      <div className="agenta-premium-icon">
+                        <i className="fas fa-calendar-star"></i>
                       </div>
-                    </div>
-
-                    <div className="agenda-help-card">
                       <div>
-                        <strong>¿Cómo funciona?</strong>
-                        <p>
-                          Cuando este bot detecte que un lead quiere una cita, revisará estos horarios,
-                          validará disponibilidad y creará la cita automáticamente.
-                        </p>
-                      </div>
-
-                      <div className="agenda-example">
-                        <span>Ejemplo para probar por WhatsApp:</span>
-                        <code>Hola, quiero agendar una cita mañana a las 3</code>
+                        <h3 className="agenda-premium-title">Agenda AI <span className="premium-badge">INTELIGENTE</span></h3>
+                        <p className="agenda-premium-subtitle">Configuración avanzada de citas automáticas con inteligencia artificial</p>
                       </div>
                     </div>
 
-                    <label className="switch-row agenda-toggle">
-                      <input
-                        type="checkbox"
-                        checked={!!botAgendaSettings.enabled}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            enabled: e.target.checked
-                          })
-                        }
-                      />
-                      <span>Activar agenda automática para este bot</span>
-                    </label>
-
-                    <div className="agenda-config-grid">
-                      <label className="field-label">
-                        <span>Tipo de cita</span>
-                        <select
-                          value={botAgendaSettings.goal || 'sales_call'}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              goal: e.target.value
-                            })
-                          }
-                        >
-                          <option value="sales_call">Llamada comercial</option>
-                          <option value="zoom">Zoom</option>
-                          <option value="meet">Google Meet</option>
-                          <option value="support_call">Soporte</option>
-                        </select>
-                        <small>Define el objetivo principal de la cita.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Duración de la cita</span>
-                        <input
-                          type="number"
-                          min="5"
-                          placeholder="30"
-                          value={botAgendaSettings.duration_mins || 30}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              duration_mins: Number(e.target.value)
-                            })
-                          }
-                        />
-                        <small>Tiempo en minutos. Recomendado: 30.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Buffer entre citas</span>
-                        <input
-                          type="number"
-                          min="0"
-                          placeholder="10"
-                          value={botAgendaSettings.buffer_mins ?? 10}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              buffer_mins: Number(e.target.value)
-                            })
-                          }
-                        />
-                        <small>Espacio libre entre reuniones. Recomendado: 10 o 15.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Días disponibles</span>
-                        <input
-                          placeholder="mon,tue,wed,thu,fri"
-                          value={botAgendaSettings.available_days || 'mon,tue,wed,thu,fri'}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              available_days: e.target.value
-                            })
-                          }
-                        />
-                        <small>Usa: mon,tue,wed,thu,fri,sat,sun.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Hora de inicio</span>
-                        <input
-                          type="time"
-                          value={botAgendaSettings.start_time || '09:00'}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              start_time: e.target.value
-                            })
-                          }
-                        />
-                        <small>Desde qué hora puede agendar el bot.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Hora final</span>
-                        <input
-                          type="time"
-                          value={botAgendaSettings.end_time || '18:00'}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              end_time: e.target.value
-                            })
-                          }
-                        />
-                        <small>Hasta qué hora puede agendar el bot.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>WhatsApp para notificaciones</span>
-                        <input
-                          placeholder="573118777641"
-                          value={botAgendaSettings.notify_whatsapp || ''}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              notify_whatsapp: e.target.value
-                            })
-                          }
-                        />
-                        <small>Número que recibe avisos cuando se agenda una cita.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Email para notificaciones</span>
-                        <input
-                          type="email"
-                          placeholder="gerencia@empresa.com"
-                          value={botAgendaSettings.notify_email || ''}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              notify_email: e.target.value
-                            })
-                          }
-                        />
-                        <small>Correo donde llegará el aviso de nueva cita.</small>
-                      </label>
-
-                      <label className="field-label">
-                        <span>Recordatorio antes de la cita</span>
-                        <input
-                          type="number"
-                          min="5"
-                          placeholder="60"
-                          value={botAgendaSettings.reminder_before_mins || 60}
-                          onChange={e =>
-                            setBotAgendaSettings({
-                              ...botAgendaSettings,
-                              reminder_before_mins: Number(e.target.value)
-                            })
-                          }
-                        />
-                        <small>Minutos antes. Ejemplo: 60 = 1 hora antes.</small>
-                      </label>
-                    </div>
-
-                    <button
-                      onClick={() => saveBotAgendaSettings(selectedBot.id)}
-                      disabled={agendaLoading}
-                    >
-                      <i className="fas fa-save"></i>
-                      Guardar Agenda AI
-                    </button>
-
-                    <section className="stack">
-                      <div className="section-title">
-                        Próximos espacios IA
+                    <div className="agenda-premium-grid">
+                      {/* Tarjeta de información - Cómo funciona */}
+                      <div className="agenda-info-premium">
+                        <div className="info-header">
+                          <i className="fas fa-robot"></i>
+                          <strong>¿Cómo funciona la Agenda AI?</strong>
+                        </div>
+                        <p>Cuando el bot detecte que un lead quiere agendar una cita, analizará automáticamente tu disponibilidad, validará horarios y creará la cita en tiempo real sin intervención manual.</p>
+                        <div className="info-tip">
+                          <i className="fas fa-lightbulb"></i>
+                          <span>El lead escribe <code>"Quiero agendar una cita mañana a las 3pm"</code> y el bot hace todo automáticamente</span>
+                        </div>
                       </div>
 
-                      <div className="template-list">
-                        {(agendaSlots || []).map((slot, idx) => (
-                          <div key={idx} className="template-card">
-                            <strong>
-                              {new Date(slot.start_at).toLocaleDateString()}
-                            </strong>
-                            <div className="muted tiny">
-                              {new Date(slot.start_at).toLocaleTimeString()}
+                      {/* Tarjeta de configuración general */}
+                      <div className="agenda-config-premium">
+                        <div className="config-header">
+                          <i className="fas fa-sliders-h"></i>
+                          <span>Configuración general</span>
+                        </div>
+                        
+                        <label className="toggle-premium">
+                          <input
+                            type="checkbox"
+                            checked={!!botAgendaSettings.enabled}
+                            onChange={e =>
+                              setBotAgendaSettings({
+                                ...botAgendaSettings,
+                                enabled: e.target.checked
+                              })
+                            }
+                          />
+                          <span className="toggle-slider"></span>
+                          <span className="toggle-label">
+                            <i className="fas fa-power-off"></i>
+                            Activar agenda automática
+                          </span>
+                        </label>
+
+                        <div className="two-columns">
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-calendar-day"></i>
+                              <span>Tipo de cita</span>
+                            </label>
+                            <select
+                              value={botAgendaSettings.goal || 'sales_call'}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  goal: e.target.value
+                                })
+                              }
+                            >
+                              <option value="sales_call">📞 Llamada comercial</option>
+                              <option value="zoom">🎥 Zoom</option>
+                              <option value="meet">📧 Google Meet</option>
+                              <option value="support_call">🛠️ Soporte técnico</option>
+                            </select>
+                          </div>
+
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-hourglass-half"></i>
+                              <span>Duración (minutos)</span>
+                            </label>
+                            <input
+                              type="number"
+                              min="5"
+                              step="5"
+                              value={botAgendaSettings.duration_mins || 30}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  duration_mins: Number(e.target.value)
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-pause-circle"></i>
+                              <span>Buffer entre citas</span>
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="5"
+                              value={botAgendaSettings.buffer_mins ?? 10}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  buffer_mins: Number(e.target.value)
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-bell"></i>
+                              <span>Recordatorio (minutos antes)</span>
+                            </label>
+                            <input
+                              type="number"
+                              min="5"
+                              step="15"
+                              value={botAgendaSettings.reminder_before_mins || 60}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  reminder_before_mins: Number(e.target.value)
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Tarjeta de horarios */}
+                      <div className="agenda-schedule-premium">
+                        <div className="schedule-header">
+                          <i className="fas fa-clock"></i>
+                          <span>Horarios de atención</span>
+                        </div>
+
+                        <div className="two-columns">
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-calendar-week"></i>
+                              <span>Días disponibles</span>
+                            </label>
+                            <div className="days-selector">
+                              {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => {
+                                const daysMap = { mon: 'L', tue: 'M', wed: 'M', thu: 'J', fri: 'V', sat: 'S', sun: 'D' }
+                                const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
+                                const isActive = currentDays.includes(day)
+                                return (
+                                  <button
+                                    key={day}
+                                    type="button"
+                                    className={`day-chip ${isActive ? 'active' : ''}`}
+                                    onClick={() => {
+                                      let newDays = [...currentDays]
+                                      if (isActive) {
+                                        newDays = newDays.filter(d => d !== day)
+                                      } else {
+                                        newDays.push(day)
+                                      }
+                                      setBotAgendaSettings({
+                                        ...botAgendaSettings,
+                                        available_days: newDays.join(',')
+                                      })
+                                    }}
+                                  >
+                                    {daysMap[day]}
+                                  </button>
+                                )
+                              })}
                             </div>
                           </div>
-                        ))}
-                        {agendaSlots.length === 0 && (
-                          <div className="empty-box">No hay espacios agendados</div>
+
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-sun"></i>
+                              <span>Hora de inicio</span>
+                            </label>
+                            <input
+                              type="time"
+                              value={botAgendaSettings.start_time || '09:00'}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  start_time: e.target.value
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-moon"></i>
+                              <span>Hora final</span>
+                            </label>
+                            <input
+                              type="time"
+                              value={botAgendaSettings.end_time || '18:00'}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  end_time: e.target.value
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Tarjeta de notificaciones */}
+                      <div className="agenda-notify-premium">
+                        <div className="notify-header">
+                          <i className="fas fa-bell"></i>
+                          <span>Notificaciones automáticas</span>
+                        </div>
+
+                        <div className="two-columns">
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fab fa-whatsapp"></i>
+                              <span>WhatsApp</span>
+                            </label>
+                            <input
+                              placeholder="Ej: 573118777641"
+                              value={botAgendaSettings.notify_whatsapp || ''}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  notify_whatsapp: e.target.value
+                                })
+                              }
+                            />
+                            <small>Recibirás un mensaje cuando se agende una cita</small>
+                          </div>
+
+                          <div className="input-group-premium">
+                            <label>
+                              <i className="fas fa-envelope"></i>
+                              <span>Correo electrónico</span>
+                            </label>
+                            <input
+                              type="email"
+                              placeholder="gerencia@tuequipo.com"
+                              value={botAgendaSettings.notify_email || ''}
+                              onChange={e =>
+                                setBotAgendaSettings({
+                                  ...botAgendaSettings,
+                                  notify_email: e.target.value
+                                })
+                              }
+                            />
+                            <small>Recibirás una notificación por email</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="agenda-actions-premium">
+                      <button
+                        className="btn-save-premium"
+                        onClick={() => saveBotAgendaSettings(selectedBot.id)}
+                        disabled={agendaLoading}
+                      >
+                        {agendaLoading ? (
+                          <>
+                            <i className="fas fa-circle-notch fa-spin"></i>
+                            Guardando configuración...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fas fa-save"></i>
+                            Guardar configuración de Agenda AI
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="agenda-slots-premium">
+                      <div className="slots-header">
+                        <i className="fas fa-calendar-alt"></i>
+                        <span>Próximos espacios disponibles</span>
+                        <button
+                          type="button"
+                          className="refresh-slots"
+                          onClick={() => loadAgendaSlots(selectedBot.id)}
+                        >
+                          <i className="fas fa-sync-alt"></i>
+                        </button>
+                      </div>
+
+                      <div className="slots-grid">
+                        {(agendaSlots || []).length > 0 ? (
+                          (agendaSlots || []).map((slot, idx) => (
+                            <div key={idx} className="slot-card">
+                              <div className="slot-date">
+                                <i className="fas fa-calendar-day"></i>
+                                {new Date(slot.start_at).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
+                              </div>
+                              <div className="slot-time">
+                                <i className="fas fa-clock"></i>
+                                {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                {' - '}
+                                {new Date(slot.end_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="empty-slots">
+                            <i className="fas fa-calendar-times"></i>
+                            <p>No hay espacios agendados</p>
+                            <span>Activa la agenda y los leads podrán reservar automáticamente</span>
+                          </div>
                         )}
                       </div>
-                    </section>
+                    </div>
                   </section>
                 </>
               ) : <div className="empty-box">Selecciona un bot</div>}
