@@ -4434,28 +4434,29 @@ export default function App() {
 }
 
 /* GRID DE DOS COLUMNAS ASIMÉTRICAS */
-/* GRID AGENDA AI - CORREGIDO PARA DASHBOARD */
+/* GRID AGENDA AI - DOS COLUMNAS PRO */
 .agenda-premium-v2-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) 280px;
   gap: 1.25rem;
   margin-bottom: 1.5rem;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
+  align-items: start;
 }
 
 .agenda-col-left,
 .agenda-col-right {
-  width: 100%;
-  max-width: 100%;
   min-width: 0;
+  max-width: 100%;
 }
 
 .agenda-col-right {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.25rem;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .reminder-card-v2,
@@ -5176,17 +5177,23 @@ export default function App() {
 }
 
 /* RESPONSIVE */
-@media (max-width: 1100px) {
+@media (max-width: 1250px) {
+  .agenda-premium-v2-grid {
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+
   .agenda-col-right {
+    width: 260px;
+  }
+}
+
+@media (max-width: 980px) {
+  .agenda-premium-v2-grid {
     grid-template-columns: 1fr;
   }
 
-  .weekly-schedule {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .meeting-options {
-    grid-template-columns: 1fr;
+  .agenda-col-right {
+    width: 100%;
   }
 }
 
