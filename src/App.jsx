@@ -5947,1374 +5947,6 @@ export default function App() {
   }
 }   
 
-
-/* ======================== DASHBOARD PREMIUM ULTRA ======================== */
-.dashboard-premium-container {
-  animation: dashboardFadeIn 0.4s ease-out;
-}
-
-@keyframes dashboardFadeIn {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* HEADER PREMIUM */
-.dashboard-premium-header {
-  position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  border-radius: 1.25rem;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.header-bg-glow {
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 60%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(116, 48, 226, 0.35), transparent);
-  filter: blur(70px);
-}
-
-.header-premium-content {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.header-welcome-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.welcome-icon-wrapper {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  color: white;
-}
-
-.welcome-icon-glow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 14px;
-  background: rgba(116, 48, 226, 0.5);
-  animation: iconPulse 2s infinite;
-}
-
-@keyframes iconPulse {
-  0% { transform: scale(1); opacity: 0.5; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.welcome-text h1 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-}
-
-.user-name-highlight {
-  background: linear-gradient(135deg, #c084fc, #818cf8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.welcome-text p {
-  color: #94a3b8;
-  font-size: 0.7rem;
-  margin: 0.2rem 0 0;
-}
-
-.date-badge {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem 1rem;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: white;
-  font-size: 0.7rem;
-}
-
-/* MÉTRICAS */
-.dashboard-metrics-premium {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.metric-card-premium {
-  background: white;
-  border-radius: 1rem;
-  padding: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.metric-card-premium::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #7430e2, #2563eb);
-}
-
-.metric-card-premium:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: #c4b5fd;
-}
-
-.metric-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: white;
-}
-
-.metric-info {
-  flex: 1;
-}
-
-.metric-value {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-  line-height: 1.2;
-}
-
-.metric-label {
-  font-size: 0.65rem;
-  color: #64748b;
-}
-
-.metric-trend {
-  background: #f1f5f9;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-  font-size: 0.6rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.metric-trend.up {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-/* GRÁFICAS */
-.dashboard-charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 0.9fr;
-  gap: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.chart-card-premium {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.chart-card-premium:hover {
-  border-color: #c4b5fd;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.9rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.chart-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.chart-title i {
-  color: #7430e2;
-  font-size: 0.9rem;
-}
-
-.chart-title h3 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.chart-badge {
-  font-size: 0.6rem;
-  background: #e0e7ff;
-  color: #4f46e5;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-}
-
-.chart-body {
-  padding: 1rem;
-}
-
-/* Barras de etapas */
-.stage-bar-premium {
-  margin-bottom: 0.9rem;
-}
-
-.stage-bar-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.3rem;
-}
-
-.stage-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-}
-
-.stage-info {
-  flex: 1;
-}
-
-.stage-name {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: block;
-}
-
-.stage-desc {
-  font-size: 0.55rem;
-  color: #64748b;
-}
-
-.stage-numbers {
-  text-align: right;
-}
-
-.stage-count {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-}
-
-.stage-percent {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.stage-bar-track {
-  background: #e2e8f0;
-  border-radius: 20px;
-  height: 8px;
-  overflow: hidden;
-}
-
-.stage-bar-fill {
-  height: 100%;
-  border-radius: 20px;
-  transition: width 0.5s ease;
-  position: relative;
-}
-
-.stage-bar-fill .fill-value {
-  display: none;
-}
-
-/* Gráfica de mensajes */
-.messages-chart-premium {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  height: 160px;
-  gap: 0.5rem;
-}
-
-.message-bar-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.message-bar {
-  width: 80%;
-  background: linear-gradient(180deg, #7430e2, #2563eb);
-  border-radius: 8px 8px 4px 4px;
-  transition: height 0.5s ease;
-  position: relative;
-  min-height: 4px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 4px;
-}
-
-.message-count {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: white;
-}
-
-.message-day {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.chart-footer {
-  padding: 0.8rem 1rem;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.chart-footer .total {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.chart-footer .trend {
-  font-size: 0.6rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.trend.up {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-/* PLAN USAGE */
-.plan-usage-premium-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.plan-usage-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.9rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.plan-info {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.plan-info i {
-  color: #7430e2;
-  font-size: 1rem;
-}
-
-.plan-info h3 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.plan-name {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.65rem;
-  font-weight: 700;
-}
-
-.upgrade-plan-btn {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 40px;
-  font-size: 0.7rem;
-  gap: 0.3rem;
-}
-
-.plan-usage-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.8rem;
-  padding: 1rem;
-}
-
-.usage-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: #f8fafc;
-  padding: 0.6rem;
-  border-radius: 0.8rem;
-}
-
-.usage-icon {
-  width: 32px;
-  height: 32px;
-  background: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #7430e2;
-  font-size: 0.8rem;
-}
-
-.usage-details {
-  flex: 1;
-}
-
-.usage-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: block;
-  margin-bottom: 0.2rem;
-}
-
-.usage-bar {
-  background: #e2e8f0;
-  border-radius: 10px;
-  height: 4px;
-  overflow: hidden;
-  margin-bottom: 0.2rem;
-}
-
-.usage-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #7430e2, #2563eb);
-  border-radius: 10px;
-  transition: width 0.3s;
-}
-
-.usage-numbers {
-  display: flex;
-  gap: 0.2rem;
-}
-
-.used {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.limit {
-  font-size: 0.6rem;
-  color: #94a3b8;
-}
-
-/* BOTS SECTION */
-.bots-premium-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.bots-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.bots-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.status-indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.status-indicator.active {
-  background: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-}
-
-.status-indicator.inactive {
-  background: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-}
-
-.header-left h3 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 0.2rem 0.5rem;
-  gap: 0.3rem;
-}
-
-.search-box i {
-  color: #94a3b8;
-  font-size: 0.7rem;
-}
-
-.search-box input {
-  border: none;
-  padding: 0.2rem;
-  font-size: 0.7rem;
-  width: 120px;
-}
-
-.search-box input:focus {
-  outline: none;
-}
-
-.bots-count {
-  background: #e2e8f0;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.create-bot-form {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.8rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.create-bot-form input {
-  flex: 1;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 0.7rem;
-}
-
-.create-bot-form button {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.7rem;
-  background: #7430e2;
-}
-
-.bots-list {
-  padding: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  max-height: 380px;
-  overflow-y: auto;
-}
-
-.bot-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: #f8fafc;
-  border-radius: 0.8rem;
-  padding: 0.6rem;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.bot-item:hover {
-  border-color: #c4b5fd;
-  transform: translateX(3px);
-}
-
-.bot-item.selected {
-  border-color: #7430e2;
-  background: linear-gradient(135deg, #f8f5ff, #ffffff);
-  box-shadow: 0 4px 12px rgba(116, 48, 226, 0.1);
-}
-
-.bot-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.9rem;
-}
-
-.bot-avatar.active {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.bot-avatar.inactive {
-  background: linear-gradient(135deg, #94a3b8, #64748b);
-}
-
-.bot-details {
-  flex: 1;
-}
-
-.bot-details strong {
-  font-size: 0.75rem;
-  color: #0f172a;
-  display: block;
-}
-
-.bot-details span {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.bot-status-badge {
-  font-size: 0.6rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-}
-
-.bot-status-badge.active {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-.bot-status-badge.inactive {
-  background: #fee2e2;
-  color: #ef4444;
-}
-
-.bot-status-badge .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.bot-actions {
-  display: flex;
-  gap: 0.3rem;
-}
-
-.bot-actions button {
-  padding: 0.25rem;
-  border-radius: 0.4rem;
-  font-size: 0.6rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
-  width: 26px;
-  height: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bot-actions button:hover {
-  transform: none;
-}
-
-.bot-actions .edit:hover {
-  background: #e0e7ff;
-  color: #4f46e5;
-}
-
-.bot-actions .stop:hover {
-  background: #fee2e2;
-  color: #ef4444;
-}
-
-.bot-actions .start:hover {
-  background: #dcfce7;
-  color: #10b981;
-}
-
-.bot-actions .delete:hover {
-  background: #fee2e2;
-  color: #ef4444;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 2rem;
-  color: #64748b;
-}
-
-.empty-state i {
-  font-size: 2rem;
-  color: #cbd5e1;
-  margin-bottom: 0.5rem;
-}
-
-.empty-state p {
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-.empty-state span {
-  font-size: 0.65rem;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-
-.pagination button {
-  padding: 0.2rem 0.5rem;
-  font-size: 0.65rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-}
-
-/* BOT SELECCIONADO */
-.selected-bot-premium-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.selected-bot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: linear-gradient(135deg, #f8fafc, #ffffff);
-  border-bottom: 1px solid #e2e8f0;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.bot-info-section {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.bot-avatar-large {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.3rem;
-}
-
-.bot-info-section h2 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.bot-info-section p {
-  font-size: 0.65rem;
-  color: #64748b;
-  margin: 0;
-}
-
-.bot-actions-section {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-stop, .btn-start, .btn-edit {
-  padding: 0.4rem 1rem;
-  font-size: 0.7rem;
-  gap: 0.3rem;
-}
-
-.btn-stop {
-  background: #ef4444;
-}
-
-.btn-start {
-  background: #10b981;
-}
-
-.selected-bot-stats {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.qr-section {
-  text-align: center;
-  min-width: 140px;
-}
-
-.qr-code {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  background: white;
-  padding: 0.3rem;
-  border-radius: 0.8rem;
-  border: 1px solid #e2e8f0;
-}
-
-.qr-placeholder {
-  width: 100px;
-  height: 100px;
-  background: #f8fafc;
-  border-radius: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  color: #94a3b8;
-}
-
-.qr-placeholder i {
-  font-size: 1.5rem;
-}
-
-.qr-placeholder span {
-  font-size: 0.6rem;
-}
-
-.qr-info {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.6rem;
-  color: #64748b;
-  background: #f8fafc;
-  padding: 0.3rem 0.5rem;
-  border-radius: 0.5rem;
-  margin-top: 0.3rem;
-}
-
-.metrics-section {
-  flex: 1;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-around;
-}
-
-.stat-card {
-  text-align: center;
-  flex: 1;
-}
-
-.stat-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  margin: 0 auto 0.5rem;
-}
-
-.stat-data {
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #0f172a;
-  display: block;
-}
-
-.stat-label {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-/* Leads por etapa del bot */
-.bot-leads-section {
-  padding: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-
-.section-title-mini {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
-}
-
-.section-title-mini i {
-  color: #7430e2;
-  font-size: 0.8rem;
-}
-
-.section-title-mini span {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.bot-stages {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.stage-item {
-  flex: 1;
-  min-width: 70px;
-}
-
-.stage-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.6rem;
-  margin-bottom: 0.2rem;
-}
-
-.stage-name {
-  font-weight: 700;
-  color: #475569;
-}
-
-.stage-count {
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.stage-track {
-  background: #e2e8f0;
-  border-radius: 10px;
-  height: 4px;
-  overflow: hidden;
-}
-
-.stage-fill {
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.3s;
-}
-
-/* AGENDA AI INTEGRADA */
-.agenda-bot-integrated {
-  padding: 1rem;
-  background: linear-gradient(135deg, #f8fafc, #ffffff);
-}
-
-.agenda-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.agenda-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.agenda-title i {
-  color: #7430e2;
-  font-size: 0.9rem;
-}
-
-.agenda-title span {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.agenda-badge {
-  background: #e0e7ff;
-  color: #4f46e5;
-  padding: 0.15rem 0.4rem;
-  border-radius: 20px;
-  font-size: 0.6rem;
-  font-weight: 700;
-}
-
-.toggle-switch {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  cursor: pointer;
-}
-
-.toggle-switch input {
-  display: none;
-}
-
-.toggle-switch .toggle-slider {
-  width: 44px;
-  height: 22px;
-  background: #cbd5e1;
-  border-radius: 30px;
-  position: relative;
-  transition: 0.3s;
-}
-
-.toggle-switch .toggle-slider:before {
-  content: '';
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 3px;
-  transition: 0.3s;
-}
-
-.toggle-switch input:checked + .toggle-slider {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-}
-
-.toggle-switch input:checked + .toggle-slider:before {
-  transform: translateX(20px);
-}
-
-.toggle-switch .toggle-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #475569;
-}
-
-.agenda-config-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.8rem;
-  margin-bottom: 0.8rem;
-}
-
-.agenda-config-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 0.8rem;
-  margin-bottom: 0.8rem;
-}
-
-.agenda-notifications-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-
-.config-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.config-field label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.config-field label i {
-  font-size: 0.55rem;
-}
-
-.config-field select,
-.config-field input {
-  padding: 0.4rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  font-size: 0.7rem;
-  background: white;
-}
-
-.days-field {
-  grid-column: span 1;
-}
-
-.days-selector {
-  display: flex;
-  gap: 0.3rem;
-  flex-wrap: wrap;
-}
-
-.day-chip {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  font-weight: 700;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-}
-
-.day-chip.active {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-color: #7430e2;
-  color: white;
-}
-
-.agenda-slots-section {
-  background: #f8fafc;
-  border-radius: 0.8rem;
-  padding: 0.8rem;
-  border: 1px solid #e2e8f0;
-}
-
-.slots-header {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.6rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.slots-header i {
-  color: #7430e2;
-}
-
-.refresh-slots {
-  margin-left: auto;
-  background: transparent;
-  border: none;
-  padding: 0.2rem;
-  font-size: 0.65rem;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.slots-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
-  max-height: 120px;
-  overflow-y: auto;
-}
-
-.slot-item {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 0.4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #e2e8f0;
-  font-size: 0.65rem;
-}
-
-.slot-date {
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.slot-time {
-  color: #64748b;
-}
-
-.empty-slots {
-  text-align: center;
-  padding: 0.8rem;
-  color: #94a3b8;
-  font-size: 0.65rem;
-}
-
-.save-agenda-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border: none;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.7rem;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.save-agenda-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(116, 48, 226, 0.3);
-}
-
-.save-agenda-btn:disabled {
-  opacity: 0.6;
-  transform: none;
-}
-
-.no-bot-selected {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  text-align: center;
-  padding: 3rem;
-  color: #64748b;
-}
-
-.no-bot-selected i {
-  font-size: 3rem;
-  color: #cbd5e1;
-  margin-bottom: 1rem;
-}
-
-.no-bot-selected h4 {
-  font-size: 1rem;
-  color: #0f172a;
-  margin-bottom: 0.3rem;
-}
-
-.no-bot-selected p {
-  font-size: 0.7rem;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .dashboard-metrics-premium {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .dashboard-charts-grid {
-    grid-template-columns: 1fr;
-  }
-  .bots-premium-section {
-    grid-template-columns: 1fr;
-  }
-  .plan-usage-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .agenda-config-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .agenda-config-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-metrics-premium {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .plan-usage-grid {
-    grid-template-columns: 1fr;
-  }
-  .selected-bot-stats {
-    flex-direction: column;
-    align-items: center;
-  }
-  .metrics-section {
-    width: 100%;
-  }
-  .header-premium-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  .agenda-config-grid {
-    grid-template-columns: 1fr;
-  }
-  .agenda-notifications-row {
-    grid-template-columns: 1fr;
-  }
-  .bot-stages {
-    flex-direction: column;
-  }
-}
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -10761,8 +9393,8 @@ async function updateUser(e) {
             <button className="btn-mini" onClick={createAppointmentAgent}>
               <i className="fas fa-plus"></i>
               <span style="
-                  color: blue;
-              ">Agregar</span>
+                color: blue;
+            ">Agregar</span>
             </button>
           </div>
           <div className="agents-list">
@@ -11096,677 +9728,576 @@ async function updateUser(e) {
           </section>
         )}
 
-       {/* ======================== DASHBOARD PREMIUM ULTRA ======================== */}
-{tab === 'dashboard' && (
-  <section className="dashboard-premium-container">
-    
-    {/* ========== HEADER PREMIUM CON EFECTO GLASS ========== */}
-    <div className="dashboard-premium-header">
-      <div className="header-bg-glow"></div>
-      <div className="header-premium-content">
-        <div className="header-welcome-section">
-          <div className="welcome-icon-wrapper">
-            <div className="welcome-icon-glow"></div>
-            <i className="fas fa-chart-line"></i>
-          </div>
-          <div className="welcome-text">
-            <h1>Bienvenido, <span className="user-name-highlight">{me?.name || 'Usuario'}</span></h1>
-            <p>Panel de control · Gestión inteligente de tu negocio</p>
-          </div>
-        </div>
-        <div className="header-stats-section">
-          <div className="date-badge">
-            <i className="fas fa-calendar-alt"></i>
-            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* ========== MÉTRICAS PRINCIPALES ========== */}
-    <div className="dashboard-metrics-premium">
-      <div className="metric-card-premium">
-        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
-          <i className="fas fa-building"></i>
-        </div>
-        <div className="metric-info">
-          <span className="metric-value">{metrics.clients || 0}</span>
-          <span className="metric-label">Clientes activos</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+12%</span>
-        </div>
-      </div>
-
-      <div className="metric-card-premium">
-        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #11998e, #38ef7d)' }}>
-          <i className="fas fa-robot"></i>
-        </div>
-        <div className="metric-info">
-          <span className="metric-value">{metrics.bots || 0}</span>
-          <span className="metric-label">Bots activos</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+8%</span>
-        </div>
-      </div>
-
-      <div className="metric-card-premium">
-        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
-          <i className="fas fa-users"></i>
-        </div>
-        <div className="metric-info">
-          <span className="metric-value">{metrics.leads || 0}</span>
-          <span className="metric-label">Leads totales</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+15%</span>
-        </div>
-      </div>
-
-      <div className="metric-card-premium">
-        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
-          <i className="fas fa-fire"></i>
-        </div>
-        <div className="metric-info">
-          <span className="metric-value">{metrics.hot_leads || 0}</span>
-          <span className="metric-label">Hot leads</span>
-        </div>
-        <div className="metric-trend">
-          <i className="fas fa-chart-line"></i>
-          <span>+5%</span>
-        </div>
-      </div>
-
-      <div className="metric-card-premium">
-        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)' }}>
-          <i className="fas fa-trophy"></i>
-        </div>
-        <div className="metric-info">
-          <span className="metric-value">{metrics.closed_leads || 0}</span>
-          <span className="metric-label">Ventas cerradas</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+3%</span>
-        </div>
-      </div>
-
-      <div className="metric-card-premium">
-        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
-          <i className="fas fa-envelope"></i>
-        </div>
-        <div className="metric-info">
-          <span className="metric-value">{metrics.messages_24h || 0}</span>
-          <span className="metric-label">Mensajes 24h</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+22%</span>
-        </div>
-      </div>
-    </div>
-
-    {/* ========== GRÁFICAS PREMIUM ========== */}
-    <div className="dashboard-charts-grid">
-      
-      {/* LEADS POR ETAPA */}
-      <div className="chart-card-premium">
-        <div className="chart-header">
-          <div className="chart-title">
-            <i className="fas fa-chart-pie"></i>
-            <h3>Distribución de leads</h3>
-          </div>
-          <div className="chart-badge">Por etapa del embudo</div>
-        </div>
-        <div className="chart-body">
-          {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
-            const count = leads.filter(l => l.stage === stage).length
-            const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
-            const percentage = (count / maxCount) * 100
-            const percentTotal = Math.round((count / (leads.length || 1)) * 100)
-            
-            const stageConfig = {
-              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', desc: 'Primer contacto' },
-              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', desc: 'Interés validado' },
-              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', desc: 'Alta intención' },
-              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', desc: 'Listos para cerrar' },
-              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', desc: 'Venta concretada' }
-            }
-            const config = stageConfig[stage]
-            
-            return (
-              <div key={stage} className="stage-bar-premium">
-                <div className="stage-bar-header">
-                  <div className="stage-icon" style={{ background: `${config.color}15`, color: config.color }}>
-                    <i className={`fas ${config.icon}`}></i>
+        {/* ======================== DASHBOARD ======================== */}
+        {tab === 'dashboard' && (
+          <section className="stack gap-lg">
+            {/* Tarjetas de uso del plan - solo para clientes no admin */}
+            {!isAdmin && (
+              <div className="stripe-card stack">
+                <div className="row between center">
+                  <div>
+                    <div className="section-title">
+                      <i className="fas fa-gauge-high"></i> Uso del plan
+                    </div>
+                    <p className="muted">Plan actual: <strong>{currentPlan?.name || activePlanSlug}</strong></p>
                   </div>
-                  <div className="stage-info">
-                    <span className="stage-name">{config.label}</span>
-                    <span className="stage-desc">{config.desc}</span>
-                  </div>
-                  <div className="stage-numbers">
-                    <span className="stage-count">{count}</span>
-                    <span className="stage-percent">{percentTotal}%</span>
-                  </div>
-                </div>
-                <div className="stage-bar-track">
-                  <div className="stage-bar-fill" style={{ width: `${percentage}%`, background: config.color }}>
-                    <span className="fill-value">{count}</span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* MENSAJES ÚLTIMOS 7 DÍAS */}
-      <div className="chart-card-premium">
-        <div className="chart-header">
-          <div className="chart-title">
-            <i className="fas fa-message"></i>
-            <h3>Actividad de mensajes</h3>
-          </div>
-          <div className="chart-badge">Últimos 7 días</div>
-        </div>
-        <div className="chart-body">
-          <div className="messages-chart-premium">
-            {messagesLast7Days.days.map((day, idx) => {
-              const maxCount = Math.max(...messagesLast7Days.counts, 1)
-              const height = (messagesLast7Days.counts[idx] / maxCount) * 100
-              return (
-                <div key={day} className="message-bar-wrapper">
-                  <div className="message-bar" style={{ height: `${height}%` }}>
-                    <span className="message-count">{messagesLast7Days.counts[idx]}</span>
-                  </div>
-                  <span className="message-day">{day}</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-        <div className="chart-footer">
-          <span className="total">Total: {messagesLast7Days.counts.reduce((a,b) => a+b, 0)} mensajes</span>
-          <span className="trend up">
-            <i className="fas fa-arrow-up"></i> +18% vs semana anterior
-          </span>
-        </div>
-      </div>
-    </div>
-
-    {/* ========== PLAN USAGE SOLO PARA CLIENTES ========== */}
-    {!isAdmin && (
-      <div className="plan-usage-premium-card">
-        <div className="plan-usage-header">
-          <div className="plan-info">
-            <i className="fas fa-gem"></i>
-            <h3>Uso del plan</h3>
-            <span className="plan-name">{currentPlan?.name || activePlanSlug}</span>
-          </div>
-          <button className="upgrade-plan-btn" onClick={() => setForcePlanScreen(true)}>
-            <i className="fas fa-crown"></i>
-            <span>Mejorar plan</span>
-            <i className="fas fa-arrow-right"></i>
-          </button>
-        </div>
-        <div className="plan-usage-grid">
-          {[
-            ['Bots', 'bots', 'fas fa-robot'],
-            ['Usuarios', 'users', 'fas fa-users'],
-            ['Landings', 'landing_pages', 'fas fa-globe'],
-            ['Plantillas', 'templates', 'fas fa-file-alt'],
-            ['Posts sociales', 'social_posts_month', 'fab fa-facebook'],
-            ['Videos IA', 'ai_videos_month', 'fas fa-video'],
-            ['Grupos IA', 'group_bots', 'fas fa-users'],
-            ['Citas IA', 'appointments_month', 'fas fa-calendar-check']
-          ].map(([label, metric, icon]) => {
-            const used = getUsage(metric)
-            const limit = getLimit(metric)
-            const pct = limit > 0 && Number.isFinite(limit) ? Math.min(100, Math.round((used / limit) * 100)) : 0
-            
-            return (
-              <div key={metric} className="usage-item">
-                <div className="usage-icon">
-                  <i className={icon}></i>
-                </div>
-                <div className="usage-details">
-                  <span className="usage-label">{label}</span>
-                  <div className="usage-bar">
-                    <div className="usage-bar-fill" style={{ width: `${pct}%` }}></div>
-                  </div>
-                  <div className="usage-numbers">
-                    <span className="used">{used}</span>
-                    <span className="limit">/ {limit || '∞'}</span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    )}
-
-    {/* ========== SECCIÓN DE BOTS ========== */}
-    <div className="bots-premium-section">
-      
-      {/* BOTS ACTIVOS */}
-      <div className="bots-card">
-        <div className="bots-card-header">
-          <div className="header-left">
-            <div className="status-indicator active"></div>
-            <h3>Bots activos</h3>
-          </div>
-          <div className="header-right">
-            <div className="search-box">
-              <i className="fas fa-search"></i>
-              <input 
-                type="text" 
-                placeholder="Buscar bot..." 
-                value={searchBot} 
-                onChange={e => setSearchBot(e.target.value)}
-              />
-            </div>
-            <span className="bots-count">{filteredActiveBots.length}</span>
-          </div>
-        </div>
-        
-        <form onSubmit={createBot} className="create-bot-form">
-          <input 
-            type="text" 
-            value={newBotName} 
-            onChange={e => setNewBotName(e.target.value)} 
-            placeholder="Nombre del nuevo bot"
-          />
-          <button disabled={busy || !selectedClientId}>
-            <i className="fas fa-plus"></i>
-            <span>Crear bot</span>
-          </button>
-        </form>
-        
-        <div className="bots-list">
-          {paginatedActiveBots.length > 0 ? (
-            paginatedActiveBots.map(bot => (
-              <div 
-                key={bot.id} 
-                className={`bot-item ${selectedBotId === bot.id ? 'selected' : ''}`}
-                onClick={() => setSelectedBotId(bot.id)}
-              >
-                <div className="bot-avatar active">
-                  <i className="fas fa-robot"></i>
-                </div>
-                <div className="bot-details">
-                  <strong>{bot.name}</strong>
-                  <span>{bot.phone || 'Sin número'}</span>
-                </div>
-                <div className="bot-status-badge active">
-                  <span className="dot"></span>
-                  {bot.status}
-                </div>
-                <div className="bot-actions" onClick={e => e.stopPropagation()}>
-                  <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
-                  <button className="stop" onClick={() => stopBot(bot.id)}><i className="fas fa-power-off"></i></button>
-                  <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="empty-state">
-              <i className="fas fa-robot"></i>
-              <p>No hay bots activos</p>
-              <span>Crea tu primer bot para comenzar</span>
-            </div>
-          )}
-        </div>
-        
-        {filteredActiveBots.length > pageSize && (
-          <div className="pagination">
-            <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
-              <i className="fas fa-chevron-left"></i>
-            </button>
-            <span>Página {botPage}</span>
-            <button onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredActiveBots.length}>
-              <i className="fas fa-chevron-right"></i>
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* BOTS INACTIVOS */}
-      <div className="bots-card">
-        <div className="bots-card-header">
-          <div className="header-left">
-            <div className="status-indicator inactive"></div>
-            <h3>Bots inactivos</h3>
-          </div>
-          <div className="header-right">
-            <span className="bots-count">{filteredInactiveBots.length}</span>
-          </div>
-        </div>
-        
-        <div className="bots-list">
-          {paginatedInactiveBots.length > 0 ? (
-            paginatedInactiveBots.map(bot => (
-              <div 
-                key={bot.id} 
-                className={`bot-item ${selectedBotId === bot.id ? 'selected' : ''}`}
-                onClick={() => setSelectedBotId(bot.id)}
-              >
-                <div className="bot-avatar inactive">
-                  <i className="fas fa-robot"></i>
-                </div>
-                <div className="bot-details">
-                  <strong>{bot.name}</strong>
-                  <span>{bot.phone || 'Sin número'}</span>
-                </div>
-                <div className="bot-status-badge inactive">
-                  <span className="dot"></span>
-                  {bot.status}
-                </div>
-                <div className="bot-actions" onClick={e => e.stopPropagation()}>
-                  <button className="start" onClick={async () => { await api(`/api/bots/${bot.id}/start`, { method: 'POST' }); await loadBots(selectedClientId); await loadQr(bot.id); showNotice('Bot encendido') }}>
-                    <i className="fas fa-play"></i>
+                  <button type="button" onClick={() => setForcePlanScreen(true)}>
+                    <i className="fas fa-crown"></i>
+                    Mejorar plan
                   </button>
-                  <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
-                  <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
+                </div>
+
+                <div className="metric-grid">
+                  {[
+                    ['Bots', 'bots'],
+                    ['Usuarios', 'users'],
+                    ['Landings', 'landing_pages'],
+                    ['Plantillas', 'templates'],
+                    ['Posts sociales', 'social_posts_month'],
+                    ['Videos IA', 'ai_videos_month'],
+                    ['Grupos IA', 'group_bots'],
+                    ['Citas IA', 'appointments_month']
+                  ].map(([label, metric]) => {
+                    const used = getUsage(metric)
+                    const limit = getLimit(metric)
+                    const pct = limit > 0 && Number.isFinite(limit)
+                      ? Math.min(100, Math.round((used / limit) * 100))
+                      : 0
+
+                    return (
+                      <div key={metric} className="usage-mini-card">
+                        <div className="row between">
+                          <strong>{label}</strong>
+                          <span>{used}/{limit || 0}</span>
+                        </div>
+                        <div className="usage-bar">
+                          <div style={{ width: `${pct}%` }}></div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="empty-state">
-              <i className="fas fa-robot"></i>
-              <p>No hay bots inactivos</p>
-              <span>Todos tus bots están activos</span>
-            </div>
-          )}
-        </div>
-        
-        {filteredInactiveBots.length > pageSize && (
-          <div className="pagination">
-            <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
-              <i className="fas fa-chevron-left"></i>
-            </button>
-            <span>Página {botPage}</span>
-            <button onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredInactiveBots.length}>
-              <i className="fas fa-chevron-right"></i>
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-
-    {/* ========== BOT SELECCIONADO - DETALLE PREMIUM ========== */}
-    {selectedBot ? (
-      <div className="selected-bot-premium-card">
-        <div className="selected-bot-header">
-          <div className="bot-info-section">
-            <div className="bot-avatar-large">
-              <i className="fas fa-microchip"></i>
-            </div>
-            <div>
-              <h2>{selectedBot.name}</h2>
-              <p>Bot seleccionado · Configuración y métricas en tiempo real</p>
-            </div>
-          </div>
-          <div className="bot-actions-section">
-            {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
-              <button className="btn-stop" onClick={() => stopBot(selectedBot.id)} disabled={busy}>
-                <i className="fas fa-power-off"></i>
-                <span>Apagar bot</span>
-              </button>
-            ) : (
-              <button className="btn-start" onClick={startBot} disabled={busy}>
-                <i className="fas fa-play"></i>
-                <span>Encender bot</span>
-              </button>
             )}
-            <button className="btn-edit" onClick={() => renameBot(selectedBot)} disabled={busy}>
-              <i className="fas fa-pen"></i>
-              <span>Editar</span>
-            </button>
-          </div>
-        </div>
-        
-        <div className="selected-bot-stats">
-          <div className="qr-section">
-            {qrDataUrlBot ? (
-              <img className="qr-code" src={qrDataUrlBot} alt="QR Code" />
-            ) : (
-              <div className="qr-placeholder">
-                <i className="fas fa-qrcode"></i>
-                <span>Sin QR pendiente</span>
-              </div>
-            )}
-            <div className="qr-info">
-              <i className="fas fa-info-circle"></i>
-              <p>Escanea este código QR con WhatsApp para conectar el bot</p>
-            </div>
-          </div>
-          
-          <div className="metrics-section">
-            <div className="stat-card">
-              <div className="stat-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
-                <i className="fas fa-users"></i>
-              </div>
-              <div className="stat-data">
-                <span className="stat-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</span>
-                <span className="stat-label">Total leads</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
-                <i className="fas fa-comments"></i>
-              </div>
-              <div className="stat-data">
-                <span className="stat-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</span>
-                <span className="stat-label">Activos</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
-                <i className="fas fa-chart-line"></i>
-              </div>
-              <div className="stat-data">
-                <span className="stat-value">
-                  {Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%
-                </span>
-                <span className="stat-label">Tasa cierre</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* LEADS POR ETAPA DEL BOT */}
-        <div className="bot-leads-section">
-          <div className="section-title-mini">
-            <i className="fas fa-chart-simple"></i>
-            <span>Leads por etapa</span>
-          </div>
-          <div className="bot-stages">
-            {botLeadsByStage.stages.map((stage, idx) => {
-              const count = botLeadsByStage.counts[idx]
-              const maxCount = Math.max(...botLeadsByStage.counts, 1)
-              const percentage = (count / maxCount) * 100
-              
-              const stageColors = {
-                new: '#3b82f6', qualified: '#8b5cf6', interested: '#f59e0b', hot: '#ef4444', closed: '#10b981'
-              }
-              const stageNames = {
-                new: 'Nuevos', qualified: 'Calificados', interested: 'Interesados', hot: 'Hot', closed: 'Cerrados'
-              }
-              
-              return (
-                <div key={stage} className="stage-item">
-                  <div className="stage-header">
-                    <span className="stage-name">{stageNames[stage]}</span>
-                    <span className="stage-count">{count}</span>
-                  </div>
-                  <div className="stage-track">
-                    <div className="stage-fill" style={{ width: `${percentage}%`, background: stageColors[stage] }}></div>
+            <div className="metric-grid">
+              {[
+                ['Clientes', metrics.clients], ['Bots', metrics.bots], ['Leads', metrics.leads],
+                ['Hot leads', metrics.hot_leads], ['Cerrados', metrics.closed_leads], ['Mensajes 24h', metrics.messages_24h]
+              ].map(([label, v]) => (
+                <div className="stripe-card metric" key={label}>
+                  <div className="metric-label">{label}</div>
+                  <div className="metric-value">{v ?? 0}</div>
+                </div>
+              ))}
+            </div>
+            <div className="stripe-card">
+              <div className="chart-container">
+                <div className="chart">
+                  <div className="chart-title">Leads por etapa</div>
+                  <div className="bar-container">
+                    {leadsByStageGlobal.stages.map((stage, idx) => (
+                      <div key={stage} className="bar-item">
+                        <div className="bar-label">{stage}</div>
+                        <div className="bar-fill" style={{ width: `${Math.min(100, leadsByStageGlobal.counts[idx] * 5)}%`, maxWidth: '100%' }}></div>
+                        <div className="bar-value">{leadsByStageGlobal.counts[idx]}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              )
-            })}
-          </div>
-        </div>
+                <div className="chart">
+                  <div className="chart-title">Mensajes últimos 7 días</div>
+                  <div className="bar-container">
+                    {messagesLast7Days.days.map((day, idx) => (
+                      <div key={day} className="bar-item">
+                        <div className="bar-label">{day}</div>
+                        <div className="bar-fill" style={{ width: `${Math.min(100, messagesLast7Days.counts[idx] * 2)}%`, maxWidth: '100%' }}></div>
+                        <div className="bar-value">{messagesLast7Days.counts[idx]}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="panel-grid">
+              <section className="stripe-card stack">
+                <div className="row between center">
+                  <div className="section-title"><i className="fas fa-plug"></i> Bots activos</div>
+                  <div className="row gap-sm">
+                    <input type="text" placeholder="Buscar bot..." className="search-input" value={searchBot} onChange={e => setSearchBot(e.target.value)} />
+                    <span className="pill connected">{filteredActiveBots.length}</span>
+                  </div>
+                </div>
+                <form onSubmit={createBot} className="row gap-sm">
+                  <input className="grow" value={newBotName} onChange={e => setNewBotName(e.target.value)} placeholder="Nombre del bot" />
+                  <button disabled={busy || !selectedClientId}>Crear bot</button>
+                </form>
+                <div className="list two-col">
+                  {paginatedActiveBots.map(bot => {
+                  const isSelected = selectedBotId === bot.id
 
-        {/* ========== AGENDA AI DEL BOT (INTEGRADA) ========== */}
-        <div className="agenda-bot-integrated">
-          <div className="agenda-header">
-            <div className="agenda-title">
-              <i className="fas fa-calendar-check"></i>
-              <span>Agenda AI</span>
-              <span className="agenda-badge">Automatización</span>
-            </div>
-            <label className="toggle-switch">
-              <input
-                type="checkbox"
-                checked={!!botAgendaSettings.enabled}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    enabled: e.target.checked
-                  })
-                }
-              />
-              <span className="toggle-slider"></span>
-              <span className="toggle-label">Activar agenda</span>
-            </label>
-          </div>
-
-          <div className="agenda-config-grid">
-            <div className="config-field">
-              <label><i className="fas fa-phone-alt"></i> Tipo de cita</label>
-              <select
-                value={botAgendaSettings.goal || 'sales_call'}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    goal: e.target.value
-                  })
-                }
-              >
-                <option value="sales_call">📞 Llamada comercial</option>
-                <option value="zoom">🎥 Zoom</option>
-                <option value="meet">📧 Google Meet</option>
-                <option value="support_call">🛠️ Soporte</option>
-              </select>
-            </div>
-            <div className="config-field">
-              <label><i className="fas fa-hourglass-half"></i> Duración (min)</label>
-              <input
-                type="number"
-                min="5"
-                step="5"
-                value={botAgendaSettings.duration_mins || 30}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    duration_mins: Number(e.target.value)
-                  })
-                }
-              />
-            </div>
-            <div className="config-field">
-              <label><i className="fas fa-pause-circle"></i> Buffer (min)</label>
-              <input
-                type="number"
-                min="0"
-                step="5"
-                value={botAgendaSettings.buffer_mins ?? 10}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    buffer_mins: Number(e.target.value)
-                  })
-                }
-              />
-            </div>
-            <div className="config-field">
-              <label><i className="fas fa-bell"></i> Recordatorio (min)</label>
-              <input
-                type="number"
-                min="5"
-                step="15"
-                value={botAgendaSettings.reminder_before_mins || 60}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    reminder_before_mins: Number(e.target.value)
-                  })
-                }
-              />
-            </div>
-          </div>
-
-          <div className="agenda-config-row">
-            <div className="config-field days-field">
-              <label><i className="fas fa-calendar-week"></i> Días disponibles</label>
-              <div className="days-selector">
-                {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, idx) => {
-                  const dayKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'][idx]
-                  const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
-                  const isActive = currentDays.includes(dayKey)
                   return (
-                    <button
-                      key={dayKey}
-                      type="button"
-                      className={`day-chip ${isActive ? 'active' : ''}`}
-                      onClick={() => {
-                        let newDays = [...currentDays]
-                        if (isActive) {
-                          newDays = newDays.filter(d => d !== dayKey)
-                        } else {
-                          newDays.push(dayKey)
-                        }
-                        setBotAgendaSettings({
-                          ...botAgendaSettings,
-                          available_days: newDays.join(',')
-                        })
-                      }}
+                    <div
+                      key={bot.id}
+                      className={`bot-card-pro ${isSelected ? 'selected' : ''}`}
                     >
-                      {day}
-                    </button>
+                      <div className="bot-card-pro-head">
+                        <div className="bot-icon-pro">
+                          <i className="fas fa-robot"></i>
+                        </div>
+
+                        <div className="bot-main-info">
+                          <strong>{bot.name}</strong>
+                          <span>{bot.phone || 'Sin número'}</span>
+                        </div>
+
+                        <span className={`pill ${bot.status}`}>
+                          {bot.status}
+                        </span>
+                      </div>
+
+                      <div className="bot-card-pro-actions">
+                        <button
+                          type="button"
+                          className={isSelected ? 'secondary' : ''}
+                          onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
+                        >
+                          <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
+                          {isSelected ? 'Quitar selección' : 'Seleccionar'}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="secondary"
+                          onClick={() => renameBot(bot)}
+                        >
+                          <i className="fas fa-pen"></i>
+                          Editar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="secondary"
+                          onClick={() => stopBot(bot.id)}
+                        >
+                          <i className="fas fa-power-off"></i>
+                          Apagar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="danger"
+                          onClick={() => deleteBot(bot)}
+                        >
+                          <i className="fas fa-trash"></i>
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
                   )
                 })}
+                  {paginatedActiveBots.length === 0 && <div className="empty-box">No hay bots activos</div>}
+                </div>
+                <div className="pagination">
+                  <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
+                  <span>Página {botPage}</span>
+                  <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredActiveBots.length}>Siguiente</button>
+                </div>
+              </section>
+
+              <section className="stripe-card stack">
+                <div className="row between center">
+                  <div className="section-title"><i className="fas fa-power-off"></i> Bots inactivos</div>
+                  <span className="pill disconnected">{filteredInactiveBots.length}</span>
+                </div>
+                <div className="list two-col">
+                  {paginatedInactiveBots.map(bot => {
+                    const isSelected = selectedBotId === bot.id
+
+                    return (
+                      <div
+                        key={bot.id}
+                        className={`bot-card-pro inactive ${isSelected ? 'selected' : ''}`}
+                      >
+                        <div className="bot-card-pro-head">
+                          <div className="bot-icon-pro inactive">
+                            <i className="fas fa-robot"></i>
+                          </div>
+
+                          <div className="bot-main-info">
+                            <strong>{bot.name}</strong>
+                            <span>{bot.phone || 'Sin número'}</span>
+                          </div>
+
+                          <span className={`pill ${bot.status}`}>
+                            {bot.status}
+                          </span>
+                        </div>
+
+                        <div className="bot-card-pro-actions">
+                          <button
+                            type="button"
+                            className={isSelected ? 'secondary' : ''}
+                            onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
+                          >
+                            <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
+                            {isSelected ? 'Quitar selección' : 'Seleccionar'}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await api(`/api/bots/${bot.id}/start`, { method: 'POST' })
+                              await loadBots(selectedClientId)
+                              await loadQr(bot.id)
+                              showNotice('Bot encendido')
+                            }}
+                          >
+                            <i className="fas fa-play"></i>
+                            Encender
+                          </button>
+
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() => renameBot(bot)}
+                          >
+                            <i className="fas fa-pen"></i>
+                            Editar
+                          </button>
+
+                          <button
+                            type="button"
+                            className="danger"
+                            onClick={() => deleteBot(bot)}
+                          >
+                            <i className="fas fa-trash"></i>
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {paginatedInactiveBots.length === 0 && <div className="empty-box">No hay bots inactivos</div>}
+                </div>
+                <div className="pagination">
+                  <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
+                  <span>Página {botPage}</span>
+                  <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredInactiveBots.length}>Siguiente</button>
+                </div>
+              </section>
+            </div>
+            <section className="stripe-card stack">
+              <div className="row between center">
+                <div>
+                  <div className="section-title"><i className="fas fa-microchip"></i> Bot seleccionado</div>
+                  <p className="muted">{selectedBot ? selectedBot.name : 'Selecciona un bot'}</p>
+                </div>
+                {selectedBot && (
+                  <div className="row gap-sm">
+                    {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
+                      <button type="button" onClick={() => stopBot(selectedBot.id)} disabled={busy}>Apagar</button>
+                    ) : (
+                      <button type="button" onClick={startBot} disabled={busy}>Encender</button>
+                    )}
+                    <button type="button" onClick={() => renameBot(selectedBot)} disabled={busy}>Editar</button>
+                  </div>
+                )}
+              </div>
+              {selectedBot ? (
+                <>
+                  <div className="status-row"><strong>{selectedBot.name}</strong> <span className={`pill ${selectedBot.status}`}>{selectedBot.status}</span></div>
+                  {qrDataUrlBot ? <img className="qr" src={qrDataUrlBot} alt="QR" /> : <div className="empty-box">Sin QR pendiente</div>}
+                  <div className="metric-grid" style={{ marginTop: '1rem' }}>
+                    <div className="metric"><div className="metric-label">Total leads</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</div></div>
+                    <div className="metric"><div className="metric-label">Conversaciones activas</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</div></div>
+                    <div className="metric"><div className="metric-label">Tasa cierre</div><div className="metric-value">{Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%</div></div>
+                  </div>
+                  <div className="chart" style={{ marginTop: '0.5rem' }}>
+                    <div className="chart-title">Leads por etapa (este bot)</div>
+                    <div className="bar-container">
+                      {botLeadsByStage.stages.map((stage, idx) => (
+                        <div key={stage} className="bar-item">
+                          <div className="bar-label">{stage}</div>
+                          <div className="bar-fill" style={{ width: `${Math.min(100, botLeadsByStage.counts[idx] * 10)}%`, maxWidth: '100%' }}></div>
+                          <div className="bar-value">{botLeadsByStage.counts[idx]}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                 {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
+<section className="agenda-premium-v2">
+  {/* Header con gradiente */}
+  <div className="agenda-premium-v2-header">
+    <div className="header-glow"></div>
+    <div className="header-content">
+      <div className="header-icon">
+        <i className="fas fa-calendar-check"></i>
+        <div className="pulse-ring"></div>
+      </div>
+      <div className="header-text">
+        <h2>
+          Agenda AI 
+          <span className="premium-chip">
+            <i className="fas fa-gem"></i> PRÉMIUM
+          </span>
+        </h2>
+        <p>Automatización inteligente de citas con IA avanzada</p>
+      </div>
+      <div className="header-stats">
+        <div className="stat-badge">
+          <i className="fas fa-robot"></i>
+          <span>IA Activada</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Layout de dos columnas asimétricas */}
+  <div className="agenda-premium-v2-grid">
+    
+    {/* COLUMNA IZQUIERDA - Configuración principal */}
+    <div className="agenda-col-left">
+      
+      {/* Tarjeta de activación - Glassmorphism */}
+      <div className="activation-card-v2">
+        <div className="activation-bg"></div>
+        <div className="activation-content">
+          <div className="activation-info">
+            <div className="power-indicator">
+              <div className={`power-led ${botAgendaSettings.enabled ? 'active' : ''}`}></div>
+              <span className="power-label">
+                {botAgendaSettings.enabled ? 'Agenda activa' : 'Agenda inactiva'}
+              </span>
+            </div>
+            <p className="activation-desc">
+              {botAgendaSettings.enabled 
+                ? 'El bot está programando citas automáticamente' 
+                : 'Activa la agenda para que el bot comience a programar citas'}
+            </p>
+          </div>
+          <label className="toggle-premium-v2">
+            <input
+              type="checkbox"
+              checked={!!botAgendaSettings.enabled}
+              onChange={e =>
+                setBotAgendaSettings({
+                  ...botAgendaSettings,
+                  enabled: e.target.checked
+                })
+              }
+            />
+            <span className="toggle-back">
+              <span className="toggle-front"></span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      {/* Tarjeta de horarios - Diseño de agenda semanal */}
+      <div className="schedule-card-v2">
+        <div className="card-header-v2">
+          <i className="fas fa-calendar-week"></i>
+          <h3>Horario semanal</h3>
+          <span className="card-badge">Disponibilidad</span>
+        </div>
+        
+        <div className="weekly-schedule">
+          {[
+            { key: 'mon', label: 'LUN', full: 'Lunes' },
+            { key: 'tue', label: 'MAR', full: 'Martes' },
+            { key: 'wed', label: 'MIÉ', full: 'Miércoles' },
+            { key: 'thu', label: 'JUE', full: 'Jueves' },
+            { key: 'fri', label: 'VIE', full: 'Viernes' },
+            { key: 'sat', label: 'SÁB', full: 'Sábado' },
+            { key: 'sun', label: 'DOM', full: 'Domingo' }
+          ].map(day => {
+            const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
+            const isActive = currentDays.includes(day.key)
+            return (
+              <button
+                key={day.key}
+                type="button"
+                className={`day-card-v2 ${isActive ? 'active' : ''}`}
+                onClick={() => {
+                  let newDays = [...currentDays]
+                  if (isActive) {
+                    newDays = newDays.filter(d => d !== day.key)
+                  } else {
+                    newDays.push(day.key)
+                  }
+                  setBotAgendaSettings({
+                    ...botAgendaSettings,
+                    available_days: newDays.join(',')
+                  })
+                }}
+              >
+                <span className="day-label">{day.label}</span>
+                <span className="day-full">{day.full}</span>
+                <div className="day-check">
+                  <i className={`fas ${isActive ? 'fa-check-circle' : 'fa-circle'}`}></i>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="time-range-v2">
+          <div className="time-input-group">
+            <label>
+              <i className="fas fa-play-circle"></i>
+              Desde
+            </label>
+            <input
+              type="time"
+              value={botAgendaSettings.start_time || '09:00'}
+              onChange={e =>
+                setBotAgendaSettings({
+                  ...botAgendaSettings,
+                  start_time: e.target.value
+                })
+              }
+              className="time-input-v2"
+            />
+          </div>
+          <div className="time-divider">
+            <i className="fas fa-arrow-right"></i>
+          </div>
+          <div className="time-input-group">
+            <label>
+              <i className="fas fa-stop-circle"></i>
+              Hasta
+            </label>
+            <input
+              type="time"
+              value={botAgendaSettings.end_time || '18:00'}
+              onChange={e =>
+                setBotAgendaSettings({
+                  ...botAgendaSettings,
+                  end_time: e.target.value
+                })
+              }
+              className="time-input-v2"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tarjeta de duración y buffer */}
+      <div className="duration-card-v2">
+        <div className="card-header-v2">
+          <i className="fas fa-hourglass-half"></i>
+          <h3>Configuración de tiempo</h3>
+        </div>
+        <div className="duration-metrics">
+          <div className="metric-box">
+            <span className="metric-icon"><i className="fas fa-clock"></i></span>
+            <div className="metric-content">
+              <label>Duración de cita</label>
+              <div className="metric-input-wrapper">
+                <input
+                  type="number"
+                  min="5"
+                  step="5"
+                  value={botAgendaSettings.duration_mins || 30}
+                  onChange={e =>
+                    setBotAgendaSettings({
+                      ...botAgendaSettings,
+                      duration_mins: Number(e.target.value)
+                    })
+                  }
+                />
+                <span className="metric-unit">minutos</span>
               </div>
             </div>
-            <div className="config-field">
-              <label><i className="fas fa-sun"></i> Hora inicio</label>
-              <input
-                type="time"
-                value={botAgendaSettings.start_time || '09:00'}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    start_time: e.target.value
-                  })
-                }
-              />
-            </div>
-            <div className="config-field">
-              <label><i className="fas fa-moon"></i> Hora fin</label>
-              <input
-                type="time"
-                value={botAgendaSettings.end_time || '18:00'}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    end_time: e.target.value
-                  })
-                }
-              />
+          </div>
+          <div className="metric-divider"></div>
+          <div className="metric-box">
+            <span className="metric-icon"><i className="fas fa-pause"></i></span>
+            <div className="metric-content">
+              <label>Buffer entre citas</label>
+              <div className="metric-input-wrapper">
+                <input
+                  type="number"
+                  min="0"
+                  step="5"
+                  value={botAgendaSettings.buffer_mins ?? 10}
+                  onChange={e =>
+                    setBotAgendaSettings({
+                      ...botAgendaSettings,
+                      buffer_mins: Number(e.target.value)
+                    })
+                  }
+                />
+                <span className="metric-unit">minutos</span>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <div className="agenda-notifications-row">
-            <div className="config-field">
-              <label><i className="fab fa-whatsapp"></i> WhatsApp notificaciones</label>
+    {/* COLUMNA DERECHA - Configuración avanzada y notificaciones */}
+    <div className="agenda-col-right">
+      
+      {/* Tarjeta de recordatorios */}
+      <div className="reminder-card-v2">
+        <div className="card-header-v2">
+          <i className="fas fa-bell"></i>
+          <h3>Recordatorios</h3>
+          <span className="card-badge">Automáticos</span>
+        </div>
+        <div className="reminder-content">
+          <div className="reminder-slider">
+            <i className="fas fa-hourglass-start"></i>
+            <input
+              type="range"
+              min="5"
+              max="240"
+              step="5"
+              value={botAgendaSettings.reminder_before_mins || 60}
+              onChange={e =>
+                setBotAgendaSettings({
+                  ...botAgendaSettings,
+                  reminder_before_mins: Number(e.target.value)
+                })
+              }
+              className="reminder-range"
+            />
+            <div className="reminder-value">
+              <span className="value-number">{botAgendaSettings.reminder_before_mins || 60}</span>
+              <span className="value-unit">minutos antes</span>
+            </div>
+          </div>
+          <div className="reminder-examples">
+            <div className="example-badge">
+              <i className="fas fa-clock"></i> 15 min → Recordatorio rápido
+            </div>
+            <div className="example-badge">
+              <i className="fas fa-clock"></i> 60 min → Recordatorio estándar
+            </div>
+            <div className="example-badge">
+              <i className="fas fa-clock"></i> 120 min → Recordatorio anticipado
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tarjeta de notificaciones */}
+      <div className="notifications-card-v2">
+        <div className="card-header-v2">
+          <i className="fas fa-broadcast-tower"></i>
+          <h3>Canal de notificaciones</h3>
+        </div>
+        <div className="notifications-channels">
+          <div className="channel-item">
+            <div className="channel-icon whatsapp">
+              <i className="fab fa-whatsapp"></i>
+            </div>
+            <div className="channel-input">
+              <label>WhatsApp Business</label>
               <input
-                placeholder="573118777641"
+                placeholder="Ej: 573118777641"
                 value={botAgendaSettings.notify_whatsapp || ''}
                 onChange={e =>
                   setBotAgendaSettings({
@@ -11775,12 +10306,19 @@ async function updateUser(e) {
                   })
                 }
               />
+              <small>Recibirás mensaje cuando se agende una cita</small>
             </div>
-            <div className="config-field">
-              <label><i className="fas fa-envelope"></i> Email notificaciones</label>
+          </div>
+          <div className="channel-divider"></div>
+          <div className="channel-item">
+            <div className="channel-icon email">
+              <i className="fas fa-envelope"></i>
+            </div>
+            <div className="channel-input">
+              <label>Correo electrónico</label>
               <input
                 type="email"
-                placeholder="gerencia@empresa.com"
+                placeholder="gerencia@tuequipo.com"
                 value={botAgendaSettings.notify_email || ''}
                 onChange={e =>
                   setBotAgendaSettings({
@@ -11789,62 +10327,133 @@ async function updateUser(e) {
                   })
                 }
               />
+              <small>Notificaciones por email de nueva cita</small>
             </div>
-          </div>
-
-          <div className="agenda-slots-section">
-            <div className="slots-header">
-              <i className="fas fa-calendar-alt"></i>
-              <span>Próximos espacios disponibles</span>
-              <button className="refresh-slots" onClick={() => loadAgendaSlots(selectedBot.id)}>
-                <i className="fas fa-sync-alt"></i>
-              </button>
-            </div>
-            <div className="slots-list">
-              {(agendaSlots || []).length > 0 ? (
-                (agendaSlots || []).slice(0, 4).map((slot, idx) => (
-                  <div key={idx} className="slot-item">
-                    <div className="slot-date">
-                      {new Date(slot.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                    </div>
-                    <div className="slot-time">
-                      {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                      {' - '}
-                      {new Date(slot.end_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="empty-slots">
-                  <i className="fas fa-calendar-times"></i>
-                  <span>No hay espacios disponibles</span>
-                </div>
-              )}
-            </div>
-            <button
-              className="save-agenda-btn"
-              onClick={() => saveBotAgendaSettings(selectedBot.id)}
-              disabled={agendaLoading}
-            >
-              {agendaLoading ? (
-                <><i className="fas fa-circle-notch fa-spin"></i> Guardando...</>
-              ) : (
-                <><i className="fas fa-save"></i> Guardar configuración</>
-              )}
-            </button>
           </div>
         </div>
       </div>
-    ) : (
-      <div className="no-bot-selected">
-        <i className="fas fa-robot"></i>
-        <h4>No hay bot seleccionado</h4>
-        <p>Selecciona un bot de la lista para ver sus métricas y configuración</p>
-      </div>
-    )}
 
-  </section>
-)}
+      {/* Tarjeta de tipo de cita */}
+      <div className="meeting-type-card-v2">
+        <div className="card-header-v2">
+          <i className="fas fa-video"></i>
+          <h3>Tipo de reunión</h3>
+        </div>
+        <div className="meeting-options">
+          {[
+            { value: 'sales_call', icon: 'fas fa-phone-alt', label: 'Llamada comercial', color: '#10b981' },
+            { value: 'zoom', icon: 'fab fa-zoom', label: 'Zoom', color: '#0d6efd' },
+            { value: 'meet', icon: 'fab fa-google', label: 'Google Meet', color: '#ea4335' },
+            { value: 'support_call', icon: 'fas fa-headset', label: 'Soporte', color: '#f59e0b' }
+          ].map(option => (
+            <button
+              key={option.value}
+              type="button"
+              className={`meeting-option ${botAgendaSettings.goal === option.value ? 'active' : ''}`}
+              style={{ '--option-color': option.color }}
+              onClick={() =>
+                setBotAgendaSettings({
+                  ...botAgendaSettings,
+                  goal: option.value
+                })
+              }
+            >
+              <i className={option.icon}></i>
+              <span>{option.label}</span>
+              {botAgendaSettings.goal === option.value && (
+                <i className="fas fa-check-circle check-mark"></i>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Botón de guardar - Flotante premium */}
+  <div className="save-floating-bar">
+    <button
+      className="btn-save-premium-v2"
+      onClick={() => saveBotAgendaSettings(selectedBot.id)}
+      disabled={agendaLoading}
+    >
+      {agendaLoading ? (
+        <>
+          <div className="spinner-ring"></div>
+          <span>Procesando configuración...</span>
+        </>
+      ) : (
+        <>
+          <i className="fas fa-cloud-upload-alt"></i>
+          <span>Guardar configuración avanzada</span>
+          <i className="fas fa-arrow-right"></i>
+        </>
+      )}
+    </button>
+  </div>
+
+  {/* Sección de próximos espacios */}
+  <div className="slots-premium-v2">
+    <div className="slots-header-v2">
+      <div className="slots-title">
+        <i className="fas fa-calendar-alt"></i>
+        <h4>Próximos espacios disponibles</h4>
+      </div>
+      <button
+        type="button"
+        className="refresh-slots-v2"
+        onClick={() => loadAgendaSlots(selectedBot.id)}
+      >
+        <i className="fas fa-sync-alt"></i>
+        <span>Actualizar</span>
+      </button>
+    </div>
+
+    <div className="slots-grid-v2">
+      {(agendaSlots || []).length > 0 ? (
+        (agendaSlots || []).map((slot, idx) => (
+          <div key={idx} className="slot-card-v2">
+            <div className="slot-date-v2">
+              <div className="date-day">
+                {new Date(slot.start_at).toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase()}
+              </div>
+              <div className="date-num">
+                {new Date(slot.start_at).getDate()}
+              </div>
+              <div className="date-month">
+                {new Date(slot.start_at).toLocaleDateString('es-ES', { month: 'short' })}
+              </div>
+            </div>
+            <div className="slot-time-v2">
+              <i className="fas fa-clock"></i>
+              <span>
+                {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                {' - '}
+                {new Date(slot.end_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+            <div className="slot-status">
+              <span className="status-available">Disponible</span>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="empty-slots-v2">
+          <div className="empty-icon">
+            <i className="fas fa-calendar-times"></i>
+          </div>
+          <p>No hay espacios disponibles</p>
+          <span>Activa la agenda para que los leads puedan reservar citas</span>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+                </>
+              ) : <div className="empty-box">Selecciona un bot</div>}
+            </section>
+          </section>
+        )}
 
         {/* ======================== INBOX ======================== */}
         {tab === 'inbox' && (
@@ -12052,348 +10661,93 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== FUNNEL PREMIUM ULTRA ======================== */}
-{tab === 'funnel' && (
-  <section className="funnel-premium-dashboard">
-    
-    {/* HEADER PREMIUM */}
-    <div className="funnel-premium-hero">
-      <div className="funnel-hero-glow"></div>
-      <div className="funnel-hero-content">
-        <div className="funnel-hero-icon">
-          <i className="fas fa-funnel-dollar"></i>
-          <div className="funnel-hero-pulse"></div>
-        </div>
-        <div className="funnel-hero-text">
-          <h1>Embudo de conversión</h1>
-          <p>Analiza el rendimiento de tu funnel en tiempo real</p>
-        </div>
-        <div className="funnel-hero-stats">
-          <div className="funnel-stat-item">
-            <span className="stat-value">{funnelMetrics.landing_views || 0}</span>
-            <span className="stat-label">Visitas</span>
-          </div>
-          <div className="funnel-stat-divider"></div>
-          <div className="funnel-stat-item">
-            <span className="stat-value">{funnelMetrics.whatsapp_clicks || 0}</span>
-            <span className="stat-label">Clicks WA</span>
-          </div>
-          <div className="funnel-stat-divider"></div>
-          <div className="funnel-stat-item">
-            <span className="stat-value">{metrics.leads || 0}</span>
-            <span className="stat-label">Leads</span>
-          </div>
-          <div className="funnel-stat-divider"></div>
-          <div className="funnel-stat-item">
-            <span className="stat-value">{metrics.closed_leads || 0}</span>
-            <span className="stat-label">Cerrados</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* MÉTRICAS CLAVE */}
-    <div className="funnel-metrics-grid">
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#eff6ff' }}>
-          <i className="fas fa-eye" style={{ color: '#3b82f6' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{funnelMetrics.landing_views || 0}</span>
-          <span className="metric-label">Visitas a landing</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+12%</span>
-        </div>
-      </div>
-
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#dcfce7' }}>
-          <i className="fab fa-whatsapp" style={{ color: '#22c55e' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</span>
-          <span className="metric-label">Clicks a WhatsApp</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+8%</span>
-        </div>
-      </div>
-
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#fef3c7' }}>
-          <i className="fas fa-users" style={{ color: '#f59e0b' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{metrics.leads || 0}</span>
-          <span className="metric-label">Leads generados</span>
-        </div>
-        <div className="metric-trend up">
-          <i className="fas fa-arrow-up"></i>
-          <span>+5%</span>
-        </div>
-      </div>
-
-      <div className="funnel-metric-card">
-        <div className="metric-icon-bg" style={{ background: '#f3e8ff' }}>
-          <i className="fas fa-trophy" style={{ color: '#8b5cf6' }}></i>
-        </div>
-        <div className="metric-content">
-          <span className="metric-value">{metrics.closed_leads || 0}</span>
-          <span className="metric-label">Ventas cerradas</span>
-        </div>
-        <div className="metric-trend">
-          <i className="fas fa-chart-line"></i>
-          <span>+3%</span>
-        </div>
-      </div>
-    </div>
-
-    {/* EMBUDO VISUAL 3D */}
-    <div className="funnel-visual-container">
-      <div className="funnel-title-section">
-        <i className="fas fa-chart-line"></i>
-        <h3>Embudo de conversión</h3>
-        <span className="funnel-badge">Tasa conversión: {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
-      </div>
-      
-      <div className="funnel-steps-container">
-        {[
-          { label: 'Visitas', value: funnelMetrics.landing_views || 0, icon: 'fa-eye', color: '#3b82f6', bg: '#eff6ff' },
-          { label: 'Clicks WA', value: funnelMetrics.whatsapp_clicks || 0, icon: 'fa-message', color: '#22c55e', bg: '#dcfce7' },
-          { label: 'Leads', value: metrics.leads || 0, icon: 'fa-user-plus', color: '#f59e0b', bg: '#fef3c7' },
-          { label: 'Interesados', value: leads.filter(l => l.stage === 'interested').length, icon: 'fa-fire', color: '#ef4444', bg: '#fee2e2' },
-          { label: 'Hot leads', value: leads.filter(l => l.stage === 'hot').length, icon: 'fa-bolt', color: '#8b5cf6', bg: '#f3e8ff' },
-          { label: 'Cerrados', value: metrics.closed_leads || 0, icon: 'fa-trophy', color: '#10b981', bg: '#dcfce7' }
-        ].map((step, idx, arr) => {
-          const prevValue = idx > 0 ? arr[idx-1].value : step.value
-          const conversionRate = prevValue > 0 ? (step.value / prevValue) * 100 : 100
-          const widthPercent = (step.value / (arr[0].value || 1)) * 100
-          
-          return (
-            <div key={step.label} className="funnel-step-premium">
-              <div className="funnel-step-icon" style={{ background: step.bg, color: step.color }}>
-                <i className={`fas ${step.icon}`}></i>
-              </div>
-              <div className="funnel-step-info">
-                <div className="step-header">
-                  <span className="step-label">{step.label}</span>
-                  <span className="step-value">{step.value}</span>
-                </div>
-                <div className="step-bar-container">
-                  <div className="step-bar" style={{ width: `${widthPercent}%`, background: step.color }}>
-                    <span className="step-percentage">{conversionRate.toFixed(0)}%</span>
+        {/* ======================== FUNNEL ======================== */}
+        {tab === 'funnel' && (
+          <section className="stack gap-lg">
+            <div className="metric-grid">
+              <div className="stripe-card metric"><div className="metric-label">Visitas landing</div><div className="metric-value">{funnelMetrics.landing_views || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Clicks WhatsApp</div><div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Leads</div><div className="metric-value">{metrics.leads || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Cerrados</div><div className="metric-value">{metrics.closed_leads || 0}</div></div>
+              <div className="stripe-card metric"><div className="metric-label">CTR</div><div className="metric-value">{Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%</div></div>
+              <div className="stripe-card metric"><div className="metric-label">Conversión</div><div className="metric-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</div></div>
+            </div>
+            <div className="stripe-card">
+              <div className="section-title">Embudo de conversión</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1rem' }}>
+                {[
+                  ['Visitas', funnelMetrics.landing_views],
+                  ['Clicks WA', funnelMetrics.whatsapp_clicks],
+                  ['Leads', metrics.leads],
+                  ['Interesados', leads.filter(l => l.stage === 'interested').length],
+                  ['Hot', leads.filter(l => l.stage === 'hot').length],
+                  ['Cerrados', metrics.closed_leads]
+                ].map(([label, val], i) => (
+                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#7430e2', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
+                    {label}: {val || 0}
                   </div>
-                </div>
-                <div className="step-footer">
-                  <span className="step-conversion">
-                    <i className="fas fa-arrow-right"></i>
-                    Conversión: {conversionRate.toFixed(0)}%
-                  </span>
-                </div>
+                ))}
               </div>
             </div>
-          )
-        })}
-      </div>
-    </div>
-
-    {/* GRÁFICAS Y ESTADÍSTICAS AVANZADAS */}
-    <div className="funnel-charts-row">
-      {/* Leads por etapa - Gráfica de barras premium */}
-      <div className="funnel-chart-card">
-        <div className="chart-card-header">
-          <i className="fas fa-chart-simple"></i>
-          <h4>Leads por etapa</h4>
-          <span className="chart-badge">Distribución actual</span>
-        </div>
-        <div className="stage-bars-container">
-          {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
-            const count = leads.filter(l => l.stage === stage).length
-            const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
-            const percentage = (count / maxCount) * 100
-            const percentTotal = Math.round((count / (leads.length || 1)) * 100)
-            
-            const stageConfig = {
-              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', bg: '#eff6ff' },
-              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', bg: '#f5f3ff' },
-              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', bg: '#fffbeb' },
-              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', bg: '#fef2f2' },
-              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', bg: '#ecfdf5' }
-            }
-            const config = stageConfig[stage]
-            
-            return (
-              <div key={stage} className="stage-bar-item">
-                <div className="stage-bar-header">
-                  <div className="stage-icon" style={{ background: config.bg, color: config.color }}>
-                    <i className={`fas ${config.icon}`}></i>
-                  </div>
-                  <span className="stage-name">{config.label}</span>
-                  <span className="stage-count">{count}</span>
-                  <span className="stage-percent">{percentTotal}%</span>
-                </div>
-                <div className="stage-bar-track">
-                  <div className="stage-bar-fill" style={{ width: `${percentage}%`, background: config.color }}>
-                    <span className="bar-value">{count}</span>
-                  </div>
-                </div>
+            <div className="stripe-card">
+              <div className="chart-title">Leads por etapa</div>
+              <div className="bar-container">
+                {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
+                  const count = leads.filter(l => l.stage === stage).length
+                  return (
+                    <div key={stage} className="bar-item">
+                      <div className="bar-label">{stage}</div>
+                      <div className="bar-fill" style={{ width: `${Math.min(100, count * 10)}%` }}></div>
+                      <div className="bar-value">{count}</div>
+                    </div>
+                  )
+                })}
               </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Tasa de conversión - Gráfica de anillo */}
-      <div className="funnel-chart-card">
-        <div className="chart-card-header">
-          <i className="fas fa-chart-pie"></i>
-          <h4>Tasa de conversión</h4>
-          <span className="chart-badge">Efectividad</span>
-        </div>
-        <div className="conversion-ring-container">
-          <div className="ring-chart">
-            <svg viewBox="0 0 120 120" className="ring-svg">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" strokeWidth="10"/>
-              <circle 
-                cx="60" cy="60" r="52" fill="none" 
-                stroke="url(#ringGradient)" 
-                strokeWidth="10"
-                strokeDasharray={`${((metrics.closed_leads || 0) / (metrics.leads || 1)) * 327} 327`}
-                strokeLinecap="round"
-                transform="rotate(-90 60 60)"
-              />
-              <defs>
-                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#10b981"/>
-                  <stop offset="100%" stopColor="#34d399"/>
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="ring-inner">
-              <span className="ring-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
-              <span className="ring-label">Conversión</span>
             </div>
-          </div>
-          <div className="ring-stats">
-            <div className="ring-stat">
-              <span className="stat-dot" style={{ background: '#10b981' }}></span>
-              <span>Cerrados: {metrics.closed_leads || 0}</span>
-            </div>
-            <div className="ring-stat">
-              <span className="stat-dot" style={{ background: '#ef4444' }}></span>
-              <span>En funnel: {(metrics.leads || 0) - (metrics.closed_leads || 0)}</span>
-            </div>
-            <div className="ring-stat">
-              <span className="stat-dot" style={{ background: '#f59e0b' }}></span>
-              <span>Tasa cierre: {Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* TABLA DE LEADS PREMIUM */}
-    <div className="funnel-table-card">
-      <div className="table-card-header">
-        <div className="table-header-left">
-          <i className="fas fa-users-viewfinder"></i>
-          <h4>Leads y conversaciones activas</h4>
-        </div>
-        <div className="table-header-right">
-          <div className="search-wrapper">
-            <i className="fas fa-search"></i>
-            <input 
-              type="text" 
-              placeholder="Buscar lead..." 
-              value={searchLead} 
-              onChange={e => setSearchLead(e.target.value)}
-              className="table-search"
-            />
-          </div>
-          <button className="refresh-btn" onClick={() => loadInboxLeads()}>
-            <i className="fas fa-sync-alt"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div className="table-responsive">
-        <table className="funnel-premium-table">
-          <thead>
-            <tr>
-              <th><i className="fas fa-user"></i> Nombre</th>
-              <th><i className="fab fa-whatsapp"></i> Teléfono</th>
-              <th><i className="fas fa-chart-simple"></i> Stage</th>
-              <th><i className="fas fa-robot"></i> Bot</th>
-              <th><i className="fas fa-message"></i> Último mensaje</th>
-              <th><i className="fas fa-cog"></i> Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLeads.length > 0 ? (
-              filteredLeads.slice(0, 10).map(lead => {
-                const stageColors = {
-                  new: { color: '#3b82f6', bg: '#eff6ff', label: 'Nuevo' },
-                  qualified: { color: '#8b5cf6', bg: '#f5f3ff', label: 'Calificado' },
-                  interested: { color: '#f59e0b', bg: '#fffbeb', label: 'Interesado' },
-                  hot: { color: '#ef4444', bg: '#fef2f2', label: 'Hot' },
-                  closed: { color: '#10b981', bg: '#ecfdf5', label: 'Cerrado' }
-                }
-                const stageStyle = stageColors[lead.stage] || stageColors.new
-                
-                return (
-                  <tr key={lead.id} className="lead-row" onClick={() => setSelectedLeadId(lead.id)} style={{ cursor: 'pointer' }}>
-                    <td className="lead-name">
-                      <div className="lead-avatar" style={{ background: stageStyle.bg, color: stageStyle.color }}>
-                        {(lead.display_name || lead.phone || 'U').charAt(0).toUpperCase()}
-                      </div>
-                      <span>{lead.display_name || '—'}</span>
-                    </td>
-                    <td className="lead-phone">{lead.phone}</td>
-                    <td>
-                      <span className="stage-pill" style={{ background: stageStyle.bg, color: stageStyle.color }}>
-                        {stageStyle.label}
-                      </span>
-                    </td>
-                    <td className="lead-bot">{lead.bot_name}</td>
-                    <td className="lead-message">{lead.last_inbound_text?.slice(0, 50)}...</td>
-                    <td>
-                      <button className="chat-action-btn" onClick={(e) => { e.stopPropagation(); setSelectedLeadId(lead.id); setTab('inbox'); }}>
-                        <i className="fas fa-comment-dots"></i>
-                        <span>Chat</span>
-                      </button>
-                    </td>
+            <div className="stripe-card">
+              <div className="row between">
+                <div className="section-title">Leads y conversaciones</div>
+                <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
+              </div>
+              <table className="leads-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Stage</th>
+                    <th>Bot</th>
+                    <th>Último mensaje</th>
+                    <th>Acción</th>
                   </tr>
-                )
-              })
-            ) : (
-              <tr className="empty-row">
-                <td colSpan="6">
-                  <div className="empty-leads">
-                    <i className="fas fa-inbox"></i>
-                    <p>No hay leads registrados</p>
-                    <span>Comienza a generar leads para verlos aquí</span>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      
-      {filteredLeads.length > 10 && (
-        <div className="table-footer">
-          <button className="view-all-btn" onClick={() => setTab('inbox')}>
-            Ver todos los leads ({filteredLeads.length})
-            <i className="fas fa-arrow-right"></i>
-          </button>
-        </div>
-      )}
-    </div>
-  </section>
-)}
+                </thead>
+                <tbody>
+                  {filteredLeads.length > 0 ? (
+                    filteredLeads.map(lead => (
+                      <tr key={lead.id}>
+                        <td>{lead.display_name || '—'}</td>
+                        <td>{lead.phone}</td>
+                        <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
+                        <td>{lead.bot_name}</td>
+                        <td>{lead.last_inbound_text?.slice(0, 40)}</td>
+                                                 <td>
+                          <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
+                            Ver chat
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                        No hay leads
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         {/* ======================== SOCIAL IA con PremiumGate ======================== */}
         {tab === 'social' && !canUseFeature('social_ai') && (
