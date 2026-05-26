@@ -9164,7 +9164,7 @@ async function updateUser(e) {
       <div className="hero-glow-bg"></div>
       <div className="hero-content">
         <div className="hero-icon">
-          <i className="fas fa-calendar-robot"></i>
+          <i className="fas fa-calendar-check"></i>
           <div className="hero-pulse"></div>
         </div>
         <div className="hero-text">
@@ -9392,7 +9392,9 @@ async function updateUser(e) {
             </div>
             <button className="btn-mini" onClick={createAppointmentAgent}>
               <i className="fas fa-plus"></i>
-              <span>Agregar</span>
+              <span style="
+                color: blue;
+            ">Agregar</span>
             </button>
           </div>
           <div className="agents-list">
