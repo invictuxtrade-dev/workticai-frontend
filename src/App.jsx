@@ -4434,15 +4434,12 @@ export default function App() {
 }
 
 /* GRID DE DOS COLUMNAS ASIMÉTRICAS */
+/* GRID AGENDA AI - CORREGIDO PARA DASHBOARD */
 .agenda-premium-v2-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-columns: 1fr;
   gap: 1.25rem;
-  width: 100%;
-  max-width: 100%;
-  align-items: start;
-}
-  .agenda-premium-v2 {
+  margin-bottom: 1.5rem;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
@@ -4450,8 +4447,15 @@ export default function App() {
 
 .agenda-col-left,
 .agenda-col-right {
-  min-width: 0;
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
+}
+
+.agenda-col-right {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
 }
 
 .reminder-card-v2,
@@ -4459,22 +4463,8 @@ export default function App() {
 .meeting-type-card-v2 {
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   overflow: hidden;
-}
-
-.channel-input {
-  width: 100%;
-  min-width: 0;
-}
-
-.channel-input input {
-  width: 100%;
-  min-width: 0;
-}
-@media (max-width: 1250px) {
-  .agenda-premium-v2-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* TARJETA DE ACTIVACIÓN */
@@ -5187,14 +5177,14 @@ export default function App() {
 
 /* RESPONSIVE */
 @media (max-width: 1100px) {
-  .agenda-premium-v2-grid {
+  .agenda-col-right {
     grid-template-columns: 1fr;
   }
-  
+
   .weekly-schedule {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   .meeting-options {
     grid-template-columns: 1fr;
   }
