@@ -4748,14 +4748,21 @@ export default function App() {
     }
   }
 
-  async function loadAppointmentAgents() {
-    try {
-      const data = await api('/api/agenda/agents')
-      setAppointmentAgents(Array.isArray(data) ? data : [])
-    } catch (err) {
-      console.error(err)
-    }
+ async function loadAppointmentAgents() {
+  try {
+    const clientID =
+      me?.role === 'admin'
+        ? selectedClientId
+        : me?.client_id
+
+    const qs = clientID ? `?client_id=${clientID}` : ''
+
+    const data = await api(`/api/agenda/agents${qs}`)
+    setAppointmentAgents(Array.isArray(data) ? data : [])
+  } catch (err) {
+    console.error(err)
   }
+}
 
   // ======================== NUEVAS FUNCIONES AGENDA AI PARA BOT ========================
   async function loadBotAgendaSettings(botId) {
@@ -4871,32 +4878,45 @@ export default function App() {
     }
   }
 
-  async function createAppointmentAgent() {
-    try {
-      setBusy(true)
+async function createAppointmentAgent() {
+  try {
+    setBusy(true)
 
-      await api('/api/agenda/agents', {
-        method: 'POST',
-        body: JSON.stringify(agentForm)
-      })
+    const clientID =
+      me?.role === 'admin'
+        ? selectedClientId
+        : me?.client_id
 
-      showNotice('Agente creado')
-
-      setAgentForm({
-        name: '',
-        email: '',
-        whatsapp: '',
-        role: 'sales',
-        color: '#7430e2'
-      })
-
-      await loadAppointmentAgents()
-    } catch (err) {
-      showNotice(err.message)
-    } finally {
-      setBusy(false)
+    if (!clientID) {
+      showNotice('Selecciona un cliente antes de crear el agente')
+      return
     }
+
+    await api('/api/agenda/agents', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...agentForm,
+        client_id: clientID
+      })
+    })
+
+    showNotice('Agente creado')
+
+    setAgentForm({
+      name: '',
+      email: '',
+      whatsapp: '',
+      role: 'sales',
+      color: '#7430e2'
+    })
+
+    await loadAppointmentAgents()
+  } catch (err) {
+    showNotice(err.message)
+  } finally {
+    setBusy(false)
   }
+}
 
   // ======================== FUNCIONES VIDEO AI NUEVAS ========================
   async function uploadAIVideoFile(file) {
