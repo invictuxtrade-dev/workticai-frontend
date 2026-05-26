@@ -6980,6 +6980,70 @@ export default function App() {
   }
 }
 
+
+/* GRÁFICA DE MENSAJES CORREGIDA */
+.messages-chart-premium-v2 {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 200px;
+  gap: 0.8rem;
+  padding: 0.5rem 0;
+}
+
+.message-bar-wrapper-v2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.message-bar-v2 {
+  width: 70%;
+  min-width: 35px;
+  border-radius: 12px 12px 6px 6px;
+  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  box-shadow: 0 -2px 10px rgba(116, 48, 226, 0.3);
+}
+
+.message-count-v2 {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.message-day-v2 {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .messages-chart-premium-v2 {
+    height: 160px;
+  }
+  .message-bar-v2 {
+    width: 100%;
+    min-width: 25px;
+  }
+  .message-count-v2 {
+    font-size: 0.55rem;
+  }
+  .message-day-v2 {
+    font-size: 0.6rem;
+  }
+}
+
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -10759,53 +10823,49 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== DASHBOARD ULTRA PREMIUM ======================== */}
+ {/* ======================== DASHBOARD PREMIUM ======================== */}
 {tab === 'dashboard' && (
-  <section className="dashboard-ultra-premium">
+  <section className="dashboard-premium-container">
     
-    {/* ========== HEADER GLASSMORPHISM ========== */}
-    <div className="dashboard-header-glass">
-      <div className="header-glass-bg"></div>
-      <div className="header-glass-content">
-        <div className="welcome-glass-section">
-          <div className="welcome-glass-icon">
+    {/* ========== HEADER IGUAL AL DE AGENDA AI ========== */}
+    <div className="dashboard-premium-header" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }}>
+      <div className="header-glow-bg"></div>
+      <div className="header-premium-content">
+        <div className="header-welcome-section">
+          <div className="welcome-icon-wrapper">
+            <div className="welcome-icon-glow"></div>
             <i className="fas fa-chart-line"></i>
-            <div className="glass-icon-pulse"></div>
           </div>
-          <div className="welcome-glass-text">
+          <div className="welcome-text">
             <h1>Dashboard</h1>
-            <p>Bienvenido, <span className="glass-user-name">{me?.name || 'Usuario'}</span></p>
+            <p>Bienvenido, <span className="user-name-highlight">{me?.name || 'Usuario'}</span></p>
           </div>
         </div>
-        <div className="date-glass-section">
-          <div className="date-glass-badge">
+        <div className="header-stats-section">
+          <div className="date-badge">
             <i className="fas fa-calendar-alt"></i>
-            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
-          </div>
-          <div className="time-glass-badge">
-            <i className="fas fa-clock"></i>
-            <span>{new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
           </div>
         </div>
       </div>
     </div>
 
-    {/* ========== USO DEL PLAN (solo clientes) - GLASS CARDS ========== */}
+    {/* ========== USO DEL PLAN (solo clientes) ========== */}
     {!isAdmin && (
-      <div className="plan-usage-glass">
-        <div className="plan-usage-glass-header">
-          <div className="plan-usage-title">
+      <div className="plan-usage-premium-card">
+        <div className="plan-usage-header">
+          <div className="plan-info">
             <i className="fas fa-gem"></i>
-            <h3>Plan actual</h3>
-            <span className="plan-name-glass">{currentPlan?.name || activePlanSlug}</span>
+            <h3>Uso del plan</h3>
+            <span className="plan-name">{currentPlan?.name || activePlanSlug}</span>
           </div>
-          <button className="upgrade-glass-btn" onClick={() => setForcePlanScreen(true)}>
+          <button className="upgrade-plan-btn" onClick={() => setForcePlanScreen(true)}>
             <i className="fas fa-crown"></i>
             <span>Mejorar plan</span>
             <i className="fas fa-arrow-right"></i>
           </button>
         </div>
-        <div className="plan-usage-glass-grid">
+        <div className="plan-usage-grid">
           {[
             ['Bots', 'bots', 'fas fa-robot'],
             ['Usuarios', 'users', 'fas fa-users'],
@@ -10820,16 +10880,16 @@ async function updateUser(e) {
             const limit = getLimit(metric)
             const pct = limit > 0 && Number.isFinite(limit) ? Math.min(100, Math.round((used / limit) * 100)) : 0
             return (
-              <div key={metric} className="usage-glass-item">
-                <div className="usage-glass-icon">
+              <div key={metric} className="usage-item">
+                <div className="usage-icon">
                   <i className={icon}></i>
                 </div>
-                <div className="usage-glass-info">
-                  <span className="usage-glass-label">{label}</span>
-                  <div className="usage-glass-bar">
-                    <div className="usage-glass-fill" style={{ width: `${pct}%` }}></div>
+                <div className="usage-details">
+                  <span className="usage-label">{label}</span>
+                  <div className="usage-bar">
+                    <div className="usage-bar-fill" style={{ width: `${pct}%` }}></div>
                   </div>
-                  <div className="usage-glass-numbers">
+                  <div className="usage-numbers">
                     <span className="used">{used}</span>
                     <span className="limit">/ {limit || '∞'}</span>
                   </div>
@@ -10841,100 +10901,82 @@ async function updateUser(e) {
       </div>
     )}
 
-    {/* ========== MÉTRICAS PRINCIPALES - GLASS CARDS ========== */}
-    <div className="metrics-glass-grid">
-      <div className="metric-glass-card">
-        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
+    {/* ========== MÉTRICAS PRINCIPALES ========== */}
+    <div className="dashboard-metrics-premium">
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
           <i className="fas fa-building"></i>
         </div>
-        <div className="metric-glass-info">
-          <span className="metric-glass-value">{metrics.clients || 0}</span>
-          <span className="metric-glass-label">Clientes activos</span>
-        </div>
-        <div className="metric-glass-trend up">
-          <i className="fas fa-arrow-up"></i>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.clients || 0}</span>
+          <span className="metric-label">Clientes activos</span>
         </div>
       </div>
 
-      <div className="metric-glass-card">
-        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #11998e, #38ef7d)' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #11998e, #38ef7d)' }}>
           <i className="fas fa-robot"></i>
         </div>
-        <div className="metric-glass-info">
-          <span className="metric-glass-value">{metrics.bots || 0}</span>
-          <span className="metric-glass-label">Bots activos</span>
-        </div>
-        <div className="metric-glass-trend up">
-          <i className="fas fa-arrow-up"></i>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.bots || 0}</span>
+          <span className="metric-label">Bots activos</span>
         </div>
       </div>
 
-      <div className="metric-glass-card">
-        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
           <i className="fas fa-users"></i>
         </div>
-        <div className="metric-glass-info">
-          <span className="metric-glass-value">{metrics.leads || 0}</span>
-          <span className="metric-glass-label">Leads totales</span>
-        </div>
-        <div className="metric-glass-trend up">
-          <i className="fas fa-arrow-up"></i>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.leads || 0}</span>
+          <span className="metric-label">Leads totales</span>
         </div>
       </div>
 
-      <div className="metric-glass-card">
-        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
           <i className="fas fa-fire"></i>
         </div>
-        <div className="metric-glass-info">
-          <span className="metric-glass-value">{metrics.hot_leads || 0}</span>
-          <span className="metric-glass-label">Hot leads</span>
-        </div>
-        <div className="metric-glass-trend">
-          <i className="fas fa-chart-line"></i>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.hot_leads || 0}</span>
+          <span className="metric-label">Hot leads</span>
         </div>
       </div>
 
-      <div className="metric-glass-card">
-        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)' }}>
           <i className="fas fa-trophy"></i>
         </div>
-        <div className="metric-glass-info">
-          <span className="metric-glass-value">{metrics.closed_leads || 0}</span>
-          <span className="metric-glass-label">Ventas cerradas</span>
-        </div>
-        <div className="metric-glass-trend up">
-          <i className="fas fa-arrow-up"></i>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.closed_leads || 0}</span>
+          <span className="metric-label">Ventas cerradas</span>
         </div>
       </div>
 
-      <div className="metric-glass-card">
-        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
+      <div className="metric-card-premium">
+        <div className="metric-icon" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
           <i className="fas fa-envelope"></i>
         </div>
-        <div className="metric-glass-info">
-          <span className="metric-glass-value">{metrics.messages_24h || 0}</span>
-          <span className="metric-glass-label">Mensajes 24h</span>
-        </div>
-        <div className="metric-glass-trend up">
-          <i className="fas fa-arrow-up"></i>
+        <div className="metric-info">
+          <span className="metric-value">{metrics.messages_24h || 0}</span>
+          <span className="metric-label">Mensajes 24h</span>
         </div>
       </div>
     </div>
 
     {/* ========== GRÁFICAS PREMIUM ========== */}
-    <div className="charts-glass-grid">
+    <div className="dashboard-charts-grid">
       
       {/* LEADS POR ETAPA */}
-      <div className="chart-glass-card">
-        <div className="chart-glass-header">
-          <div className="chart-glass-title">
+      <div className="chart-card-premium">
+        <div className="chart-header">
+          <div className="chart-title">
             <i className="fas fa-chart-pie"></i>
             <h3>Distribución de leads</h3>
           </div>
-          <div className="chart-glass-badge">Por etapa</div>
+          <div className="chart-badge">Por etapa del embudo</div>
         </div>
-        <div className="chart-glass-body">
+        <div className="chart-body">
           {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
             const count = leads.filter(l => l.stage === stage).length
             const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
@@ -10942,31 +10984,31 @@ async function updateUser(e) {
             const percentTotal = Math.round((count / (leads.length || 1)) * 100)
             
             const stageConfig = {
-              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', bg: '#eff6ff' },
-              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', bg: '#f5f3ff' },
-              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', bg: '#fffbeb' },
-              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', bg: '#fef2f2' },
-              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', bg: '#ecfdf5' }
+              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', desc: 'Primer contacto' },
+              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', desc: 'Interés validado' },
+              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', desc: 'Alta intención' },
+              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', desc: 'Listos para cerrar' },
+              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', desc: 'Venta concretada' }
             }
             const config = stageConfig[stage]
             
             return (
-              <div key={stage} className="stage-glass-bar">
-                <div className="stage-glass-info">
-                  <div className="stage-glass-icon" style={{ background: config.bg, color: config.color }}>
+              <div key={stage} className="stage-bar-premium">
+                <div className="stage-bar-header">
+                  <div className="stage-icon" style={{ background: `${config.color}15`, color: config.color }}>
                     <i className={`fas ${config.icon}`}></i>
                   </div>
-                  <div className="stage-glass-details">
-                    <span className="stage-glass-name">{config.label}</span>
-                    <span className="stage-glass-desc">{config.desc}</span>
+                  <div className="stage-info">
+                    <span className="stage-name">{config.label}</span>
+                    <span className="stage-desc">{config.desc}</span>
                   </div>
-                  <div className="stage-glass-numbers">
-                    <span className="stage-glass-count">{count}</span>
-                    <span className="stage-glass-percent">{percentTotal}%</span>
+                  <div className="stage-numbers">
+                    <span className="stage-count">{count}</span>
+                    <span className="stage-percent">{percentTotal}%</span>
                   </div>
                 </div>
-                <div className="stage-glass-track">
-                  <div className="stage-glass-fill" style={{ width: `${percentage}%`, background: config.color }}></div>
+                <div className="stage-bar-track">
+                  <div className="stage-bar-fill" style={{ width: `${percentage}%`, background: config.color }}></div>
                 </div>
               </div>
             )
@@ -10974,52 +11016,53 @@ async function updateUser(e) {
         </div>
       </div>
 
-      {/* MENSAJES ÚLTIMOS 7 DÍAS */}
-      <div className="chart-glass-card">
-        <div className="chart-glass-header">
-          <div className="chart-glass-title">
+      {/* MENSAJES ÚLTIMOS 7 DÍAS - CORREGIDO */}
+      <div className="chart-card-premium">
+        <div className="chart-header">
+          <div className="chart-title">
             <i className="fas fa-message"></i>
             <h3>Actividad de mensajes</h3>
           </div>
-          <div className="chart-glass-badge">Últimos 7 días</div>
+          <div className="chart-badge">Últimos 7 días</div>
         </div>
-        <div className="chart-glass-body">
-          <div className="messages-glass-chart">
+        <div className="chart-body" style={{ minHeight: '220px' }}>
+          <div className="messages-chart-premium-v2">
             {messagesLast7Days.days.map((day, idx) => {
               const maxCount = Math.max(...messagesLast7Days.counts, 1)
-              const height = (messagesLast7Days.counts[idx] / maxCount) * 100
+              const total = messagesLast7Days.counts.reduce((a,b) => a+b, 0)
+              const height = Math.max(30, (messagesLast7Days.counts[idx] / maxCount) * 140)
               return (
-                <div key={day} className="message-glass-bar-wrapper">
-                  <div className="message-glass-bar" style={{ height: `${height}%` }}>
-                    <span className="message-glass-count">{messagesLast7Days.counts[idx]}</span>
+                <div key={day} className="message-bar-wrapper-v2">
+                  <div className="message-bar-v2" style={{ height: `${height}px`, background: 'linear-gradient(180deg, #7430e2, #2563eb)' }}>
+                    <span className="message-count-v2">{messagesLast7Days.counts[idx]}</span>
                   </div>
-                  <span className="message-glass-day">{day}</span>
+                  <span className="message-day-v2">{day}</span>
                 </div>
               )
             })}
           </div>
         </div>
-        <div className="chart-glass-footer">
-          <span className="total-glass">Total: {messagesLast7Days.counts.reduce((a,b) => a+b, 0)} mensajes</span>
-          <span className="trend-glass up">
-            <i className="fas fa-arrow-up"></i> +18%
+        <div className="chart-footer">
+          <span className="total">Total: {messagesLast7Days.counts.reduce((a,b) => a+b, 0)} mensajes</span>
+          <span className="trend up">
+            <i className="fas fa-arrow-up"></i> +18% vs semana anterior
           </span>
         </div>
       </div>
     </div>
 
     {/* ========== BOTS ACTIVOS E INACTIVOS ========== */}
-    <div className="bots-glass-section">
+    <div className="bots-premium-section">
       
       {/* BOTS ACTIVOS */}
-      <div className="bots-glass-card">
-        <div className="bots-glass-header">
-          <div className="header-glass-left">
-            <div className="status-glass active"></div>
+      <div className="bots-card">
+        <div className="bots-card-header">
+          <div className="header-left">
+            <div className="status-indicator active"></div>
             <h3>Bots activos</h3>
           </div>
-          <div className="header-glass-right">
-            <div className="search-glass">
+          <div className="header-right">
+            <div className="search-box">
               <i className="fas fa-search"></i>
               <input 
                 type="text" 
@@ -11028,11 +11071,11 @@ async function updateUser(e) {
                 onChange={e => setSearchBot(e.target.value)}
               />
             </div>
-            <span className="bots-glass-count">{filteredActiveBots.length}</span>
+            <span className="bots-count">{filteredActiveBots.length}</span>
           </div>
         </div>
         
-        <form onSubmit={createBot} className="create-bot-glass">
+        <form onSubmit={createBot} className="create-bot-form">
           <input 
             type="text" 
             value={newBotName} 
@@ -11045,26 +11088,26 @@ async function updateUser(e) {
           </button>
         </form>
         
-        <div className="bots-glass-list">
+        <div className="bots-list">
           {paginatedActiveBots.length > 0 ? (
             paginatedActiveBots.map(bot => (
               <div 
                 key={bot.id} 
-                className={`bot-glass-item ${selectedBotId === bot.id ? 'selected' : ''}`}
+                className={`bot-item ${selectedBotId === bot.id ? 'selected' : ''}`}
                 onClick={() => setSelectedBotId(bot.id)}
               >
-                <div className="bot-glass-avatar active">
+                <div className="bot-avatar active">
                   <i className="fas fa-robot"></i>
                 </div>
-                <div className="bot-glass-info">
+                <div className="bot-details">
                   <strong>{bot.name}</strong>
                   <span>{bot.phone || 'Sin número'}</span>
                 </div>
-                <div className="bot-glass-status active">
+                <div className="bot-status active">
                   <span className="dot"></span>
                   {bot.status}
                 </div>
-                <div className="bot-glass-actions" onClick={e => e.stopPropagation()}>
+                <div className="bot-actions" onClick={e => e.stopPropagation()}>
                   <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
                   <button className="stop" onClick={() => stopBot(bot.id)}><i className="fas fa-power-off"></i></button>
                   <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
@@ -11072,7 +11115,7 @@ async function updateUser(e) {
               </div>
             ))
           ) : (
-            <div className="empty-glass">
+            <div className="empty-state">
               <i className="fas fa-robot"></i>
               <p>No hay bots activos</p>
               <span>Crea tu primer bot para comenzar</span>
@@ -11081,7 +11124,7 @@ async function updateUser(e) {
         </div>
         
         {filteredActiveBots.length > pageSize && (
-          <div className="pagination-glass">
+          <div className="pagination">
             <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
               <i className="fas fa-chevron-left"></i>
             </button>
@@ -11094,37 +11137,37 @@ async function updateUser(e) {
       </div>
 
       {/* BOTS INACTIVOS */}
-      <div className="bots-glass-card">
-        <div className="bots-glass-header">
-          <div className="header-glass-left">
-            <div className="status-glass inactive"></div>
+      <div className="bots-card">
+        <div className="bots-card-header">
+          <div className="header-left">
+            <div className="status-indicator inactive"></div>
             <h3>Bots inactivos</h3>
           </div>
-          <div className="header-glass-right">
-            <span className="bots-glass-count">{filteredInactiveBots.length}</span>
+          <div className="header-right">
+            <span className="bots-count">{filteredInactiveBots.length}</span>
           </div>
         </div>
         
-        <div className="bots-glass-list">
+        <div className="bots-list">
           {paginatedInactiveBots.length > 0 ? (
             paginatedInactiveBots.map(bot => (
               <div 
                 key={bot.id} 
-                className={`bot-glass-item ${selectedBotId === bot.id ? 'selected' : ''}`}
+                className={`bot-item ${selectedBotId === bot.id ? 'selected' : ''}`}
                 onClick={() => setSelectedBotId(bot.id)}
               >
-                <div className="bot-glass-avatar inactive">
+                <div className="bot-avatar inactive">
                   <i className="fas fa-robot"></i>
                 </div>
-                <div className="bot-glass-info">
+                <div className="bot-details">
                   <strong>{bot.name}</strong>
                   <span>{bot.phone || 'Sin número'}</span>
                 </div>
-                <div className="bot-glass-status inactive">
+                <div className="bot-status inactive">
                   <span className="dot"></span>
                   {bot.status}
                 </div>
-                <div className="bot-glass-actions" onClick={e => e.stopPropagation()}>
+                <div className="bot-actions" onClick={e => e.stopPropagation()}>
                   <button className="start" onClick={async () => { await api(`/api/bots/${bot.id}/start`, { method: 'POST' }); await loadBots(selectedClientId); await loadQr(bot.id); showNotice('Bot encendido') }}>
                     <i className="fas fa-play"></i>
                   </button>
@@ -11134,7 +11177,7 @@ async function updateUser(e) {
               </div>
             ))
           ) : (
-            <div className="empty-glass">
+            <div className="empty-state">
               <i className="fas fa-robot"></i>
               <p>No hay bots inactivos</p>
               <span>Todos tus bots están activos</span>
@@ -11143,7 +11186,7 @@ async function updateUser(e) {
         </div>
         
         {filteredInactiveBots.length > pageSize && (
-          <div className="pagination-glass">
+          <div className="pagination">
             <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
               <i className="fas fa-chevron-left"></i>
             </button>
@@ -11156,94 +11199,94 @@ async function updateUser(e) {
       </div>
     </div>
 
-    {/* ========== BOT SELECCIONADO (SIN MODIFICAR LA AGENDA AI) ========== */}
+    {/* ========== BOT SELECCIONADO (SIN AGENDA AI - SE MUESTRA APARTE) ========== */}
     {selectedBot ? (
-      <div className="selected-bot-glass">
-        <div className="selected-bot-glass-header">
-          <div className="bot-glass-selected-info">
-            <div className="bot-glass-selected-icon">
+      <div className="selected-bot-premium-card">
+        <div className="selected-bot-header">
+          <div className="bot-info-section">
+            <div className="bot-avatar-large">
               <i className="fas fa-microchip"></i>
             </div>
-            <div className="bot-glass-selected-text">
+            <div>
               <h2>{selectedBot.name}</h2>
-              <p>Bot seleccionado · Gestión y métricas</p>
+              <p>Bot seleccionado · Configuración y métricas</p>
             </div>
           </div>
-          <div className="bot-glass-selected-actions">
+          <div className="bot-actions-section">
             {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
-              <button className="glass-btn-stop" onClick={() => stopBot(selectedBot.id)} disabled={busy}>
+              <button className="btn-stop" onClick={() => stopBot(selectedBot.id)} disabled={busy}>
                 <i className="fas fa-power-off"></i>
                 <span>Apagar bot</span>
               </button>
             ) : (
-              <button className="glass-btn-start" onClick={startBot} disabled={busy}>
+              <button className="btn-start" onClick={startBot} disabled={busy}>
                 <i className="fas fa-play"></i>
                 <span>Encender bot</span>
               </button>
             )}
-            <button className="glass-btn-edit" onClick={() => renameBot(selectedBot)} disabled={busy}>
+            <button className="btn-edit" onClick={() => renameBot(selectedBot)} disabled={busy}>
               <i className="fas fa-pen"></i>
               <span>Editar</span>
             </button>
           </div>
         </div>
         
-        <div className="selected-bot-glass-stats">
-          <div className="qr-glass-section">
+        <div className="selected-bot-stats">
+          <div className="qr-section">
             {qrDataUrlBot ? (
-              <img className="qr-glass-code" src={qrDataUrlBot} alt="QR Code" />
+              <img className="qr-code" src={qrDataUrlBot} alt="QR Code" />
             ) : (
-              <div className="qr-glass-placeholder">
+              <div className="qr-placeholder">
                 <i className="fas fa-qrcode"></i>
                 <span>Sin QR pendiente</span>
               </div>
             )}
-            <div className="qr-glass-info">
+            <div className="qr-info">
               <i className="fas fa-info-circle"></i>
               <p>Escanea este código QR con WhatsApp para conectar el bot</p>
             </div>
           </div>
           
-          <div className="stats-glass-section">
-            <div className="stat-glass-card">
-              <div className="stat-glass-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+          <div className="metrics-section">
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
                 <i className="fas fa-users"></i>
               </div>
-              <div className="stat-glass-data">
-                <span className="stat-glass-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</span>
-                <span className="stat-glass-label">Total leads</span>
+              <div className="stat-data">
+                <span className="stat-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</span>
+                <span className="stat-label">Total leads</span>
               </div>
             </div>
-            <div className="stat-glass-card">
-              <div className="stat-glass-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
                 <i className="fas fa-comments"></i>
               </div>
-              <div className="stat-glass-data">
-                <span className="stat-glass-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</span>
-                <span className="stat-glass-label">Conversaciones activas</span>
+              <div className="stat-data">
+                <span className="stat-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</span>
+                <span className="stat-label">Activos</span>
               </div>
             </div>
-            <div className="stat-glass-card">
-              <div className="stat-glass-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
                 <i className="fas fa-chart-line"></i>
               </div>
-              <div className="stat-glass-data">
-                <span className="stat-glass-value">
+              <div className="stat-data">
+                <span className="stat-value">
                   {Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%
                 </span>
-                <span className="stat-glass-label">Tasa cierre</span>
+                <span className="stat-label">Tasa cierre</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* LEADS POR ETAPA DEL BOT - REDISEÑADO */}
-        <div className="bot-leads-glass">
-          <div className="bot-leads-glass-title">
+        {/* LEADS POR ETAPA DEL BOT */}
+        <div className="bot-leads-chart">
+          <div className="chart-title-mini">
             <i className="fas fa-chart-simple"></i>
             <span>Leads por etapa</span>
           </div>
-          <div className="bot-stages-glass">
+          <div className="bot-stages">
             {botLeadsByStage.stages.map((stage, idx) => {
               const count = botLeadsByStage.counts[idx]
               const maxCount = Math.max(...botLeadsByStage.counts, 1)
@@ -11257,13 +11300,13 @@ async function updateUser(e) {
               }
               
               return (
-                <div key={stage} className="bot-stage-glass">
-                  <div className="bot-stage-glass-header">
-                    <span className="bot-stage-glass-name">{stageNames[stage]}</span>
-                    <span className="bot-stage-glass-count">{count}</span>
+                <div key={stage} className="bot-stage-item">
+                  <div className="stage-header">
+                    <span className="stage-name">{stageNames[stage]}</span>
+                    <span className="stage-count">{count}</span>
                   </div>
-                  <div className="bot-stage-glass-track">
-                    <div className="bot-stage-glass-fill" style={{ width: `${percentage}%`, background: stageColors[stage] }}></div>
+                  <div className="stage-track">
+                    <div className="stage-fill" style={{ width: `${percentage}%`, background: stageColors[stage] }}></div>
                   </div>
                 </div>
               )
@@ -11271,434 +11314,401 @@ async function updateUser(e) {
           </div>
         </div>
 
-        {/* ========== AGENDA AI DEL BOT (SIN MODIFICAR, EXACTAMENTE IGUAL) ========== */}
+        {/* ========== AGENDA AI DEL BOT (SIN MODIFICAR) ========== */}
         {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
-<section className="agenda-premium-v2">
-  {/* Header con gradiente */}
-  <div className="agenda-premium-v2-header">
-    <div className="header-glow"></div>
-    <div className="header-content">
-      <div className="header-icon">
-        <i className="fas fa-calendar-check"></i>
-        <div className="pulse-ring"></div>
-      </div>
-      <div className="header-text">
-        <h2>
-          Agenda AI 
-          <span className="premium-chip">
-            <i className="fas fa-gem"></i> PRÉMIUM
-          </span>
-        </h2>
-        <p>Automatización inteligente de citas con IA avanzada</p>
-      </div>
-      <div className="header-stats">
-        <div className="stat-badge">
-          <i className="fas fa-robot"></i>
-          <span>IA Activada</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Layout de dos columnas asimétricas */}
-  <div className="agenda-premium-v2-grid">
-    
-    {/* COLUMNA IZQUIERDA - Configuración principal */}
-    <div className="agenda-col-left">
-      
-      {/* Tarjeta de activación - Glassmorphism */}
-      <div className="activation-card-v2">
-        <div className="activation-bg"></div>
-        <div className="activation-content">
-          <div className="activation-info">
-            <div className="power-indicator">
-              <div className={`power-led ${botAgendaSettings.enabled ? 'active' : ''}`}></div>
-              <span className="power-label">
-                {botAgendaSettings.enabled ? 'Agenda activa' : 'Agenda inactiva'}
-              </span>
-            </div>
-            <p className="activation-desc">
-              {botAgendaSettings.enabled 
-                ? 'El bot está programando citas automáticamente' 
-                : 'Activa la agenda para que el bot comience a programar citas'}
-            </p>
-          </div>
-          <label className="toggle-premium-v2">
-            <input
-              type="checkbox"
-              checked={!!botAgendaSettings.enabled}
-              onChange={e =>
-                setBotAgendaSettings({
-                  ...botAgendaSettings,
-                  enabled: e.target.checked
-                })
-              }
-            />
-            <span className="toggle-back">
-              <span className="toggle-front"></span>
-            </span>
-          </label>
-        </div>
-      </div>
-
-      {/* Tarjeta de horarios - Diseño de agenda semanal */}
-      <div className="schedule-card-v2">
-        <div className="card-header-v2">
-          <i className="fas fa-calendar-week"></i>
-          <h3>Horario semanal</h3>
-          <span className="card-badge">Disponibilidad</span>
-        </div>
-        
-        <div className="weekly-schedule">
-          {[
-            { key: 'mon', label: 'LUN', full: 'Lunes' },
-            { key: 'tue', label: 'MAR', full: 'Martes' },
-            { key: 'wed', label: 'MIÉ', full: 'Miércoles' },
-            { key: 'thu', label: 'JUE', full: 'Jueves' },
-            { key: 'fri', label: 'VIE', full: 'Viernes' },
-            { key: 'sat', label: 'SÁB', full: 'Sábado' },
-            { key: 'sun', label: 'DOM', full: 'Domingo' }
-          ].map(day => {
-            const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
-            const isActive = currentDays.includes(day.key)
-            return (
-              <button
-                key={day.key}
-                type="button"
-                className={`day-card-v2 ${isActive ? 'active' : ''}`}
-                onClick={() => {
-                  let newDays = [...currentDays]
-                  if (isActive) {
-                    newDays = newDays.filter(d => d !== day.key)
-                  } else {
-                    newDays.push(day.key)
-                  }
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    available_days: newDays.join(',')
-                  })
-                }}
-              >
-                <span className="day-label">{day.label}</span>
-                <span className="day-full">{day.full}</span>
-                <div className="day-check">
-                  <i className={`fas ${isActive ? 'fa-check-circle' : 'fa-circle'}`}></i>
+        <div className="agenda-premium-v2" style={{ margin: '0', overflow: 'visible' }}>
+          {/* Header con gradiente */}
+          <div className="agenda-premium-v2-header">
+            <div className="header-glow"></div>
+            <div className="header-content" style={{ flexWrap: 'wrap' }}>
+              <div className="header-icon">
+                <i className="fas fa-calendar-check"></i>
+                <div className="pulse-ring"></div>
+              </div>
+              <div className="header-text">
+                <h2>
+                  Agenda AI 
+                  <span className="premium-chip">
+                    <i className="fas fa-gem"></i> PRÉMIUM
+                  </span>
+                </h2>
+                <p>Automatización inteligente de citas con IA avanzada</p>
+              </div>
+              <div className="header-stats">
+                <div className="stat-badge">
+                  <i className="fas fa-robot"></i>
+                  <span>IA Activada</span>
                 </div>
-              </button>
-            )
-          })}
-        </div>
-
-        <div className="time-range-v2">
-          <div className="time-input-group">
-            <label>
-              <i className="fas fa-play-circle"></i>
-              Desde
-            </label>
-            <input
-              type="time"
-              value={botAgendaSettings.start_time || '09:00'}
-              onChange={e =>
-                setBotAgendaSettings({
-                  ...botAgendaSettings,
-                  start_time: e.target.value
-                })
-              }
-              className="time-input-v2"
-            />
-          </div>
-          <div className="time-divider">
-            <i className="fas fa-arrow-right"></i>
-          </div>
-          <div className="time-input-group">
-            <label>
-              <i className="fas fa-stop-circle"></i>
-              Hasta
-            </label>
-            <input
-              type="time"
-              value={botAgendaSettings.end_time || '18:00'}
-              onChange={e =>
-                setBotAgendaSettings({
-                  ...botAgendaSettings,
-                  end_time: e.target.value
-                })
-              }
-              className="time-input-v2"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Tarjeta de duración y buffer */}
-      <div className="duration-card-v2">
-        <div className="card-header-v2">
-          <i className="fas fa-hourglass-half"></i>
-          <h3>Configuración de tiempo</h3>
-        </div>
-        <div className="duration-metrics">
-          <div className="metric-box">
-            <span className="metric-icon"><i className="fas fa-clock"></i></span>
-            <div className="metric-content">
-              <label>Duración de cita</label>
-              <div className="metric-input-wrapper">
-                <input
-                  type="number"
-                  min="5"
-                  step="5"
-                  value={botAgendaSettings.duration_mins || 30}
-                  onChange={e =>
-                    setBotAgendaSettings({
-                      ...botAgendaSettings,
-                      duration_mins: Number(e.target.value)
-                    })
-                  }
-                />
-                <span className="metric-unit">minutos</span>
               </div>
             </div>
           </div>
-          <div className="metric-divider"></div>
-          <div className="metric-box">
-            <span className="metric-icon"><i className="fas fa-pause"></i></span>
-            <div className="metric-content">
-              <label>Buffer entre citas</label>
-              <div className="metric-input-wrapper">
-                <input
-                  type="number"
-                  min="0"
-                  step="5"
-                  value={botAgendaSettings.buffer_mins ?? 10}
-                  onChange={e =>
-                    setBotAgendaSettings({
-                      ...botAgendaSettings,
-                      buffer_mins: Number(e.target.value)
-                    })
-                  }
-                />
-                <span className="metric-unit">minutos</span>
+
+          {/* Layout de dos columnas asimétricas */}
+          <div className="agenda-premium-v2-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '1.25rem' }}>
+            
+            {/* COLUMNA IZQUIERDA */}
+            <div className="agenda-col-left">
+              
+              {/* Tarjeta de activación */}
+              <div className="activation-card-v2">
+                <div className="activation-bg"></div>
+                <div className="activation-content">
+                  <div className="activation-info">
+                    <div className="power-indicator">
+                      <div className={`power-led ${botAgendaSettings.enabled ? 'active' : ''}`}></div>
+                      <span className="power-label">
+                        {botAgendaSettings.enabled ? 'Agenda activa' : 'Agenda inactiva'}
+                      </span>
+                    </div>
+                    <p className="activation-desc">
+                      {botAgendaSettings.enabled 
+                        ? 'El bot está programando citas automáticamente' 
+                        : 'Activa la agenda para que el bot comience a programar citas'}
+                    </p>
+                  </div>
+                  <label className="toggle-premium-v2">
+                    <input
+                      type="checkbox"
+                      checked={!!botAgendaSettings.enabled}
+                      onChange={e =>
+                        setBotAgendaSettings({
+                          ...botAgendaSettings,
+                          enabled: e.target.checked
+                        })
+                      }
+                    />
+                    <span className="toggle-back">
+                      <span className="toggle-front"></span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Tarjeta de horarios */}
+              <div className="schedule-card-v2">
+                <div className="card-header-v2">
+                  <i className="fas fa-calendar-week"></i>
+                  <h3>Horario semanal</h3>
+                  <span className="card-badge">Disponibilidad</span>
+                </div>
+                
+                <div className="weekly-schedule" style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: '0.5rem' }}>
+                  {[
+                    { key: 'mon', label: 'LUN', full: 'Lunes' },
+                    { key: 'tue', label: 'MAR', full: 'Martes' },
+                    { key: 'wed', label: 'MIÉ', full: 'Miércoles' },
+                    { key: 'thu', label: 'JUE', full: 'Jueves' },
+                    { key: 'fri', label: 'VIE', full: 'Viernes' },
+                    { key: 'sat', label: 'SÁB', full: 'Sábado' },
+                    { key: 'sun', label: 'DOM', full: 'Domingo' }
+                  ].map(day => {
+                    const currentDays = (botAgendaSettings.available_days || 'mon,tue,wed,thu,fri').split(',')
+                    const isActive = currentDays.includes(day.key)
+                    return (
+                      <button
+                        key={day.key}
+                        type="button"
+                        className={`day-card-v2 ${isActive ? 'active' : ''}`}
+                        onClick={() => {
+                          let newDays = [...currentDays]
+                          if (isActive) {
+                            newDays = newDays.filter(d => d !== day.key)
+                          } else {
+                            newDays.push(day.key)
+                          }
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            available_days: newDays.join(',')
+                          })
+                        }}
+                      >
+                        <span className="day-label">{day.label}</span>
+                        <span className="day-full">{day.full}</span>
+                        <div className="day-check">
+                          <i className={`fas ${isActive ? 'fa-check-circle' : 'fa-circle'}`}></i>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="time-range-v2" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                  <div className="time-input-group" style={{ flex: 1 }}>
+                    <label><i className="fas fa-play-circle"></i> Desde</label>
+                    <input
+                      type="time"
+                      value={botAgendaSettings.start_time || '09:00'}
+                      onChange={e =>
+                        setBotAgendaSettings({
+                          ...botAgendaSettings,
+                          start_time: e.target.value
+                        })
+                      }
+                      className="time-input-v2"
+                    />
+                  </div>
+                  <div className="time-divider"><i className="fas fa-arrow-right"></i></div>
+                  <div className="time-input-group" style={{ flex: 1 }}>
+                    <label><i className="fas fa-stop-circle"></i> Hasta</label>
+                    <input
+                      type="time"
+                      value={botAgendaSettings.end_time || '18:00'}
+                      onChange={e =>
+                        setBotAgendaSettings({
+                          ...botAgendaSettings,
+                          end_time: e.target.value
+                        })
+                      }
+                      className="time-input-v2"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Tarjeta de duración */}
+              <div className="duration-card-v2">
+                <div className="card-header-v2">
+                  <i className="fas fa-hourglass-half"></i>
+                  <h3>Configuración de tiempo</h3>
+                </div>
+                <div className="duration-metrics" style={{ display: 'flex', gap: '1rem' }}>
+                  <div className="metric-box" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span className="metric-icon"><i className="fas fa-clock"></i></span>
+                    <div className="metric-content" style={{ flex: 1 }}>
+                      <label>Duración de cita</label>
+                      <div className="metric-input-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <input
+                          type="number"
+                          min="5"
+                          step="5"
+                          value={botAgendaSettings.duration_mins || 30}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              duration_mins: Number(e.target.value)
+                            })
+                          }
+                        />
+                        <span className="metric-unit">minutos</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="metric-divider" style={{ width: '1px', background: '#e2e8f0' }}></div>
+                  <div className="metric-box" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span className="metric-icon"><i className="fas fa-pause"></i></span>
+                    <div className="metric-content" style={{ flex: 1 }}>
+                      <label>Buffer entre citas</label>
+                      <div className="metric-input-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <input
+                          type="number"
+                          min="0"
+                          step="5"
+                          value={botAgendaSettings.buffer_mins ?? 10}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              buffer_mins: Number(e.target.value)
+                            })
+                          }
+                        />
+                        <span className="metric-unit">minutos</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* COLUMNA DERECHA */}
+            <div className="agenda-col-right" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              
+              {/* Recordatorios */}
+              <div className="reminder-card-v2">
+                <div className="card-header-v2">
+                  <i className="fas fa-bell"></i>
+                  <h3>Recordatorios</h3>
+                  <span className="card-badge">Automáticos</span>
+                </div>
+                <div className="reminder-content">
+                  <div className="reminder-slider" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <i className="fas fa-hourglass-start"></i>
+                    <input
+                      type="range"
+                      min="5"
+                      max="240"
+                      step="5"
+                      value={botAgendaSettings.reminder_before_mins || 60}
+                      onChange={e =>
+                        setBotAgendaSettings({
+                          ...botAgendaSettings,
+                          reminder_before_mins: Number(e.target.value)
+                        })
+                      }
+                      className="reminder-range"
+                      style={{ flex: 1 }}
+                    />
+                    <div className="reminder-value" style={{ textAlign: 'center', minWidth: '80px' }}>
+                      <span className="value-number">{botAgendaSettings.reminder_before_mins || 60}</span>
+                      <span className="value-unit">minutos antes</span>
+                    </div>
+                  </div>
+                  <div className="reminder-examples" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                    <div className="example-badge"><i className="fas fa-clock"></i> 15 min → Rápido</div>
+                    <div className="example-badge"><i className="fas fa-clock"></i> 60 min → Estándar</div>
+                    <div className="example-badge"><i className="fas fa-clock"></i> 120 min → Anticipado</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notificaciones */}
+              <div className="notifications-card-v2">
+                <div className="card-header-v2">
+                  <i className="fas fa-broadcast-tower"></i>
+                  <h3>Canal de notificaciones</h3>
+                </div>
+                <div className="notifications-channels" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div className="channel-item" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div className="channel-icon whatsapp" style={{ width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#dcfce7', color: '#22c55e' }}>
+                      <i className="fab fa-whatsapp"></i>
+                    </div>
+                    <div className="channel-input" style={{ flex: 1 }}>
+                      <label>WhatsApp Business</label>
+                      <input
+                        placeholder="Ej: 573118777641"
+                        value={botAgendaSettings.notify_whatsapp || ''}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            notify_whatsapp: e.target.value
+                          })
+                        }
+                      />
+                      <small>Recibirás mensaje cuando se agende una cita</small>
+                    </div>
+                  </div>
+                  <div className="channel-divider" style={{ height: '1px', background: '#e2e8f0' }}></div>
+                  <div className="channel-item" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div className="channel-icon email" style={{ width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e0e7ff', color: '#3b82f6' }}>
+                      <i className="fas fa-envelope"></i>
+                    </div>
+                    <div className="channel-input" style={{ flex: 1 }}>
+                      <label>Correo electrónico</label>
+                      <input
+                        type="email"
+                        placeholder="gerencia@tuequipo.com"
+                        value={botAgendaSettings.notify_email || ''}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            notify_email: e.target.value
+                          })
+                        }
+                      />
+                      <small>Notificaciones por email de nueva cita</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tipo de cita */}
+              <div className="meeting-type-card-v2">
+                <div className="card-header-v2">
+                  <i className="fas fa-video"></i>
+                  <h3>Tipo de reunión</h3>
+                </div>
+                <div className="meeting-options" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                  {[
+                    { value: 'sales_call', icon: 'fas fa-phone-alt', label: 'Llamada comercial', color: '#10b981' },
+                    { value: 'zoom', icon: 'fab fa-zoom', label: 'Zoom', color: '#0d6efd' },
+                    { value: 'meet', icon: 'fab fa-google', label: 'Google Meet', color: '#ea4335' },
+                    { value: 'support_call', icon: 'fas fa-headset', label: 'Soporte', color: '#f59e0b' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={`meeting-option ${botAgendaSettings.goal === option.value ? 'active' : ''}`}
+                      style={{ '--option-color': option.color }}
+                      onClick={() =>
+                        setBotAgendaSettings({
+                          ...botAgendaSettings,
+                          goal: option.value
+                        })
+                      }
+                    >
+                      <i className={option.icon}></i>
+                      <span>{option.label}</span>
+                      {botAgendaSettings.goal === option.value && (
+                        <i className="fas fa-check-circle check-mark"></i>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    {/* COLUMNA DERECHA - Configuración avanzada y notificaciones */}
-    <div className="agenda-col-right">
-      
-      {/* Tarjeta de recordatorios */}
-      <div className="reminder-card-v2">
-        <div className="card-header-v2">
-          <i className="fas fa-bell"></i>
-          <h3>Recordatorios</h3>
-          <span className="card-badge">Automáticos</span>
-        </div>
-        <div className="reminder-content">
-          <div className="reminder-slider">
-            <i className="fas fa-hourglass-start"></i>
-            <input
-              type="range"
-              min="5"
-              max="240"
-              step="5"
-              value={botAgendaSettings.reminder_before_mins || 60}
-              onChange={e =>
-                setBotAgendaSettings({
-                  ...botAgendaSettings,
-                  reminder_before_mins: Number(e.target.value)
-                })
-              }
-              className="reminder-range"
-            />
-            <div className="reminder-value">
-              <span className="value-number">{botAgendaSettings.reminder_before_mins || 60}</span>
-              <span className="value-unit">minutos antes</span>
-            </div>
-          </div>
-          <div className="reminder-examples">
-            <div className="example-badge">
-              <i className="fas fa-clock"></i> 15 min → Recordatorio rápido
-            </div>
-            <div className="example-badge">
-              <i className="fas fa-clock"></i> 60 min → Recordatorio estándar
-            </div>
-            <div className="example-badge">
-              <i className="fas fa-clock"></i> 120 min → Recordatorio anticipado
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tarjeta de notificaciones */}
-      <div className="notifications-card-v2">
-        <div className="card-header-v2">
-          <i className="fas fa-broadcast-tower"></i>
-          <h3>Canal de notificaciones</h3>
-        </div>
-        <div className="notifications-channels">
-          <div className="channel-item">
-            <div className="channel-icon whatsapp">
-              <i className="fab fa-whatsapp"></i>
-            </div>
-            <div className="channel-input">
-              <label>WhatsApp Business</label>
-              <input
-                placeholder="Ej: 573118777641"
-                value={botAgendaSettings.notify_whatsapp || ''}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    notify_whatsapp: e.target.value
-                  })
-                }
-              />
-              <small>Recibirás mensaje cuando se agende una cita</small>
-            </div>
-          </div>
-          <div className="channel-divider"></div>
-          <div className="channel-item">
-            <div className="channel-icon email">
-              <i className="fas fa-envelope"></i>
-            </div>
-            <div className="channel-input">
-              <label>Correo electrónico</label>
-              <input
-                type="email"
-                placeholder="gerencia@tuequipo.com"
-                value={botAgendaSettings.notify_email || ''}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    notify_email: e.target.value
-                  })
-                }
-              />
-              <small>Notificaciones por email de nueva cita</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tarjeta de tipo de cita */}
-      <div className="meeting-type-card-v2">
-        <div className="card-header-v2">
-          <i className="fas fa-video"></i>
-          <h3>Tipo de reunión</h3>
-        </div>
-        <div className="meeting-options">
-          {[
-            { value: 'sales_call', icon: 'fas fa-phone-alt', label: 'Llamada comercial', color: '#10b981' },
-            { value: 'zoom', icon: 'fab fa-zoom', label: 'Zoom', color: '#0d6efd' },
-            { value: 'meet', icon: 'fab fa-google', label: 'Google Meet', color: '#ea4335' },
-            { value: 'support_call', icon: 'fas fa-headset', label: 'Soporte', color: '#f59e0b' }
-          ].map(option => (
+          {/* Botón guardar */}
+          <div className="save-floating-bar" style={{ margin: '1.5rem 0' }}>
             <button
-              key={option.value}
-              type="button"
-              className={`meeting-option ${botAgendaSettings.goal === option.value ? 'active' : ''}`}
-              style={{ '--option-color': option.color }}
-              onClick={() =>
-                setBotAgendaSettings({
-                  ...botAgendaSettings,
-                  goal: option.value
-                })
-              }
+              className="btn-save-premium-v2"
+              onClick={() => saveBotAgendaSettings(selectedBot.id)}
+              disabled={agendaLoading}
+              style={{ width: '100%' }}
             >
-              <i className={option.icon}></i>
-              <span>{option.label}</span>
-              {botAgendaSettings.goal === option.value && (
-                <i className="fas fa-check-circle check-mark"></i>
+              {agendaLoading ? (
+                <><div className="spinner-ring"></div><span>Procesando configuración...</span></>
+              ) : (
+                <><i className="fas fa-cloud-upload-alt"></i><span>Guardar configuración avanzada</span><i className="fas fa-arrow-right"></i></>
               )}
             </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
+          </div>
 
-  {/* Botón de guardar - Flotante premium */}
-  <div className="save-floating-bar">
-    <button
-      className="btn-save-premium-v2"
-      onClick={() => saveBotAgendaSettings(selectedBot.id)}
-      disabled={agendaLoading}
-    >
-      {agendaLoading ? (
-        <>
-          <div className="spinner-ring"></div>
-          <span>Procesando configuración...</span>
-        </>
-      ) : (
-        <>
-          <i className="fas fa-cloud-upload-alt"></i>
-          <span>Guardar configuración avanzada</span>
-          <i className="fas fa-arrow-right"></i>
-        </>
-      )}
-    </button>
-  </div>
-
-  {/* Sección de próximos espacios */}
-  <div className="slots-premium-v2">
-    <div className="slots-header-v2">
-      <div className="slots-title">
-        <i className="fas fa-calendar-alt"></i>
-        <h4>Próximos espacios disponibles</h4>
-      </div>
-      <button
-        type="button"
-        className="refresh-slots-v2"
-        onClick={() => loadAgendaSlots(selectedBot.id)}
-      >
-        <i className="fas fa-sync-alt"></i>
-        <span>Actualizar</span>
-      </button>
-    </div>
-
-    <div className="slots-grid-v2">
-      {(agendaSlots || []).length > 0 ? (
-        (agendaSlots || []).map((slot, idx) => (
-          <div key={idx} className="slot-card-v2">
-            <div className="slot-date-v2">
-              <div className="date-day">
-                {new Date(slot.start_at).toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase()}
+          {/* Espacios disponibles */}
+          <div className="slots-premium-v2">
+            <div className="slots-header-v2" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="slots-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <i className="fas fa-calendar-alt"></i>
+                <h4>Próximos espacios disponibles</h4>
               </div>
-              <div className="date-num">
-                {new Date(slot.start_at).getDate()}
-              </div>
-              <div className="date-month">
-                {new Date(slot.start_at).toLocaleDateString('es-ES', { month: 'short' })}
-              </div>
+              <button type="button" className="refresh-slots-v2" onClick={() => loadAgendaSlots(selectedBot.id)}>
+                <i className="fas fa-sync-alt"></i>
+                <span>Actualizar</span>
+              </button>
             </div>
-            <div className="slot-time-v2">
-              <i className="fas fa-clock"></i>
-              <span>
-                {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                {' - '}
-                {new Date(slot.end_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            </div>
-            <div className="slot-status">
-              <span className="status-available">Disponible</span>
+
+            <div className="slots-grid-v2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {(agendaSlots || []).length > 0 ? (
+                (agendaSlots || []).map((slot, idx) => (
+                  <div key={idx} className="slot-card-v2">
+                    <div className="slot-date-v2" style={{ textAlign: 'center', minWidth: '60px' }}>
+                      <div className="date-day">{new Date(slot.start_at).toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase()}</div>
+                      <div className="date-num">{new Date(slot.start_at).getDate()}</div>
+                      <div className="date-month">{new Date(slot.start_at).toLocaleDateString('es-ES', { month: 'short' })}</div>
+                    </div>
+                    <div className="slot-time-v2" style={{ flex: 1 }}>
+                      <i className="fas fa-clock"></i>
+                      <span>
+                        {new Date(slot.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                        {' - '}
+                        {new Date(slot.end_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <div className="slot-status"><span className="status-available">Disponible</span></div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-slots-v2" style={{ textAlign: 'center', padding: '2rem' }}>
+                  <div className="empty-icon"><i className="fas fa-calendar-times"></i></div>
+                  <p>No hay espacios disponibles</p>
+                  <span>Activa la agenda para que los leads puedan reservar citas</span>
+                </div>
+              )}
             </div>
           </div>
-        ))
-      ) : (
-        <div className="empty-slots-v2">
-          <div className="empty-icon">
-            <i className="fas fa-calendar-times"></i>
-          </div>
-          <p>No hay espacios disponibles</p>
-          <span>Activa la agenda para que los leads puedan reservar citas</span>
         </div>
-      )}
-    </div>
-  </div>
-</section>
       </div>
     ) : (
-      <div className="no-bot-glass">
+      <div className="no-bot-selected">
         <i className="fas fa-robot"></i>
         <h4>No hay bot seleccionado</h4>
         <p>Selecciona un bot de la lista para ver sus métricas y configuración</p>
