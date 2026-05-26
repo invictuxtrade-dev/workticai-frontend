@@ -8412,365 +8412,439 @@ async function updateUser(e) {
           </div>
         </header>
 
-        {/* ======================== AGENDA AI ======================== */}
-        {tab === 'agenda_ai' && (
-          <section className="stack">
-            
-            <section className="metric-grid">
-              <div className="metric-card">
-                <strong>{agendaMetrics.today || 0}</strong>
-                <span>Citas hoy</span>
-              </div>
+        {/* ======================== AGENDA AI - PREMIUM ULTRA ======================== */}
+{tab === 'agenda_ai' && (
+  <section className="agenda-premium-dashboard">
+    
+    {/* HEADER PREMIUM CON EFECTO GLASS */}
+    <div className="agenda-premium-hero">
+      <div className="hero-glow-bg"></div>
+      <div className="hero-content">
+        <div className="hero-icon">
+          <i className="fas fa-calendar-robot"></i>
+          <div className="hero-pulse"></div>
+        </div>
+        <div className="hero-text">
+          <h1>Agenda AI</h1>
+          <p>Gestión inteligente de citas y seguimiento automatizado</p>
+        </div>
+        <div className="hero-stats">
+          <div className="hero-stat-item">
+            <span className="stat-value">{agendaMetrics.today || 0}</span>
+            <span className="stat-label">Hoy</span>
+          </div>
+          <div className="hero-stat-divider"></div>
+          <div className="hero-stat-item">
+            <span className="stat-value">{agendaMetrics.scheduled || 0}</span>
+            <span className="stat-label">Pendientes</span>
+          </div>
+          <div className="hero-stat-divider"></div>
+          <div className="hero-stat-item">
+            <span className="stat-value">{agendaMetrics.completed || 0}</span>
+            <span className="stat-label">Completadas</span>
+          </div>
+        </div>
+        <button className="hero-btn-primary" onClick={() => setShowAppointmentModal(true)}>
+          <i className="fas fa-plus-circle"></i>
+          <span>Nueva cita</span>
+        </button>
+      </div>
+    </div>
 
-              <div className="metric-card">
-                <strong>{agendaMetrics.scheduled || 0}</strong>
-                <span>Agendadas</span>
-              </div>
+    {/* GRID PRINCIPAL 2 COLUMNAS */}
+    <div className="agenda-premium-grid">
+      
+      {/* COLUMNA IZQUIERDA - CALENDARIO PREMIUM */}
+      <div className="agenda-calendar-wrapper">
+        <div className="calendar-card-premium">
+          <div className="calendar-card-header">
+            <div className="header-left">
+              <i className="fas fa-calendar-alt"></i>
+              <h3>Calendario de citas</h3>
+              <span className="header-badge">Sincronizado</span>
+            </div>
+            <div className="header-right">
+              <button className="icon-btn" onClick={() => loadAgenda()}>
+                <i className="fas fa-sync-alt"></i>
+              </button>
+            </div>
+          </div>
+          <div className="calendar-premium-container">
+            <FullCalendar
+              plugins={[
+                dayGridPlugin,
+                timeGridPlugin,
+                interactionPlugin
+              ]}
+              initialView="timeGridWeek"
+              editable={true}
+              selectable={true}
+              height={650}
+              headerToolbar={{
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              }}
+              buttonText={{
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+              }}
+              events={appointments.map(a => ({
+                id: a.id,
+                title: a.title || a.contact_name || 'Cita',
+                start: a.start_at,
+                end: a.end_at,
+                backgroundColor: a.status === 'confirmed' ? '#10b981' : 
+                                 a.status === 'completed' ? '#6366f1' :
+                                 a.status === 'cancelled' ? '#ef4444' : '#7430e2',
+                borderColor: 'transparent',
+                extendedProps: a
+              }))}
+              eventClick={(info) => {
+                const ap = info.event.extendedProps
+                setSelectedAppointment(ap)
+                setAppointmentForm({
+                  title: ap.title || '',
+                  contact_name: ap.contact_name || '',
+                  contact_phone: ap.contact_phone || '',
+                  contact_email: ap.contact_email || '',
+                  status: ap.status || 'scheduled',
+                  meeting_type: ap.meeting_type || 'call',
+                  meeting_link: ap.meeting_link || '',
+                  location: ap.location || '',
+                  notes: ap.notes || '',
+                  start_at: ap.start_at?.slice(0,16) || '',
+                  end_at: ap.end_at?.slice(0,16) || '',
+                  timezone: ap.timezone || 'America/Bogota',
+                  lead_score: ap.lead_score || 70
+                })
+                setShowAppointmentModal(true)
+              }}
+              eventClassNames="calendar-event-premium"
+            />
+          </div>
+        </div>
+      </div>
 
-              <div className="metric-card">
-                <strong>{agendaMetrics.confirmed || 0}</strong>
-                <span>Confirmadas</span>
-              </div>
+      {/* COLUMNA DERECHA - PIPELINE Y AGENTES */}
+      <div className="agenda-side-wrapper">
+        
+        {/* TARJETA DE MÉTRICAS RÁPIDAS */}
+        <div className="metrics-premium-row">
+          <div className="metric-premium-card">
+            <div className="metric-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+              <i className="fas fa-calendar-check"></i>
+            </div>
+            <div className="metric-info">
+              <span className="metric-value">{agendaMetrics.today || 0}</span>
+              <span className="metric-label">Citas hoy</span>
+            </div>
+          </div>
+          <div className="metric-premium-card">
+            <div className="metric-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
+              <i className="fas fa-check-circle"></i>
+            </div>
+            <div className="metric-info">
+              <span className="metric-value">{agendaMetrics.confirmed || 0}</span>
+              <span className="metric-label">Confirmadas</span>
+            </div>
+          </div>
+          <div className="metric-premium-card">
+            <div className="metric-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
+              <i className="fas fa-times-circle"></i>
+            </div>
+            <div className="metric-info">
+              <span className="metric-value">{agendaMetrics.no_show || 0}</span>
+              <span className="metric-label">No asistieron</span>
+            </div>
+          </div>
+          <div className="metric-premium-card">
+            <div className="metric-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+              <i className="fas fa-chart-line"></i>
+            </div>
+            <div className="metric-info">
+              <span className="metric-value">{Math.round((agendaMetrics.completed / (agendaMetrics.scheduled || 1)) * 100)}%</span>
+              <span className="metric-label">Efectividad</span>
+            </div>
+          </div>
+        </div>
 
-              <div className="metric-card">
-                <strong>{agendaMetrics.completed || 0}</strong>
-                <span>Completadas</span>
-              </div>
-
-              <div className="metric-card">
-                <strong>{agendaMetrics.no_show || 0}</strong>
-                <span>No asistió</span>
-              </div>
-            </section>
-
-            <section className="panel-grid">
-              
-              <section className="stripe-card stack">
-                <div className="row between center">
-                  <div className="section-title">
-                    <i className="fas fa-calendar-check"></i>
-                    Agenda AI
-                  </div>
-
-                  <button
-                    onClick={() => setShowAppointmentModal(true)}
-                  >
-                    <i className="fas fa-plus"></i>
-                    Nueva cita
-                  </button>
+        {/* PIPELINE DE CITAS - KANBAN STYLE */}
+        <div className="pipeline-premium-card">
+          <div className="pipeline-card-header">
+            <i className="fas fa-funnel-dollar"></i>
+            <h3>Pipeline de citas</h3>
+            <span className="pipeline-count">{appointments.length} total</span>
+          </div>
+          <div className="pipeline-kanban">
+            {[
+              { status: 'scheduled', label: 'Agendadas', icon: 'fa-clock', color: '#3b82f6', bg: '#eff6ff' },
+              { status: 'confirmed', label: 'Confirmadas', icon: 'fa-check-circle', color: '#10b981', bg: '#dcfce7' },
+              { status: 'completed', label: 'Completadas', icon: 'fa-trophy', color: '#8b5cf6', bg: '#f5f3ff' },
+              { status: 'no_show', label: 'No asistió', icon: 'fa-user-slash', color: '#ef4444', bg: '#fee2e2' },
+              { status: 'cancelled', label: 'Canceladas', icon: 'fa-ban', color: '#6b7280', bg: '#f3f4f6' }
+            ].map(column => (
+              <div key={column.status} className="pipeline-column">
+                <div className="column-header" style={{ background: column.bg }}>
+                  <i className={`fas ${column.icon}`} style={{ color: column.color }}></i>
+                  <span>{column.label}</span>
+                  <span className="column-count" style={{ background: column.color }}>
+                    {(appointments || []).filter(a => a.status === column.status).length}
+                  </span>
                 </div>
-
-                <FullCalendar
-                  plugins={[
-                    dayGridPlugin,
-                    timeGridPlugin,
-                    interactionPlugin
-                  ]}
-                  initialView="timeGridWeek"
-                  editable={true}
-                  selectable={true}
-                  height={780}
-                  events={appointments.map(a => ({
-                    id: a.id,
-                    title: a.title || a.contact_name || 'Cita',
-                    start: a.start_at,
-                    end: a.end_at,
-                    extendedProps: a
-                  }))}
-                  eventClick={(info) => {
-                    const ap = info.event.extendedProps
-
-                    setSelectedAppointment(ap)
-
-                    setAppointmentForm({
-                      title: ap.title || '',
-                      contact_name: ap.contact_name || '',
-                      contact_phone: ap.contact_phone || '',
-                      contact_email: ap.contact_email || '',
-                      status: ap.status || 'scheduled',
-                      meeting_type: ap.meeting_type || 'call',
-                      meeting_link: ap.meeting_link || '',
-                      location: ap.location || '',
-                      notes: ap.notes || '',
-                      start_at: ap.start_at?.slice(0,16) || '',
-                      end_at: ap.end_at?.slice(0,16) || '',
-                      timezone: ap.timezone || 'America/Bogota',
-                      lead_score: ap.lead_score || 70
-                    })
-
-                    setShowAppointmentModal(true)
-                  }}
-                />
-              </section>
-
-              <section className="stack">
-
-                <section className="stripe-card stack">
-                  <div className="section-title">
-                    Pipeline IA
-                  </div>
-
-                  <div className="pipeline-grid">
-
-                    {[
-                      ['scheduled', 'Agendadas'],
-                      ['confirmed', 'Confirmadas'],
-                      ['completed', 'Completadas'],
-                      ['no_show', 'No asistió'],
-                      ['cancelled', 'Canceladas']
-                    ].map(([status, label]) => (
-                      <div key={status} className="pipeline-column">
-                        <div className="pipeline-header">
-                          {label}
+                <div className="column-cards">
+                  {(appointments || [])
+                    .filter(a => a.status === column.status)
+                    .slice(0, 4)
+                    .map(a => (
+                      <div key={a.id} className="pipeline-item" onClick={() => {
+                        setSelectedAppointment(a)
+                        setAppointmentForm({
+                          title: a.title || '',
+                          contact_name: a.contact_name || '',
+                          contact_phone: a.contact_phone || '',
+                          contact_email: a.contact_email || '',
+                          status: a.status || 'scheduled',
+                          meeting_type: a.meeting_type || 'call',
+                          meeting_link: a.meeting_link || '',
+                          location: a.location || '',
+                          notes: a.notes || '',
+                          start_at: a.start_at?.slice(0,16) || '',
+                          end_at: a.end_at?.slice(0,16) || '',
+                          timezone: a.timezone || 'America/Bogota',
+                          lead_score: a.lead_score || 70
+                        })
+                        setShowAppointmentModal(true)
+                      }}>
+                        <div className="item-title">{a.title || a.contact_name || 'Sin título'}</div>
+                        <div className="item-time">
+                          <i className="fas fa-clock"></i>
+                          {new Date(a.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} · {new Date(a.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                         </div>
-
-                        {(appointments || [])
-                          .filter(a => a.status === status)
-                          .map(a => (
-                            <div
-                              key={a.id}
-                              className="pipeline-card"
-                            >
-                              <strong>
-                                {a.contact_name || 'Lead'}
-                              </strong>
-
-                              <div className="muted tiny">
-                                {a.title}
-                              </div>
-
-                              <div className="tiny muted">
-                                Score IA: {a.lead_score || 0}
-                              </div>
-
-                              <button
-                                className="danger tiny-btn"
-                                onClick={() => deleteAppointment(a.id)}
-                              >
-                                Eliminar
-                              </button>
-                            </div>
-                          ))}
+                        {a.contact_name && (
+                          <div className="item-contact">
+                            <i className="fas fa-user"></i>
+                            {a.contact_name}
+                          </div>
+                        )}
                       </div>
                     ))}
-
-                  </div>
-                </section>
-
-                <section className="stripe-card stack">
-                  <div className="section-title">
-                    Agentes IA
-                  </div>
-
-                  <div className="form-grid">
-
-                    <input
-                      placeholder="Nombre"
-                      value={agentForm.name}
-                      onChange={e => setAgentForm({
-                        ...agentForm,
-                        name: e.target.value
-                      })}
-                    />
-
-                    <input
-                      placeholder="Email"
-                      value={agentForm.email}
-                      onChange={e => setAgentForm({
-                        ...agentForm,
-                        email: e.target.value
-                      })}
-                    />
-
-                    <input
-                      placeholder="WhatsApp"
-                      value={agentForm.whatsapp}
-                      onChange={e => setAgentForm({
-                        ...agentForm,
-                        whatsapp: e.target.value
-                      })}
-                    />
-
-                    <button onClick={createAppointmentAgent}>
-                      Crear agente
-                    </button>
-                  </div>
-
-                  <div className="template-list">
-                    {appointmentAgents.map(agent => (
-                      <div key={agent.id} className="template-card">
-                        <div className="row between">
-                          <strong>{agent.name}</strong>
-
-                          <span
-                            className="pill"
-                            style={{
-                              background: agent.color
-                            }}
-                          >
-                            {agent.role}
-                          </span>
-                        </div>
-
-                        <div className="muted tiny">
-                          {agent.email}
-                        </div>
-
-                        <div className="muted tiny">
-                          {agent.whatsapp}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-              </section>
-            </section>
-
-            {showAppointmentModal && (
-              <div className="modal-overlay">
-                <div className="modal-card large-modal">
-
-                  <div className="row between center">
-                    <div className="section-title">
-                      Nueva cita
-                    </div>
-
-                    <button
-                      className="danger tiny-btn"
-                      onClick={() => {
-                        setShowAppointmentModal(false)
-                        setSelectedAppointment(null)
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-
-                  <div className="form-grid">
-
-                    <input
-                      placeholder="Título"
-                      value={appointmentForm.title}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        title: e.target.value
-                      })}
-                    />
-
-                    <input
-                      placeholder="Nombre contacto"
-                      value={appointmentForm.contact_name}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        contact_name: e.target.value
-                      })}
-                    />
-
-                    <input
-                      placeholder="WhatsApp"
-                      value={appointmentForm.contact_phone}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        contact_phone: e.target.value
-                      })}
-                    />
-
-                    <input
-                      placeholder="Email"
-                      value={appointmentForm.contact_email}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        contact_email: e.target.value
-                      })}
-                    />
-
-                    <input
-                      type="datetime-local"
-                      value={appointmentForm.start_at}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        start_at: e.target.value
-                      })}
-                    />
-
-                    <input
-                      type="datetime-local"
-                      value={appointmentForm.end_at}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        end_at: e.target.value
-                      })}
-                    />
-
-                    <select
-                      value={appointmentForm.status}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        status: e.target.value
-                      })}
-                    >
-                      <option value="scheduled">Agendada</option>
-                      <option value="confirmed">Confirmada</option>
-                      <option value="completed">Completada</option>
-                      <option value="no_show">No asistió</option>
-                      <option value="cancelled">Cancelada</option>
-                    </select>
-
-                    <select
-                      value={appointmentForm.meeting_type}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        meeting_type: e.target.value
-                      })}
-                    >
-                      <option value="call">Llamada</option>
-                      <option value="zoom">Zoom</option>
-                      <option value="meet">Google Meet</option>
-                      <option value="presential">Presencial</option>
-                    </select>
-
-                    <input
-                      placeholder="Link reunión"
-                      value={appointmentForm.meeting_link}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        meeting_link: e.target.value
-                      })}
-                    />
-
-                    <input
-                      placeholder="Ubicación"
-                      value={appointmentForm.location}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        location: e.target.value
-                      })}
-                    />
-
-                    <textarea
-                      placeholder="Notas"
-                      value={appointmentForm.notes}
-                      onChange={e => setAppointmentForm({
-                        ...appointmentForm,
-                        notes: e.target.value
-                      })}
-                    />
-
-                  </div>
-
-                  <button
-                    className="full"
-                    onClick={createAppointment}
-                  >
-                    Guardar cita
-                  </button>
-
+                  {(appointments || []).filter(a => a.status === column.status).length > 4 && (
+                    <div className="column-more">+{Math.abs((appointments || []).filter(a => a.status === column.status).length - 4)} más</div>
+                  )}
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* AGENTES Y MIEMBROS */}
+        <div className="agents-premium-card">
+          <div className="agents-card-header">
+            <div>
+              <i className="fas fa-users-gear"></i>
+              <h3>Agentes de ventas</h3>
+            </div>
+            <button className="btn-mini" onClick={createAppointmentAgent}>
+              <i className="fas fa-plus"></i>
+              <span>Agregar</span>
+            </button>
+          </div>
+          <div className="agents-list">
+            <div className="agent-add-form">
+              <input 
+                placeholder="Nombre" 
+                value={agentForm.name}
+                onChange={e => setAgentForm({...agentForm, name: e.target.value})}
+              />
+              <input 
+                placeholder="Email" 
+                value={agentForm.email}
+                onChange={e => setAgentForm({...agentForm, email: e.target.value})}
+              />
+              <input 
+                placeholder="WhatsApp" 
+                value={agentForm.whatsapp}
+                onChange={e => setAgentForm({...agentForm, whatsapp: e.target.value})}
+              />
+            </div>
+            {appointmentAgents.map(agent => (
+              <div key={agent.id} className="agent-item">
+                <div className="agent-avatar" style={{ background: agent.color || '#7430e2' }}>
+                  {agent.name?.charAt(0) || 'A'}
+                </div>
+                <div className="agent-info">
+                  <strong>{agent.name}</strong>
+                  <span>{agent.email}</span>
+                  <small>{agent.whatsapp}</small>
+                </div>
+                <div className="agent-role">
+                  <span className="role-badge">{agent.role || 'sales'}</span>
+                </div>
+              </div>
+            ))}
+            {appointmentAgents.length === 0 && (
+              <div className="empty-agents">
+                <i className="fas fa-user-plus"></i>
+                <p>No hay agentes</p>
+                <span>Agrega tu equipo de ventas</span>
               </div>
             )}
-          </section>
-        )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* MODAL DE CITA PREMIUM */}
+    {showAppointmentModal && (
+      <div className="modal-premium-overlay">
+        <div className="modal-premium-container">
+          <div className="modal-premium-header">
+            <div className="modal-icon">
+              <i className="fas fa-calendar-plus"></i>
+            </div>
+            <div>
+              <h2>{selectedAppointment ? 'Editar cita' : 'Nueva cita'}</h2>
+              <p>Completa los detalles de la reunión</p>
+            </div>
+            <button className="modal-close" onClick={() => {
+              setShowAppointmentModal(false)
+              setSelectedAppointment(null)
+            }}>
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+          <div className="modal-premium-body">
+            <div className="form-two-columns">
+              <div className="input-group-premium">
+                <label><i className="fas fa-tag"></i> Título</label>
+                <input 
+                  placeholder="Ej: Reunión con cliente" 
+                  value={appointmentForm.title}
+                  onChange={e => setAppointmentForm({...appointmentForm, title: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-user"></i> Contacto</label>
+                <input 
+                  placeholder="Nombre del cliente" 
+                  value={appointmentForm.contact_name}
+                  onChange={e => setAppointmentForm({...appointmentForm, contact_name: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fab fa-whatsapp"></i> WhatsApp</label>
+                <input 
+                  placeholder="573000000000" 
+                  value={appointmentForm.contact_phone}
+                  onChange={e => setAppointmentForm({...appointmentForm, contact_phone: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-envelope"></i> Email</label>
+                <input 
+                  placeholder="cliente@email.com" 
+                  value={appointmentForm.contact_email}
+                  onChange={e => setAppointmentForm({...appointmentForm, contact_email: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-calendar-day"></i> Inicio</label>
+                <input 
+                  type="datetime-local" 
+                  value={appointmentForm.start_at}
+                  onChange={e => setAppointmentForm({...appointmentForm, start_at: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-calendar-day"></i> Fin</label>
+                <input 
+                  type="datetime-local" 
+                  value={appointmentForm.end_at}
+                  onChange={e => setAppointmentForm({...appointmentForm, end_at: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-chart-simple"></i> Estado</label>
+                <select 
+                  value={appointmentForm.status}
+                  onChange={e => setAppointmentForm({...appointmentForm, status: e.target.value})}
+                >
+                  <option value="scheduled">📅 Agendada</option>
+                  <option value="confirmed">✅ Confirmada</option>
+                  <option value="completed">🏆 Completada</option>
+                  <option value="no_show">❌ No asistió</option>
+                  <option value="cancelled">🚫 Cancelada</option>
+                </select>
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-video"></i> Tipo reunión</label>
+                <select 
+                  value={appointmentForm.meeting_type}
+                  onChange={e => setAppointmentForm({...appointmentForm, meeting_type: e.target.value})}
+                >
+                  <option value="call">📞 Llamada</option>
+                  <option value="zoom">🎥 Zoom</option>
+                  <option value="meet">📧 Google Meet</option>
+                  <option value="presential">🏢 Presencial</option>
+                </select>
+              </div>
+              <div className="input-group-premium full-width">
+                <label><i className="fas fa-link"></i> Link reunión</label>
+                <input 
+                  placeholder="https://meet.google.com/..." 
+                  value={appointmentForm.meeting_link}
+                  onChange={e => setAppointmentForm({...appointmentForm, meeting_link: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium full-width">
+                <label><i className="fas fa-location-dot"></i> Ubicación</label>
+                <input 
+                  placeholder="Dirección o lugar" 
+                  value={appointmentForm.location}
+                  onChange={e => setAppointmentForm({...appointmentForm, location: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium full-width">
+                <label><i className="fas fa-pen"></i> Notas</label>
+                <textarea 
+                  rows={3} 
+                  placeholder="Notas adicionales..." 
+                  value={appointmentForm.notes}
+                  onChange={e => setAppointmentForm({...appointmentForm, notes: e.target.value})}
+                />
+              </div>
+              <div className="input-group-premium">
+                <label><i className="fas fa-star"></i> Score IA</label>
+                <input 
+                  type="number" 
+                  min="0" 
+                  max="100"
+                  value={appointmentForm.lead_score}
+                  onChange={e => setAppointmentForm({...appointmentForm, lead_score: Number(e.target.value)})}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="modal-premium-footer">
+            <button className="btn-cancel" onClick={() => {
+              setShowAppointmentModal(false)
+              setSelectedAppointment(null)
+            }}>
+              Cancelar
+            </button>
+            <button className="btn-save" onClick={createAppointment}>
+              <i className="fas fa-save"></i>
+              {selectedAppointment ? 'Actualizar cita' : 'Crear cita'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </section>
+)}
 
         {/* ======================== ASSISTANT AI MEJORADO ======================== */}
         {tab === 'assistant' && (
