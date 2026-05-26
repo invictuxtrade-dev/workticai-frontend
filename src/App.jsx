@@ -5947,6 +5947,1039 @@ export default function App() {
   }
 }   
 
+/* ======================== DASHBOARD ULTRA PREMIUM ======================== */
+.dashboard-ultra-premium {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER GLASS */
+.dashboard-header-glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 1.5rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.header-glass-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(116, 48, 226, 0.15), rgba(37, 99, 235, 0.1));
+  z-index: -1;
+}
+
+.header-glass-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcome-glass-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.welcome-glass-icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-icon-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: rgba(116, 48, 226, 0.5);
+  animation: glassPulse 2s infinite;
+}
+
+@keyframes glassPulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.welcome-glass-text h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.glass-user-name {
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+
+.welcome-glass-text p {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin: 0.2rem 0 0;
+}
+
+.date-glass-section {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.date-glass-badge, .time-glass-badge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  color: #1e293b;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* PLAN USAGE GLASS */
+.plan-usage-glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 1.2rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.plan-usage-glass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.plan-usage-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.plan-usage-title i {
+  color: #7430e2;
+}
+
+.plan-usage-title h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.plan-name-glass {
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.upgrade-glass-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
+  font-size: 0.7rem;
+  gap: 0.3rem;
+}
+
+.plan-usage-glass-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.usage-glass-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 0.6rem;
+  border-radius: 0.8rem;
+}
+
+.usage-glass-icon {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7430e2;
+  font-size: 0.8rem;
+}
+
+.usage-glass-info {
+  flex: 1;
+}
+
+.usage-glass-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.usage-glass-bar {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 4px;
+  overflow: hidden;
+  margin-bottom: 0.2rem;
+}
+
+.usage-glass-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7430e2, #2563eb);
+  border-radius: 10px;
+}
+
+.usage-glass-numbers {
+  display: flex;
+  gap: 0.2rem;
+  font-size: 0.55rem;
+}
+
+.usage-glass-numbers .used {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.usage-glass-numbers .limit {
+  color: #94a3b8;
+}
+
+/* MÉTRICAS GLASS */
+.metrics-glass-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.metric-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7430e2, #2563eb);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.metric-glass-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.metric-glass-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.metric-glass-info {
+  flex: 1;
+}
+
+.metric-glass-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: block;
+  line-height: 1.2;
+}
+
+.metric-glass-label {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+.metric-glass-trend {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+.metric-glass-trend.up {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+/* GRÁFICAS GLASS */
+.charts-glass-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.chart-glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.chart-glass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chart-glass-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-glass-title i {
+  color: #7430e2;
+}
+
+.chart-glass-title h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.chart-glass-badge {
+  font-size: 0.6rem;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+}
+
+.chart-glass-body {
+  padding: 1rem;
+}
+
+.stage-glass-bar {
+  margin-bottom: 0.9rem;
+}
+
+.stage-glass-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.stage-glass-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.stage-glass-details {
+  flex: 1;
+}
+
+.stage-glass-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: block;
+}
+
+.stage-glass-desc {
+  font-size: 0.55rem;
+  color: #64748b;
+}
+
+.stage-glass-numbers {
+  text-align: right;
+}
+
+.stage-glass-count {
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: block;
+}
+
+.stage-glass-percent {
+  font-size: 0.6rem;
+  color: #64748b;
+}
+
+.stage-glass-track {
+  background: #e2e8f0;
+  border-radius: 20px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.stage-glass-fill {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+/* Mensajes chart glass */
+.messages-glass-chart {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 160px;
+  gap: 0.5rem;
+}
+
+.message-glass-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.message-glass-bar {
+  width: 80%;
+  background: linear-gradient(180deg, #7430e2, #2563eb);
+  border-radius: 8px 8px 4px 4px;
+  transition: height 0.5s ease;
+  min-height: 4px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.message-glass-count {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: white;
+}
+
+.message-glass-day {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.chart-glass-footer {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.02);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-glass {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.trend-glass {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.trend-glass.up {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+/* BOTS SECTION GLASS */
+.bots-glass-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.bots-glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.bots-glass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header-glass-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-glass {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-glass.active {
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.status-glass.inactive {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.header-glass-left h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header-glass-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-glass {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  gap: 0.3rem;
+}
+
+.search-glass input {
+  border: none;
+  padding: 0.2rem;
+  font-size: 0.7rem;
+  width: 120px;
+}
+
+.search-glass input:focus {
+  outline: none;
+}
+
+.bots-glass-count {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.create-bot-glass {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.create-bot-glass input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.7rem;
+  background: white;
+}
+
+.create-bot-glass button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.7rem;
+  background: #7430e2;
+}
+
+.bots-glass-list {
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.bot-glass-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 0.8rem;
+  padding: 0.6rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.bot-glass-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateX(3px);
+}
+
+.bot-glass-item.selected {
+  background: linear-gradient(135deg, rgba(116, 48, 226, 0.1), rgba(37, 99, 235, 0.05));
+  border-left: 3px solid #7430e2;
+}
+
+.bot-glass-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.bot-glass-avatar.active {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bot-glass-avatar.inactive {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+}
+
+.bot-glass-info {
+  flex: 1;
+}
+
+.bot-glass-info strong {
+  font-size: 0.75rem;
+  display: block;
+}
+
+.bot-glass-info span {
+  font-size: 0.6rem;
+  color: #64748b;
+}
+
+.bot-glass-status {
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+}
+
+.bot-glass-status.active {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+.bot-glass-status.inactive {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.bot-glass-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.bot-glass-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.bot-glass-actions button {
+  padding: 0.25rem;
+  border-radius: 0.4rem;
+  font-size: 0.6rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bot-glass-actions .edit:hover {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.bot-glass-actions .stop:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.bot-glass-actions .start:hover {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+.bot-glass-actions .delete:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.empty-glass {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+}
+
+.empty-glass i {
+  font-size: 2rem;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+}
+
+.pagination-glass {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* BOT SELECCIONADO GLASS */
+.selected-bot-glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.selected-bot-glass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.bot-glass-selected-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.bot-glass-selected-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #7430e2, #2563eb);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.bot-glass-selected-text h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.bot-glass-selected-text p {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.bot-glass-selected-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.glass-btn-stop, .glass-btn-start, .glass-btn-edit {
+  padding: 0.4rem 1rem;
+  font-size: 0.7rem;
+  gap: 0.3rem;
+}
+
+.glass-btn-stop {
+  background: #ef4444;
+}
+
+.glass-btn-start {
+  background: #10b981;
+}
+
+.selected-bot-glass-stats {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.qr-glass-section {
+  text-align: center;
+  min-width: 140px;
+}
+
+.qr-glass-code {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  background: white;
+  padding: 0.3rem;
+  border-radius: 0.8rem;
+  border: 1px solid #e2e8f0;
+}
+
+.qr-glass-placeholder {
+  width: 100px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  color: #94a3b8;
+}
+
+.qr-glass-info {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6rem;
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.stats-glass-section {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.stat-glass-card {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-glass-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  margin: 0 auto 0.5rem;
+}
+
+.stat-glass-data {
+  text-align: center;
+}
+
+.stat-glass-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: block;
+}
+
+.stat-glass-label {
+  font-size: 0.6rem;
+  color: #64748b;
+}
+
+/* LEADS DEL BOT GLASS */
+.bot-leads-glass {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.bot-leads-glass-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.bot-leads-glass-title i {
+  color: #7430e2;
+}
+
+.bot-leads-glass-title span {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.bot-stages-glass {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.bot-stage-glass {
+  flex: 1;
+  min-width: 70px;
+}
+
+.bot-stage-glass-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  margin-bottom: 0.2rem;
+}
+
+.bot-stage-glass-name {
+  font-weight: 700;
+}
+
+.bot-stage-glass-count {
+  font-weight: 800;
+}
+
+.bot-stage-glass-track {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.bot-stage-glass-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+.no-bot-glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+}
+
+.no-bot-glass i {
+  font-size: 3rem;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .metrics-glass-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .charts-glass-grid {
+    grid-template-columns: 1fr;
+  }
+  .bots-glass-section {
+    grid-template-columns: 1fr;
+  }
+  .plan-usage-glass-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .metrics-glass-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .plan-usage-glass-grid {
+    grid-template-columns: 1fr;
+  }
+  .selected-bot-glass-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+  .stats-glass-section {
+    width: 100%;
+  }
+  .header-glass-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .date-glass-section {
+    justify-content: center;
+  }
+  .bot-stages-glass {
+    flex-direction: column;
+  }
+}
+
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
           margin-top: 1rem;
@@ -9726,304 +10759,520 @@ async function updateUser(e) {
           </section>
         )}
 
-        {/* ======================== DASHBOARD ======================== */}
-        {tab === 'dashboard' && (
-          <section className="stack gap-lg">
-            {/* Tarjetas de uso del plan - solo para clientes no admin */}
-            {!isAdmin && (
-              <div className="stripe-card stack">
-                <div className="row between center">
-                  <div>
-                    <div className="section-title">
-                      <i className="fas fa-gauge-high"></i> Uso del plan
-                    </div>
-                    <p className="muted">Plan actual: <strong>{currentPlan?.name || activePlanSlug}</strong></p>
+        {/* ======================== DASHBOARD ULTRA PREMIUM ======================== */}
+{tab === 'dashboard' && (
+  <section className="dashboard-ultra-premium">
+    
+    {/* ========== HEADER GLASSMORPHISM ========== */}
+    <div className="dashboard-header-glass">
+      <div className="header-glass-bg"></div>
+      <div className="header-glass-content">
+        <div className="welcome-glass-section">
+          <div className="welcome-glass-icon">
+            <i className="fas fa-chart-line"></i>
+            <div className="glass-icon-pulse"></div>
+          </div>
+          <div className="welcome-glass-text">
+            <h1>Dashboard</h1>
+            <p>Bienvenido, <span className="glass-user-name">{me?.name || 'Usuario'}</span></p>
+          </div>
+        </div>
+        <div className="date-glass-section">
+          <div className="date-glass-badge">
+            <i className="fas fa-calendar-alt"></i>
+            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          </div>
+          <div className="time-glass-badge">
+            <i className="fas fa-clock"></i>
+            <span>{new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* ========== USO DEL PLAN (solo clientes) - GLASS CARDS ========== */}
+    {!isAdmin && (
+      <div className="plan-usage-glass">
+        <div className="plan-usage-glass-header">
+          <div className="plan-usage-title">
+            <i className="fas fa-gem"></i>
+            <h3>Plan actual</h3>
+            <span className="plan-name-glass">{currentPlan?.name || activePlanSlug}</span>
+          </div>
+          <button className="upgrade-glass-btn" onClick={() => setForcePlanScreen(true)}>
+            <i className="fas fa-crown"></i>
+            <span>Mejorar plan</span>
+            <i className="fas fa-arrow-right"></i>
+          </button>
+        </div>
+        <div className="plan-usage-glass-grid">
+          {[
+            ['Bots', 'bots', 'fas fa-robot'],
+            ['Usuarios', 'users', 'fas fa-users'],
+            ['Landings', 'landing_pages', 'fas fa-globe'],
+            ['Plantillas', 'templates', 'fas fa-file-alt'],
+            ['Posts sociales', 'social_posts_month', 'fab fa-facebook'],
+            ['Videos IA', 'ai_videos_month', 'fas fa-video'],
+            ['Grupos IA', 'group_bots', 'fas fa-users'],
+            ['Citas IA', 'appointments_month', 'fas fa-calendar-check']
+          ].map(([label, metric, icon]) => {
+            const used = getUsage(metric)
+            const limit = getLimit(metric)
+            const pct = limit > 0 && Number.isFinite(limit) ? Math.min(100, Math.round((used / limit) * 100)) : 0
+            return (
+              <div key={metric} className="usage-glass-item">
+                <div className="usage-glass-icon">
+                  <i className={icon}></i>
+                </div>
+                <div className="usage-glass-info">
+                  <span className="usage-glass-label">{label}</span>
+                  <div className="usage-glass-bar">
+                    <div className="usage-glass-fill" style={{ width: `${pct}%` }}></div>
                   </div>
-                  <button type="button" onClick={() => setForcePlanScreen(true)}>
-                    <i className="fas fa-crown"></i>
-                    Mejorar plan
+                  <div className="usage-glass-numbers">
+                    <span className="used">{used}</span>
+                    <span className="limit">/ {limit || '∞'}</span>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )}
+
+    {/* ========== MÉTRICAS PRINCIPALES - GLASS CARDS ========== */}
+    <div className="metrics-glass-grid">
+      <div className="metric-glass-card">
+        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
+          <i className="fas fa-building"></i>
+        </div>
+        <div className="metric-glass-info">
+          <span className="metric-glass-value">{metrics.clients || 0}</span>
+          <span className="metric-glass-label">Clientes activos</span>
+        </div>
+        <div className="metric-glass-trend up">
+          <i className="fas fa-arrow-up"></i>
+        </div>
+      </div>
+
+      <div className="metric-glass-card">
+        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #11998e, #38ef7d)' }}>
+          <i className="fas fa-robot"></i>
+        </div>
+        <div className="metric-glass-info">
+          <span className="metric-glass-value">{metrics.bots || 0}</span>
+          <span className="metric-glass-label">Bots activos</span>
+        </div>
+        <div className="metric-glass-trend up">
+          <i className="fas fa-arrow-up"></i>
+        </div>
+      </div>
+
+      <div className="metric-glass-card">
+        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}>
+          <i className="fas fa-users"></i>
+        </div>
+        <div className="metric-glass-info">
+          <span className="metric-glass-value">{metrics.leads || 0}</span>
+          <span className="metric-glass-label">Leads totales</span>
+        </div>
+        <div className="metric-glass-trend up">
+          <i className="fas fa-arrow-up"></i>
+        </div>
+      </div>
+
+      <div className="metric-glass-card">
+        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)' }}>
+          <i className="fas fa-fire"></i>
+        </div>
+        <div className="metric-glass-info">
+          <span className="metric-glass-value">{metrics.hot_leads || 0}</span>
+          <span className="metric-glass-label">Hot leads</span>
+        </div>
+        <div className="metric-glass-trend">
+          <i className="fas fa-chart-line"></i>
+        </div>
+      </div>
+
+      <div className="metric-glass-card">
+        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)' }}>
+          <i className="fas fa-trophy"></i>
+        </div>
+        <div className="metric-glass-info">
+          <span className="metric-glass-value">{metrics.closed_leads || 0}</span>
+          <span className="metric-glass-label">Ventas cerradas</span>
+        </div>
+        <div className="metric-glass-trend up">
+          <i className="fas fa-arrow-up"></i>
+        </div>
+      </div>
+
+      <div className="metric-glass-card">
+        <div className="metric-glass-icon" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}>
+          <i className="fas fa-envelope"></i>
+        </div>
+        <div className="metric-glass-info">
+          <span className="metric-glass-value">{metrics.messages_24h || 0}</span>
+          <span className="metric-glass-label">Mensajes 24h</span>
+        </div>
+        <div className="metric-glass-trend up">
+          <i className="fas fa-arrow-up"></i>
+        </div>
+      </div>
+    </div>
+
+    {/* ========== GRÁFICAS PREMIUM ========== */}
+    <div className="charts-glass-grid">
+      
+      {/* LEADS POR ETAPA */}
+      <div className="chart-glass-card">
+        <div className="chart-glass-header">
+          <div className="chart-glass-title">
+            <i className="fas fa-chart-pie"></i>
+            <h3>Distribución de leads</h3>
+          </div>
+          <div className="chart-glass-badge">Por etapa</div>
+        </div>
+        <div className="chart-glass-body">
+          {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
+            const count = leads.filter(l => l.stage === stage).length
+            const maxCount = Math.max(...['new', 'qualified', 'interested', 'hot', 'closed'].map(s => leads.filter(l => l.stage === s).length), 1)
+            const percentage = (count / maxCount) * 100
+            const percentTotal = Math.round((count / (leads.length || 1)) * 100)
+            
+            const stageConfig = {
+              new: { icon: 'fa-star', color: '#3b82f6', label: 'Nuevos', bg: '#eff6ff' },
+              qualified: { icon: 'fa-check-circle', color: '#8b5cf6', label: 'Calificados', bg: '#f5f3ff' },
+              interested: { icon: 'fa-fire', color: '#f59e0b', label: 'Interesados', bg: '#fffbeb' },
+              hot: { icon: 'fa-bolt', color: '#ef4444', label: 'Hot leads', bg: '#fef2f2' },
+              closed: { icon: 'fa-trophy', color: '#10b981', label: 'Cerrados', bg: '#ecfdf5' }
+            }
+            const config = stageConfig[stage]
+            
+            return (
+              <div key={stage} className="stage-glass-bar">
+                <div className="stage-glass-info">
+                  <div className="stage-glass-icon" style={{ background: config.bg, color: config.color }}>
+                    <i className={`fas ${config.icon}`}></i>
+                  </div>
+                  <div className="stage-glass-details">
+                    <span className="stage-glass-name">{config.label}</span>
+                    <span className="stage-glass-desc">{config.desc}</span>
+                  </div>
+                  <div className="stage-glass-numbers">
+                    <span className="stage-glass-count">{count}</span>
+                    <span className="stage-glass-percent">{percentTotal}%</span>
+                  </div>
+                </div>
+                <div className="stage-glass-track">
+                  <div className="stage-glass-fill" style={{ width: `${percentage}%`, background: config.color }}></div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* MENSAJES ÚLTIMOS 7 DÍAS */}
+      <div className="chart-glass-card">
+        <div className="chart-glass-header">
+          <div className="chart-glass-title">
+            <i className="fas fa-message"></i>
+            <h3>Actividad de mensajes</h3>
+          </div>
+          <div className="chart-glass-badge">Últimos 7 días</div>
+        </div>
+        <div className="chart-glass-body">
+          <div className="messages-glass-chart">
+            {messagesLast7Days.days.map((day, idx) => {
+              const maxCount = Math.max(...messagesLast7Days.counts, 1)
+              const height = (messagesLast7Days.counts[idx] / maxCount) * 100
+              return (
+                <div key={day} className="message-glass-bar-wrapper">
+                  <div className="message-glass-bar" style={{ height: `${height}%` }}>
+                    <span className="message-glass-count">{messagesLast7Days.counts[idx]}</span>
+                  </div>
+                  <span className="message-glass-day">{day}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        <div className="chart-glass-footer">
+          <span className="total-glass">Total: {messagesLast7Days.counts.reduce((a,b) => a+b, 0)} mensajes</span>
+          <span className="trend-glass up">
+            <i className="fas fa-arrow-up"></i> +18%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    {/* ========== BOTS ACTIVOS E INACTIVOS ========== */}
+    <div className="bots-glass-section">
+      
+      {/* BOTS ACTIVOS */}
+      <div className="bots-glass-card">
+        <div className="bots-glass-header">
+          <div className="header-glass-left">
+            <div className="status-glass active"></div>
+            <h3>Bots activos</h3>
+          </div>
+          <div className="header-glass-right">
+            <div className="search-glass">
+              <i className="fas fa-search"></i>
+              <input 
+                type="text" 
+                placeholder="Buscar bot..." 
+                value={searchBot} 
+                onChange={e => setSearchBot(e.target.value)}
+              />
+            </div>
+            <span className="bots-glass-count">{filteredActiveBots.length}</span>
+          </div>
+        </div>
+        
+        <form onSubmit={createBot} className="create-bot-glass">
+          <input 
+            type="text" 
+            value={newBotName} 
+            onChange={e => setNewBotName(e.target.value)} 
+            placeholder="Nombre del nuevo bot"
+          />
+          <button disabled={busy || !selectedClientId}>
+            <i className="fas fa-plus"></i>
+            <span>Crear bot</span>
+          </button>
+        </form>
+        
+        <div className="bots-glass-list">
+          {paginatedActiveBots.length > 0 ? (
+            paginatedActiveBots.map(bot => (
+              <div 
+                key={bot.id} 
+                className={`bot-glass-item ${selectedBotId === bot.id ? 'selected' : ''}`}
+                onClick={() => setSelectedBotId(bot.id)}
+              >
+                <div className="bot-glass-avatar active">
+                  <i className="fas fa-robot"></i>
+                </div>
+                <div className="bot-glass-info">
+                  <strong>{bot.name}</strong>
+                  <span>{bot.phone || 'Sin número'}</span>
+                </div>
+                <div className="bot-glass-status active">
+                  <span className="dot"></span>
+                  {bot.status}
+                </div>
+                <div className="bot-glass-actions" onClick={e => e.stopPropagation()}>
+                  <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
+                  <button className="stop" onClick={() => stopBot(bot.id)}><i className="fas fa-power-off"></i></button>
+                  <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-glass">
+              <i className="fas fa-robot"></i>
+              <p>No hay bots activos</p>
+              <span>Crea tu primer bot para comenzar</span>
+            </div>
+          )}
+        </div>
+        
+        {filteredActiveBots.length > pageSize && (
+          <div className="pagination-glass">
+            <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
+              <i className="fas fa-chevron-left"></i>
+            </button>
+            <span>Página {botPage}</span>
+            <button onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredActiveBots.length}>
+              <i className="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* BOTS INACTIVOS */}
+      <div className="bots-glass-card">
+        <div className="bots-glass-header">
+          <div className="header-glass-left">
+            <div className="status-glass inactive"></div>
+            <h3>Bots inactivos</h3>
+          </div>
+          <div className="header-glass-right">
+            <span className="bots-glass-count">{filteredInactiveBots.length}</span>
+          </div>
+        </div>
+        
+        <div className="bots-glass-list">
+          {paginatedInactiveBots.length > 0 ? (
+            paginatedInactiveBots.map(bot => (
+              <div 
+                key={bot.id} 
+                className={`bot-glass-item ${selectedBotId === bot.id ? 'selected' : ''}`}
+                onClick={() => setSelectedBotId(bot.id)}
+              >
+                <div className="bot-glass-avatar inactive">
+                  <i className="fas fa-robot"></i>
+                </div>
+                <div className="bot-glass-info">
+                  <strong>{bot.name}</strong>
+                  <span>{bot.phone || 'Sin número'}</span>
+                </div>
+                <div className="bot-glass-status inactive">
+                  <span className="dot"></span>
+                  {bot.status}
+                </div>
+                <div className="bot-glass-actions" onClick={e => e.stopPropagation()}>
+                  <button className="start" onClick={async () => { await api(`/api/bots/${bot.id}/start`, { method: 'POST' }); await loadBots(selectedClientId); await loadQr(bot.id); showNotice('Bot encendido') }}>
+                    <i className="fas fa-play"></i>
                   </button>
+                  <button className="edit" onClick={() => renameBot(bot)}><i className="fas fa-pen"></i></button>
+                  <button className="delete" onClick={() => deleteBot(bot)}><i className="fas fa-trash"></i></button>
                 </div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-glass">
+              <i className="fas fa-robot"></i>
+              <p>No hay bots inactivos</p>
+              <span>Todos tus bots están activos</span>
+            </div>
+          )}
+        </div>
+        
+        {filteredInactiveBots.length > pageSize && (
+          <div className="pagination-glass">
+            <button onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>
+              <i className="fas fa-chevron-left"></i>
+            </button>
+            <span>Página {botPage}</span>
+            <button onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredInactiveBots.length}>
+              <i className="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
 
-                <div className="metric-grid">
-                  {[
-                    ['Bots', 'bots'],
-                    ['Usuarios', 'users'],
-                    ['Landings', 'landing_pages'],
-                    ['Plantillas', 'templates'],
-                    ['Posts sociales', 'social_posts_month'],
-                    ['Videos IA', 'ai_videos_month'],
-                    ['Grupos IA', 'group_bots'],
-                    ['Citas IA', 'appointments_month']
-                  ].map(([label, metric]) => {
-                    const used = getUsage(metric)
-                    const limit = getLimit(metric)
-                    const pct = limit > 0 && Number.isFinite(limit)
-                      ? Math.min(100, Math.round((used / limit) * 100))
-                      : 0
-
-                    return (
-                      <div key={metric} className="usage-mini-card">
-                        <div className="row between">
-                          <strong>{label}</strong>
-                          <span>{used}/{limit || 0}</span>
-                        </div>
-                        <div className="usage-bar">
-                          <div style={{ width: `${pct}%` }}></div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
+    {/* ========== BOT SELECCIONADO (SIN MODIFICAR LA AGENDA AI) ========== */}
+    {selectedBot ? (
+      <div className="selected-bot-glass">
+        <div className="selected-bot-glass-header">
+          <div className="bot-glass-selected-info">
+            <div className="bot-glass-selected-icon">
+              <i className="fas fa-microchip"></i>
+            </div>
+            <div className="bot-glass-selected-text">
+              <h2>{selectedBot.name}</h2>
+              <p>Bot seleccionado · Gestión y métricas</p>
+            </div>
+          </div>
+          <div className="bot-glass-selected-actions">
+            {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
+              <button className="glass-btn-stop" onClick={() => stopBot(selectedBot.id)} disabled={busy}>
+                <i className="fas fa-power-off"></i>
+                <span>Apagar bot</span>
+              </button>
+            ) : (
+              <button className="glass-btn-start" onClick={startBot} disabled={busy}>
+                <i className="fas fa-play"></i>
+                <span>Encender bot</span>
+              </button>
+            )}
+            <button className="glass-btn-edit" onClick={() => renameBot(selectedBot)} disabled={busy}>
+              <i className="fas fa-pen"></i>
+              <span>Editar</span>
+            </button>
+          </div>
+        </div>
+        
+        <div className="selected-bot-glass-stats">
+          <div className="qr-glass-section">
+            {qrDataUrlBot ? (
+              <img className="qr-glass-code" src={qrDataUrlBot} alt="QR Code" />
+            ) : (
+              <div className="qr-glass-placeholder">
+                <i className="fas fa-qrcode"></i>
+                <span>Sin QR pendiente</span>
               </div>
             )}
-
-            <div className="metric-grid">
-              {[
-                ['Clientes', metrics.clients], ['Bots', metrics.bots], ['Leads', metrics.leads],
-                ['Hot leads', metrics.hot_leads], ['Cerrados', metrics.closed_leads], ['Mensajes 24h', metrics.messages_24h]
-              ].map(([label, v]) => (
-                <div className="stripe-card metric" key={label}>
-                  <div className="metric-label">{label}</div>
-                  <div className="metric-value">{v ?? 0}</div>
-                </div>
-              ))}
+            <div className="qr-glass-info">
+              <i className="fas fa-info-circle"></i>
+              <p>Escanea este código QR con WhatsApp para conectar el bot</p>
             </div>
-            <div className="stripe-card">
-              <div className="chart-container">
-                <div className="chart">
-                  <div className="chart-title">Leads por etapa</div>
-                  <div className="bar-container">
-                    {leadsByStageGlobal.stages.map((stage, idx) => (
-                      <div key={stage} className="bar-item">
-                        <div className="bar-label">{stage}</div>
-                        <div className="bar-fill" style={{ width: `${Math.min(100, leadsByStageGlobal.counts[idx] * 5)}%`, maxWidth: '100%' }}></div>
-                        <div className="bar-value">{leadsByStageGlobal.counts[idx]}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="chart">
-                  <div className="chart-title">Mensajes últimos 7 días</div>
-                  <div className="bar-container">
-                    {messagesLast7Days.days.map((day, idx) => (
-                      <div key={day} className="bar-item">
-                        <div className="bar-label">{day}</div>
-                        <div className="bar-fill" style={{ width: `${Math.min(100, messagesLast7Days.counts[idx] * 2)}%`, maxWidth: '100%' }}></div>
-                        <div className="bar-value">{messagesLast7Days.counts[idx]}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+          </div>
+          
+          <div className="stats-glass-section">
+            <div className="stat-glass-card">
+              <div className="stat-glass-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+                <i className="fas fa-users"></i>
+              </div>
+              <div className="stat-glass-data">
+                <span className="stat-glass-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</span>
+                <span className="stat-glass-label">Total leads</span>
               </div>
             </div>
-            <div className="panel-grid">
-              <section className="stripe-card stack">
-                <div className="row between center">
-                  <div className="section-title"><i className="fas fa-plug"></i> Bots activos</div>
-                  <div className="row gap-sm">
-                    <input type="text" placeholder="Buscar bot..." className="search-input" value={searchBot} onChange={e => setSearchBot(e.target.value)} />
-                    <span className="pill connected">{filteredActiveBots.length}</span>
-                  </div>
-                </div>
-                <form onSubmit={createBot} className="row gap-sm">
-                  <input className="grow" value={newBotName} onChange={e => setNewBotName(e.target.value)} placeholder="Nombre del bot" />
-                  <button disabled={busy || !selectedClientId}>Crear bot</button>
-                </form>
-                <div className="list two-col">
-                  {paginatedActiveBots.map(bot => {
-                  const isSelected = selectedBotId === bot.id
-
-                  return (
-                    <div
-                      key={bot.id}
-                      className={`bot-card-pro ${isSelected ? 'selected' : ''}`}
-                    >
-                      <div className="bot-card-pro-head">
-                        <div className="bot-icon-pro">
-                          <i className="fas fa-robot"></i>
-                        </div>
-
-                        <div className="bot-main-info">
-                          <strong>{bot.name}</strong>
-                          <span>{bot.phone || 'Sin número'}</span>
-                        </div>
-
-                        <span className={`pill ${bot.status}`}>
-                          {bot.status}
-                        </span>
-                      </div>
-
-                      <div className="bot-card-pro-actions">
-                        <button
-                          type="button"
-                          className={isSelected ? 'secondary' : ''}
-                          onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
-                        >
-                          <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
-                          {isSelected ? 'Quitar selección' : 'Seleccionar'}
-                        </button>
-
-                        <button
-                          type="button"
-                          className="secondary"
-                          onClick={() => renameBot(bot)}
-                        >
-                          <i className="fas fa-pen"></i>
-                          Editar
-                        </button>
-
-                        <button
-                          type="button"
-                          className="secondary"
-                          onClick={() => stopBot(bot.id)}
-                        >
-                          <i className="fas fa-power-off"></i>
-                          Apagar
-                        </button>
-
-                        <button
-                          type="button"
-                          className="danger"
-                          onClick={() => deleteBot(bot)}
-                        >
-                          <i className="fas fa-trash"></i>
-                          Eliminar
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-                  {paginatedActiveBots.length === 0 && <div className="empty-box">No hay bots activos</div>}
-                </div>
-                <div className="pagination">
-                  <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
-                  <span>Página {botPage}</span>
-                  <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredActiveBots.length}>Siguiente</button>
-                </div>
-              </section>
-
-              <section className="stripe-card stack">
-                <div className="row between center">
-                  <div className="section-title"><i className="fas fa-power-off"></i> Bots inactivos</div>
-                  <span className="pill disconnected">{filteredInactiveBots.length}</span>
-                </div>
-                <div className="list two-col">
-                  {paginatedInactiveBots.map(bot => {
-                    const isSelected = selectedBotId === bot.id
-
-                    return (
-                      <div
-                        key={bot.id}
-                        className={`bot-card-pro inactive ${isSelected ? 'selected' : ''}`}
-                      >
-                        <div className="bot-card-pro-head">
-                          <div className="bot-icon-pro inactive">
-                            <i className="fas fa-robot"></i>
-                          </div>
-
-                          <div className="bot-main-info">
-                            <strong>{bot.name}</strong>
-                            <span>{bot.phone || 'Sin número'}</span>
-                          </div>
-
-                          <span className={`pill ${bot.status}`}>
-                            {bot.status}
-                          </span>
-                        </div>
-
-                        <div className="bot-card-pro-actions">
-                          <button
-                            type="button"
-                            className={isSelected ? 'secondary' : ''}
-                            onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
-                          >
-                            <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
-                            {isSelected ? 'Quitar selección' : 'Seleccionar'}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              await api(`/api/bots/${bot.id}/start`, { method: 'POST' })
-                              await loadBots(selectedClientId)
-                              await loadQr(bot.id)
-                              showNotice('Bot encendido')
-                            }}
-                          >
-                            <i className="fas fa-play"></i>
-                            Encender
-                          </button>
-
-                          <button
-                            type="button"
-                            className="secondary"
-                            onClick={() => renameBot(bot)}
-                          >
-                            <i className="fas fa-pen"></i>
-                            Editar
-                          </button>
-
-                          <button
-                            type="button"
-                            className="danger"
-                            onClick={() => deleteBot(bot)}
-                          >
-                            <i className="fas fa-trash"></i>
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
-                  {paginatedInactiveBots.length === 0 && <div className="empty-box">No hay bots inactivos</div>}
-                </div>
-                <div className="pagination">
-                  <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
-                  <span>Página {botPage}</span>
-                  <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredInactiveBots.length}>Siguiente</button>
-                </div>
-              </section>
-            </div>
-            <section className="stripe-card stack">
-              <div className="row between center">
-                <div>
-                  <div className="section-title"><i className="fas fa-microchip"></i> Bot seleccionado</div>
-                  <p className="muted">{selectedBot ? selectedBot.name : 'Selecciona un bot'}</p>
-                </div>
-                {selectedBot && (
-                  <div className="row gap-sm">
-                    {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
-                      <button type="button" onClick={() => stopBot(selectedBot.id)} disabled={busy}>Apagar</button>
-                    ) : (
-                      <button type="button" onClick={startBot} disabled={busy}>Encender</button>
-                    )}
-                    <button type="button" onClick={() => renameBot(selectedBot)} disabled={busy}>Editar</button>
-                  </div>
-                )}
+            <div className="stat-glass-card">
+              <div className="stat-glass-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
+                <i className="fas fa-comments"></i>
               </div>
-              {selectedBot ? (
-                <>
-                  <div className="status-row"><strong>{selectedBot.name}</strong> <span className={`pill ${selectedBot.status}`}>{selectedBot.status}</span></div>
-                  {qrDataUrlBot ? <img className="qr" src={qrDataUrlBot} alt="QR" /> : <div className="empty-box">Sin QR pendiente</div>}
-                  <div className="metric-grid" style={{ marginTop: '1rem' }}>
-                    <div className="metric"><div className="metric-label">Total leads</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</div></div>
-                    <div className="metric"><div className="metric-label">Conversaciones activas</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</div></div>
-                    <div className="metric"><div className="metric-label">Tasa cierre</div><div className="metric-value">{Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%</div></div>
+              <div className="stat-glass-data">
+                <span className="stat-glass-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</span>
+                <span className="stat-glass-label">Conversaciones activas</span>
+              </div>
+            </div>
+            <div className="stat-glass-card">
+              <div className="stat-glass-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+                <i className="fas fa-chart-line"></i>
+              </div>
+              <div className="stat-glass-data">
+                <span className="stat-glass-value">
+                  {Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%
+                </span>
+                <span className="stat-glass-label">Tasa cierre</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* LEADS POR ETAPA DEL BOT - REDISEÑADO */}
+        <div className="bot-leads-glass">
+          <div className="bot-leads-glass-title">
+            <i className="fas fa-chart-simple"></i>
+            <span>Leads por etapa</span>
+          </div>
+          <div className="bot-stages-glass">
+            {botLeadsByStage.stages.map((stage, idx) => {
+              const count = botLeadsByStage.counts[idx]
+              const maxCount = Math.max(...botLeadsByStage.counts, 1)
+              const percentage = (count / maxCount) * 100
+              
+              const stageColors = {
+                new: '#3b82f6', qualified: '#8b5cf6', interested: '#f59e0b', hot: '#ef4444', closed: '#10b981'
+              }
+              const stageNames = {
+                new: 'Nuevos', qualified: 'Calificados', interested: 'Interesados', hot: 'Hot', closed: 'Cerrados'
+              }
+              
+              return (
+                <div key={stage} className="bot-stage-glass">
+                  <div className="bot-stage-glass-header">
+                    <span className="bot-stage-glass-name">{stageNames[stage]}</span>
+                    <span className="bot-stage-glass-count">{count}</span>
                   </div>
-                  <div className="chart" style={{ marginTop: '0.5rem' }}>
-                    <div className="chart-title">Leads por etapa (este bot)</div>
-                    <div className="bar-container">
-                      {botLeadsByStage.stages.map((stage, idx) => (
-                        <div key={stage} className="bar-item">
-                          <div className="bar-label">{stage}</div>
-                          <div className="bar-fill" style={{ width: `${Math.min(100, botLeadsByStage.counts[idx] * 10)}%`, maxWidth: '100%' }}></div>
-                          <div className="bar-value">{botLeadsByStage.counts[idx]}</div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="bot-stage-glass-track">
+                    <div className="bot-stage-glass-fill" style={{ width: `${percentage}%`, background: stageColors[stage] }}></div>
                   </div>
-                 {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* ========== AGENDA AI DEL BOT (SIN MODIFICAR, EXACTAMENTE IGUAL) ========== */}
+        {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
 <section className="agenda-premium-v2">
   {/* Header con gradiente */}
   <div className="agenda-premium-v2-header">
@@ -10447,11 +11696,17 @@ async function updateUser(e) {
     </div>
   </div>
 </section>
-                </>
-              ) : <div className="empty-box">Selecciona un bot</div>}
-            </section>
-          </section>
-        )}
+      </div>
+    ) : (
+      <div className="no-bot-glass">
+        <i className="fas fa-robot"></i>
+        <h4>No hay bot seleccionado</h4>
+        <p>Selecciona un bot de la lista para ver sus métricas y configuración</p>
+      </div>
+    )}
+
+  </section>
+)}
 
         {/* ======================== INBOX ======================== */}
         {tab === 'inbox' && (
