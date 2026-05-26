@@ -8132,6 +8132,30 @@ async function updateUser(e) {
                     </div>
 
                     <div className="form-grid">
+
+                      <select
+                        value={botAgendaSettings.agent_id || ''}
+                        onChange={e =>
+                          setBotAgendaSettings({
+                            ...botAgendaSettings,
+                            agent_id: e.target.value
+                          })
+                        }
+                      >
+                        <option value="">
+                          Selecciona agente
+                        </option>
+
+                        {(appointmentAgents || []).map(agent => (
+                          <option
+                            key={agent.id}
+                            value={agent.id}
+                          >
+                            {agent.name}
+                          </option>
+                        ))}
+                      </select>
+
                       <select
                         value={botAgendaSettings.goal || 'sales_call'}
                         onChange={e =>
@@ -8161,8 +8185,8 @@ async function updateUser(e) {
 
                       <input
                         type="number"
-                        placeholder="Buffer (min)"
-                        value={botAgendaSettings.buffer_mins || 0}
+                        placeholder="Buffer entre citas"
+                        value={botAgendaSettings.buffer_mins || 10}
                         onChange={e =>
                           setBotAgendaSettings({
                             ...botAgendaSettings,
@@ -8173,7 +8197,7 @@ async function updateUser(e) {
 
                       <input
                         placeholder="Días disponibles"
-                        value={botAgendaSettings.available_days || ''}
+                        value={botAgendaSettings.available_days || 'mon,tue,wed,thu,fri'}
                         onChange={e =>
                           setBotAgendaSettings({
                             ...botAgendaSettings,
@@ -8226,17 +8250,40 @@ async function updateUser(e) {
                         }
                       />
 
-                      <input
-                        type="number"
-                        placeholder="Recordatorio antes (min)"
-                        value={botAgendaSettings.reminder_before_mins || 60}
-                        onChange={e =>
-                          setBotAgendaSettings({
-                            ...botAgendaSettings,
-                            reminder_before_mins: Number(e.target.value)
-                          })
-                        }
-                      />
+                      <label className="switch-row">
+                        <input
+                          type="checkbox"
+                          checked={!!botAgendaSettings.auto_confirm}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              auto_confirm: e.target.checked
+                            })
+                          }
+                        />
+
+                        <span>
+                          Confirmación automática
+                        </span>
+                      </label>
+
+                      <label className="switch-row">
+                        <input
+                          type="checkbox"
+                          checked={!!botAgendaSettings.auto_reschedule}
+                          onChange={e =>
+                            setBotAgendaSettings({
+                              ...botAgendaSettings,
+                              auto_reschedule: e.target.checked
+                            })
+                          }
+                        />
+
+                        <span>
+                          Reagendamiento IA
+                        </span>
+                      </label>
+
                     </div>
 
                     <button
@@ -8542,7 +8589,7 @@ async function updateUser(e) {
                         <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
                         <td>{lead.bot_name}</td>
                         <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                                                 <td>
+                        <td>
                           <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
                             Ver chat
                           </button>
@@ -8563,384 +8610,575 @@ async function updateUser(e) {
         )}
 
         {/* ======================== SOCIAL IA con PremiumGate ======================== */}
-        {tab === 'social' && !canUseFeature('social_ai') && (
-          <PremiumGate
-            title="Social AI requiere un plan superior"
-            description="Genera contenido, publica en redes sociales y automatiza tu presencia con IA."
-            onUpgrade={() => setForcePlanScreen(true)}
+{tab === 'social' && !canUseFeature('social_ai') && (
+  <PremiumGate
+    title="Social AI requiere un plan superior"
+    description="Genera contenido, publica en redes sociales y automatiza tu presencia con IA."
+    onUpgrade={() => setForcePlanScreen(true)}
+  />
+)}
+
+{tab === 'social' && canUseFeature('social_ai') && (
+  <section className="stack gap-lg">
+    {/* Panel de Credenciales y Configuración */}
+    <div className="panel-grid">
+      
+      {/* Credenciales Sociales */}
+      <section className="stripe-card stack">
+        <div className="section-title">
+          <i className="fas fa-key"></i> Credenciales Sociales
+        </div>
+        
+        <div className="form-grid">
+          <input 
+            value={socialCredential.page_name} 
+            onChange={e => setSocialCredential({ ...socialCredential, page_name: e.target.value })} 
+            placeholder="Nombre de la página" 
+          />
+          <input 
+            value={socialCredential.page_id} 
+            onChange={e => setSocialCredential({ ...socialCredential, page_id: e.target.value })} 
+            placeholder="Page ID" 
+          />
+          <input 
+            className="full" 
+            value={socialCredential.access_token} 
+            onChange={e => setSocialCredential({ ...socialCredential, access_token: e.target.value })} 
+            placeholder="Page Access Token" 
+          />
+          <input 
+            value={socialCredential.ad_account_id} 
+            onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })} 
+            placeholder="Ad Account ID (opcional)" 
+          />
+          <input 
+            value={socialCredential.tiktok_access_token} 
+            onChange={e => setSocialCredential({ ...socialCredential, tiktok_access_token: e.target.value })} 
+            placeholder="TikTok Access Token" 
+          />
+          <input 
+            value={socialCredential.tiktok_open_id} 
+            onChange={e => setSocialCredential({ ...socialCredential, tiktok_open_id: e.target.value })} 
+            placeholder="TikTok Open ID" 
+          />
+          <label className="toggle">
+            <input 
+              type="checkbox" 
+              checked={!!socialCredential.enabled} 
+              onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })} 
+            /> 
+            Redes habilitadas
+          </label>
+        </div>
+        
+        <div className="row gap-sm">
+          <button type="button" onClick={saveSocialCredential}>
+            Guardar credenciales
+          </button>
+          <button type="button" className="secondary" onClick={verifyInstagram}>
+            <i className="fab fa-instagram"></i> Verificar Instagram
+          </button>
+          <button onClick={getInstagramData}>
+            Obtener datos IG
+          </button>
+        </div>
+
+        {socialCredential.instagram_connected ? (
+          <div className="pill success" style={{ marginTop: '0.75rem' }}>
+            <i className="fab fa-instagram"></i> Instagram conectado: @{socialCredential.instagram_username}
+          </div>
+        ) : (
+          <div className="pill warning" style={{ marginTop: '0.75rem' }}>
+            <i className="fab fa-instagram"></i> Instagram no conectado
+          </div>
+        )}
+
+        {socialCredential.tiktok_connected ? (
+          <div className="pill success" style={{ marginTop: '0.5rem' }}>
+            <i className="fab fa-tiktok"></i> TikTok conectado
+          </div>
+        ) : (
+          <div className="pill warning" style={{ marginTop: '0.5rem' }}>
+            <i className="fab fa-tiktok"></i> TikTok no conectado
+          </div>
+        )}
+
+        {instagramData && (
+          <div className="muted tiny" style={{ marginTop: '0.5rem' }}>
+            <div>👤 @{instagramData.username}</div>
+            <div>👥 Seguidores: {instagramData.followers_count}</div>
+            <div>📸 Posts: {instagramData.media_count}</div>
+          </div>
+        )}
+      </section>
+
+      {/* Configuración Campaña */}
+      <section className="stripe-card stack">
+        <div className="section-title">
+          <i className="fas fa-bullhorn"></i> Configuración campaña
+        </div>
+        
+        <div className="form-grid">
+          <input 
+            value={socialCampaign.name} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })} 
+            placeholder="Nombre de campaña" 
+          />
+          
+          <select 
+            value={socialCampaign.objective} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}
+          >
+            <option value="whatsapp">Enviar a WhatsApp</option>
+            <option value="landing">Enviar a Landing</option>
+            <option value="manual_link">Link manual</option>
+            <option value="no_link">Sin link</option>
+          </select>
+          
+          <select 
+            value={socialCampaign.bot_id} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}
+          >
+            <option value="">Selecciona bot</option>
+            {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+          </select>
+          
+          <select 
+            value={socialCampaign.landing_id} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}
+          >
+            <option value="">Selecciona landing</option>
+            {landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+          
+          {/* Selector de tipo de medio */}
+          <select
+            value={socialMediaType}
+            onChange={(e) => {
+              const type = e.target.value
+              setSocialMediaType(type)
+              if (type === 'text') {
+                setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', video_url: '' }))
+                setSelectedSocialVideoURL('')
+                setSelectedSocialVideoId('')
+              }
+              if (type === 'image') {
+                setSocialCampaign(prev => ({ ...prev, image_mode: 'ai', video_url: '' }))
+                setSelectedSocialVideoURL('')
+                setSelectedSocialVideoId('')
+              }
+              if (type === 'video') {
+                setSocialCampaign(prev => ({ ...prev, image_mode: 'video', manual_image_url: selectedSocialVideoURL || prev.manual_image_url, video_url: selectedSocialVideoURL || prev.video_url || '' }))
+              }
+            }}
+          >
+            <option value="image">Imagen</option>
+            <option value="video">Video AI</option>
+            <option value="text">Solo texto</option>
+          </select>
+
+          {socialMediaType !== 'video' && socialMediaType !== 'text' && (
+            <>
+              <select 
+                value={socialCampaign.image_mode} 
+                onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}
+              >
+                <option value="ai">Imagen IA</option>
+                <option value="manual">Imagen manual</option>
+                <option value="none">Sin imagen</option>
+              </select>
+              <input 
+                value={socialCampaign.manual_image_url} 
+                onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} 
+                placeholder="URL imagen manual" 
+              />
+            </>
+          )}
+
+          {socialMediaType === 'video' && (
+            <div className="social-video-picker">
+              <div className="section-title">
+                <i className="fas fa-video"></i> Seleccionar video de Video AI
+              </div>
+              <div className="social-video-grid">
+                {(videoJobs || []).filter(v => v.video_url).map(job => {
+                  const url = resolveMediaURL(job.video_url)
+                  const active = selectedSocialVideoId === job.id
+                  return (
+                    <button
+                      key={job.id}
+                      type="button"
+                      className={active ? 'social-video-card active' : 'social-video-card'}
+                      onClick={() => {
+                        setSelectedSocialVideoId(job.id)
+                        setSelectedSocialVideoURL(url)
+                        setSocialCampaign(prev => ({ ...prev, image_mode: 'video', manual_image_url: url, video_url: url }))
+                        showNotice('Video seleccionado para Social AI')
+                      }}
+                    >
+                      <video src={url} muted playsInline />
+                      <span>{job.provider === 'upload' ? 'Subido' : 'IA'} · {job.status}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              {selectedSocialVideoURL && (
+                <div className="selected-social-video">
+                  <video src={selectedSocialVideoURL} controls playsInline />
+                  <div>
+                    <strong>Video listo para publicación</strong>
+                    <small>{selectedSocialVideoURL}</small>
+                  </div>
+                  <button
+                    className="tiny-btn danger"
+                    onClick={() => {
+                      setSelectedSocialVideoURL('')
+                      setSelectedSocialVideoId('')
+                      setSocialCampaign(prev => ({ ...prev, image_mode: 'none', video_url: '' }))
+                      showNotice('Video removido')
+                    }}
+                  >
+                    Remover video
+                  </button>
+                </div>
+              )}
+              <button type="button" className="secondary" onClick={() => setTab('video')}>
+                Abrir Video AI Studio
+              </button>
+            </div>
+          )}
+
+          <input 
+            value={socialCampaign.manual_link_url} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })} 
+            placeholder="Link manual" 
+          />
+          
+          <input 
+            value={socialCampaign.call_to_action} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })} 
+            placeholder="Call to action" 
+          />
+          
+          <select 
+            value={socialCampaign.publish_mode} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}
+          >
+            <option value="now">Publicar ahora</option>
+            <option value="scheduled">Fecha y hora exacta</option>
+            <option value="recurring">Repetir cada X minutos</option>
+          </select>
+          
+          {socialCampaign.publish_mode === 'scheduled' && (
+            <input 
+              type="datetime-local" 
+              value={socialCampaign.scheduled_at} 
+              onChange={e => setSocialCampaign({ ...socialCampaign, scheduled_at: e.target.value })} 
+            />
+          )}
+          
+          {socialCampaign.publish_mode === 'recurring' && (
+            <input 
+              type="number" 
+              value={socialCampaign.recurring_minutes} 
+              onChange={e => setSocialCampaign({ ...socialCampaign, recurring_minutes: e.target.value })} 
+              placeholder="Cada cuántos minutos" 
+            />
+          )}
+          
+          <input 
+            className="full" 
+            value={socialCampaign.days_of_week} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, days_of_week: e.target.value })} 
+            placeholder="Días de publicación (ej: mon,tue,wed)" 
+          />
+          
+          <textarea 
+            className="full" 
+            rows={5} 
+            value={socialCampaign.prompt} 
+            onChange={e => setSocialCampaign({ ...socialCampaign, prompt: e.target.value })} 
+            placeholder="Describe la campaña que quieres generar con IA..." 
+          />
+        </div>
+        
+        <div className="row gap-sm">
+          <button type="button" onClick={generateSocial}>Generar contenido IA</button>
+        </div>
+        
+        <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={selectedPlatforms.includes('facebook')}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedPlatforms(prev => [...new Set([...prev, 'facebook'])])
+                } else {
+                  setSelectedPlatforms(prev => prev.filter(p => p !== 'facebook'))
+                }
+              }}
+            />
+            Facebook
+          </label>
+
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={selectedPlatforms.includes('instagram')}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedPlatforms(prev => [...new Set([...prev, 'instagram'])])
+                } else {
+                  setSelectedPlatforms(prev => prev.filter(p => p !== 'instagram'))
+                }
+              }}
+            />
+            Instagram
+          </label>
+
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={selectedPlatforms.includes('tiktok')}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedPlatforms(prev => [...new Set([...prev, 'tiktok'])])
+                } else {
+                  setSelectedPlatforms(prev => prev.filter(p => p !== 'tiktok'))
+                }
+              }}
+            />
+            TikTok
+          </label>
+
+          <button type="button" onClick={publishMulti}>
+            <i className="fas fa-paper-plane"></i> Publicar selección
+          </button>
+          
+          <button type="button" className="secondary" onClick={() => {
+            if (!selectedPlatforms.length) {
+              showNotice('Selecciona al menos una red social')
+              return
+            }
+            if (selectedPlatforms.length > 1) {
+              showNotice('Por ahora programa una red a la vez')
+              return
+            }
+            scheduleSocialPost()
+          }}>
+            <i className="fas fa-calendar"></i> Programar selección
+          </button>
+        </div>
+      </section>
+    </div>
+
+    {/* Imagen IA */}
+    <section className="stripe-card stack">
+      <div className="section-title">
+        <i className="fas fa-image"></i> Imagen IA
+      </div>
+      
+      <textarea 
+        className="full" 
+        rows={3} 
+        value={socialImagePrompt} 
+        onChange={e => { 
+          setSocialImagePrompt(e.target.value)
+          setSocialCampaign(prev => ({ ...prev, image_prompt: e.target.value }))
+        }} 
+        placeholder="Describe la imagen que quieres generar para la publicación..." 
+      />
+      
+      <div className="row gap-sm">
+        <button type="button" onClick={generateSocialImage} disabled={socialImageLoading}>
+          {socialImageLoading ? 'Generando imagen...' : 'Generar imagen IA'}
+        </button>
+        
+        <label className="secondary" style={{ cursor: 'pointer' }}>
+          {socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}
+          <input 
+            type="file" 
+            accept="image/*" 
+            style={{ display: 'none' }} 
+            onChange={e => uploadSocialImage(e.target.files?.[0])} 
+          />
+        </label>
+        
+        <button 
+          type="button" 
+          className="secondary" 
+          onClick={() => { 
+            setSocialImageURL('')
+            setSocialImagePrompt('')
+            setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', image_prompt: '' }))
+          }}
+        >
+          Sin imagen
+        </button>
+      </div>
+      
+      {socialMediaType === 'video' && selectedSocialVideoURL ? (
+        <video
+          src={selectedSocialVideoURL}
+          controls
+          playsInline
+          muted
+          style={{
+            maxWidth: '320px',
+            width: '100%',
+            borderRadius: '1rem',
+            border: '1px solid #e2e8f0',
+            marginTop: '1rem',
+            background: '#000',
+            objectFit: 'cover'
+          }}
+        />
+      ) : (
+        (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
+          <img
+            src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
+            alt="Preview social"
+            style={{
+              maxWidth: '320px',
+              width: '100%',
+              borderRadius: '1rem',
+              border: '1px solid #e2e8f0',
+              marginTop: '1rem',
+              objectFit: 'cover'
+            }}
+            onError={(e) => {
+              e.currentTarget.style.opacity = '0.4'
+              showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.')
+            }}
+          />
+        )
+      )}
+    </section>
+
+    {/* Preview de publicación */}
+    <section className="stripe-card stack">
+      <div className="section-title">
+        <i className="fas fa-eye"></i> Preview de publicación
+      </div>
+      
+      <div style={{ border: '1px solid #e2e8f0', borderRadius: '18px', background: '#ffffff', overflow: 'hidden', maxWidth: '640px' }}>
+        <div style={{ padding: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+            <div style={{ width: '46px', height: '46px', borderRadius: '9999px', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '18px' }}>
+              {(socialCredential.page_name || selectedClient?.name || 'P').slice(0, 1).toUpperCase()}
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, color: '#0f172a' }}>{socialCredential.page_name || selectedClient?.name || 'Tu página'}</div>
+              <div style={{ fontSize: '12px', color: '#64748b' }}>Publicidad · Ahora</div>
+            </div>
+          </div>
+          <div style={{ whiteSpace: 'pre-line', color: '#0f172a', fontSize: '15px', lineHeight: 1.5 }}>
+            {htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}
+          </div>
+        </div>
+        
+        {socialMediaType === 'image' && (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
+          <img 
+            src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} 
+            alt="Preview social" 
+            style={{ width: '100%', maxHeight: '520px', objectFit: 'cover', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} 
           />
         )}
-        {tab === 'social' && canUseFeature('social_ai') && (
-          <section className="stack gap-lg">
-            <div className="panel-grid">
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-key"></i> Credenciales Sociales</div>
-                <div className="form-grid">
-                  <input value={socialCredential.page_name} onChange={e => setSocialCredential({ ...socialCredential, page_name: e.target.value })} placeholder="Nombre de la página" />
-                  <input value={socialCredential.page_id} onChange={e => setSocialCredential({ ...socialCredential, page_id: e.target.value })} placeholder="Page ID" />
-                  <input className="full" value={socialCredential.access_token} onChange={e => setSocialCredential({ ...socialCredential, access_token: e.target.value })} placeholder="Page Access Token" />
-                  <input value={socialCredential.ad_account_id} onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })} placeholder="Ad Account ID (opcional)" />
-                  <input value={socialCredential.tiktok_access_token} onChange={e => setSocialCredential({ ...socialCredential, tiktok_access_token: e.target.value })} placeholder="TikTok Access Token" />
-                  <input value={socialCredential.tiktok_open_id} onChange={e => setSocialCredential({ ...socialCredential, tiktok_open_id: e.target.value })} placeholder="TikTok Open ID" />
-                  <label className="toggle"><input type="checkbox" checked={!!socialCredential.enabled} onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })} /> Redes habilitadas</label>
-                </div>
-                <div className="row gap-sm">
-                  <button type="button" onClick={saveSocialCredential}>
-                    Guardar credenciales
-                  </button>
-                  <button type="button" className="secondary" onClick={verifyInstagram}>
-                    <i className="fab fa-instagram"></i> Verificar Instagram
-                  </button>
-                  <button onClick={getInstagramData}>
-                    Obtener datos IG
-                  </button>
-                </div>
-
-                {socialCredential.instagram_connected ? (
-                  <div className="pill success" style={{ marginTop: '0.75rem' }}>
-                    <i className="fab fa-instagram"></i> Instagram conectado: @{socialCredential.instagram_username}
-                  </div>
-                ) : (
-                  <div className="pill warning" style={{ marginTop: '0.75rem' }}>
-                    <i className="fab fa-instagram"></i> Instagram no conectado
-                  </div>
-                )}
-
-                {socialCredential.tiktok_connected ? (
-                  <div className="pill success" style={{ marginTop: '0.5rem' }}>
-                    <i className="fab fa-tiktok"></i> TikTok conectado
-                  </div>
-                ) : (
-                  <div className="pill warning" style={{ marginTop: '0.5rem' }}>
-                    <i className="fab fa-tiktok"></i> TikTok no conectado
-                  </div>
-                )}
-
-                {instagramData && (
-                  <div className="muted tiny" style={{ marginTop: '0.5rem' }}>
-                    <div>👤 @{instagramData.username}</div>
-                    <div>👥 Seguidores: {instagramData.followers_count}</div>
-                    <div>📸 Posts: {instagramData.media_count}</div>
-                  </div>
-                )}
-              </section>
-
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-bullhorn"></i> Configuración campaña</div>
-                <div className="form-grid">
-                  <input value={socialCampaign.name} onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })} placeholder="Nombre de campaña" />
-                  <select value={socialCampaign.objective} onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}>
-                    <option value="whatsapp">Enviar a WhatsApp</option>
-                    <option value="landing">Enviar a Landing</option>
-                    <option value="manual_link">Link manual</option>
-                    <option value="no_link">Sin link</option>
-                  </select>
-                  <select value={socialCampaign.bot_id} onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}><option value="">Selecciona bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
-                  <select value={socialCampaign.landing_id} onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}><option value="">Selecciona landing</option>{landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}</select>
-                  
-                  {/* Selector de tipo de medio */}
-                  <select
-                    value={socialMediaType}
-                    onChange={(e) => {
-                      const type = e.target.value
-                      setSocialMediaType(type)
-
-                      if (type === 'text') {
-                      setSocialCampaign(prev => ({
-                        ...prev,
-                        image_mode: 'none',
-                        manual_image_url: '',
-                        video_url: ''
-                      }))
-                        setSelectedSocialVideoURL('')
-                        setSelectedSocialVideoId('')
-                      }
-
-                      if (type === 'image') {
-                      setSocialCampaign(prev => ({
-                        ...prev,
-                        image_mode: 'ai',
-                        video_url: ''
-                      }))
-                        setSelectedSocialVideoURL('')
-                        setSelectedSocialVideoId('')
-                      }
-
-                      if (type === 'video') {
-                        setSocialCampaign(prev => ({
-                          ...prev,
-                          image_mode: 'video',
-                          manual_image_url: selectedSocialVideoURL || prev.manual_image_url,
-                          video_url: selectedSocialVideoURL || prev.video_url || ''
-                        }))
-                      }
-                    }}
-                  >
-                    <option value="image">Imagen</option>
-                    <option value="video">Video AI</option>
-                    <option value="text">Solo texto</option>
-                  </select>
-
-                  {socialMediaType !== 'video' && socialMediaType !== 'text' && (
-                    <>
-                      <select value={socialCampaign.image_mode} onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}>
-                        <option value="ai">Imagen IA</option>
-                        <option value="manual">Imagen manual</option>
-                        <option value="none">Sin imagen</option>
-                      </select>
-                      <input value={socialCampaign.manual_image_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} placeholder="URL imagen manual" />
-                    </>
-                  )}
-
-                  {socialMediaType === 'video' && (
-                    <div className="social-video-picker">
-                      <div className="section-title">
-                        <i className="fas fa-video"></i> Seleccionar video de Video AI
-                      </div>
-
-                      <div className="social-video-grid">
-                        {(videoJobs || []).filter(v => v.video_url).map(job => {
-                          const url = resolveMediaURL(job.video_url)
-                          const active = selectedSocialVideoId === job.id
-
-                          return (
-                            <button
-                              key={job.id}
-                              type="button"
-                              className={active ? 'social-video-card active' : 'social-video-card'}
-                              onClick={() => {
-                                setSelectedSocialVideoId(job.id)
-                                setSelectedSocialVideoURL(url)
-                                setSocialCampaign(prev => ({
-                                  ...prev,
-                                  image_mode: 'video',
-                                  manual_image_url: url,
-                                  video_url: url
-                                }))
-                                showNotice('Video seleccionado para Social AI')
-                              }}
-                            >
-                              <video src={url} muted playsInline />
-                              <span>{job.provider === 'upload' ? 'Subido' : 'IA'} · {job.status}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-
-                      {selectedSocialVideoURL && (
-                        <div className="selected-social-video">
-                          <video src={selectedSocialVideoURL} controls playsInline />
-                          <div>
-                            <strong>Video listo para publicación</strong>
-                            <small>{selectedSocialVideoURL}</small>
-                          </div>
-                          <button
-                            className="tiny-btn danger"
-                            onClick={() => {
-                              setSelectedSocialVideoURL('')
-                              setSelectedSocialVideoId('')
-                              setSocialCampaign(prev => ({
-                                ...prev,
-                                image_mode: 'none',
-                                video_url: ''
-                              }))
-                              showNotice('Video removido')
-                            }}
-                          >
-                            Remover video
-                          </button>
-                        </div>
-                      )}
-
-                      <button type="button" className="secondary" onClick={() => setTab('video')}>
-                        Abrir Video AI Studio
-                      </button>
-                    </div>
-                  )}
-
-                  <input value={socialCampaign.manual_link_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })} placeholder="Link manual" />
-                  <input value={socialCampaign.call_to_action} onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })} placeholder="Call to action" />
-                  <select value={socialCampaign.publish_mode} onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}>
-                    <option value="now">Publicar ahora</option><option value="scheduled">Fecha y hora exacta</option><option value="recurring">Repetir cada X minutos</option>
-                  </select>
-                  {socialCampaign.publish_mode === 'scheduled' && <input type="datetime-local" value={socialCampaign.scheduled_at} onChange={e => setSocialCampaign({ ...socialCampaign, scheduled_at: e.target.value })} />}
-                  {socialCampaign.publish_mode === 'recurring' && <input type="number" value={socialCampaign.recurring_minutes} onChange={e => setSocialCampaign({ ...socialCampaign, recurring_minutes: e.target.value })} placeholder="Cada cuántos minutos" />}
-                  <input className="full" value={socialCampaign.days_of_week} onChange={e => setSocialCampaign({ ...socialCampaign, days_of_week: e.target.value })} placeholder="Días de publicación (ej: mon,tue,wed)" />
-                  <textarea className="full" rows={5} value={socialCampaign.prompt} onChange={e => setSocialCampaign({ ...socialCampaign, prompt: e.target.value })} placeholder="Describe la campaña que quieres generar con IA..." />
-                </div>
-                <div className="row gap-sm">
-                  <button type="button" onClick={generateSocial}>Generar contenido IA</button>
-                  <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes('facebook')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms(prev => [...new Set([...prev, 'facebook'])])
-                          } else {
-                            setSelectedPlatforms(prev => prev.filter(p => p !== 'facebook'))
-                          }
-                        }}
-                      />
-                      Facebook
-                    </label>
-
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes('instagram')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms(prev => [...new Set([...prev, 'instagram'])])
-                          } else {
-                            setSelectedPlatforms(prev => prev.filter(p => p !== 'instagram'))
-                          }
-                        }}
-                      />
-                      Instagram
-                    </label>
-
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes('tiktok')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms(prev => [...new Set([...prev, 'tiktok'])])
-                          } else {
-                            setSelectedPlatforms(prev => prev.filter(p => p !== 'tiktok'))
-                          }
-                        }}
-                      />
-                      TikTok
-                    </label>
-
-                    <button type="button" onClick={publishMulti}>
-                      <i className="fas fa-paper-plane"></i> Publicar selección
-                    </button>
-                     <button type="button" className="secondary"
-                    onClick={() => {
-                      if (!selectedPlatforms.length) {
-                        showNotice('Selecciona al menos una red social')
-                        return
-                      }
-                      if (selectedPlatforms.length > 1) {
-                        showNotice('Por ahora programa una red a la vez')
-                        return
-                      }
-                      scheduleSocialPost()
-                    }}
-                  >
-                  <i className="fas fa-calendar"></i>  Programar selección
-                  </button>
-                  </div>
-                 
-                </div>
-              </section>
-            </div>
-
-            <section className="stripe-card stack">
-              <div className="section-title"><i className="fas fa-image"></i> Imagen IA</div>
-              <textarea className="full" rows={3} value={socialImagePrompt} onChange={e => { setSocialImagePrompt(e.target.value); setSocialCampaign(prev => ({ ...prev, image_prompt: e.target.value })) }} placeholder="Describe la imagen que quieres generar para la publicación..." />
-              <div className="row gap-sm">
-                <button type="button" onClick={generateSocialImage} disabled={socialImageLoading}>{socialImageLoading ? 'Generando imagen...' : 'Generar imagen IA'}</button>
-                <label className="secondary" style={{ cursor: 'pointer' }}>{socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}<input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => uploadSocialImage(e.target.files?.[0])} /></label>
-                <button type="button" className="secondary" onClick={() => { setSocialImageURL(''); setSocialImagePrompt(''); setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', image_prompt: '' })) }}>Sin imagen</button>
-              </div>
-              {socialMediaType === 'video' && selectedSocialVideoURL ? (
-                <video
-                  src={selectedSocialVideoURL}
-                  controls
-                  playsInline
-                  muted
-                  style={{
-                    maxWidth: '320px',
-                    width: '100%',
-                    borderRadius: '1rem',
-                    border: '1px solid #e2e8f0',
-                    marginTop: '1rem',
-                    background: '#000',
-                    objectFit: 'cover'
-                  }}
-                />
-              ) : (
-                (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                  <img
-                    src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
-                    alt="Preview social"
-                    style={{
-                      maxWidth: '320px',
-                      width: '100%',
-                      borderRadius: '1rem',
-                      border: '1px solid #e2e8f0',
-                      marginTop: '1rem',
-                      objectFit: 'cover'
-                    }}
-                    onError={(e) => {
-                      e.currentTarget.style.opacity = '0.4'
-                      showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.')
-                    }}
-                  />
-                )
-              )}
-            </section>
-
-            <section className="stripe-card stack">
-              <div className="section-title"><i className="fas fa-eye"></i> Preview de publicación</div>
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '18px', background: '#ffffff', overflow: 'hidden', maxWidth: '640px' }}>
-                <div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                    <div style={{ width: '46px', height: '46px', borderRadius: '9999px', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '18px' }}>{(socialCredential.page_name || selectedClient?.name || 'P').slice(0, 1).toUpperCase()}</div>
-                    <div><div style={{ fontWeight: 700, color: '#0f172a' }}>{socialCredential.page_name || selectedClient?.name || 'Tu página'}</div><div style={{ fontSize: '12px', color: '#64748b' }}>Publicidad · Ahora</div></div>
-                  </div>
-                  <div style={{ whiteSpace: 'pre-line', color: '#0f172a', fontSize: '15px', lineHeight: 1.5 }}>{htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}</div>
-                </div>
-                {socialMediaType === 'image' && (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                  <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ width: '100%', maxHeight: '520px', objectFit: 'cover', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
-                )}
-                {socialMediaType === 'video' && selectedSocialVideoURL && (
-                  <video src={selectedSocialVideoURL} controls style={{ width: '100%', maxHeight: '520px', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
-                )}
-                <div style={{ padding: '12px 16px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Destino del clic</div>
-                  <div style={{ fontWeight: 600, color: '#0f172a' }}>
-                    {socialCampaign.objective === 'whatsapp' && 'WhatsApp'}
-                    {socialCampaign.objective === 'landing' && 'Landing page'}
-                    {socialCampaign.objective === 'manual_link' && 'Link manual'}
-                    {socialCampaign.objective === 'none' && 'Sin enlace'}
-                  </div>
-                  <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
-                    {socialCampaign.objective === 'manual_link' ? socialCampaign.manual_link_url || 'Escribe un link manual' : socialCampaign.objective === 'whatsapp' ? 'Abrirá conversación con el bot seleccionado' : socialCampaign.objective === 'landing' ? 'Abrirá la landing seleccionada' : 'La publicación no llevará enlace'}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div className="social-history-full">
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
-                <table>
-                  <thead>
-                    <tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr>
-                  </thead>
-                  <tbody>
-                    {socialPosts.map(post => (
-                      <tr key={post.id}>
-                        <td>{post.platform}</td>
-                        <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
-                        <td>{post.publish_mode}</td>
-                        <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
-                        <td>{(post.content || '').slice(0, 120)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
-              </section>
-            </div>
-          </section>
+        
+        {socialMediaType === 'video' && selectedSocialVideoURL && (
+          <video 
+            src={selectedSocialVideoURL} 
+            controls 
+            style={{ width: '100%', maxHeight: '520px', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} 
+          />
         )}
+        
+        <div style={{ padding: '12px 16px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Destino del clic</div>
+          <div style={{ fontWeight: 600, color: '#0f172a' }}>
+            {socialCampaign.objective === 'whatsapp' && 'WhatsApp'}
+            {socialCampaign.objective === 'landing' && 'Landing page'}
+            {socialCampaign.objective === 'manual_link' && 'Link manual'}
+            {socialCampaign.objective === 'none' && 'Sin enlace'}
+          </div>
+          <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
+            {socialCampaign.objective === 'manual_link' 
+              ? socialCampaign.manual_link_url || 'Escribe un link manual' 
+              : socialCampaign.objective === 'whatsapp' 
+                ? 'Abrirá conversación con el bot seleccionado' 
+                : socialCampaign.objective === 'landing' 
+                  ? 'Abrirá la landing seleccionada' 
+                  : 'La publicación no llevará enlace'}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Historial de publicaciones */}
+    <div className="social-history-full">
+      <section className="stripe-card stack">
+        <div className="section-title">
+          <i className="fas fa-history"></i> Historial de publicaciones
+        </div>
+        
+        {socialPosts.length === 0 ? (
+          <div className="empty-box">
+            <i className="fas fa-newspaper"></i>
+            <p>No hay publicaciones todavía</p>
+            <small>Genera tu primer contenido y publícalo en redes sociales</small>
+          </div>
+        ) : (
+          <div className="table-responsive">
+            <table className="social-posts-table">
+              <thead>
+                <tr>
+                  <th>Plataforma</th>
+                  <th>Estado</th>
+                  <th>Modo</th>
+                  <th>Fecha</th>
+                  <th>Contenido</th>
+                </tr>
+              </thead>
+              <tbody>
+                {socialPosts.map((post) => (
+                  <tr key={post.id}>
+                    <td>
+                      {post.platform === 'facebook' && <i className="fab fa-facebook"></i>}
+                      {post.platform === 'instagram' && <i className="fab fa-instagram"></i>}
+                      {post.platform === 'tiktok' && <i className="fab fa-tiktok"></i>}
+                      <span style={{ marginLeft: '0.5rem' }}>{post.platform || '—'}</span>
+                    </td>
+                    <td>
+                      <span className={`pill ${
+                        post.status === 'published' ? 'connected' : 
+                        post.status === 'error' ? 'error' : 
+                        'new'
+                      }`}>
+                        {post.status === 'published' ? 'Publicado' :
+                         post.status === 'error' ? 'Error' :
+                         post.status === 'scheduled' ? 'Programado' :
+                         post.status || 'Pendiente'}
+                      </span>
+                    </td>
+                    <td>
+                      {post.publish_mode === 'now' && 'Ahora'}
+                      {post.publish_mode === 'scheduled' && 'Programado'}
+                      {post.publish_mode === 'recurring' && 'Recurrente'}
+                      {post.publish_mode || '—'}
+                    </td>
+                    <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
+                    <td className="content-preview">{(post.content || '').slice(0, 120)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </div>
+  </section>
+)}
 
         {/* ======================== VIDEO AI con PremiumGate ======================== */}
         {tab === 'video' && !canUseFeature('video_ai') && (
