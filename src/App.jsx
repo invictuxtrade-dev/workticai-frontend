@@ -4774,57 +4774,89 @@ export default function App() {
 }
 
   // ======================== NUEVAS FUNCIONES AGENDA AI PARA BOT ========================
-  async function loadBotAgendaSettings(botId) {
-    if (!botId) return
+async function loadBotAgendaSettings(botId) {
+  if (!botId) return
 
-    try {
-      setAgendaLoading(true)
+  try {
+    setAgendaLoading(true)
 
-      const data = await api(`/agenda/settings?bot_id=${botId}`)
+    const clientID =
+      me?.role === 'admin'
+        ? selectedClientId
+        : me?.client_id
 
-      setBotAgendaSettings(data || {})
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setAgendaLoading(false)
-    }
+    const qs = clientID
+      ? `?bot_id=${botId}&client_id=${clientID}`
+      : `?bot_id=${botId}`
+
+    const data = await api(`/api/agenda/settings${qs}`)
+
+    setBotAgendaSettings(data || {})
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setAgendaLoading(false)
+  }
+}
+
+async function saveBotAgendaSettings(botId) {
+  if (!requireFeature('agenda_ai', 'Agenda AI')) {
+    return
   }
 
-  async function saveBotAgendaSettings(botId) {
-    if (!requireFeature('agenda_ai', 'Agenda AI')) {
+  try {
+    setAgendaLoading(true)
+
+    const clientID =
+      me?.role === 'admin'
+        ? selectedClientId
+        : me?.client_id
+
+    if (!clientID) {
+      showNotice('Selecciona un cliente antes de guardar Agenda AI')
       return
     }
 
-    try {
-      setAgendaLoading(true)
-
-      await api('/agenda/settings', {
-        method: 'PUT',
-        body: JSON.stringify({
-          ...botAgendaSettings,
-          bot_id: botId
-        })
+    await api('/api/agenda/settings', {
+      method: 'PUT',
+      body: JSON.stringify({
+        ...botAgendaSettings,
+        client_id: clientID,
+        bot_id: botId
       })
+    })
 
-      showNotice('Configuración Agenda AI guardada')
-    } catch (err) {
-      showNotice(err.message)
-    } finally {
-      setAgendaLoading(false)
-    }
+    showNotice('Configuración Agenda AI guardada')
+
+    await loadBotAgendaSettings(botId)
+    await loadAgendaSlots(botId)
+  } catch (err) {
+    showNotice(err.message)
+  } finally {
+    setAgendaLoading(false)
   }
+}
 
-  async function loadAgendaSlots(botId) {
-    if (!botId) return
+async function loadAgendaSlots(botId) {
+  if (!botId) return
 
-    try {
-      const data = await api(`/agenda/slots?bot_id=${botId}`)
+  try {
+    const clientID =
+      me?.role === 'admin'
+        ? selectedClientId
+        : me?.client_id
 
-      setAgendaSlots(Array.isArray(data) ? data : [])
-    } catch (err) {
-      console.error(err)
-    }
+    const qs = clientID
+      ? `?bot_id=${botId}&client_id=${clientID}`
+      : `?bot_id=${botId}`
+
+    const data = await api(`/api/agenda/slots${qs}`)
+
+    setAgendaSlots(Array.isArray(data) ? data : [])
+  } catch (err) {
+    console.error(err)
   }
+}
 
   async function createAppointment() {
     if (!requireFeature('agenda_ai', 'Agenda AI')) return
@@ -6805,17 +6837,21 @@ async function createAppointmentAgent() {
   }, [me, tab, selectedClientId, selectedBotId, forcePlanScreen])
 
   useEffect(() => {
-    if (!selectedBotId) {
-      setQrDataUrlBot('')
-      setConfig(emptyConfig)
-      return
-    }
+  if (!selectedBotId) {
+    setQrDataUrlBot('')
+    setConfig(emptyConfig)
+    setBotAgendaSettings({})
+    setAgendaSlots([])
+    return
+  }
 
-    if (tab !== 'bots') return
+  if (tab !== 'bots') return
 
-    loadQr(selectedBotId)
-    loadConfig(selectedBotId)
-  }, [selectedBotId, tab])
+  loadQr(selectedBotId)
+  loadConfig(selectedBotId)
+  loadBotAgendaSettings(selectedBotId)
+  loadAgendaSlots(selectedBotId)
+}, [selectedBotId, tab])
 
   useEffect(() => {
     if (selectedLead?.bot_id && selectedLead?.id) {
