@@ -4327,866 +4327,6 @@ export default function App() {
         word-break: break-all;
       }
 
-      /* AGENDA PREMIUM V2 - DISEÑO DE DOS COLUMNAS ASIMÉTRICAS */
-.agenda-premium-v2 {
-  margin-top: 1.5rem;
-  position: relative;
-}
-
-/* HEADER PREMIUM */
-.agenda-premium-v2-header {
-  position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  border-radius: 1.5rem;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.header-glow {
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 60%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(116, 48, 226, 0.4), transparent);
-  filter: blur(60px);
-}
-
-.header-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-}
-
-.header-icon {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  color: white;
-}
-
-.pulse-ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  background: rgba(116, 48, 226, 0.5);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.5; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.header-text h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: white;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.premium-chip {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  padding: 0.25rem 0.7rem;
-  border-radius: 30px;
-  font-size: 0.7rem;
-  color: #0f172a;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.header-text p {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  margin: 0.25rem 0 0;
-}
-
-.header-stats {
-  margin-left: auto;
-}
-
-.stat-badge {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem 1rem;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-/* GRID DE DOS COLUMNAS ASIMÉTRICAS */
-.agenda-premium-v2-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-/* TARJETA DE ACTIVACIÓN */
-.activation-card-v2 {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(116, 48, 226, 0.2);
-  margin-bottom: 1.25rem;
-}
-
-.activation-bg {
-  position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(116, 48, 226, 0.08), transparent);
-  border-radius: 50%;
-}
-
-.activation-content {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.activation-info {
-  flex: 1;
-}
-
-.power-indicator {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.5rem;
-}
-
-.power-led {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #94a3b8;
-  transition: all 0.3s;
-}
-
-.power-led.active {
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: blink 1.5s infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.power-label {
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: #0f172a;
-}
-
-.activation-desc {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin: 0;
-}
-
-/* TOGGLE PREMIUM V2 */
-.toggle-premium-v2 {
-  cursor: pointer;
-}
-
-.toggle-premium-v2 input {
-  display: none;
-}
-
-.toggle-back {
-  display: block;
-  width: 56px;
-  height: 30px;
-  background: #e2e8f0;
-  border-radius: 30px;
-  position: relative;
-  transition: all 0.3s;
-}
-
-.toggle-front {
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: all 0.3s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.toggle-premium-v2 input:checked + .toggle-back {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-}
-
-.toggle-premium-v2 input:checked + .toggle-back .toggle-front {
-  transform: translateX(26px);
-}
-
-/* TARJETA DE HORARIO SEMANAL */
-.schedule-card-v2 {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 1.25rem;
-}
-
-.card-header-v2 {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.card-header-v2 i {
-  color: #7430e2;
-  font-size: 1.1rem;
-}
-
-.card-header-v2 h3 {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-  flex: 1;
-}
-
-.card-badge {
-  font-size: 0.6rem;
-  background: #e0e7ff;
-  color: #4f1bb5;
-  padding: 0.2rem 0.5rem;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.weekly-schedule {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-}
-
-.day-card-v2 {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-  padding: 0.6rem 0.3rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.day-card-v2:hover {
-  transform: translateY(-2px);
-}
-
-.day-card-v2.active {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-color: #7430e2;
-}
-
-.day-card-v2.active .day-label,
-.day-card-v2.active .day-full {
-  color: white;
-}
-
-.day-card-v2.active .day-check i {
-  color: white;
-}
-
-.day-label {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: #475569;
-  display: block;
-}
-
-.day-full {
-  font-size: 0.65rem;
-  color: #94a3b8;
-  display: block;
-}
-
-.day-check {
-  margin-top: 0.2rem;
-}
-
-.day-check i {
-  font-size: 0.7rem;
-  color: #cbd5e1;
-}
-
-.time-range-v2 {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: #f8fafc;
-  padding: 0.75rem;
-  border-radius: 1rem;
-}
-
-.time-input-group {
-  flex: 1;
-}
-
-.time-input-group label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-bottom: 0.3rem;
-}
-
-.time-input-v2 {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
-}
-
-.time-divider i {
-  color: #7430e2;
-}
-
-/* TARJETA DE DURACIÓN */
-.duration-card-v2 {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  border: 1px solid #e2e8f0;
-}
-
-.duration-metrics {
-  display: flex;
-  gap: 1rem;
-}
-
-.metric-box {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.metric-icon {
-  width: 40px;
-  height: 40px;
-  background: #f1f5f9;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #7430e2;
-  font-size: 1rem;
-}
-
-.metric-content {
-  flex: 1;
-}
-
-.metric-content label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #64748b;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.metric-input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.metric-input-wrapper input {
-  width: 70px;
-  padding: 0.4rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
-  text-align: center;
-}
-
-.metric-unit {
-  font-size: 0.7rem;
-  color: #94a3b8;
-}
-
-.metric-divider {
-  width: 1px;
-  background: #e2e8f0;
-}
-
-/* COLUMNA DERECHA */
-.agenda-col-right {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-/* TARJETA DE RECORDATORIOS */
-.reminder-card-v2 {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  border: 1px solid #e2e8f0;
-}
-
-.reminder-slider {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.reminder-slider i {
-  font-size: 1.2rem;
-  color: #7430e2;
-}
-
-.reminder-range {
-  flex: 1;
-  height: 4px;
-  border-radius: 4px;
-  background: #e2e8f0;
-  -webkit-appearance: none;
-}
-
-.reminder-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #7430e2;
-  cursor: pointer;
-  box-shadow: 0 0 6px rgba(116, 48, 226, 0.5);
-}
-
-.reminder-value {
-  text-align: center;
-  min-width: 80px;
-}
-
-.value-number {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.value-unit {
-  font-size: 0.65rem;
-  color: #64748b;
-  display: block;
-}
-
-.reminder-examples {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.example-badge {
-  background: #f8fafc;
-  padding: 0.3rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.65rem;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-/* TARJETA DE NOTIFICACIONES */
-.notifications-card-v2 {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  border: 1px solid #e2e8f0;
-}
-
-.notifications-channels {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.channel-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.channel-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-}
-
-.channel-icon.whatsapp {
-  background: #dcfce7;
-  color: #22c55e;
-}
-
-.channel-icon.email {
-  background: #e0e7ff;
-  color: #3b82f6;
-}
-
-.channel-input {
-  flex: 1;
-}
-
-.channel-input label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.channel-input input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
-}
-
-.channel-input small {
-  font-size: 0.65rem;
-  color: #94a3b8;
-}
-
-.channel-divider {
-  height: 1px;
-  background: #e2e8f0;
-}
-
-/* TARJETA DE TIPO DE REUNIÓN */
-.meeting-type-card-v2 {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  border: 1px solid #e2e8f0;
-}
-
-.meeting-options {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-}
-
-.meeting-option {
-  position: relative;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-  padding: 0.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.meeting-option i:first-child {
-  font-size: 0.9rem;
-}
-
-.meeting-option.active {
-  background: linear-gradient(135deg, var(--option-color), color-mix(in srgb, var(--option-color) 70%, black));
-  border-color: var(--option-color);
-  color: white;
-}
-
-.meeting-option.active i {
-  color: white;
-}
-
-.check-mark {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  font-size: 1rem;
-  background: white;
-  border-radius: 50%;
-  color: #10b981;
-}
-
-/* BOTÓN FLOTANTE */
-.save-floating-bar {
-  margin: 1.5rem 0;
-}
-
-.btn-save-premium-v2 {
-  width: 100%;
-  background: linear-gradient(135deg, #7430e2, #4f1bb5);
-  border: none;
-  padding: 1rem;
-  border-radius: 1rem;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  box-shadow: 0 10px 25px rgba(116, 48, 226, 0.3);
-}
-
-.btn-save-premium-v2:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(116, 48, 226, 0.4);
-}
-
-.spinner-ring {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* SECCIÓN DE ESPACIOS DISPONIBLES */
-.slots-premium-v2 {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  border: 1px solid #e2e8f0;
-}
-
-.slots-header-v2 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.slots-title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.slots-title i {
-  color: #7430e2;
-  font-size: 1.1rem;
-}
-
-.slots-title h4 {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.refresh-slots-v2 {
-  background: transparent;
-  border: 1px solid #e2e8f0;
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.75rem;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: #64748b;
-}
-
-.refresh-slots-v2:hover {
-  background: #f8fafc;
-}
-
-.slots-grid-v2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.75rem;
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-.slot-card-v2 {
-  background: #f8fafc;
-  border-radius: 1rem;
-  padding: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: all 0.2s;
-}
-
-.slot-card-v2:hover {
-  background: white;
-  border: 1px solid #e2e8f0;
-  transform: translateY(-2px);
-}
-
-.slot-date-v2 {
-  text-align: center;
-  min-width: 60px;
-}
-
-.date-day {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #7430e2;
-  text-transform: uppercase;
-}
-
-.date-num {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.date-month {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-.slot-time-v2 {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.7rem;
-  color: #475569;
-}
-
-.slot-time-v2 i {
-  color: #7430e2;
-  font-size: 0.65rem;
-}
-
-.slot-status .status-available {
-  font-size: 0.6rem;
-  background: #dcfce7;
-  color: #22c55e;
-  padding: 0.2rem 0.4rem;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.empty-slots-v2 {
-  text-align: center;
-  padding: 2rem;
-}
-
-.empty-icon {
-  width: 60px;
-  height: 60px;
-  background: #f1f5f9;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 0.75rem;
-}
-
-.empty-icon i {
-  font-size: 1.8rem;
-  color: #94a3b8;
-}
-
-.empty-slots-v2 p {
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 0.25rem;
-}
-
-.empty-slots-v2 span {
-  font-size: 0.7rem;
-  color: #64748b;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .agenda-premium-v2-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .weekly-schedule {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  .meeting-options {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .header-stats {
-    margin-left: 0;
-  }
-  
-  .duration-metrics {
-    flex-direction: column;
-  }
-  
-  .metric-divider {
-    display: none;
-  }
-  
-  .weekly-schedule {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
       .bot-card-pro-actions {
         display: grid;
         grid-template-columns: repeat(2, minmax(0,1fr));
@@ -5203,749 +4343,6 @@ export default function App() {
           grid-template-columns: 1fr;
         }
       }
-     /* ======================== AGENDA AI PREMIUM ULTRA ======================== */
-/* Este CSS solo afecta a .agenda-premium-dashboard y sus hijos */
-
-.agenda-premium-dashboard {
-  animation: agendaFadeInUp 0.5s ease-out;
-  font-size: 14px;
-}
-
-@keyframes agendaFadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* HEADER PREMIUM */
-.agenda-premium-dashboard .agenda-premium-hero {
-  position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  border-radius: 1.5rem;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.agenda-premium-dashboard .hero-glow-bg {
-  position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 50%;
-  height: 160%;
-  background: radial-gradient(circle, rgba(116, 48, 226, 0.4), transparent);
-  filter: blur(80px);
-}
-
-.agenda-premium-dashboard .hero-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.2rem 1.5rem;
-  backdrop-filter: blur(10px);
-  flex-wrap: wrap;
-}
-
-.agenda-premium-dashboard .hero-icon {
-  position: relative;
-  width: 52px;
-  height: 52px;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: white;
-  box-shadow: 0 10px 20px rgba(116, 48, 226, 0.3);
-}
-
-.agenda-premium-dashboard .hero-pulse {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-  background: rgba(116, 48, 226, 0.5);
-  animation: agendaHeroPulse 2s infinite;
-}
-
-@keyframes agendaHeroPulse {
-  0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.agenda-premium-dashboard .hero-text h1 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-}
-
-.agenda-premium-dashboard .hero-text p {
-  color: #94a3b8;
-  font-size: 0.7rem;
-  margin: 0.1rem 0 0;
-}
-
-.agenda-premium-dashboard .hero-stats {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  padding: 0.4rem 1rem;
-  border-radius: 40px;
-  margin-left: auto;
-}
-
-.agenda-premium-dashboard .hero-stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.agenda-premium-dashboard .hero-stat-item .stat-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: white;
-}
-
-.agenda-premium-dashboard .hero-stat-item .stat-label {
-  font-size: 0.6rem;
-  color: #94a3b8;
-}
-
-.agenda-premium-dashboard .hero-stat-divider {
-  width: 1px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.agenda-premium-dashboard .hero-btn-primary {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 40px;
-  color: white;
-  font-weight: 600;
-  font-size: 0.8rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 6px 15px rgba(116, 48, 226, 0.3);
-}
-
-.agenda-premium-dashboard .hero-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(116, 48, 226, 0.4);
-}
-
-/* GRID PRINCIPAL */
-.agenda-premium-dashboard .agenda-premium-grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 1.2rem;
-}
-
-/* CALENDARIO PREMIUM */
-.agenda-premium-dashboard .calendar-card-premium {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.agenda-premium-dashboard .calendar-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.agenda-premium-dashboard .header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.agenda-premium-dashboard .header-left i {
-  color: #7430e2;
-  font-size: 1rem;
-}
-
-.agenda-premium-dashboard .header-left h3 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.agenda-premium-dashboard .header-badge {
-  background: #e0e7ff;
-  color: #4f46e5;
-  padding: 0.15rem 0.4rem;
-  border-radius: 20px;
-  font-size: 0.6rem;
-  font-weight: 700;
-}
-
-.agenda-premium-dashboard .icon-btn {
-  background: transparent;
-  border: 1px solid #e2e8f0;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.4rem;
-  color: #64748b;
-  cursor: pointer;
-  font-size: 0.75rem;
-}
-
-.agenda-premium-dashboard .icon-btn:hover {
-  background: #f1f5f9;
-}
-
-.agenda-premium-dashboard .calendar-premium-container {
-  padding: 0.8rem;
-}
-
-.agenda-premium-dashboard .calendar-premium-container .fc {
-  font-size: 12px;
-}
-
-.agenda-premium-dashboard .calendar-premium-container .fc-toolbar-title {
-  font-size: 1rem;
-}
-
-.agenda-premium-dashboard .calendar-premium-container .fc-button {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.7rem;
-}
-
-/* MÉTRICAS RÁPIDAS */
-.agenda-premium-dashboard .metrics-premium-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.6rem;
-  margin-bottom: 1rem;
-}
-
-.agenda-premium-dashboard .metric-premium-card {
-  background: white;
-  border-radius: 0.8rem;
-  padding: 0.7rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s;
-}
-
-.agenda-premium-dashboard .metric-premium-card:hover {
-  transform: translateY(-2px);
-  border-color: #c4b5fd;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
-}
-
-.agenda-premium-dashboard .metric-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-}
-
-.agenda-premium-dashboard .metric-info {
-  flex: 1;
-}
-
-.agenda-premium-dashboard .metric-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: block;
-  line-height: 1.2;
-}
-
-.agenda-premium-dashboard .metric-label {
-  font-size: 0.6rem;
-  color: #64748b;
-}
-
-/* PIPELINE KANBAN */
-.agenda-premium-dashboard .pipeline-premium-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
-
-.agenda-premium-dashboard .pipeline-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.agenda-premium-dashboard .pipeline-card-header i {
-  color: #7430e2;
-  font-size: 0.9rem;
-}
-
-.agenda-premium-dashboard .pipeline-card-header h3 {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-  flex: 1;
-}
-
-.agenda-premium-dashboard .pipeline-count {
-  font-size: 0.65rem;
-  background: #e2e8f0;
-  padding: 0.15rem 0.4rem;
-  border-radius: 20px;
-  color: #475569;
-}
-
-.agenda-premium-dashboard .pipeline-kanban {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.8rem;
-  max-height: 380px;
-  overflow-y: auto;
-}
-
-.agenda-premium-dashboard .pipeline-column {
-  background: #f8fafc;
-  border-radius: 0.6rem;
-  overflow: hidden;
-}
-
-.agenda-premium-dashboard .column-header {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.7rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.agenda-premium-dashboard .column-count {
-  margin-left: auto;
-  padding: 0.1rem 0.35rem;
-  border-radius: 20px;
-  font-size: 0.6rem;
-  color: white;
-}
-
-.agenda-premium-dashboard .column-cards {
-  padding: 0.4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  max-height: 160px;
-  overflow-y: auto;
-}
-
-.agenda-premium-dashboard .pipeline-item {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  border: 1px solid #e2e8f0;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.agenda-premium-dashboard .pipeline-item:hover {
-  border-color: #7430e2;
-  transform: translateX(2px);
-}
-
-.agenda-premium-dashboard .item-title {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.2rem;
-}
-
-.agenda-premium-dashboard .item-time {
-  font-size: 0.6rem;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  margin-bottom: 0.15rem;
-}
-
-.agenda-premium-dashboard .item-contact {
-  font-size: 0.6rem;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.agenda-premium-dashboard .column-more {
-  font-size: 0.6rem;
-  color: #7430e2;
-  padding: 0.3rem;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* AGENTES CARD */
-.agenda-premium-dashboard .agents-premium-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-}
-
-.agenda-premium-dashboard .agents-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.7rem 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.agenda-premium-dashboard .agents-card-header > div {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.agenda-premium-dashboard .agents-card-header i {
-  color: #7430e2;
-  font-size: 0.9rem;
-}
-
-.agenda-premium-dashboard .agents-card-header h3 {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.agenda-premium-dashboard .btn-mini {
-  background: transparent;
-  border: 1px solid #e2e8f0;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.4rem;
-  font-size: 0.65rem;
-  gap: 0.25rem;
-}
-
-.agenda-premium-dashboard .agents-list {
-  padding: 0.8rem;
-  max-height: 280px;
-  overflow-y: auto;
-}
-
-.agenda-premium-dashboard .agent-add-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.agenda-premium-dashboard .agent-add-form input {
-  padding: 0.4rem;
-  font-size: 0.7rem;
-  border-radius: 0.4rem;
-  border: 1px solid #e2e8f0;
-}
-
-.agenda-premium-dashboard .agent-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem;
-  border-radius: 0.6rem;
-  transition: all 0.2s;
-}
-
-.agenda-premium-dashboard .agent-item:hover {
-  background: #f8fafc;
-}
-
-.agenda-premium-dashboard .agent-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: 700;
-  color: white;
-}
-
-.agenda-premium-dashboard .agent-info {
-  flex: 1;
-}
-
-.agenda-premium-dashboard .agent-info strong {
-  font-size: 0.75rem;
-  color: #0f172a;
-  display: block;
-}
-
-.agenda-premium-dashboard .agent-info span {
-  font-size: 0.65rem;
-  color: #64748b;
-  display: block;
-}
-
-.agenda-premium-dashboard .agent-info small {
-  font-size: 0.55rem;
-  color: #94a3b8;
-}
-
-.agenda-premium-dashboard .role-badge {
-  background: #e0e7ff;
-  color: #4f46e5;
-  padding: 0.15rem 0.4rem;
-  border-radius: 20px;
-  font-size: 0.6rem;
-  font-weight: 700;
-}
-
-.agenda-premium-dashboard .empty-agents {
-  text-align: center;
-  padding: 1.5rem;
-  color: #64748b;
-}
-
-.agenda-premium-dashboard .empty-agents i {
-  font-size: 1.5rem;
-  color: #cbd5e1;
-  margin-bottom: 0.3rem;
-}
-
-.agenda-premium-dashboard .empty-agents p {
-  font-size: 0.75rem;
-  margin: 0;
-}
-
-.agenda-premium-dashboard .empty-agents span {
-  font-size: 0.65rem;
-}
-
-/* MODAL PREMIUM */
-.agenda-premium-dashboard .modal-premium-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(8px);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.agenda-premium-dashboard .modal-premium-container {
-  background: white;
-  border-radius: 1.2rem;
-  width: min(720px, 95%);
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-}
-
-.agenda-premium-dashboard .modal-premium-header {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1rem 1.2rem;
-  background: linear-gradient(135deg, #f8fafc, #ffffff);
-  border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
-}
-
-.agenda-premium-dashboard .modal-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.1rem;
-}
-
-.agenda-premium-dashboard .modal-premium-header h2 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.agenda-premium-dashboard .modal-premium-header p {
-  font-size: 0.65rem;
-  color: #64748b;
-  margin: 0;
-}
-
-.agenda-premium-dashboard .modal-close {
-  margin-left: auto;
-  background: transparent;
-  border: none;
-  font-size: 1rem;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 0.3rem;
-}
-
-.agenda-premium-dashboard .modal-close:hover {
-  color: #ef4444;
-}
-
-.agenda-premium-dashboard .modal-premium-body {
-  padding: 1.2rem;
-}
-
-.agenda-premium-dashboard .form-two-columns {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.8rem;
-}
-
-.agenda-premium-dashboard .input-group-premium {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.agenda-premium-dashboard .input-group-premium.full-width {
-  grid-column: span 2;
-}
-
-.agenda-premium-dashboard .input-group-premium label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.agenda-premium-dashboard .input-group-premium label i {
-  color: #7430e2;
-  font-size: 0.65rem;
-}
-
-.agenda-premium-dashboard .input-group-premium input,
-.agenda-premium-dashboard .input-group-premium select,
-.agenda-premium-dashboard .input-group-premium textarea {
-  padding: 0.5rem;
-  border-radius: 0.6rem;
-  border: 1px solid #e2e8f0;
-  font-size: 0.75rem;
-  transition: all 0.2s;
-}
-
-.agenda-premium-dashboard .input-group-premium input:focus,
-.agenda-premium-dashboard .input-group-premium select:focus,
-.agenda-premium-dashboard .input-group-premium textarea:focus {
-  outline: none;
-  border-color: #7430e2;
-  box-shadow: 0 0 0 3px rgba(116, 48, 226, 0.1);
-}
-
-.agenda-premium-dashboard .modal-premium-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.6rem;
-  padding: 0.8rem 1.2rem;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-
-.agenda-premium-dashboard .btn-cancel {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  padding: 0.5rem 1rem;
-  border-radius: 0.6rem;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-.agenda-premium-dashboard .btn-cancel:hover {
-  background: #e2e8f0;
-}
-
-.agenda-premium-dashboard .btn-save {
-  background: linear-gradient(135deg, #7430e2, #2563eb);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.6rem;
-  color: white;
-  font-weight: 600;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.agenda-premium-dashboard .btn-save:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(116, 48, 226, 0.3);
-}
-
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .agenda-premium-dashboard .agenda-premium-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .agenda-premium-dashboard .hero-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .agenda-premium-dashboard .hero-stats {
-    margin-left: 0;
-  }
-  
-  .agenda-premium-dashboard .hero-btn-primary {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .agenda-premium-dashboard .form-two-columns {
-    grid-template-columns: 1fr;
-  }
-  
-  .agenda-premium-dashboard .input-group-premium.full-width {
-    grid-column: span 1;
-  }
-}   
 
         /* NEW AGENDA AI BOX STYLES */
         .agenda-bot-box {
@@ -9155,441 +7552,365 @@ async function updateUser(e) {
           </div>
         </header>
 
-        {/* ======================== AGENDA AI - PREMIUM ULTRA ======================== */}
-{tab === 'agenda_ai' && (
-  <section className="agenda-premium-dashboard">
-    
-    {/* HEADER PREMIUM CON EFECTO GLASS */}
-    <div className="agenda-premium-hero">
-      <div className="hero-glow-bg"></div>
-      <div className="hero-content">
-        <div className="hero-icon">
-          <i className="fas fa-calendar-check"></i>
-          <div className="hero-pulse"></div>
-        </div>
-        <div className="hero-text">
-          <h1>Agenda AI</h1>
-          <p>Gestión inteligente de citas y seguimiento automatizado</p>
-        </div>
-        <div className="hero-stats">
-          <div className="hero-stat-item">
-            <span className="stat-value">{agendaMetrics.today || 0}</span>
-            <span className="stat-label">Hoy</span>
-          </div>
-          <div className="hero-stat-divider"></div>
-          <div className="hero-stat-item">
-            <span className="stat-value">{agendaMetrics.scheduled || 0}</span>
-            <span className="stat-label">Pendientes</span>
-          </div>
-          <div className="hero-stat-divider"></div>
-          <div className="hero-stat-item">
-            <span className="stat-value">{agendaMetrics.completed || 0}</span>
-            <span className="stat-label">Completadas</span>
-          </div>
-        </div>
-        <button className="hero-btn-primary" onClick={() => setShowAppointmentModal(true)}>
-          <i className="fas fa-plus-circle"></i>
-          <span>Nueva cita</span>
-        </button>
-      </div>
-    </div>
+        {/* ======================== AGENDA AI ======================== */}
+        {tab === 'agenda_ai' && (
+          <section className="stack">
+            
+            <section className="metric-grid">
+              <div className="metric-card">
+                <strong>{agendaMetrics.today || 0}</strong>
+                <span>Citas hoy</span>
+              </div>
 
-    {/* GRID PRINCIPAL 2 COLUMNAS */}
-    <div className="agenda-premium-grid">
-      
-      {/* COLUMNA IZQUIERDA - CALENDARIO PREMIUM */}
-      <div className="agenda-calendar-wrapper">
-        <div className="calendar-card-premium">
-          <div className="calendar-card-header">
-            <div className="header-left">
-              <i className="fas fa-calendar-alt"></i>
-              <h3>Calendario de citas</h3>
-              <span className="header-badge">Sincronizado</span>
-            </div>
-            <div className="header-right">
-              <button className="icon-btn" onClick={() => loadAgenda()}>
-                <i className="fas fa-sync-alt"></i>
-              </button>
-            </div>
-          </div>
-          <div className="calendar-premium-container">
-            <FullCalendar
-              plugins={[
-                dayGridPlugin,
-                timeGridPlugin,
-                interactionPlugin
-              ]}
-              initialView="timeGridWeek"
-              editable={true}
-              selectable={true}
-              height={650}
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-              }}
-              buttonText={{
-                today: 'Hoy',
-                month: 'Mes',
-                week: 'Semana',
-                day: 'Día'
-              }}
-              events={appointments.map(a => ({
-                id: a.id,
-                title: a.title || a.contact_name || 'Cita',
-                start: a.start_at,
-                end: a.end_at,
-                backgroundColor: a.status === 'confirmed' ? '#10b981' : 
-                                 a.status === 'completed' ? '#6366f1' :
-                                 a.status === 'cancelled' ? '#ef4444' : '#7430e2',
-                borderColor: 'transparent',
-                extendedProps: a
-              }))}
-              eventClick={(info) => {
-                const ap = info.event.extendedProps
-                setSelectedAppointment(ap)
-                setAppointmentForm({
-                  title: ap.title || '',
-                  contact_name: ap.contact_name || '',
-                  contact_phone: ap.contact_phone || '',
-                  contact_email: ap.contact_email || '',
-                  status: ap.status || 'scheduled',
-                  meeting_type: ap.meeting_type || 'call',
-                  meeting_link: ap.meeting_link || '',
-                  location: ap.location || '',
-                  notes: ap.notes || '',
-                  start_at: ap.start_at?.slice(0,16) || '',
-                  end_at: ap.end_at?.slice(0,16) || '',
-                  timezone: ap.timezone || 'America/Bogota',
-                  lead_score: ap.lead_score || 70
-                })
-                setShowAppointmentModal(true)
-              }}
-              eventClassNames="calendar-event-premium"
-            />
-          </div>
-        </div>
-      </div>
+              <div className="metric-card">
+                <strong>{agendaMetrics.scheduled || 0}</strong>
+                <span>Agendadas</span>
+              </div>
 
-      {/* COLUMNA DERECHA - PIPELINE Y AGENTES */}
-      <div className="agenda-side-wrapper">
-        
-        {/* TARJETA DE MÉTRICAS RÁPIDAS */}
-        <div className="metrics-premium-row">
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
-              <i className="fas fa-calendar-check"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{agendaMetrics.today || 0}</span>
-              <span className="metric-label">Citas hoy</span>
-            </div>
-          </div>
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
-              <i className="fas fa-check-circle"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{agendaMetrics.confirmed || 0}</span>
-              <span className="metric-label">Confirmadas</span>
-            </div>
-          </div>
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
-              <i className="fas fa-times-circle"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{agendaMetrics.no_show || 0}</span>
-              <span className="metric-label">No asistieron</span>
-            </div>
-          </div>
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
-              <i className="fas fa-chart-line"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{Math.round((agendaMetrics.completed / (agendaMetrics.scheduled || 1)) * 100)}%</span>
-              <span className="metric-label">Efectividad</span>
-            </div>
-          </div>
-        </div>
+              <div className="metric-card">
+                <strong>{agendaMetrics.confirmed || 0}</strong>
+                <span>Confirmadas</span>
+              </div>
 
-        {/* PIPELINE DE CITAS - KANBAN STYLE */}
-        <div className="pipeline-premium-card">
-          <div className="pipeline-card-header">
-            <i className="fas fa-funnel-dollar"></i>
-            <h3>Pipeline de citas</h3>
-            <span className="pipeline-count">{appointments.length} total</span>
-          </div>
-          <div className="pipeline-kanban">
-            {[
-              { status: 'scheduled', label: 'Agendadas', icon: 'fa-clock', color: '#3b82f6', bg: '#eff6ff' },
-              { status: 'confirmed', label: 'Confirmadas', icon: 'fa-check-circle', color: '#10b981', bg: '#dcfce7' },
-              { status: 'completed', label: 'Completadas', icon: 'fa-trophy', color: '#8b5cf6', bg: '#f5f3ff' },
-              { status: 'no_show', label: 'No asistió', icon: 'fa-user-slash', color: '#ef4444', bg: '#fee2e2' },
-              { status: 'cancelled', label: 'Canceladas', icon: 'fa-ban', color: '#6b7280', bg: '#f3f4f6' }
-            ].map(column => (
-              <div key={column.status} className="pipeline-column">
-                <div className="column-header" style={{ background: column.bg }}>
-                  <i className={`fas ${column.icon}`} style={{ color: column.color }}></i>
-                  <span>{column.label}</span>
-                  <span className="column-count" style={{ background: column.color }}>
-                    {(appointments || []).filter(a => a.status === column.status).length}
-                  </span>
+              <div className="metric-card">
+                <strong>{agendaMetrics.completed || 0}</strong>
+                <span>Completadas</span>
+              </div>
+
+              <div className="metric-card">
+                <strong>{agendaMetrics.no_show || 0}</strong>
+                <span>No asistió</span>
+              </div>
+            </section>
+
+            <section className="panel-grid">
+              
+              <section className="stripe-card stack">
+                <div className="row between center">
+                  <div className="section-title">
+                    <i className="fas fa-calendar-check"></i>
+                    Agenda AI
+                  </div>
+
+                  <button
+                    onClick={() => setShowAppointmentModal(true)}
+                  >
+                    <i className="fas fa-plus"></i>
+                    Nueva cita
+                  </button>
                 </div>
-                <div className="column-cards">
-                  {(appointments || [])
-                    .filter(a => a.status === column.status)
-                    .slice(0, 4)
-                    .map(a => (
-                      <div key={a.id} className="pipeline-item" onClick={() => {
-                        setSelectedAppointment(a)
-                        setAppointmentForm({
-                          title: a.title || '',
-                          contact_name: a.contact_name || '',
-                          contact_phone: a.contact_phone || '',
-                          contact_email: a.contact_email || '',
-                          status: a.status || 'scheduled',
-                          meeting_type: a.meeting_type || 'call',
-                          meeting_link: a.meeting_link || '',
-                          location: a.location || '',
-                          notes: a.notes || '',
-                          start_at: a.start_at?.slice(0,16) || '',
-                          end_at: a.end_at?.slice(0,16) || '',
-                          timezone: a.timezone || 'America/Bogota',
-                          lead_score: a.lead_score || 70
-                        })
-                        setShowAppointmentModal(true)
-                      }}>
-                        <div className="item-title">{a.title || a.contact_name || 'Sin título'}</div>
-                        <div className="item-time">
-                          <i className="fas fa-clock"></i>
-                          {new Date(a.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} · {new Date(a.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+
+                <FullCalendar
+                  plugins={[
+                    dayGridPlugin,
+                    timeGridPlugin,
+                    interactionPlugin
+                  ]}
+                  initialView="timeGridWeek"
+                  editable={true}
+                  selectable={true}
+                  height={780}
+                  events={appointments.map(a => ({
+                    id: a.id,
+                    title: a.title || a.contact_name || 'Cita',
+                    start: a.start_at,
+                    end: a.end_at,
+                    extendedProps: a
+                  }))}
+                  eventClick={(info) => {
+                    const ap = info.event.extendedProps
+
+                    setSelectedAppointment(ap)
+
+                    setAppointmentForm({
+                      title: ap.title || '',
+                      contact_name: ap.contact_name || '',
+                      contact_phone: ap.contact_phone || '',
+                      contact_email: ap.contact_email || '',
+                      status: ap.status || 'scheduled',
+                      meeting_type: ap.meeting_type || 'call',
+                      meeting_link: ap.meeting_link || '',
+                      location: ap.location || '',
+                      notes: ap.notes || '',
+                      start_at: ap.start_at?.slice(0,16) || '',
+                      end_at: ap.end_at?.slice(0,16) || '',
+                      timezone: ap.timezone || 'America/Bogota',
+                      lead_score: ap.lead_score || 70
+                    })
+
+                    setShowAppointmentModal(true)
+                  }}
+                />
+              </section>
+
+              <section className="stack">
+
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    Pipeline IA
+                  </div>
+
+                  <div className="pipeline-grid">
+
+                    {[
+                      ['scheduled', 'Agendadas'],
+                      ['confirmed', 'Confirmadas'],
+                      ['completed', 'Completadas'],
+                      ['no_show', 'No asistió'],
+                      ['cancelled', 'Canceladas']
+                    ].map(([status, label]) => (
+                      <div key={status} className="pipeline-column">
+                        <div className="pipeline-header">
+                          {label}
                         </div>
-                        {a.contact_name && (
-                          <div className="item-contact">
-                            <i className="fas fa-user"></i>
-                            {a.contact_name}
-                          </div>
-                        )}
+
+                        {(appointments || [])
+                          .filter(a => a.status === status)
+                          .map(a => (
+                            <div
+                              key={a.id}
+                              className="pipeline-card"
+                            >
+                              <strong>
+                                {a.contact_name || 'Lead'}
+                              </strong>
+
+                              <div className="muted tiny">
+                                {a.title}
+                              </div>
+
+                              <div className="tiny muted">
+                                Score IA: {a.lead_score || 0}
+                              </div>
+
+                              <button
+                                className="danger tiny-btn"
+                                onClick={() => deleteAppointment(a.id)}
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                          ))}
                       </div>
                     ))}
-                  {(appointments || []).filter(a => a.status === column.status).length > 4 && (
-                    <div className="column-more">+{Math.abs((appointments || []).filter(a => a.status === column.status).length - 4)} más</div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* AGENTES Y MIEMBROS */}
-        <div className="agents-premium-card">
-          <div className="agents-card-header">
-            <div>
-              <i className="fas fa-users-gear"></i>
-              <h3>Agentes de ventas</h3>
-            </div>
-            <button className="btn-mini" onClick={createAppointmentAgent}>
-              <i className="fas fa-plus"></i>
-              <span style="
-                color: blue;
-            ">Agregar</span>
-            </button>
-          </div>
-          <div className="agents-list">
-            <div className="agent-add-form">
-              <input 
-                placeholder="Nombre" 
-                value={agentForm.name}
-                onChange={e => setAgentForm({...agentForm, name: e.target.value})}
-              />
-              <input 
-                placeholder="Email" 
-                value={agentForm.email}
-                onChange={e => setAgentForm({...agentForm, email: e.target.value})}
-              />
-              <input 
-                placeholder="WhatsApp" 
-                value={agentForm.whatsapp}
-                onChange={e => setAgentForm({...agentForm, whatsapp: e.target.value})}
-              />
-            </div>
-            {appointmentAgents.map(agent => (
-              <div key={agent.id} className="agent-item">
-                <div className="agent-avatar" style={{ background: agent.color || '#7430e2' }}>
-                  {agent.name?.charAt(0) || 'A'}
+                  </div>
+                </section>
+
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    Agentes IA
+                  </div>
+
+                  <div className="form-grid">
+
+                    <input
+                      placeholder="Nombre"
+                      value={agentForm.name}
+                      onChange={e => setAgentForm({
+                        ...agentForm,
+                        name: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Email"
+                      value={agentForm.email}
+                      onChange={e => setAgentForm({
+                        ...agentForm,
+                        email: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="WhatsApp"
+                      value={agentForm.whatsapp}
+                      onChange={e => setAgentForm({
+                        ...agentForm,
+                        whatsapp: e.target.value
+                      })}
+                    />
+
+                    <button onClick={createAppointmentAgent}>
+                      Crear agente
+                    </button>
+                  </div>
+
+                  <div className="template-list">
+                    {appointmentAgents.map(agent => (
+                      <div key={agent.id} className="template-card">
+                        <div className="row between">
+                          <strong>{agent.name}</strong>
+
+                          <span
+                            className="pill"
+                            style={{
+                              background: agent.color
+                            }}
+                          >
+                            {agent.role}
+                          </span>
+                        </div>
+
+                        <div className="muted tiny">
+                          {agent.email}
+                        </div>
+
+                        <div className="muted tiny">
+                          {agent.whatsapp}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+              </section>
+            </section>
+
+            {showAppointmentModal && (
+              <div className="modal-overlay">
+                <div className="modal-card large-modal">
+
+                  <div className="row between center">
+                    <div className="section-title">
+                      Nueva cita
+                    </div>
+
+                    <button
+                      className="danger tiny-btn"
+                      onClick={() => {
+                        setShowAppointmentModal(false)
+                        setSelectedAppointment(null)
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="form-grid">
+
+                    <input
+                      placeholder="Título"
+                      value={appointmentForm.title}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        title: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Nombre contacto"
+                      value={appointmentForm.contact_name}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        contact_name: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="WhatsApp"
+                      value={appointmentForm.contact_phone}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        contact_phone: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Email"
+                      value={appointmentForm.contact_email}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        contact_email: e.target.value
+                      })}
+                    />
+
+                    <input
+                      type="datetime-local"
+                      value={appointmentForm.start_at}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        start_at: e.target.value
+                      })}
+                    />
+
+                    <input
+                      type="datetime-local"
+                      value={appointmentForm.end_at}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        end_at: e.target.value
+                      })}
+                    />
+
+                    <select
+                      value={appointmentForm.status}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        status: e.target.value
+                      })}
+                    >
+                      <option value="scheduled">Agendada</option>
+                      <option value="confirmed">Confirmada</option>
+                      <option value="completed">Completada</option>
+                      <option value="no_show">No asistió</option>
+                      <option value="cancelled">Cancelada</option>
+                    </select>
+
+                    <select
+                      value={appointmentForm.meeting_type}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        meeting_type: e.target.value
+                      })}
+                    >
+                      <option value="call">Llamada</option>
+                      <option value="zoom">Zoom</option>
+                      <option value="meet">Google Meet</option>
+                      <option value="presential">Presencial</option>
+                    </select>
+
+                    <input
+                      placeholder="Link reunión"
+                      value={appointmentForm.meeting_link}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        meeting_link: e.target.value
+                      })}
+                    />
+
+                    <input
+                      placeholder="Ubicación"
+                      value={appointmentForm.location}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        location: e.target.value
+                      })}
+                    />
+
+                    <textarea
+                      placeholder="Notas"
+                      value={appointmentForm.notes}
+                      onChange={e => setAppointmentForm({
+                        ...appointmentForm,
+                        notes: e.target.value
+                      })}
+                    />
+
+                  </div>
+
+                  <button
+                    className="full"
+                    onClick={createAppointment}
+                  >
+                    Guardar cita
+                  </button>
+
                 </div>
-                <div className="agent-info">
-                  <strong>{agent.name}</strong>
-                  <span>{agent.email}</span>
-                  <small>{agent.whatsapp}</small>
-                </div>
-                <div className="agent-role">
-                  <span className="role-badge">{agent.role || 'sales'}</span>
-                </div>
-              </div>
-            ))}
-            {appointmentAgents.length === 0 && (
-              <div className="empty-agents">
-                <i className="fas fa-user-plus"></i>
-                <p>No hay agentes</p>
-                <span>Agrega tu equipo de ventas</span>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* MODAL DE CITA PREMIUM */}
-    {showAppointmentModal && (
-      <div className="modal-premium-overlay">
-        <div className="modal-premium-container">
-          <div className="modal-premium-header">
-            <div className="modal-icon">
-              <i className="fas fa-calendar-plus"></i>
-            </div>
-            <div>
-              <h2>{selectedAppointment ? 'Editar cita' : 'Nueva cita'}</h2>
-              <p>Completa los detalles de la reunión</p>
-            </div>
-            <button className="modal-close" onClick={() => {
-              setShowAppointmentModal(false)
-              setSelectedAppointment(null)
-            }}>
-              <i className="fas fa-times"></i>
-            </button>
-          </div>
-          <div className="modal-premium-body">
-            <div className="form-two-columns">
-              <div className="input-group-premium">
-                <label><i className="fas fa-tag"></i> Título</label>
-                <input 
-                  placeholder="Ej: Reunión con cliente" 
-                  value={appointmentForm.title}
-                  onChange={e => setAppointmentForm({...appointmentForm, title: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-user"></i> Contacto</label>
-                <input 
-                  placeholder="Nombre del cliente" 
-                  value={appointmentForm.contact_name}
-                  onChange={e => setAppointmentForm({...appointmentForm, contact_name: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fab fa-whatsapp"></i> WhatsApp</label>
-                <input 
-                  placeholder="573000000000" 
-                  value={appointmentForm.contact_phone}
-                  onChange={e => setAppointmentForm({...appointmentForm, contact_phone: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-envelope"></i> Email</label>
-                <input 
-                  placeholder="cliente@email.com" 
-                  value={appointmentForm.contact_email}
-                  onChange={e => setAppointmentForm({...appointmentForm, contact_email: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-calendar-day"></i> Inicio</label>
-                <input 
-                  type="datetime-local" 
-                  value={appointmentForm.start_at}
-                  onChange={e => setAppointmentForm({...appointmentForm, start_at: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-calendar-day"></i> Fin</label>
-                <input 
-                  type="datetime-local" 
-                  value={appointmentForm.end_at}
-                  onChange={e => setAppointmentForm({...appointmentForm, end_at: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-chart-simple"></i> Estado</label>
-                <select 
-                  value={appointmentForm.status}
-                  onChange={e => setAppointmentForm({...appointmentForm, status: e.target.value})}
-                >
-                  <option value="scheduled">📅 Agendada</option>
-                  <option value="confirmed">✅ Confirmada</option>
-                  <option value="completed">🏆 Completada</option>
-                  <option value="no_show">❌ No asistió</option>
-                  <option value="cancelled">🚫 Cancelada</option>
-                </select>
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-video"></i> Tipo reunión</label>
-                <select 
-                  value={appointmentForm.meeting_type}
-                  onChange={e => setAppointmentForm({...appointmentForm, meeting_type: e.target.value})}
-                >
-                  <option value="call">📞 Llamada</option>
-                  <option value="zoom">🎥 Zoom</option>
-                  <option value="meet">📧 Google Meet</option>
-                  <option value="presential">🏢 Presencial</option>
-                </select>
-              </div>
-              <div className="input-group-premium full-width">
-                <label><i className="fas fa-link"></i> Link reunión</label>
-                <input 
-                  placeholder="https://meet.google.com/..." 
-                  value={appointmentForm.meeting_link}
-                  onChange={e => setAppointmentForm({...appointmentForm, meeting_link: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium full-width">
-                <label><i className="fas fa-location-dot"></i> Ubicación</label>
-                <input 
-                  placeholder="Dirección o lugar" 
-                  value={appointmentForm.location}
-                  onChange={e => setAppointmentForm({...appointmentForm, location: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium full-width">
-                <label><i className="fas fa-pen"></i> Notas</label>
-                <textarea 
-                  rows={3} 
-                  placeholder="Notas adicionales..." 
-                  value={appointmentForm.notes}
-                  onChange={e => setAppointmentForm({...appointmentForm, notes: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-star"></i> Score IA</label>
-                <input 
-                  type="number" 
-                  min="0" 
-                  max="100"
-                  value={appointmentForm.lead_score}
-                  onChange={e => setAppointmentForm({...appointmentForm, lead_score: Number(e.target.value)})}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="modal-premium-footer">
-            <button className="btn-cancel" onClick={() => {
-              setShowAppointmentModal(false)
-              setSelectedAppointment(null)
-            }}>
-              Cancelar
-            </button>
-            <button className="btn-save" onClick={createAppointment}>
-              <i className="fas fa-save"></i>
-              {selectedAppointment ? 'Actualizar cita' : 'Crear cita'}
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-  </section>
-)}
+          </section>
+        )}
 
         {/* ======================== ASSISTANT AI MEJORADO ======================== */}
         {tab === 'assistant' && (
