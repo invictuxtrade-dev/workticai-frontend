@@ -8782,6 +8782,24 @@ async function createAppointmentAgent() {
   }
 }
 
+function formatAgendaDateTime(value) {
+  if (!value) return ''
+
+  const clean = String(value).replace('T', ' ')
+  const parts = clean.split(' ')
+
+  if (parts.length < 2) return value
+
+  const datePart = parts[0]
+  const timePart = parts[1].slice(0, 5)
+
+  const [year, month, day] = datePart.split('-')
+
+  if (!year || !month || !day) return value
+
+  return `${day}/${month} · ${timePart}`
+}
+
 async function updateUser(e) {
   e.preventDefault()
 
@@ -9412,11 +9430,15 @@ async function updateUser(e) {
                         })
                         setShowAppointmentModal(true)
                       }}>
-                        <div className="item-title">{a.title || a.contact_name || 'Sin título'}</div>
+                        <div className="item-title">
+                          {a.title || a.contact_name || 'Sin título'}
+                        </div>
+
                         <div className="item-time">
                           <i className="fas fa-clock"></i>
-                          {new Date(a.start_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} · {new Date(a.start_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                          {formatAgendaDateTime(a.start_at)}
                         </div>
+
                         {a.contact_name && (
                           <div className="item-contact">
                             <i className="fas fa-user"></i>
