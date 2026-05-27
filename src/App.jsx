@@ -8149,9 +8149,12 @@ async function createAppointmentAgent() {
     setSocialImageLoading(true)
     try {
       const res = await api('/api/social/generate-image', {
-        method: 'POST',
-        body: JSON.stringify({ prompt: socialImagePrompt })
+      method: 'POST',
+      body: JSON.stringify({
+        client_id: selectedClientId || currentClientId,
+        prompt: socialCampaign.image_prompt
       })
+    })
       const imageURL = res.image_url || ''
       const resolvedURL = resolveMediaURL(imageURL)
       setSocialImageURL(resolvedURL)
