@@ -8140,36 +8140,46 @@ async function createAppointmentAgent() {
     }
   }
 
-  async function generateSocialImage() {
-    if (!socialImagePrompt.trim()) {
-      showNotice('Describe la imagen que quieres generar')
-      return
-    }
-    if (!requireLimit('ai_images_month', 'imágenes IA')) return
-    setSocialImageLoading(true)
-    try {
-      const res = await api('/api/social/generate-image', {
+ async function generateSocialImage() {
+  if (!selectedClientId) {
+    showNotice('Selecciona un cliente primero')
+    return
+  }
+
+  if (!socialImagePrompt.trim()) {
+    showNotice('Describe la imagen que quieres generar')
+    return
+  }
+
+  setSocialImageLoading(true)
+
+  try {
+    const res = await api(`/api/social/generate-image?client_id=${selectedClientId}`, {
       method: 'POST',
       body: JSON.stringify({
-        client_id: selectedClientId || currentClientId,
-        prompt: socialCampaign.image_prompt
+        prompt: socialImagePrompt
       })
     })
-      const imageURL = res.image_url || ''
-      const resolvedURL = resolveMediaURL(imageURL)
-      setSocialImageURL(resolvedURL)
-      setSocialCampaign(prev => ({
-        ...prev,
-        image_mode: 'ai',
-        image_prompt: socialImagePrompt
-      }))
-      showNotice('Imagen IA generada correctamente')
-    } catch (err) {
-      showNotice(err.message || 'Error generando imagen IA')
-    } finally {
-      setSocialImageLoading(false)
-    }
+
+    const imageURL = res.image_url || ''
+    const resolvedURL = resolveMediaURL(imageURL)
+
+    setSocialImageURL(resolvedURL)
+
+    setSocialCampaign(prev => ({
+      ...prev,
+      image_mode: 'ai',
+      image_prompt: socialImagePrompt,
+      manual_image_url: ''
+    }))
+
+    showNotice('Imagen IA generada correctamente')
+  } catch (err) {
+    showNotice(err.message || 'Error generando imagen IA')
+  } finally {
+    setSocialImageLoading(false)
   }
+}
 
   async function uploadSocialImage(file) {
     if (!file) return
