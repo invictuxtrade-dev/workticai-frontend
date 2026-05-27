@@ -9268,6 +9268,8 @@ async function updateUser(e) {
                 timeGridPlugin,
                 interactionPlugin
               ]}
+              locale="es"
+              timeZone="America/Bogota"
               initialView="timeGridWeek"
               editable={true}
               selectable={true}
@@ -9286,11 +9288,11 @@ async function updateUser(e) {
               events={appointments.map(a => ({
                 id: a.id,
                 title: a.title || a.contact_name || 'Cita',
-                start: a.start_at,
-                end: a.end_at,
-                backgroundColor: a.status === 'confirmed' ? '#10b981' : 
-                                 a.status === 'completed' ? '#6366f1' :
-                                 a.status === 'cancelled' ? '#ef4444' : '#7430e2',
+                start: String(a.start_at || '').replace(' ', 'T'),
+                end: String(a.end_at || '').replace(' ', 'T'),
+                backgroundColor: a.status === 'confirmed' ? '#10b981' :
+                                a.status === 'completed' ? '#6366f1' :
+                                a.status === 'cancelled' ? '#ef4444' : '#7430e2',
                 borderColor: 'transparent',
                 extendedProps: a
               }))}
@@ -9307,8 +9309,8 @@ async function updateUser(e) {
                   meeting_link: ap.meeting_link || '',
                   location: ap.location || '',
                   notes: ap.notes || '',
-                  start_at: ap.start_at?.slice(0,16) || '',
-                  end_at: ap.end_at?.slice(0,16) || '',
+                  start_at: String(ap.start_at || '').replace(' ', 'T').slice(0, 16),
+                  end_at: String(ap.end_at || '').replace(' ', 'T').slice(0, 16),
                   timezone: ap.timezone || 'America/Bogota',
                   lead_score: ap.lead_score || 70
                 })
