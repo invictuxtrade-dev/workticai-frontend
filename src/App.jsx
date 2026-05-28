@@ -6557,6 +6557,12 @@ async function saveBotAgendaSettings(botId) {
       return
     }
 
+    console.log('GUARDANDO AGENDA SETTINGS:', {
+  ...botAgendaSettings,
+  client_id: clientID,
+  bot_id: botId
+})
+
     await api('/api/agenda/settings', {
       method: 'PUT',
       body: JSON.stringify({
@@ -10381,15 +10387,15 @@ async function updateUser(e) {
             <div className="channel-input">
               <label>WhatsApp Business</label>
               <input
-                placeholder="Ej: 573118777641"
-                value={botAgendaSettings.notify_whatsapp || ''}
-                onChange={e =>
-                  setBotAgendaSettings({
-                    ...botAgendaSettings,
-                    notify_whatsapp: e.target.value
-                  })
-                }
-              />
+  value={botAgendaSettings.notify_whatsapp || ''}
+  onChange={e =>
+    setBotAgendaSettings(prev => ({
+      ...prev,
+      notify_whatsapp: e.target.value.replace(/\D/g, '')
+    }))
+  }
+  placeholder="573332450481"
+/>
               <small>Recibirás mensaje cuando se agende una cita</small>
             </div>
           </div>
