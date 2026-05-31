@@ -1371,6 +1371,91 @@ function PublicPaymentPage() {
   )
 }
 
+// ======================== PÁGINA PÚBLICA DE CONTRATO AGENCIA ========================
+function PublicAgencyContractPage() {
+  const id = window.location.pathname.replace('/agency-contract/', '').trim()
+  const [agency, setAgency] = useState(null)
+  const [form, setForm] = useState({
+    signed_by: '',
+    signed_email: '',
+    signature: ''
+  })
+  const [loading, setLoading] = useState(true)
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await api(`/api/public/agencies/${id}/contract`)
+        setAgency(data)
+        setForm({
+          signed_by: data.contract_signed_by || '',
+          signed_email: data.contract_signed_email || '',
+          signature: data.contract_signature || ''
+        })
+      } catch (err) {
+        setMessage(err.message || 'Contrato no encontrado')
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [id])
+
+  async function submit(e) {
+    e.preventDefault()
+
+    try {
+      const data = await api(`/api/public/agencies/${id}/contract/sign`, {
+        method: 'POST',
+        body: JSON.stringify(form)
+      })
+
+      setAgency(data)
+      setMessage('Contrato firmado correctamente.')
+    } catch (err) {
+      setMessage(err.message || 'No se pudo firmar el contrato')
+    }
+  }
+
+  if (loading) return <div className="auth-shell"><div className="auth-card">Cargando contrato...</div></div>
+  if (!agency) return <div className="auth-shell"><div className="auth-card">{message}</div></div>
+
+  return (
+    <div className="auth-shell auth-shell-pro">
+      <div className="auth-card auth-card-pro stack" style={{ maxWidth: 900 }}>
+        <div className="auth-brand">
+          <div className="auth-logo">
+            <img src="/logo.png" alt="Worktic AI" />
+          </div>
+        </div>
+
+        <h2>{agency.contract_title || 'Contrato Agencia Worktic AI'}</h2>
+        <p className="muted">Agencia: {agency.name}</p>
+
+        <div className="stripe-card" style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>
+          {agency.contract_body}
+        </div>
+
+        {agency.contract_status === 'signed' ? (
+          <div className="success-box">
+            Contrato firmado por {agency.contract_signed_by} el {agency.contract_signed_at ? new Date(agency.contract_signed_at).toLocaleString() : ''}
+          </div>
+        ) : (
+          <form onSubmit={submit} className="stack">
+            <input placeholder="Nombre del firmante" value={form.signed_by} onChange={e => setForm({ ...form, signed_by: e.target.value })} required />
+            <input placeholder="Correo del firmante" value={form.signed_email} onChange={e => setForm({ ...form, signed_email: e.target.value })} required />
+            <input placeholder="Firma digital: escribe tu nombre completo" value={form.signature} onChange={e => setForm({ ...form, signature: e.target.value })} required />
+            <button type="submit">Firmar y aceptar contrato</button>
+          </form>
+        )}
+
+        {message && <div className="notice">{message}</div>}
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   useEffect(() => {
     if (!document.getElementById('pro-styles')) {
@@ -6157,6 +6242,11 @@ export default function App() {
           margin-top: 1rem;
           font-size: 0.85rem;
         }
+
+        /* Agencies Styles */
+        .wrap {
+          flex-wrap: wrap;
+        }
       `
       document.head.appendChild(style)
     }
@@ -6243,6 +6333,27 @@ export default function App() {
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [activeSection, setActiveSection] = useState('social-ai')
 
+  // AGENCIES STATES
+  const [agencies, setAgencies] = useState([])
+  const [agencyForm, setAgencyForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    status: 'pending',
+    logo_url: '',
+    brand_color: '#7430e2',
+    brand_name: '',
+    custom_domain: '',
+    subdomain: '',
+    contract_title: '',
+    contract_body: '',
+    monthly_fee: '',
+    notes: ''
+  })
+  const [selectedAgency, setSelectedAgency] = useState(null)
+  const [agencyPrices, setAgencyPrices] = useState([])
+  const [agencyLoading, setAgencyLoading] = useState(false)
+
   // Agenda AI states
   const [appointments, setAppointments] = useState([])
   const [agendaMetrics, setAgendaMetrics] = useState({})
@@ -6293,7 +6404,6 @@ export default function App() {
 
   // Planes y suscripciones
   const [plans, setPlans] = useState([])
-  // NUEVOS ESTADOS PARA PLANES
   const [editingPlan, setEditingPlan] = useState(null)
   const [showDeletePlanModal, setShowDeletePlanModal] = useState(false)
   const [planToDelete, setPlanToDelete] = useState(null)
@@ -6419,12 +6529,10 @@ export default function App() {
   const [socialActionLoading, setSocialActionLoading] = useState(false)
   const [socialActionStep, setSocialActionStep] = useState(0)
   const [socialActionText, setSocialActionText] = useState('')
-  // SOCIAL STATE
   const [instagramData, setInstagramData] = useState(null)
   const [selectedPlatforms, setSelectedPlatforms] = useState(['facebook'])
   const [socialText, setSocialText] = useState('')
   const [socialImageUrl, setSocialImageUrl] = useState('')
-  // NUEVOS ESTADOS PARA VIDEO A SOCIAL AI
   const [socialMediaType, setSocialMediaType] = useState('image')
   const [selectedSocialVideoURL, setSelectedSocialVideoURL] = useState('')
   const [selectedSocialVideoId, setSelectedSocialVideoId] = useState('')
@@ -6433,7 +6541,6 @@ export default function App() {
 
   // AI Video Engine states
   const [videoPrompt, setVideoPrompt] = useState('')
-  // NUEVOS ESTADOS PARA VOZ IA
   const [voiceText, setVoiceText] = useState('')
   const [voiceLanguage, setVoiceLanguage] = useState('es')
   const [voiceGender, setVoiceGender] = useState('female')
@@ -6647,6 +6754,114 @@ export default function App() {
       .trim()
   }
 
+  // ======================== FUNCIONES AGENCIAS ========================
+  async function loadAgencies() {
+    try {
+      setAgencyLoading(true)
+      const data = await api('/api/agencies')
+      setAgencies(Array.isArray(data) ? data : [])
+    } catch (err) {
+      showNotice(err.message || 'No se pudieron cargar las agencias')
+    } finally {
+      setAgencyLoading(false)
+    }
+  }
+
+  async function createAgency(e) {
+    e.preventDefault()
+
+    try {
+      const payload = {
+        ...agencyForm,
+        monthly_fee: Number(agencyForm.monthly_fee || 0)
+      }
+
+      const item = await api('/api/agencies', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+
+      setSelectedAgency(item)
+      await loadAgencies()
+      showNotice('Agencia creada correctamente')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo crear la agencia')
+    }
+  }
+
+  async function updateAgency() {
+    if (!selectedAgency?.id) return
+
+    try {
+      const item = await api(`/api/agencies/${selectedAgency.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          ...selectedAgency,
+          monthly_fee: Number(selectedAgency.monthly_fee || 0)
+        })
+      })
+
+      setSelectedAgency(item)
+      await loadAgencies()
+      showNotice('Agencia actualizada')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo actualizar')
+    }
+  }
+
+  async function activateAgency(id) {
+    await api(`/api/agencies/${id}/activate`, {
+      method: 'POST',
+      body: JSON.stringify({ months: 1 })
+    })
+    await loadAgencies()
+    showNotice('Agencia activada')
+  }
+
+  async function suspendAgency(id) {
+    await api(`/api/agencies/${id}/suspend`, { method: 'POST' })
+    await loadAgencies()
+    showNotice('Agencia suspendida')
+  }
+
+  async function loadAgencyPrices(id) {
+    const data = await api(`/api/agencies/${id}/prices`)
+    setAgencyPrices(Array.isArray(data) ? data : [])
+  }
+
+  async function saveAgencyPrices() {
+    if (!selectedAgency?.id) return
+
+    await api(`/api/agencies/${selectedAgency.id}/prices`, {
+      method: 'POST',
+      body: JSON.stringify({ prices: agencyPrices })
+    })
+
+    showNotice('Precios especiales guardados')
+  }
+
+  async function createAgencyPaymentLink(agency) {
+    try {
+      const item = await api('/api/payment-links', {
+        method: 'POST',
+        body: JSON.stringify({
+          agency_id: agency.id,
+          payment_scope: 'agency_license',
+          concept: `Licencia mensual Agencia - ${agency.name}`,
+          description: `Pago mensual de licencia agencia Worktic AI para ${agency.name}`,
+          amount: Number(agency.monthly_fee || 0),
+          currency: 'USDT',
+          payment_method: 'usdt_bep20'
+        })
+      })
+
+      await navigator.clipboard.writeText(item.public_url)
+      showNotice('Link mensual de agencia creado y copiado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo crear link de agencia')
+    }
+  }
+
   // ======================== PAYMENT LINKS FUNCTIONS ========================
   async function loadPaymentLinks() {
     try {
@@ -6813,12 +7028,6 @@ async function saveBotAgendaSettings(botId) {
       showNotice('Selecciona un cliente antes de guardar Agenda AI')
       return
     }
-
-    console.log('GUARDANDO AGENDA SETTINGS:', {
-  ...botAgendaSettings,
-  client_id: clientID,
-  bot_id: botId
-})
 
     await api('/api/agenda/settings', {
       method: 'PUT',
@@ -7434,7 +7643,6 @@ async function createAppointmentAgent() {
     }
   }
 
-  // NUEVAS FUNCIONES PARA PLANES
   async function createPlan(e) {
     e.preventDefault()
     setBusy(true)
@@ -8712,6 +8920,13 @@ async function createAppointmentAgent() {
     }
   }, [selectedBotId])
 
+  // Agencies effect
+  useEffect(() => {
+    if (me && tab === 'agencies') {
+      loadAgencies()
+    }
+  }, [me, tab])
+
   // Payment Links effect
   useEffect(() => {
     if (me && tab === 'payment_links') {
@@ -9298,7 +9513,11 @@ async function updateUser(e) {
   }
 
   // ========== RENDER PRINCIPAL ==========
-  // Verificar si estamos en una ruta pública de pago
+  // Verificar rutas públicas primero
+  if (window.location.pathname.startsWith('/agency-contract/')) {
+    return <PublicAgencyContractPage />
+  }
+
   if (window.location.pathname.startsWith('/pay/')) {
     return <PublicPaymentPage />
   }
@@ -9480,6 +9699,13 @@ async function updateUser(e) {
           </button>
           {me.role === 'admin' && (
             <>
+              <button
+                className={tab === 'agencies' ? 'menu-item active' : 'menu-item'}
+                onClick={() => setTab('agencies')}
+                type="button"
+              >
+                <i className="fas fa-handshake"></i> Agencias
+              </button>
               <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
                 <i className="fas fa-building"></i> Clientes
               </button>
@@ -9525,6 +9751,196 @@ async function updateUser(e) {
             )}
           </div>
         </header>
+
+        {/* ======================== AGENCIAS SECTION ======================== */}
+        {tab === 'agencies' && (
+          <div className="stack gap-lg">
+            <section className="stripe-card stack">
+              <div className="row between">
+                <div>
+                  <h2>Agencias / Partners</h2>
+                  <p className="muted">
+                    Crea agencias dentro de Worktic AI, configura contrato, branding, precios especiales y licencia mensual.
+                  </p>
+                </div>
+                <button type="button" onClick={loadAgencies}>
+                  <i className="fas fa-sync"></i> Recargar
+                </button>
+              </div>
+
+              <form onSubmit={createAgency} className="grid-2">
+                <input placeholder="Nombre agencia" value={agencyForm.name} onChange={e => setAgencyForm({ ...agencyForm, name: e.target.value })} required />
+                <input placeholder="Email" value={agencyForm.email} onChange={e => setAgencyForm({ ...agencyForm, email: e.target.value })} />
+                <input placeholder="Teléfono" value={agencyForm.phone} onChange={e => setAgencyForm({ ...agencyForm, phone: e.target.value })} />
+                <input placeholder="Nombre de marca" value={agencyForm.brand_name} onChange={e => setAgencyForm({ ...agencyForm, brand_name: e.target.value })} />
+                <input placeholder="Logo URL" value={agencyForm.logo_url} onChange={e => setAgencyForm({ ...agencyForm, logo_url: e.target.value })} />
+                <input type="color" value={agencyForm.brand_color} onChange={e => setAgencyForm({ ...agencyForm, brand_color: e.target.value })} />
+                <input placeholder="Subdominio interno opcional" value={agencyForm.subdomain} onChange={e => setAgencyForm({ ...agencyForm, subdomain: e.target.value })} />
+                <input type="number" placeholder="Valor mensual convenio USDT" value={agencyForm.monthly_fee} onChange={e => setAgencyForm({ ...agencyForm, monthly_fee: e.target.value })} />
+                <textarea className="full" placeholder="Notas del convenio" value={agencyForm.notes} onChange={e => setAgencyForm({ ...agencyForm, notes: e.target.value })} />
+
+                <button className="full" type="submit">
+                  <i className="fas fa-plus"></i> Crear agencia
+                </button>
+              </form>
+            </section>
+
+            <section className="stripe-card stack">
+              <h2>Lista de agencias</h2>
+
+              {agencyLoading ? (
+                <div className="empty-box">Cargando agencias...</div>
+              ) : agencies.length === 0 ? (
+                <div className="empty-box">No hay agencias creadas</div>
+              ) : (
+                <div className="template-list">
+                  {agencies.map(a => (
+                    <div key={a.id} className="template-card stack">
+                      <div className="row between">
+                        <strong>{a.name}</strong>
+                        <span className="pill">{a.status}</span>
+                      </div>
+
+                      <div className="muted tiny">{a.email}</div>
+                      <div><strong>Marca:</strong> {a.brand_name || a.name}</div>
+                      <div><strong>Mensualidad:</strong> {a.monthly_fee} USDT</div>
+                      <div><strong>Contrato:</strong> {a.contract_status || 'Sin firmar'}</div>
+                      <div><strong>Vence:</strong> {a.expires_at ? new Date(a.expires_at).toLocaleDateString() : 'Sin activar'}</div>
+
+                      <div className="row wrap">
+                        <button type="button" onClick={() => setSelectedAgency(a)}>
+                          Editar
+                        </button>
+
+                        <button type="button" onClick={() => {
+                          setSelectedAgency(a)
+                          loadAgencyPrices(a.id)
+                        }}>
+                          Precios
+                        </button>
+
+                        <button type="button" onClick={() => createAgencyPaymentLink(a)}>
+                          Link mensual
+                        </button>
+
+                        <a
+                          className="secondary tiny-btn"
+                          href={`/agency-contract/${a.id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Contrato
+                        </a>
+
+                        <button type="button" onClick={() => activateAgency(a.id)}>
+                          Activar
+                        </button>
+
+                        <button type="button" className="danger" onClick={() => suspendAgency(a.id)}>
+                          Suspender
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {selectedAgency && (
+              <section className="stripe-card stack">
+                <h2>Editar agencia</h2>
+
+                <div className="grid-2">
+                  <input value={selectedAgency.name || ''} onChange={e => setSelectedAgency({ ...selectedAgency, name: e.target.value })} />
+                  <input value={selectedAgency.email || ''} onChange={e => setSelectedAgency({ ...selectedAgency, email: e.target.value })} />
+                  <input value={selectedAgency.phone || ''} onChange={e => setSelectedAgency({ ...selectedAgency, phone: e.target.value })} />
+                  <input value={selectedAgency.brand_name || ''} onChange={e => setSelectedAgency({ ...selectedAgency, brand_name: e.target.value })} />
+                  <input value={selectedAgency.logo_url || ''} onChange={e => setSelectedAgency({ ...selectedAgency, logo_url: e.target.value })} />
+                  <input type="color" value={selectedAgency.brand_color || '#7430e2'} onChange={e => setSelectedAgency({ ...selectedAgency, brand_color: e.target.value })} />
+                  <input type="number" value={selectedAgency.monthly_fee || ''} onChange={e => setSelectedAgency({ ...selectedAgency, monthly_fee: e.target.value })} />
+                  <select value={selectedAgency.status || 'pending'} onChange={e => setSelectedAgency({ ...selectedAgency, status: e.target.value })}>
+                    <option value="pending">Pendiente</option>
+                    <option value="active">Activa</option>
+                    <option value="expired">Vencida</option>
+                    <option value="suspended">Suspendida</option>
+                  </select>
+
+                  <textarea
+                    className="full"
+                    rows="10"
+                    placeholder="Cuerpo del contrato"
+                    value={selectedAgency.contract_body || ''}
+                    onChange={e => setSelectedAgency({ ...selectedAgency, contract_body: e.target.value })}
+                  />
+
+                  <button className="full" type="button" onClick={updateAgency}>
+                    Guardar cambios
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {selectedAgency && (
+              <section className="stripe-card stack">
+                <h2>Precios especiales por agencia</h2>
+
+                <button type="button" onClick={() => {
+                  setAgencyPrices([
+                    ...agencyPrices,
+                    {
+                      plan_slug: 'starter',
+                      normal_price: 17,
+                      agency_price: 10,
+                      billing_cycle: 'monthly',
+                      enabled: true
+                    }
+                  ])
+                }}>
+                  Agregar precio
+                </button>
+
+                {agencyPrices.map((p, i) => (
+                  <div key={i} className="grid-2">
+                    <select value={p.plan_slug} onChange={e => {
+                      const copy = [...agencyPrices]
+                      copy[i].plan_slug = e.target.value
+                      setAgencyPrices(copy)
+                    }}>
+                      <option value="starter">Starter</option>
+                      <option value="pro">Pro</option>
+                      <option value="business">Business</option>
+                    </select>
+
+                    <input type="number" placeholder="Precio normal" value={p.normal_price} onChange={e => {
+                      const copy = [...agencyPrices]
+                      copy[i].normal_price = Number(e.target.value)
+                      setAgencyPrices(copy)
+                    }} />
+
+                    <input type="number" placeholder="Precio agencia" value={p.agency_price} onChange={e => {
+                      const copy = [...agencyPrices]
+                      copy[i].agency_price = Number(e.target.value)
+                      setAgencyPrices(copy)
+                    }} />
+
+                    <select value={p.billing_cycle} onChange={e => {
+                      const copy = [...agencyPrices]
+                      copy[i].billing_cycle = e.target.value
+                      setAgencyPrices(copy)
+                    }}>
+                      <option value="monthly">Mensual</option>
+                      <option value="yearly">Anual</option>
+                    </select>
+                  </div>
+                ))}
+
+                <button type="button" onClick={saveAgencyPrices}>
+                  Guardar precios especiales
+                </button>
+              </section>
+            )}
+          </div>
+        )}
 
         {/* ======================== PAYMENT LINKS SECTION ======================== */}
         {tab === 'payment_links' && (
@@ -9658,446 +10074,438 @@ async function updateUser(e) {
         )}
 
         {/* ======================== AGENDA AI - PREMIUM ULTRA ======================== */}
-{tab === 'agenda_ai' && (
-  <section className="agenda-premium-dashboard">
-    
-    {/* HEADER PREMIUM CON EFECTO GLASS */}
-    <div className="agenda-premium-hero">
-      <div className="hero-glow-bg"></div>
-      <div className="hero-content">
-        <div className="hero-icon">
-          <i className="fas fa-calendar-check"></i>
-          <div className="hero-pulse"></div>
-        </div>
-        <div className="hero-text">
-          <h1>Agenda AI</h1>
-          <p>Gestión inteligente de citas y seguimiento automatizado</p>
-        </div>
-        <div className="hero-stats">
-          <div className="hero-stat-item">
-            <span className="stat-value">{agendaMetrics.today || 0}</span>
-            <span className="stat-label">Hoy</span>
-          </div>
-          <div className="hero-stat-divider"></div>
-          <div className="hero-stat-item">
-            <span className="stat-value">{agendaMetrics.scheduled || 0}</span>
-            <span className="stat-label">Pendientes</span>
-          </div>
-          <div className="hero-stat-divider"></div>
-          <div className="hero-stat-item">
-            <span className="stat-value">{agendaMetrics.completed || 0}</span>
-            <span className="stat-label">Completadas</span>
-          </div>
-        </div>
-        <button className="hero-btn-primary" onClick={() => setShowAppointmentModal(true)}>
-          <i className="fas fa-plus-circle"></i>
-          <span>Nueva cita</span>
-        </button>
-      </div>
-    </div>
-
-    {/* GRID PRINCIPAL 2 COLUMNAS */}
-    <div className="agenda-premium-grid">
-      
-      {/* COLUMNA IZQUIERDA - CALENDARIO PREMIUM */}
-      <div className="agenda-calendar-wrapper">
-        <div className="calendar-card-premium">
-          <div className="calendar-card-header">
-            <div className="header-left">
-              <i className="fas fa-calendar-alt"></i>
-              <h3>Calendario de citas</h3>
-              <span className="header-badge">Sincronizado</span>
-            </div>
-            <div className="header-right">
-              <button className="icon-btn" onClick={() => loadAgenda()}>
-                <i className="fas fa-sync-alt"></i>
-              </button>
-            </div>
-          </div>
-          <div className="calendar-premium-container">
-            <FullCalendar
-              plugins={[
-                dayGridPlugin,
-                timeGridPlugin,
-                interactionPlugin
-              ]}
-              locale="es"
-              timeZone="America/Bogota"
-              initialView="timeGridWeek"
-              editable={true}
-              selectable={true}
-              height={650}
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-              }}
-              buttonText={{
-                today: 'Hoy',
-                month: 'Mes',
-                week: 'Semana',
-                day: 'Día'
-              }}
-              events={appointments.map(a => ({
-                id: a.id,
-                title: a.title || a.contact_name || 'Cita',
-                start: String(a.start_at || '').replace(' ', 'T'),
-                end: String(a.end_at || '').replace(' ', 'T'),
-                backgroundColor: a.status === 'confirmed' ? '#10b981' :
-                                a.status === 'completed' ? '#6366f1' :
-                                a.status === 'cancelled' ? '#ef4444' : '#7430e2',
-                borderColor: 'transparent',
-                extendedProps: a
-              }))}
-              eventClick={(info) => {
-                const ap = info.event.extendedProps
-                setSelectedAppointment(ap)
-                setAppointmentForm({
-                  title: ap.title || '',
-                  contact_name: ap.contact_name || '',
-                  contact_phone: ap.contact_phone || '',
-                  contact_email: ap.contact_email || '',
-                  status: ap.status || 'scheduled',
-                  meeting_type: ap.meeting_type || 'call',
-                  meeting_link: ap.meeting_link || '',
-                  location: ap.location || '',
-                  notes: ap.notes || '',
-                  start_at: String(ap.start_at || '').replace(' ', 'T').slice(0, 16),
-                  end_at: String(ap.end_at || '').replace(' ', 'T').slice(0, 16),
-                  timezone: ap.timezone || 'America/Bogota',
-                  lead_score: ap.lead_score || 70
-                })
-                setShowAppointmentModal(true)
-              }}
-              eventClassNames="calendar-event-premium"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* COLUMNA DERECHA - PIPELINE Y AGENTES */}
-      <div className="agenda-side-wrapper">
-        
-        {/* TARJETA DE MÉTRICAS RÁPIDAS */}
-        <div className="metrics-premium-row">
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
-              <i className="fas fa-calendar-check"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{agendaMetrics.today || 0}</span>
-              <span className="metric-label">Citas hoy</span>
-            </div>
-          </div>
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
-              <i className="fas fa-check-circle"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{agendaMetrics.confirmed || 0}</span>
-              <span className="metric-label">Confirmadas</span>
-            </div>
-          </div>
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
-              <i className="fas fa-times-circle"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{agendaMetrics.no_show || 0}</span>
-              <span className="metric-label">No asistieron</span>
-            </div>
-          </div>
-          <div className="metric-premium-card">
-            <div className="metric-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
-              <i className="fas fa-chart-line"></i>
-            </div>
-            <div className="metric-info">
-              <span className="metric-value">{Math.round((agendaMetrics.completed / (agendaMetrics.scheduled || 1)) * 100)}%</span>
-              <span className="metric-label">Efectividad</span>
-            </div>
-          </div>
-        </div>
-
-        {/* PIPELINE DE CITAS - KANBAN STYLE */}
-        <div className="pipeline-premium-card">
-          <div className="pipeline-card-header">
-            <i className="fas fa-funnel-dollar"></i>
-            <h3>Pipeline de citas</h3>
-            <span className="pipeline-count">{appointments.length} total</span>
-          </div>
-          <div className="pipeline-kanban">
-            {[
-              { status: 'scheduled', label: 'Agendadas', icon: 'fa-clock', color: '#3b82f6', bg: '#eff6ff' },
-              { status: 'confirmed', label: 'Confirmadas', icon: 'fa-check-circle', color: '#10b981', bg: '#dcfce7' },
-              { status: 'completed', label: 'Completadas', icon: 'fa-trophy', color: '#8b5cf6', bg: '#f5f3ff' },
-              { status: 'no_show', label: 'No asistió', icon: 'fa-user-slash', color: '#ef4444', bg: '#fee2e2' },
-              { status: 'cancelled', label: 'Canceladas', icon: 'fa-ban', color: '#6b7280', bg: '#f3f4f6' }
-            ].map(column => (
-              <div key={column.status} className="pipeline-column">
-                <div className="column-header" style={{ background: column.bg }}>
-                  <i className={`fas ${column.icon}`} style={{ color: column.color }}></i>
-                  <span>{column.label}</span>
-                  <span className="column-count" style={{ background: column.color }}>
-                    {(appointments || []).filter(a => a.status === column.status).length}
-                  </span>
+        {tab === 'agenda_ai' && (
+          <section className="agenda-premium-dashboard">
+            
+            <div className="agenda-premium-hero">
+              <div className="hero-glow-bg"></div>
+              <div className="hero-content">
+                <div className="hero-icon">
+                  <i className="fas fa-calendar-check"></i>
+                  <div className="hero-pulse"></div>
                 </div>
-                <div className="column-cards">
-                  {(appointments || [])
-                    .filter(a => a.status === column.status)
-                    .slice(0, 4)
-                    .map(a => (
-                      <div key={a.id} className="pipeline-item" onClick={() => {
-                        setSelectedAppointment(a)
+                <div className="hero-text">
+                  <h1>Agenda AI</h1>
+                  <p>Gestión inteligente de citas y seguimiento automatizado</p>
+                </div>
+                <div className="hero-stats">
+                  <div className="hero-stat-item">
+                    <span className="stat-value">{agendaMetrics.today || 0}</span>
+                    <span className="stat-label">Hoy</span>
+                  </div>
+                  <div className="hero-stat-divider"></div>
+                  <div className="hero-stat-item">
+                    <span className="stat-value">{agendaMetrics.scheduled || 0}</span>
+                    <span className="stat-label">Pendientes</span>
+                  </div>
+                  <div className="hero-stat-divider"></div>
+                  <div className="hero-stat-item">
+                    <span className="stat-value">{agendaMetrics.completed || 0}</span>
+                    <span className="stat-label">Completadas</span>
+                  </div>
+                </div>
+                <button className="hero-btn-primary" onClick={() => setShowAppointmentModal(true)}>
+                  <i className="fas fa-plus-circle"></i>
+                  <span>Nueva cita</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="agenda-premium-grid">
+              
+              <div className="agenda-calendar-wrapper">
+                <div className="calendar-card-premium">
+                  <div className="calendar-card-header">
+                    <div className="header-left">
+                      <i className="fas fa-calendar-alt"></i>
+                      <h3>Calendario de citas</h3>
+                      <span className="header-badge">Sincronizado</span>
+                    </div>
+                    <div className="header-right">
+                      <button className="icon-btn" onClick={() => loadAgenda()}>
+                        <i className="fas fa-sync-alt"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="calendar-premium-container">
+                    <FullCalendar
+                      plugins={[
+                        dayGridPlugin,
+                        timeGridPlugin,
+                        interactionPlugin
+                      ]}
+                      locale="es"
+                      timeZone="America/Bogota"
+                      initialView="timeGridWeek"
+                      editable={true}
+                      selectable={true}
+                      height={650}
+                      headerToolbar={{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                      }}
+                      buttonText={{
+                        today: 'Hoy',
+                        month: 'Mes',
+                        week: 'Semana',
+                        day: 'Día'
+                      }}
+                      events={appointments.map(a => ({
+                        id: a.id,
+                        title: a.title || a.contact_name || 'Cita',
+                        start: String(a.start_at || '').replace(' ', 'T'),
+                        end: String(a.end_at || '').replace(' ', 'T'),
+                        backgroundColor: a.status === 'confirmed' ? '#10b981' :
+                                        a.status === 'completed' ? '#6366f1' :
+                                        a.status === 'cancelled' ? '#ef4444' : '#7430e2',
+                        borderColor: 'transparent',
+                        extendedProps: a
+                      }))}
+                      eventClick={(info) => {
+                        const ap = info.event.extendedProps
+                        setSelectedAppointment(ap)
                         setAppointmentForm({
-                          title: a.title || '',
-                          contact_name: a.contact_name || '',
-                          contact_phone: a.contact_phone || '',
-                          contact_email: a.contact_email || '',
-                          status: a.status || 'scheduled',
-                          meeting_type: a.meeting_type || 'call',
-                          meeting_link: a.meeting_link || '',
-                          location: a.location || '',
-                          notes: a.notes || '',
-                          start_at: a.start_at?.slice(0,16) || '',
-                          end_at: a.end_at?.slice(0,16) || '',
-                          timezone: a.timezone || 'America/Bogota',
-                          lead_score: a.lead_score || 70
+                          title: ap.title || '',
+                          contact_name: ap.contact_name || '',
+                          contact_phone: ap.contact_phone || '',
+                          contact_email: ap.contact_email || '',
+                          status: ap.status || 'scheduled',
+                          meeting_type: ap.meeting_type || 'call',
+                          meeting_link: ap.meeting_link || '',
+                          location: ap.location || '',
+                          notes: ap.notes || '',
+                          start_at: String(ap.start_at || '').replace(' ', 'T').slice(0, 16),
+                          end_at: String(ap.end_at || '').replace(' ', 'T').slice(0, 16),
+                          timezone: ap.timezone || 'America/Bogota',
+                          lead_score: ap.lead_score || 70
                         })
                         setShowAppointmentModal(true)
-                      }}>
-                        <div className="item-title">
-                          {a.title || a.contact_name || 'Sin título'}
-                        </div>
+                      }}
+                      eventClassNames="calendar-event-premium"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                        <div className="item-time">
-                          <i className="fas fa-clock"></i>
-                          {formatAgendaDateTime(a.start_at)}
-                        </div>
+              <div className="agenda-side-wrapper">
+                
+                <div className="metrics-premium-row">
+                  <div className="metric-premium-card">
+                    <div className="metric-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+                      <i className="fas fa-calendar-check"></i>
+                    </div>
+                    <div className="metric-info">
+                      <span className="metric-value">{agendaMetrics.today || 0}</span>
+                      <span className="metric-label">Citas hoy</span>
+                    </div>
+                  </div>
+                  <div className="metric-premium-card">
+                    <div className="metric-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
+                      <i className="fas fa-check-circle"></i>
+                    </div>
+                    <div className="metric-info">
+                      <span className="metric-value">{agendaMetrics.confirmed || 0}</span>
+                      <span className="metric-label">Confirmadas</span>
+                    </div>
+                  </div>
+                  <div className="metric-premium-card">
+                    <div className="metric-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
+                      <i className="fas fa-times-circle"></i>
+                    </div>
+                    <div className="metric-info">
+                      <span className="metric-value">{agendaMetrics.no_show || 0}</span>
+                      <span className="metric-label">No asistieron</span>
+                    </div>
+                  </div>
+                  <div className="metric-premium-card">
+                    <div className="metric-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+                      <i className="fas fa-chart-line"></i>
+                    </div>
+                    <div className="metric-info">
+                      <span className="metric-value">{Math.round((agendaMetrics.completed / (agendaMetrics.scheduled || 1)) * 100)}%</span>
+                      <span className="metric-label">Efectividad</span>
+                    </div>
+                  </div>
+                </div>
 
-                        {a.contact_name && (
-                          <div className="item-contact">
-                            <i className="fas fa-user"></i>
-                            {a.contact_name}
-                          </div>
-                        )}
+                <div className="pipeline-premium-card">
+                  <div className="pipeline-card-header">
+                    <i className="fas fa-funnel-dollar"></i>
+                    <h3>Pipeline de citas</h3>
+                    <span className="pipeline-count">{appointments.length} total</span>
+                  </div>
+                  <div className="pipeline-kanban">
+                    {[
+                      { status: 'scheduled', label: 'Agendadas', icon: 'fa-clock', color: '#3b82f6', bg: '#eff6ff' },
+                      { status: 'confirmed', label: 'Confirmadas', icon: 'fa-check-circle', color: '#10b981', bg: '#dcfce7' },
+                      { status: 'completed', label: 'Completadas', icon: 'fa-trophy', color: '#8b5cf6', bg: '#f5f3ff' },
+                      { status: 'no_show', label: 'No asistió', icon: 'fa-user-slash', color: '#ef4444', bg: '#fee2e2' },
+                      { status: 'cancelled', label: 'Canceladas', icon: 'fa-ban', color: '#6b7280', bg: '#f3f4f6' }
+                    ].map(column => (
+                      <div key={column.status} className="pipeline-column">
+                        <div className="column-header" style={{ background: column.bg }}>
+                          <i className={`fas ${column.icon}`} style={{ color: column.color }}></i>
+                          <span>{column.label}</span>
+                          <span className="column-count" style={{ background: column.color }}>
+                            {(appointments || []).filter(a => a.status === column.status).length}
+                          </span>
+                        </div>
+                        <div className="column-cards">
+                          {(appointments || [])
+                            .filter(a => a.status === column.status)
+                            .slice(0, 4)
+                            .map(a => (
+                              <div key={a.id} className="pipeline-item" onClick={() => {
+                                setSelectedAppointment(a)
+                                setAppointmentForm({
+                                  title: a.title || '',
+                                  contact_name: a.contact_name || '',
+                                  contact_phone: a.contact_phone || '',
+                                  contact_email: a.contact_email || '',
+                                  status: a.status || 'scheduled',
+                                  meeting_type: a.meeting_type || 'call',
+                                  meeting_link: a.meeting_link || '',
+                                  location: a.location || '',
+                                  notes: a.notes || '',
+                                  start_at: a.start_at?.slice(0,16) || '',
+                                  end_at: a.end_at?.slice(0,16) || '',
+                                  timezone: a.timezone || 'America/Bogota',
+                                  lead_score: a.lead_score || 70
+                                })
+                                setShowAppointmentModal(true)
+                              }}>
+                                <div className="item-title">
+                                  {a.title || a.contact_name || 'Sin título'}
+                                </div>
+
+                                <div className="item-time">
+                                  <i className="fas fa-clock"></i>
+                                  {formatAgendaDateTime(a.start_at)}
+                                </div>
+
+                                {a.contact_name && (
+                                  <div className="item-contact">
+                                    <i className="fas fa-user"></i>
+                                    {a.contact_name}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          {(appointments || []).filter(a => a.status === column.status).length > 4 && (
+                            <div className="column-more">+{Math.abs((appointments || []).filter(a => a.status === column.status).length - 4)} más</div>
+                          )}
+                        </div>
                       </div>
                     ))}
-                  {(appointments || []).filter(a => a.status === column.status).length > 4 && (
-                    <div className="column-more">+{Math.abs((appointments || []).filter(a => a.status === column.status).length - 4)} más</div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* AGENTES Y MIEMBROS */}
-        <div className="agents-premium-card">
-          <div className="agents-card-header">
-            <div>
-              <i className="fas fa-users-gear"></i>
-              <h3>Agentes de ventas</h3>
-            </div>
-            <button className="btn-mini" onClick={createAppointmentAgent}>
-              <i className="fas fa-plus"></i>
-              <span>Agregar</span>
-            </button>
-          </div>
-          <div className="agents-list">
-            <div className="agent-add-form">
-              <input 
-                placeholder="Nombre" 
-                value={agentForm.name}
-                onChange={e => setAgentForm({...agentForm, name: e.target.value})}
-              />
-              <input 
-                placeholder="Email" 
-                value={agentForm.email}
-                onChange={e => setAgentForm({...agentForm, email: e.target.value})}
-              />
-              <input 
-                placeholder="WhatsApp" 
-                value={agentForm.whatsapp}
-                onChange={e => setAgentForm({...agentForm, whatsapp: e.target.value})}
-              />
-            </div>
-            {appointmentAgents.map(agent => (
-              <div key={agent.id} className="agent-item">
-                <div className="agent-avatar" style={{ background: agent.color || '#7430e2' }}>
-                  {agent.name?.charAt(0) || 'A'}
-                </div>
-                <div className="agent-info">
-                  <strong>{agent.name}</strong>
-                  <span>{agent.email}</span>
-                  <small>{agent.whatsapp}</small>
-                </div>
-                <div className="agent-role">
-                  <span className="role-badge">{agent.role || 'sales'}</span>
+                <div className="agents-premium-card">
+                  <div className="agents-card-header">
+                    <div>
+                      <i className="fas fa-users-gear"></i>
+                      <h3>Agentes de ventas</h3>
+                    </div>
+                    <button className="btn-mini" onClick={createAppointmentAgent}>
+                      <i className="fas fa-plus"></i>
+                      <span>Agregar</span>
+                    </button>
+                  </div>
+                  <div className="agents-list">
+                    <div className="agent-add-form">
+                      <input 
+                        placeholder="Nombre" 
+                        value={agentForm.name}
+                        onChange={e => setAgentForm({...agentForm, name: e.target.value})}
+                      />
+                      <input 
+                        placeholder="Email" 
+                        value={agentForm.email}
+                        onChange={e => setAgentForm({...agentForm, email: e.target.value})}
+                      />
+                      <input 
+                        placeholder="WhatsApp" 
+                        value={agentForm.whatsapp}
+                        onChange={e => setAgentForm({...agentForm, whatsapp: e.target.value})}
+                      />
+                    </div>
+                    {appointmentAgents.map(agent => (
+                      <div key={agent.id} className="agent-item">
+                        <div className="agent-avatar" style={{ background: agent.color || '#7430e2' }}>
+                          {agent.name?.charAt(0) || 'A'}
+                        </div>
+                        <div className="agent-info">
+                          <strong>{agent.name}</strong>
+                          <span>{agent.email}</span>
+                          <small>{agent.whatsapp}</small>
+                        </div>
+                        <div className="agent-role">
+                          <span className="role-badge">{agent.role || 'sales'}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {appointmentAgents.length === 0 && (
+                      <div className="empty-agents">
+                        <i className="fas fa-user-plus"></i>
+                        <p>No hay agentes</p>
+                        <span>Agrega tu equipo de ventas</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            ))}
-            {appointmentAgents.length === 0 && (
-              <div className="empty-agents">
-                <i className="fas fa-user-plus"></i>
-                <p>No hay agentes</p>
-                <span>Agrega tu equipo de ventas</span>
+            </div>
+
+            {showAppointmentModal && (
+              <div className="modal-premium-overlay">
+                <div className="modal-premium-container">
+                  <div className="modal-premium-header">
+                    <div className="modal-icon">
+                      <i className="fas fa-calendar-plus"></i>
+                    </div>
+                    <div>
+                      <h2>{selectedAppointment ? 'Editar cita' : 'Nueva cita'}</h2>
+                      <p>Completa los detalles de la reunión</p>
+                    </div>
+                    <button className="modal-close" onClick={() => {
+                      setShowAppointmentModal(false)
+                      setSelectedAppointment(null)
+                    }}>
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <div className="modal-premium-body">
+                    <div className="form-two-columns">
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-tag"></i> Título</label>
+                        <input 
+                          placeholder="Ej: Reunión con cliente" 
+                          value={appointmentForm.title}
+                          onChange={e => setAppointmentForm({...appointmentForm, title: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-user"></i> Contacto</label>
+                        <input 
+                          placeholder="Nombre del cliente" 
+                          value={appointmentForm.contact_name}
+                          onChange={e => setAppointmentForm({...appointmentForm, contact_name: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fab fa-whatsapp"></i> WhatsApp</label>
+                        <input 
+                          placeholder="573000000000" 
+                          value={appointmentForm.contact_phone}
+                          onChange={e => setAppointmentForm({...appointmentForm, contact_phone: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-envelope"></i> Email</label>
+                        <input 
+                          placeholder="cliente@email.com" 
+                          value={appointmentForm.contact_email}
+                          onChange={e => setAppointmentForm({...appointmentForm, contact_email: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-calendar-day"></i> Inicio</label>
+                        <input 
+                          type="datetime-local" 
+                          value={appointmentForm.start_at}
+                          onChange={e => setAppointmentForm({...appointmentForm, start_at: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-calendar-day"></i> Fin</label>
+                        <input 
+                          type="datetime-local" 
+                          value={appointmentForm.end_at}
+                          onChange={e => setAppointmentForm({...appointmentForm, end_at: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-chart-simple"></i> Estado</label>
+                        <select 
+                          value={appointmentForm.status}
+                          onChange={e => setAppointmentForm({...appointmentForm, status: e.target.value})}
+                        >
+                          <option value="scheduled">📅 Agendada</option>
+                          <option value="confirmed">✅ Confirmada</option>
+                          <option value="completed">🏆 Completada</option>
+                          <option value="no_show">❌ No asistió</option>
+                          <option value="cancelled">🚫 Cancelada</option>
+                        </select>
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-video"></i> Tipo reunión</label>
+                        <select 
+                          value={appointmentForm.meeting_type}
+                          onChange={e => setAppointmentForm({...appointmentForm, meeting_type: e.target.value})}
+                        >
+                          <option value="call">📞 Llamada</option>
+                          <option value="zoom">🎥 Zoom</option>
+                          <option value="meet">📧 Google Meet</option>
+                          <option value="presential">🏢 Presencial</option>
+                        </select>
+                      </div>
+                      <div className="input-group-premium full-width">
+                        <label><i className="fas fa-link"></i> Link reunión</label>
+                        <input 
+                          placeholder="https://meet.google.com/..." 
+                          value={appointmentForm.meeting_link}
+                          onChange={e => setAppointmentForm({...appointmentForm, meeting_link: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium full-width">
+                        <label><i className="fas fa-location-dot"></i> Ubicación</label>
+                        <input 
+                          placeholder="Dirección o lugar" 
+                          value={appointmentForm.location}
+                          onChange={e => setAppointmentForm({...appointmentForm, location: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium full-width">
+                        <label><i className="fas fa-pen"></i> Notas</label>
+                        <textarea 
+                          rows={3} 
+                          placeholder="Notas adicionales..." 
+                          value={appointmentForm.notes}
+                          onChange={e => setAppointmentForm({...appointmentForm, notes: e.target.value})}
+                        />
+                      </div>
+                      <div className="input-group-premium">
+                        <label><i className="fas fa-star"></i> Score IA</label>
+                        <input 
+                          type="number" 
+                          min="0" 
+                          max="100"
+                          value={appointmentForm.lead_score}
+                          onChange={e => setAppointmentForm({...appointmentForm, lead_score: Number(e.target.value)})}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-premium-footer">
+                    <button className="btn-cancel" onClick={() => {
+                      setShowAppointmentModal(false)
+                      setSelectedAppointment(null)
+                    }}>
+                      Cancelar
+                    </button>
+                    <button className="btn-save" onClick={createAppointment}>
+                      <i className="fas fa-save"></i>
+                      {selectedAppointment ? 'Actualizar cita' : 'Crear cita'}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </section>
+        )}
 
-    {/* MODAL DE CITA PREMIUM */}
-    {showAppointmentModal && (
-      <div className="modal-premium-overlay">
-        <div className="modal-premium-container">
-          <div className="modal-premium-header">
-            <div className="modal-icon">
-              <i className="fas fa-calendar-plus"></i>
-            </div>
-            <div>
-              <h2>{selectedAppointment ? 'Editar cita' : 'Nueva cita'}</h2>
-              <p>Completa los detalles de la reunión</p>
-            </div>
-            <button className="modal-close" onClick={() => {
-              setShowAppointmentModal(false)
-              setSelectedAppointment(null)
-            }}>
-              <i className="fas fa-times"></i>
-            </button>
-          </div>
-          <div className="modal-premium-body">
-            <div className="form-two-columns">
-              <div className="input-group-premium">
-                <label><i className="fas fa-tag"></i> Título</label>
-                <input 
-                  placeholder="Ej: Reunión con cliente" 
-                  value={appointmentForm.title}
-                  onChange={e => setAppointmentForm({...appointmentForm, title: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-user"></i> Contacto</label>
-                <input 
-                  placeholder="Nombre del cliente" 
-                  value={appointmentForm.contact_name}
-                  onChange={e => setAppointmentForm({...appointmentForm, contact_name: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fab fa-whatsapp"></i> WhatsApp</label>
-                <input 
-                  placeholder="573000000000" 
-                  value={appointmentForm.contact_phone}
-                  onChange={e => setAppointmentForm({...appointmentForm, contact_phone: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-envelope"></i> Email</label>
-                <input 
-                  placeholder="cliente@email.com" 
-                  value={appointmentForm.contact_email}
-                  onChange={e => setAppointmentForm({...appointmentForm, contact_email: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-calendar-day"></i> Inicio</label>
-                <input 
-                  type="datetime-local" 
-                  value={appointmentForm.start_at}
-                  onChange={e => setAppointmentForm({...appointmentForm, start_at: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-calendar-day"></i> Fin</label>
-                <input 
-                  type="datetime-local" 
-                  value={appointmentForm.end_at}
-                  onChange={e => setAppointmentForm({...appointmentForm, end_at: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-chart-simple"></i> Estado</label>
-                <select 
-                  value={appointmentForm.status}
-                  onChange={e => setAppointmentForm({...appointmentForm, status: e.target.value})}
-                >
-                  <option value="scheduled">📅 Agendada</option>
-                  <option value="confirmed">✅ Confirmada</option>
-                  <option value="completed">🏆 Completada</option>
-                  <option value="no_show">❌ No asistió</option>
-                  <option value="cancelled">🚫 Cancelada</option>
-                </select>
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-video"></i> Tipo reunión</label>
-                <select 
-                  value={appointmentForm.meeting_type}
-                  onChange={e => setAppointmentForm({...appointmentForm, meeting_type: e.target.value})}
-                >
-                  <option value="call">📞 Llamada</option>
-                  <option value="zoom">🎥 Zoom</option>
-                  <option value="meet">📧 Google Meet</option>
-                  <option value="presential">🏢 Presencial</option>
-                </select>
-              </div>
-              <div className="input-group-premium full-width">
-                <label><i className="fas fa-link"></i> Link reunión</label>
-                <input 
-                  placeholder="https://meet.google.com/..." 
-                  value={appointmentForm.meeting_link}
-                  onChange={e => setAppointmentForm({...appointmentForm, meeting_link: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium full-width">
-                <label><i className="fas fa-location-dot"></i> Ubicación</label>
-                <input 
-                  placeholder="Dirección o lugar" 
-                  value={appointmentForm.location}
-                  onChange={e => setAppointmentForm({...appointmentForm, location: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium full-width">
-                <label><i className="fas fa-pen"></i> Notas</label>
-                <textarea 
-                  rows={3} 
-                  placeholder="Notas adicionales..." 
-                  value={appointmentForm.notes}
-                  onChange={e => setAppointmentForm({...appointmentForm, notes: e.target.value})}
-                />
-              </div>
-              <div className="input-group-premium">
-                <label><i className="fas fa-star"></i> Score IA</label>
-                <input 
-                  type="number" 
-                  min="0" 
-                  max="100"
-                  value={appointmentForm.lead_score}
-                  onChange={e => setAppointmentForm({...appointmentForm, lead_score: Number(e.target.value)})}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="modal-premium-footer">
-            <button className="btn-cancel" onClick={() => {
-              setShowAppointmentModal(false)
-              setSelectedAppointment(null)
-            }}>
-              Cancelar
-            </button>
-            <button className="btn-save" onClick={createAppointment}>
-              <i className="fas fa-save"></i>
-              {selectedAppointment ? 'Actualizar cita' : 'Crear cita'}
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-  </section>
-)}
-
-        {/* ======================== ASSISTANT AI MEJORADO ======================== */}
+        {/* ======================== ASSISTANT AI ======================== */}
         {tab === 'assistant' && (
           <section className="assistant-page stack gap-lg">
             <div className="assistant-hero stripe-card">
@@ -10237,7 +10645,6 @@ async function updateUser(e) {
         {/* ======================== DASHBOARD ======================== */}
         {tab === 'dashboard' && (
           <section className="stack gap-lg">
-            {/* Tarjetas de uso del plan - solo para clientes no admin */}
             {!isAdmin && (
               <div className="stripe-card stack">
                 <div className="row between center">
@@ -10533,7 +10940,6 @@ async function updateUser(e) {
                   </div>
                  {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
 <section className="agenda-premium-v2">
-  {/* Header con gradiente */}
   <div className="agenda-premium-v2-header">
     <div className="header-glow"></div>
     <div className="header-content">
@@ -10559,13 +10965,10 @@ async function updateUser(e) {
     </div>
   </div>
 
-  {/* Layout de dos columnas asimétricas */}
   <div className="agenda-premium-v2-grid">
     
-    {/* COLUMNA IZQUIERDA - Configuración principal */}
     <div className="agenda-col-left">
       
-      {/* Tarjeta de activación - Glassmorphism */}
       <div className="activation-card-v2">
         <div className="activation-bg"></div>
         <div className="activation-content">
@@ -10600,7 +11003,6 @@ async function updateUser(e) {
         </div>
       </div>
 
-      {/* Tarjeta de horarios - Diseño de agenda semanal */}
       <div className="schedule-card-v2">
         <div className="card-header-v2">
           <i className="fas fa-calendar-week"></i>
@@ -10689,7 +11091,6 @@ async function updateUser(e) {
         </div>
       </div>
 
-      {/* Tarjeta de duración y buffer */}
       <div className="duration-card-v2">
         <div className="card-header-v2">
           <i className="fas fa-hourglass-half"></i>
@@ -10743,10 +11144,8 @@ async function updateUser(e) {
       </div>
     </div>
 
-    {/* COLUMNA DERECHA - Configuración avanzada y notificaciones */}
     <div className="agenda-col-right">
       
-      {/* Tarjeta de recordatorios */}
       <div className="reminder-card-v2">
         <div className="card-header-v2">
           <i className="fas fa-bell"></i>
@@ -10789,7 +11188,6 @@ async function updateUser(e) {
         </div>
       </div>
 
-      {/* Tarjeta de notificaciones */}
       <div className="notifications-card-v2">
         <div className="card-header-v2">
           <i className="fas fa-broadcast-tower"></i>
@@ -10839,7 +11237,6 @@ async function updateUser(e) {
         </div>
       </div>
 
-      {/* Tarjeta de tipo de cita */}
       <div className="meeting-type-card-v2">
         <div className="card-header-v2">
           <i className="fas fa-video"></i>
@@ -10876,7 +11273,6 @@ async function updateUser(e) {
     </div>
   </div>
 
-  {/* Botón de guardar - Flotante premium */}
   <div className="save-floating-bar">
     <button
       className="btn-save-premium-v2"
@@ -10898,7 +11294,6 @@ async function updateUser(e) {
     </button>
   </div>
 
-  {/* Sección de próximos espacios */}
   <div className="slots-premium-v2">
     <div className="slots-header-v2">
       <div className="slots-title">
@@ -11235,7 +11630,7 @@ async function updateUser(e) {
                         <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
                         <td>{lead.bot_name}</td>
                         <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                                                 <td>
+                        <td>
                           <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
                             Ver chat
                           </button>
@@ -11331,7 +11726,6 @@ async function updateUser(e) {
                   <select value={socialCampaign.bot_id} onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}><option value="">Selecciona bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
                   <select value={socialCampaign.landing_id} onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}><option value="">Selecciona landing</option>{landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}</select>
                   
-                  {/* Selector de tipo de medio */}
                   <select
                     value={socialMediaType}
                     onChange={(e) => {
