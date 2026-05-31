@@ -1244,6 +1244,133 @@ const PlanGate = memo(function PlanGate({
   )
 })
 
+// ======================== PÁGINA PÚBLICA PARA LINKS DE PAGO ========================
+function PublicPaymentPage() {
+  const id = window.location.pathname.replace('/pay/', '').trim()
+  const [item, setItem] = useState(null)
+  const [form, setForm] = useState({
+    customer_name: '',
+    customer_email: '',
+    customer_phone: '',
+    tx_hash: ''
+  })
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await api(`/api/public/payment-links/${id}`)
+        setItem(data)
+        setForm({
+          customer_name: data.customer_name || '',
+          customer_email: data.customer_email || '',
+          customer_phone: data.customer_phone || '',
+          tx_hash: data.tx_hash || ''
+        })
+      } catch (err) {
+        setMessage(err.message || 'Link no encontrado')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
+  }, [id])
+
+  async function submit(e) {
+    e.preventDefault()
+    setSending(true)
+    setMessage('')
+
+    try {
+      const data = await api(`/api/public/payment-links/${id}/submit`, {
+        method: 'POST',
+        body: JSON.stringify(form)
+      })
+      setItem(data)
+      setMessage('Pago enviado para validación. Te confirmaremos cuando sea aprobado.')
+    } catch (err) {
+      setMessage(err.message || 'No se pudo enviar el pago')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="auth-shell"><div className="auth-card">Cargando pago...</div></div>
+  }
+
+  if (!item) {
+    return <div className="auth-shell"><div className="auth-card">{message || 'Link no encontrado'}</div></div>
+  }
+
+  return (
+    <div className="auth-shell auth-shell-pro">
+      <div className="auth-card auth-card-pro stack">
+        <div className="auth-brand">
+          <div className="auth-logo">
+            <img src="/logo.png" alt="Worktic AI" />
+          </div>
+        </div>
+
+        <h2>Link de Pago</h2>
+        <p className="muted">{item.description || 'Realiza el pago y reporta el hash de transacción.'}</p>
+
+        <div className="stripe-card stack">
+          <div><strong>Concepto:</strong> {item.concept}</div>
+          <div><strong>Monto:</strong> {item.amount} {item.currency}</div>
+          <div><strong>Red:</strong> USDT BEP20</div>
+          <div><strong>Wallet:</strong></div>
+          <input value={item.wallet_address || ''} readOnly />
+          <button type="button" onClick={() => navigator.clipboard.writeText(item.wallet_address || '')}>
+            Copiar wallet
+          </button>
+          <div><strong>Estado:</strong> {item.status}</div>
+        </div>
+
+        {item.status === 'approved' ? (
+          <div className="success-box">Pago aprobado correctamente.</div>
+        ) : (
+          <form onSubmit={submit} className="stack">
+            <input
+              placeholder="Nombre"
+              value={form.customer_name}
+              onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
+            />
+
+            <input
+              placeholder="Email"
+              value={form.customer_email}
+              onChange={(e) => setForm({ ...form, customer_email: e.target.value })}
+            />
+
+            <input
+              placeholder="WhatsApp"
+              value={form.customer_phone}
+              onChange={(e) => setForm({ ...form, customer_phone: e.target.value })}
+            />
+
+            <input
+              placeholder="Hash / TxID de la transacción"
+              value={form.tx_hash}
+              onChange={(e) => setForm({ ...form, tx_hash: e.target.value })}
+              required
+            />
+
+            <button disabled={sending}>
+              {sending ? 'Enviando...' : 'Enviar comprobante'}
+            </button>
+          </form>
+        )}
+
+        {message && <div className="notice">{message}</div>}
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   useEffect(() => {
     if (!document.getElementById('pro-styles')) {
@@ -1505,6 +1632,12 @@ export default function App() {
         .stripe-card:hover {
           box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08);
           transform: translateY(-2px);
+        }
+
+        .grid-2 {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
         }
 
         .metric-grid {
@@ -6004,6 +6137,26 @@ export default function App() {
           background: #f8fafc;
           border: 1px solid #e2e8f0;
         }
+
+        /* Payment Links Styles */
+        .payment-links-section {
+          padding: 1rem;
+        }
+        .success-box {
+          background: #d1fae5;
+          color: #065f46;
+          padding: 1rem;
+          border-radius: 0.75rem;
+          margin-top: 1rem;
+        }
+        .notice {
+          background: #e0e7ff;
+          color: #3730a3;
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          margin-top: 1rem;
+          font-size: 0.85rem;
+        }
       `
       document.head.appendChild(style)
     }
@@ -6191,6 +6344,22 @@ export default function App() {
   const [showInvoice, setShowInvoice] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [paymentQR, setPaymentQR] = useState('')
+
+  // PAYMENT LINKS STATES
+  const [paymentLinks, setPaymentLinks] = useState([])
+  const [paymentLinksLoading, setPaymentLinksLoading] = useState(false)
+
+  const [paymentLinkForm, setPaymentLinkForm] = useState({
+    client_id: '',
+    concept: '',
+    description: '',
+    amount: '',
+    currency: 'USDT',
+    payment_method: 'usdt_bep20',
+    customer_name: '',
+    customer_email: '',
+    customer_phone: ''
+  })
 
   // Clientes y usuarios
   const [clients, setClients] = useState([])
@@ -6476,6 +6645,94 @@ export default function App() {
     return (div.textContent || div.innerText || '')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
+  }
+
+  // ======================== PAYMENT LINKS FUNCTIONS ========================
+  async function loadPaymentLinks() {
+    try {
+      setPaymentLinksLoading(true)
+
+      let url = '/api/payment-links'
+      if (me?.role === 'admin' && selectedClientId) {
+        url += `?client_id=${encodeURIComponent(selectedClientId)}`
+      }
+
+      const data = await api(url)
+      setPaymentLinks(Array.isArray(data) ? data : [])
+    } catch (err) {
+      showNotice(err.message || 'No se pudieron cargar los links de pago')
+    } finally {
+      setPaymentLinksLoading(false)
+    }
+  }
+
+  async function createPaymentLink(e) {
+    e.preventDefault()
+
+    try {
+      setBusy(true)
+
+      const payload = {
+        ...paymentLinkForm,
+        amount: Number(paymentLinkForm.amount || 0)
+      }
+
+      await api('/api/payment-links', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+
+      setPaymentLinkForm({
+        client_id: '',
+        concept: '',
+        description: '',
+        amount: '',
+        currency: 'USDT',
+        payment_method: 'usdt_bep20',
+        customer_name: '',
+        customer_email: '',
+        customer_phone: ''
+      })
+
+      await loadPaymentLinks()
+      showNotice('Link de pago creado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo crear el link de pago')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function approvePaymentLink(id) {
+    try {
+      await api(`/api/payment-links/${id}/approve`, { method: 'POST' })
+      await loadPaymentLinks()
+      showNotice('Pago aprobado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo aprobar')
+    }
+  }
+
+  async function rejectPaymentLink(id) {
+    const reason = window.prompt('Motivo del rechazo:', 'Pago no validado')
+    if (reason === null) return
+
+    try {
+      await api(`/api/payment-links/${id}/reject`, {
+        method: 'POST',
+        body: JSON.stringify({ reason })
+      })
+      await loadPaymentLinks()
+      showNotice('Pago rechazado')
+    } catch (err) {
+      showNotice(err.message || 'No se pudo rechazar')
+    }
+  }
+
+  async function copyPaymentLink(url) {
+    if (!url) return
+    await navigator.clipboard.writeText(url)
+    showNotice('Link copiado')
   }
 
   // ======================== AGENDA AI FUNCTIONS ========================
@@ -8455,6 +8712,13 @@ async function createAppointmentAgent() {
     }
   }, [selectedBotId])
 
+  // Payment Links effect
+  useEffect(() => {
+    if (me && tab === 'payment_links') {
+      loadPaymentLinks()
+    }
+  }, [me, tab, selectedClientId])
+
   useEffect(() => {
     if (!selectedClientId && clients.length > 0) {
       setSelectedClientId(clients[0].id)
@@ -8588,6 +8852,12 @@ async function createAppointmentAgent() {
         await loadAgenda()
         await loadAgendaMetrics()
         await loadAppointmentAgents()
+        return
+      }
+
+      if (tab === 'payment_links') {
+        if (!selectedClientId && me?.role !== 'admin') return
+        await loadPaymentLinks()
         return
       }
     }, 30000)
@@ -9028,6 +9298,11 @@ async function updateUser(e) {
   }
 
   // ========== RENDER PRINCIPAL ==========
+  // Verificar si estamos en una ruta pública de pago
+  if (window.location.pathname.startsWith('/pay/')) {
+    return <PublicPaymentPage />
+  }
+
   if (!me) return <LoginScreen onAuth={(user) => {
     setMe(user)
     if (user.role !== 'admin') setForcePlanScreen(true)
@@ -9217,6 +9492,16 @@ async function updateUser(e) {
               <button className={tab === 'billing' ? 'menu-item active' : 'menu-item'} onClick={() => { setTab('billing'); loadPendingSubscriptions(); }} type="button">
                 <i className="fas fa-credit-card"></i> Billing
               </button>
+              <button
+                className={tab === 'payment_links' ? 'menu-item active' : 'menu-item'}
+                onClick={() => {
+                  setTab('payment_links')
+                  loadPaymentLinks()
+                }}
+                type="button"
+              >
+                <i className="fas fa-link"></i> Link de Pago
+              </button>
             </>
           )}
         </nav>
@@ -9240,6 +9525,137 @@ async function updateUser(e) {
             )}
           </div>
         </header>
+
+        {/* ======================== PAYMENT LINKS SECTION ======================== */}
+        {tab === 'payment_links' && (
+          <div className="stack gap-lg payment-links-section">
+            <section className="stripe-card stack">
+              <div className="row between">
+                <div>
+                  <h2>Links de Pago</h2>
+                  <p className="muted">Crea cobros en USDT BEP20 y valida pagos manualmente.</p>
+                </div>
+                <button type="button" onClick={loadPaymentLinks}>
+                  <i className="fas fa-sync"></i> Recargar
+                </button>
+              </div>
+
+              <form onSubmit={createPaymentLink} className="grid-2">
+                {me?.role === 'admin' && (
+                  <select
+                    value={paymentLinkForm.client_id}
+                    onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, client_id: e.target.value })}
+                  >
+                    <option value="">Cliente</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                )}
+
+                <input
+                  placeholder="Concepto"
+                  value={paymentLinkForm.concept}
+                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, concept: e.target.value })}
+                  required
+                />
+
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Monto"
+                  value={paymentLinkForm.amount}
+                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, amount: e.target.value })}
+                  required
+                />
+
+                <select
+                  value={paymentLinkForm.currency}
+                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, currency: e.target.value })}
+                >
+                  <option value="USDT">USDT</option>
+                  <option value="USD">USD</option>
+                  <option value="COP">COP</option>
+                </select>
+
+                <input
+                  placeholder="Nombre del cliente opcional"
+                  value={paymentLinkForm.customer_name}
+                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_name: e.target.value })}
+                />
+
+                <input
+                  placeholder="Email opcional"
+                  value={paymentLinkForm.customer_email}
+                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_email: e.target.value })}
+                />
+
+                <textarea
+                  className="full"
+                  placeholder="Descripción"
+                  value={paymentLinkForm.description}
+                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, description: e.target.value })}
+                />
+
+                <button className="full" disabled={busy}>
+                  <i className="fas fa-plus"></i> Crear link de pago
+                </button>
+              </form>
+            </section>
+
+            <section className="stripe-card stack">
+              <h2>Pagos creados</h2>
+
+              {paymentLinksLoading ? (
+                <div className="empty-box">Cargando links...</div>
+              ) : paymentLinks.length === 0 ? (
+                <div className="empty-box">No hay links de pago</div>
+              ) : (
+                <div className="template-list">
+                  {paymentLinks.map(item => (
+                    <div key={item.id} className="template-card stack">
+                      <div className="row between">
+                        <strong>{item.concept}</strong>
+                        <span className="pill">{item.status}</span>
+                      </div>
+
+                      <div className="muted tiny">{item.description || 'Sin descripción'}</div>
+                      <div><strong>Monto:</strong> {item.amount} {item.currency}</div>
+                      <div><strong>Wallet:</strong> {item.wallet_address}</div>
+                      <div><strong>Cliente:</strong> {item.customer_name || 'Sin nombre'}</div>
+                      <div><strong>Hash:</strong> {item.tx_hash || 'Pendiente'}</div>
+
+                      {item.public_url && (
+                        <div className="row">
+                          <input value={item.public_url} readOnly />
+                          <button type="button" onClick={() => copyPaymentLink(item.public_url)}>
+                            Copiar
+                          </button>
+                        </div>
+                      )}
+
+                      <div className="row">
+                        <button type="button" onClick={() => approvePaymentLink(item.id)}>
+                          Aprobar
+                        </button>
+
+                        <button type="button" className="danger" onClick={() => rejectPaymentLink(item.id)}>
+                          Rechazar
+                        </button>
+
+                        {item.public_url && (
+                          <a className="secondary tiny-btn" href={item.public_url} target="_blank" rel="noreferrer">
+                            Abrir
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
 
         {/* ======================== AGENDA AI - PREMIUM ULTRA ======================== */}
 {tab === 'agenda_ai' && (
