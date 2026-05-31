@@ -283,7 +283,16 @@ function LoginScreen({ onAuth, agencyBranding }) {
   }
 
   return (
-    <div className="auth-shell auth-shell-pro">
+     <div
+    className="auth-shell auth-shell-pro"
+    style={{
+      backgroundImage: agencyBranding?.login_background
+        ? `url(${agencyBranding.login_background})`
+        : undefined,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    }}
+  >
       <div className="ambient-bg"></div>
       <div className="glow-aura"></div>
       <div className="floating-particles">
@@ -308,8 +317,19 @@ function LoginScreen({ onAuth, agencyBranding }) {
             />
           </div>
           <div className="auth-brand-name">
-            {agencyBranding?.brand_name || 'Worktic AI'}
-          </div>
+  {
+    agencyBranding?.login_title ||
+    agencyBranding?.brand_name ||
+    'Worktic AI'
+  }
+</div>
+
+<div className="auth-subtitle">
+  {
+    agencyBranding?.login_subtitle ||
+    'Plataforma de automatización comercial'
+  }
+</div>
 
           {agencyBranding && (
             <div className="auth-powered">
@@ -1492,10 +1512,28 @@ export default function App() {
       '--agency-primary',
       data?.brand_color || '#7430e2'
     )
+
+    document.documentElement.style.setProperty(
+      '--agency-secondary',
+      data?.secondary_color || '#0f172a'
+    )
+
+    if (data?.favicon_url) {
+      let favicon = document.querySelector("link[rel='icon']")
+
+      if (!favicon) {
+        favicon = document.createElement('link')
+        favicon.rel = 'icon'
+        document.head.appendChild(favicon)
+      }
+
+      favicon.href = data.favicon_url
+    }
   } catch (err) {
     setAgencyBranding(null)
     setAgencyLoginSlug('')
     document.documentElement.style.setProperty('--agency-primary', '#7430e2')
+    document.documentElement.style.setProperty('--agency-secondary', '#0f172a')
   }
 }
 
@@ -1505,9 +1543,23 @@ export default function App() {
       if (data?.has_agency && data.agency) {
         setAgencyBranding(data.agency)
         document.documentElement.style.setProperty('--agency-primary', data.agency.brand_color || '#7430e2')
+        document.documentElement.style.setProperty('--agency-secondary', data.agency.secondary_color || '#0f172a')
+
+        if (data.agency?.favicon_url) {
+          let favicon = document.querySelector("link[rel='icon']")
+
+          if (!favicon) {
+            favicon = document.createElement('link')
+            favicon.rel = 'icon'
+            document.head.appendChild(favicon)
+          }
+
+          favicon.href = data.agency.favicon_url
+        }
       } else {
         setAgencyBranding(null)
         document.documentElement.style.setProperty('--agency-primary', '#7430e2')
+        document.documentElement.style.setProperty('--agency-secondary', '#0f172a')
       }
     } catch {
       setAgencyBranding(null)
