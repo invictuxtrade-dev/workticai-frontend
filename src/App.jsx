@@ -1457,6 +1457,24 @@ function PublicAgencyContractPage() {
 }
 
 export default function App() {
+  // ======================== AGENCY BRANDING ========================
+  const [agencyBranding, setAgencyBranding] = useState(null)
+
+  async function loadAgencyBranding() {
+    try {
+      const data = await api('/api/agency-branding')
+      if (data?.has_agency && data.agency) {
+        setAgencyBranding(data.agency)
+        document.documentElement.style.setProperty('--agency-primary', data.agency.brand_color || '#7430e2')
+      } else {
+        setAgencyBranding(null)
+        document.documentElement.style.setProperty('--agency-primary', '#7430e2')
+      }
+    } catch {
+      setAgencyBranding(null)
+    }
+  }
+
   useEffect(() => {
     if (!document.getElementById('pro-styles')) {
       const fontAwesome = document.createElement('link')
@@ -1467,6 +1485,10 @@ export default function App() {
       const style = document.createElement('style')
       style.id = 'pro-styles'
       style.textContent = `
+        :root {
+          --agency-primary: #7430e2;
+        }
+
         * {
           margin: 0;
           padding: 0;
@@ -1800,7 +1822,7 @@ export default function App() {
         .pill.closed { background: #d1d5db; color: #1f2937; }
 
         button {
-          background: #722ee0;
+          background: var(--agency-primary, #722ee0);
           border: none;
           color: white;
           padding: 0.5rem 1rem;
@@ -6262,6 +6284,13 @@ export default function App() {
       window.removeEventListener('wsos:session-expired', onExpired)
     }
   }, [])
+
+  // ======================== AGENCY BRANDING EFFECT ========================
+  useEffect(() => {
+    if (me) {
+      loadAgencyBranding()
+    }
+  }, [me])
 
   // ======================== PERMISOS Y PLANES MEJORADOS ========================
   function hasFeature(feature) {
