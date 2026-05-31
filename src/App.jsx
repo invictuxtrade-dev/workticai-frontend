@@ -142,7 +142,7 @@ const countries = [
   { code: 'PR', dialCode: '1', flag: '🇵🇷', name: 'Puerto Rico' },
 ]
 
-function LoginScreen({ onAuth }) {
+function LoginScreen({ onAuth, agencyBranding }) {
   const [mode, setMode] = useState('login')
   const [form, setForm] = useState({
     name: '',
@@ -302,8 +302,20 @@ function LoginScreen({ onAuth }) {
       <div className="auth-card auth-card-pro">
         <div className="auth-brand">
           <div className="auth-logo">
-            <img src="/logo.png" alt="Worktic AI Logo" />
+            <img
+              src={agencyBranding?.logo_url || '/logo.png'}
+              alt={agencyBranding?.brand_name || 'Worktic AI Logo'}
+            />
           </div>
+          <div className="auth-brand-name">
+            {agencyBranding?.brand_name || 'Worktic AI'}
+          </div>
+
+          {agencyBranding && (
+            <div className="auth-powered">
+              Powered by Worktic AI
+            </div>
+          )}
         </div>
 
         <div className="auth-role-switch">
@@ -1459,6 +1471,33 @@ function PublicAgencyContractPage() {
 export default function App() {
   // ======================== AGENCY BRANDING ========================
   const [agencyBranding, setAgencyBranding] = useState(null)
+  const [agencyLoginSlug, setAgencyLoginSlug] = useState('')
+  const [me, setMe] = useState(null)
+  const [tab, setTab] = useState('dashboard')
+  const [toast, setToast] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [forcePlanScreen, setForcePlanScreen] = useState(false)
+  const [activeSection, setActiveSection] = useState('social-ai')
+
+  async function loadAgencyBySlug(slug) {
+  try {
+    if (!slug) return
+
+    const data = await api(`/api/public/agencies/by-slug/${encodeURIComponent(slug)}`)
+
+    setAgencyBranding(data)
+    setAgencyLoginSlug(slug)
+
+    document.documentElement.style.setProperty(
+      '--agency-primary',
+      data?.brand_color || '#7430e2'
+    )
+  } catch (err) {
+    setAgencyBranding(null)
+    setAgencyLoginSlug('')
+    document.documentElement.style.setProperty('--agency-primary', '#7430e2')
+  }
+}
 
   async function loadAgencyBranding() {
     try {
@@ -1474,6 +1513,23 @@ export default function App() {
       setAgencyBranding(null)
     }
   }
+
+  useEffect(() => {
+  const path = window.location.pathname
+
+  if (path.startsWith('/a/')) {
+    const slug = path.replace('/a/', '').split('/')[0].trim()
+    if (slug) {
+      loadAgencyBySlug(slug)
+    }
+  }
+}, [])
+
+useEffect(() => {
+  if (me) {
+    loadAgencyBranding()
+  }
+}, [me])
 
   useEffect(() => {
     if (!document.getElementById('pro-styles')) {
@@ -6355,13 +6411,7 @@ export default function App() {
   }
 
   // ======================== ESTADOS PRINCIPALES ========================
-  const [me, setMe] = useState(null)
-  const [tab, setTab] = useState('dashboard')
-  const [toast, setToast] = useState(null)
-  const [busy, setBusy] = useState(false)
-  const [forcePlanScreen, setForcePlanScreen] = useState(false)
-  const [activeSection, setActiveSection] = useState('social-ai')
-
+ 
   // AGENCIES STATES
   const [agencies, setAgencies] = useState([])
   const [agencyForm, setAgencyForm] = useState({
@@ -9551,10 +9601,25 @@ async function updateUser(e) {
     return <PublicPaymentPage />
   }
 
-  if (!me) return <LoginScreen onAuth={(user) => {
-    setMe(user)
-    if (user.role !== 'admin') setForcePlanScreen(true)
-  }} />
+ if (!me) return (
+  <LoginScreen
+    agencyBranding={agencyBranding}
+    onAuth={(user) => {
+      if (
+      agencyBranding?.id &&
+      user.role !== 'admin' &&
+      user.agency_id !== agencyBranding.id
+    ) {
+      setToken('')
+      alert('Este usuario no pertenece a esta agencia.')
+      return
+    }
+
+      setMe(user)
+      if (user.role !== 'admin') setForcePlanScreen(true)
+    }}
+  />
+)
 
   if (forcePlanScreen && me.role !== 'admin') {
     return (
