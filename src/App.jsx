@@ -9916,11 +9916,13 @@ async function updateUser(e) {
     </div>
 
     <div className="muted">
-      Estado:{' '}
-      {me?.role === 'agency_admin'
-        ? 'activo'
-        : (subscription?.status || 'pendiente')}
-    </div>
+  Estado:{' '}
+  <span style={{ color: '#fff', fontWeight: 600 }}>
+    {me?.role === 'agency_admin'
+      ? 'activo'
+      : (subscription?.status || 'pendiente')}
+  </span>
+</div>
 
     {me?.role !== 'agency_admin' && (
       <button
