@@ -9900,14 +9900,39 @@ async function updateUser(e) {
         </div>
 
         {me?.role !== 'admin' && (
-          <div className="stripe-card" style={{ marginBottom: '1rem', background: 'rgba(255,255,255,0.05)', padding: '0.75rem' }}>
-            <div><strong>Plan actual:</strong> {subscription?.plan_slug || 'Sin plan'}</div>
-            <div className="muted">Estado: {subscription?.status || 'pendiente'}</div>
-            <button type="button" onClick={() => setForcePlanScreen(true)} style={{ marginTop: '0.75rem' }}>
-              Mejorar plan
-            </button>
-          </div>
-        )}
+  <div
+    className="stripe-card"
+    style={{
+      marginBottom: '1rem',
+      background: 'rgba(255,255,255,0.05)',
+      padding: '0.75rem'
+    }}
+  >
+    <div>
+      <strong>Plan actual:</strong>{' '}
+      {me?.role === 'agency_admin'
+        ? 'Business'
+        : (subscription?.plan_slug || 'Sin plan')}
+    </div>
+
+    <div className="muted">
+      Estado:{' '}
+      {me?.role === 'agency_admin'
+        ? 'activo'
+        : (subscription?.status || 'pendiente')}
+    </div>
+
+    {me?.role !== 'agency_admin' && (
+      <button
+        type="button"
+        onClick={() => setForcePlanScreen(true)}
+        style={{ marginTop: '0.75rem' }}
+      >
+        Mejorar plan
+      </button>
+    )}
+  </div>
+)}
 
         <nav className="menu">
           <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
