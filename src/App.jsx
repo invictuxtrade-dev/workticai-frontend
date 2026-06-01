@@ -1498,7 +1498,7 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [activeSection, setActiveSection] = useState('social-ai') // NUEVO: estado para controlar secciones de agencia
-
+  const [agencyMenuOpen, setAgencyMenuOpen] = useState(false)
   // ======================== AGENCY ACCESS MODAL ========================
   const [agencyAccess, setAgencyAccess] = useState(null)
   const [showAgencyAccessModal, setShowAgencyAccessModal] = useState(false)
@@ -1839,6 +1839,25 @@ useEffect(() => {
           align-items: center;
           gap: 0.75rem;
           font-size: 0.9rem;
+
+          .agency-menu-group {
+          margin-top: 1rem;
+          border-top: 1px solid rgba(255,255,255,.1);
+          padding-top: .75rem;
+        }
+
+        .agency-submenu {
+          margin-left: .75rem;
+          display: flex;
+          flex-direction: column;
+          gap: .25rem;
+        }
+
+        .agency-submenu .menu-item {
+          font-size: .85rem;
+          padding-left: 1.8rem;
+          opacity: .95;
+        }
         }
 
         .menu-item i {
@@ -9943,32 +9962,106 @@ async function updateUser(e) {
         <nav className="menu">
           {/* MENÚS PARA AGENCY_ADMIN */}
           {me?.role === 'agency_admin' && (
-            <>
-              <button className={activeSection === 'agency-dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-dashboard')}>
-                <i className="fas fa-chart-line"></i> Panel Agencia
-              </button>
+  <div className="agency-menu-group">
+    <button
+      type="button"
+      className="menu-item"
+      onClick={() => setAgencyMenuOpen(!agencyMenuOpen)}
+    >
+      <i className="fas fa-building"></i>
 
-              <button className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-clients')}>
-                <i className="fas fa-building"></i> Clientes Agencia
-              </button>
+      <span style={{ flex: 1 }}>
+        Agencia Partner
+      </span>
 
-              <button className={activeSection === 'agency-users' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-users')}>
-                <i className="fas fa-users"></i> Usuarios Clientes
-              </button>
+      <i
+        className={`fas ${
+          agencyMenuOpen
+            ? 'fa-chevron-down'
+            : 'fa-chevron-right'
+        }`}
+      />
+    </button>
 
-              <button className={activeSection === 'agency-licenses' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-licenses')}>
-                <i className="fas fa-key"></i> Licencias
-              </button>
+    {agencyMenuOpen && (
+      <div className="agency-submenu">
 
-              <button className={activeSection === 'agency-payments' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-payments')}>
-                <i className="fas fa-credit-card"></i> Pagos
-              </button>
+        <button
+          className={
+            activeSection === 'agency-dashboard'
+              ? 'menu-item active'
+              : 'menu-item'
+          }
+          onClick={() => setActiveSection('agency-dashboard')}
+        >
+          <i className="fas fa-chart-line"></i>
+          Panel Agencia
+        </button>
 
-              <button className={activeSection === 'agency-branding' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-branding')}>
-                <i className="fas fa-palette"></i> Branding
-              </button>
-            </>
-          )}
+        <button
+          className={
+            activeSection === 'agency-clients'
+              ? 'menu-item active'
+              : 'menu-item'
+          }
+          onClick={() => setActiveSection('agency-clients')}
+        >
+          <i className="fas fa-building-user"></i>
+          Clientes
+        </button>
+
+        <button
+          className={
+            activeSection === 'agency-users'
+              ? 'menu-item active'
+              : 'menu-item'
+          }
+          onClick={() => setActiveSection('agency-users')}
+        >
+          <i className="fas fa-users"></i>
+          Usuarios
+        </button>
+
+        <button
+          className={
+            activeSection === 'agency-licenses'
+              ? 'menu-item active'
+              : 'menu-item'
+          }
+          onClick={() => setActiveSection('agency-licenses')}
+        >
+          <i className="fas fa-key"></i>
+          Licencias
+        </button>
+
+        <button
+          className={
+            activeSection === 'agency-payments'
+              ? 'menu-item active'
+              : 'menu-item'
+          }
+          onClick={() => setActiveSection('agency-payments')}
+        >
+          <i className="fas fa-credit-card"></i>
+          Pagos
+        </button>
+
+        <button
+          className={
+            activeSection === 'agency-branding'
+              ? 'menu-item active'
+              : 'menu-item'
+          }
+          onClick={() => setActiveSection('agency-branding')}
+        >
+          <i className="fas fa-palette"></i>
+          Branding
+        </button>
+
+      </div>
+    )}
+  </div>
+)}
 
           {/* MENÚS NORMALES (solo si no es agency_admin) */}
             <>
