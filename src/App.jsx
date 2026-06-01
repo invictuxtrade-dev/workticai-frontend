@@ -9774,12 +9774,23 @@ async function updateUser(e) {
     }
 
       setMe(user)
-      if (user.role !== 'admin') setForcePlanScreen(true)
+      setMe(user)
+
+      if (
+        user.role !== 'admin' &&
+        user.role !== 'agency_admin'
+      ) {
+        setForcePlanScreen(true)
+      }
     }}
   />
 )
 
-  if (forcePlanScreen && me.role !== 'admin') {
+    if (
+    forcePlanScreen &&
+    me.role !== 'admin' &&
+    me.role !== 'agency_admin'
+    ) {
     return (
       <PlanGate
         plans={plans}
