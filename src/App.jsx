@@ -9971,7 +9971,6 @@ async function updateUser(e) {
           )}
 
           {/* MENÚS NORMALES (solo si no es agency_admin) */}
-          {me?.role !== 'agency_admin' && (
             <>
               <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
                 <i className="fas fa-tachometer-alt"></i> Dashboard
@@ -10067,7 +10066,7 @@ async function updateUser(e) {
                 </>
               )}
             </>
-          )}
+          
         </nav>
         <button className="secondary" onClick={logout} type="button">
           <i className="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -10355,7 +10354,6 @@ async function updateUser(e) {
         )}
 
         {/* ======================== SECCIONES NORMALES (solo si no es agency_admin) ======================== */}
-        {me?.role !== 'agency_admin' && (
           <>
             {/* ======================== AGENCIAS SECTION ======================== */}
             {tab === 'agencies' && (
@@ -14055,7 +14053,7 @@ async function updateUser(e) {
               </div>
             )}
           </>
-        )}
+        
       </main>
     </div>
     
