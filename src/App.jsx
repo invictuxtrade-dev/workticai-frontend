@@ -7098,9 +7098,16 @@ useEffect(() => {
       setPaymentLinksLoading(true)
 
       let url = '/api/payment-links'
-      if (me?.role === 'admin' && selectedClientId) {
-        url += `?client_id=${encodeURIComponent(selectedClientId)}`
-      }
+
+    // Solo filtrar por cliente si NO estoy en módulo de agencias/link de pago general
+    if (
+      me?.role === 'admin' &&
+      selectedClientId &&
+      activeSection !== 'payment-links' &&
+      activeSection !== 'agencies'
+    ) {
+      url += `?client_id=${encodeURIComponent(selectedClientId)}`
+    }
 
       const data = await api(url)
       setPaymentLinks(Array.isArray(data) ? data : [])
