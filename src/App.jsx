@@ -1497,7 +1497,7 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
-  const [activeSection, setActiveSection] = useState('social-ai')
+  const [activeSection, setActiveSection] = useState('social-ai') // NUEVO: estado para controlar secciones de agencia
 
   // ======================== AGENCY ACCESS MODAL ========================
   const [agencyAccess, setAgencyAccess] = useState(null)
@@ -9941,97 +9941,131 @@ async function updateUser(e) {
 )}
 
         <nav className="menu">
-          <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
-            <i className="fas fa-tachometer-alt"></i> Dashboard
-          </button>
-          <button className={tab === 'inbox' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('inbox')} type="button">
-            <i className="fas fa-inbox"></i> Inbox
-          </button>
-          <button className={tab === 'bots' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('bots')} type="button">
-            <i className="fas fa-robot"></i> Bots
-          </button>
-          <button className={tab === 'templates' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('templates')} type="button">
-            <i className="fas fa-file-alt"></i> Plantillas
-          </button>
-          <button className={tab === 'landing' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('landing')} type="button">
-            <i className="fas fa-brain"></i> Landing IA
-          </button>
-          <button className={tab === 'funnel' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('funnel')} type="button">
-            <i className="fas fa-filter"></i> Funnel
-          </button>
-           <button
-            className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
-            onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
-            type="button"
-          >
-            <i className="fas fa-calendar-check"></i> Agenda AI
-          </button>
-          <button
-            className={`${tab === 'social' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('social_ai') ? 'locked' : ''}`}
-            onClick={() => canUseFeature('social_ai') ? setTab('social') : setForcePlanScreen(true)}
-            type="button"
-          >
-            <i className="fas fa-share-nodes"></i> Social AI
-          </button>
-          <button
-            className={`${tab === 'video' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('video_ai') ? 'locked' : ''}`}
-            onClick={() => canUseFeature('video_ai') ? setTab('video') : setForcePlanScreen(true)}
-            type="button"
-          >
-            <i className="fas fa-video"></i> Video AI
-          </button>
-          <button
-            className={`${tab === 'ads' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('ads_ai') ? 'locked' : ''}`}
-            onClick={() => canUseFeature('ads_ai') ? setTab('ads') : setForcePlanScreen(true)}
-            type="button"
-          >
-            <i className="fas fa-chart-line"></i> Ads IA
-          </button>
-          <button
-            className={`${tab === 'groups' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('groups_ai') ? 'locked' : ''}`}
-            onClick={() => canUseFeature('groups_ai') ? setTab('groups') : setForcePlanScreen(true)}
-            type="button"
-          >
-            <i className="fas fa-users"></i> Grupos
-          </button>
-          <button
-            className={tab === 'assistant' ? 'menu-item active' : 'menu-item'}
-            onClick={() => setTab('assistant')}
-            type="button"
-          >
-            <i className="fas fa-robot"></i> Asistente AI
-          </button>
-          {me.role === 'admin' && (
+          {/* MENÚS PARA AGENCY_ADMIN */}
+          {me?.role === 'agency_admin' && (
             <>
-              <button
-                className={tab === 'agencies' ? 'menu-item active' : 'menu-item'}
-                onClick={() => setTab('agencies')}
+              <button className={activeSection === 'agency-dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-dashboard')}>
+                <i className="fas fa-chart-line"></i> Panel Agencia
+              </button>
+
+              <button className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-clients')}>
+                <i className="fas fa-building"></i> Clientes Agencia
+              </button>
+
+              <button className={activeSection === 'agency-users' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-users')}>
+                <i className="fas fa-users"></i> Usuarios Clientes
+              </button>
+
+              <button className={activeSection === 'agency-licenses' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-licenses')}>
+                <i className="fas fa-key"></i> Licencias
+              </button>
+
+              <button className={activeSection === 'agency-payments' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-payments')}>
+                <i className="fas fa-credit-card"></i> Pagos
+              </button>
+
+              <button className={activeSection === 'agency-branding' ? 'menu-item active' : 'menu-item'} onClick={() => setActiveSection('agency-branding')}>
+                <i className="fas fa-palette"></i> Branding
+              </button>
+            </>
+          )}
+
+          {/* MENÚS NORMALES (solo si no es agency_admin) */}
+          {me?.role !== 'agency_admin' && (
+            <>
+              <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
+                <i className="fas fa-tachometer-alt"></i> Dashboard
+              </button>
+              <button className={tab === 'inbox' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('inbox')} type="button">
+                <i className="fas fa-inbox"></i> Inbox
+              </button>
+              <button className={tab === 'bots' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('bots')} type="button">
+                <i className="fas fa-robot"></i> Bots
+              </button>
+              <button className={tab === 'templates' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('templates')} type="button">
+                <i className="fas fa-file-alt"></i> Plantillas
+              </button>
+              <button className={tab === 'landing' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('landing')} type="button">
+                <i className="fas fa-brain"></i> Landing IA
+              </button>
+              <button className={tab === 'funnel' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('funnel')} type="button">
+                <i className="fas fa-filter"></i> Funnel
+              </button>
+               <button
+                className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
+                onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
                 type="button"
               >
-                <i className="fas fa-handshake"></i> Agencias
-              </button>
-              <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
-                <i className="fas fa-building"></i> Clientes
-              </button>
-              <button className={tab === 'users' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('users')} type="button">
-                <i className="fas fa-users"></i> Usuarios
-              </button>
-              <button className={tab === 'plans' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('plans')} type="button">
-                <i className="fas fa-crown"></i> Planes SaaS
-              </button>
-              <button className={tab === 'billing' ? 'menu-item active' : 'menu-item'} onClick={() => { setTab('billing'); loadPendingSubscriptions(); }} type="button">
-                <i className="fas fa-credit-card"></i> Billing
+                <i className="fas fa-calendar-check"></i> Agenda AI
               </button>
               <button
-                className={tab === 'payment_links' ? 'menu-item active' : 'menu-item'}
-                onClick={() => {
-                  setTab('payment_links')
-                  loadPaymentLinks()
-                }}
+                className={`${tab === 'social' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('social_ai') ? 'locked' : ''}`}
+                onClick={() => canUseFeature('social_ai') ? setTab('social') : setForcePlanScreen(true)}
                 type="button"
               >
-                <i className="fas fa-link"></i> Link de Pago
+                <i className="fas fa-share-nodes"></i> Social AI
               </button>
+              <button
+                className={`${tab === 'video' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('video_ai') ? 'locked' : ''}`}
+                onClick={() => canUseFeature('video_ai') ? setTab('video') : setForcePlanScreen(true)}
+                type="button"
+              >
+                <i className="fas fa-video"></i> Video AI
+              </button>
+              <button
+                className={`${tab === 'ads' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('ads_ai') ? 'locked' : ''}`}
+                onClick={() => canUseFeature('ads_ai') ? setTab('ads') : setForcePlanScreen(true)}
+                type="button"
+              >
+                <i className="fas fa-chart-line"></i> Ads IA
+              </button>
+              <button
+                className={`${tab === 'groups' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('groups_ai') ? 'locked' : ''}`}
+                onClick={() => canUseFeature('groups_ai') ? setTab('groups') : setForcePlanScreen(true)}
+                type="button"
+              >
+                <i className="fas fa-users"></i> Grupos
+              </button>
+              <button
+                className={tab === 'assistant' ? 'menu-item active' : 'menu-item'}
+                onClick={() => setTab('assistant')}
+                type="button"
+              >
+                <i className="fas fa-robot"></i> Asistente AI
+              </button>
+              {me.role === 'admin' && (
+                <>
+                  <button
+                    className={tab === 'agencies' ? 'menu-item active' : 'menu-item'}
+                    onClick={() => setTab('agencies')}
+                    type="button"
+                  >
+                    <i className="fas fa-handshake"></i> Agencias
+                  </button>
+                  <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
+                    <i className="fas fa-building"></i> Clientes
+                  </button>
+                  <button className={tab === 'users' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('users')} type="button">
+                    <i className="fas fa-users"></i> Usuarios
+                  </button>
+                  <button className={tab === 'plans' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('plans')} type="button">
+                    <i className="fas fa-crown"></i> Planes SaaS
+                  </button>
+                  <button className={tab === 'billing' ? 'menu-item active' : 'menu-item'} onClick={() => { setTab('billing'); loadPendingSubscriptions(); }} type="button">
+                    <i className="fas fa-credit-card"></i> Billing
+                  </button>
+                  <button
+                    className={tab === 'payment_links' ? 'menu-item active' : 'menu-item'}
+                    onClick={() => {
+                      setTab('payment_links')
+                      loadPaymentLinks()
+                    }}
+                    type="button"
+                  >
+                    <i className="fas fa-link"></i> Link de Pago
+                  </button>
+                </>
+              )}
             </>
           )}
         </nav>
@@ -10056,1270 +10090,1536 @@ async function updateUser(e) {
           </div>
         </header>
 
-        {/* ======================== AGENCIAS SECTION ======================== */}
-        {tab === 'agencies' && (
-          <div className="stack gap-lg">
-            <section className="stripe-card stack">
-              <div className="row between">
-                <div>
-                  <h2>Agencias / Partners</h2>
-                  <p className="muted">
-                    Crea agencias dentro de Worktic AI, configura contrato, branding, precios especiales y licencia mensual.
-                  </p>
-                </div>
-                <button type="button" onClick={loadAgencies}>
-                  <i className="fas fa-sync"></i> Recargar
-                </button>
-              </div>
-
-              <form onSubmit={createAgency} className="grid-2">
-                <input placeholder="Nombre agencia" value={agencyForm.name} onChange={e => setAgencyForm({ ...agencyForm, name: e.target.value })} required />
-                <input placeholder="Email" value={agencyForm.email} onChange={e => setAgencyForm({ ...agencyForm, email: e.target.value })} />
-                <input placeholder="Teléfono" value={agencyForm.phone} onChange={e => setAgencyForm({ ...agencyForm, phone: e.target.value })} />
-                <input placeholder="Nombre de marca" value={agencyForm.brand_name} onChange={e => setAgencyForm({ ...agencyForm, brand_name: e.target.value })} />
-                <input placeholder="Logo URL" value={agencyForm.logo_url} onChange={e => setAgencyForm({ ...agencyForm, logo_url: e.target.value })} />
-                <input type="color" value={agencyForm.brand_color} onChange={e => setAgencyForm({ ...agencyForm, brand_color: e.target.value })} />
-                <input placeholder="Subdominio interno opcional" value={agencyForm.subdomain} onChange={e => setAgencyForm({ ...agencyForm, subdomain: e.target.value })} />
-                <input type="number" placeholder="Valor mensual convenio USDT" value={agencyForm.monthly_fee} onChange={e => setAgencyForm({ ...agencyForm, monthly_fee: e.target.value })} />
-                <textarea className="full" placeholder="Notas del convenio" value={agencyForm.notes} onChange={e => setAgencyForm({ ...agencyForm, notes: e.target.value })} />
-
-                <button className="full" type="submit">
-                  <i className="fas fa-plus"></i> Crear agencia
-                </button>
-              </form>
-            </section>
-
-            <section className="stripe-card stack">
-              <h2>Lista de agencias</h2>
-
-              {agencyLoading ? (
-                <div className="empty-box">Cargando agencias...</div>
-              ) : agencies.length === 0 ? (
-                <div className="empty-box">No hay agencias creadas</div>
-              ) : (
-                <div className="template-list">
-                  {agencies.map(a => (
-                    <div key={a.id} className="template-card stack">
-                      <div className="row between">
-                        <strong>{a.name}</strong>
-                        <span className="pill">{a.status}</span>
-                      </div>
-
-                      <div className="muted tiny">{a.email}</div>
-                      <div><strong>Marca:</strong> {a.brand_name || a.name}</div>
-                      <div><strong>Mensualidad:</strong> {a.monthly_fee} USDT</div>
-                      <div><strong>Contrato:</strong> {a.contract_status || 'Sin firmar'}</div>
-                      <div><strong>Vence:</strong> {a.expires_at ? new Date(a.expires_at).toLocaleDateString() : 'Sin activar'}</div>
-
-                      <div className="row wrap">
-                        <button type="button" onClick={() => setSelectedAgency(a)}>
-                          Editar
-                        </button>
-
-                        <button type="button" onClick={() => {
-                          setSelectedAgency(a)
-                          loadAgencyPrices(a.id)
-                        }}>
-                          Precios
-                        </button>
-
-                        <button type="button" onClick={() => createAgencyPaymentLink(a)}>
-                          Link mensual
-                        </button>
-
-                        <button type="button" onClick={() => viewAgencyAccess(a)}>
-                          Ver acceso
-                        </button>
-
-                        <button type="button" onClick={() => regenerateAgencyAccess(a)}>
-                          Nueva contraseña
-                        </button>
-
-                        <a
-                          className="secondary tiny-btn"
-                          href={`/agency-contract/${a.id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Contrato
-                        </a>
-
-                        <button type="button" onClick={() => activateAgency(a.id)}>
-                          Activar
-                        </button>
-
-                        <button type="button" className="danger" onClick={() => suspendAgency(a.id)}>
-                          Suspender
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {selectedAgency && (
-              <section className="stripe-card stack">
-                <h2>Editar agencia</h2>
-
-                <div className="grid-2">
-                  <input value={selectedAgency.name || ''} onChange={e => setSelectedAgency({ ...selectedAgency, name: e.target.value })} />
-                  <input value={selectedAgency.email || ''} onChange={e => setSelectedAgency({ ...selectedAgency, email: e.target.value })} />
-                  <input value={selectedAgency.phone || ''} onChange={e => setSelectedAgency({ ...selectedAgency, phone: e.target.value })} />
-                  <input value={selectedAgency.brand_name || ''} onChange={e => setSelectedAgency({ ...selectedAgency, brand_name: e.target.value })} />
-                  <input value={selectedAgency.logo_url || ''} onChange={e => setSelectedAgency({ ...selectedAgency, logo_url: e.target.value })} />
-                  <input type="color" value={selectedAgency.brand_color || '#7430e2'} onChange={e => setSelectedAgency({ ...selectedAgency, brand_color: e.target.value })} />
-                  <input type="number" value={selectedAgency.monthly_fee || ''} onChange={e => setSelectedAgency({ ...selectedAgency, monthly_fee: e.target.value })} />
-                  <select value={selectedAgency.status || 'pending'} onChange={e => setSelectedAgency({ ...selectedAgency, status: e.target.value })}>
-                    <option value="pending">Pendiente</option>
-                    <option value="active">Activa</option>
-                    <option value="expired">Vencida</option>
-                    <option value="suspended">Suspendida</option>
-                  </select>
-
-                  <textarea
-                    className="full"
-                    rows="10"
-                    placeholder="Cuerpo del contrato"
-                    value={selectedAgency.contract_body || ''}
-                    onChange={e => setSelectedAgency({ ...selectedAgency, contract_body: e.target.value })}
-                  />
-
-                  <button className="full" type="button" onClick={updateAgency}>
-                    Guardar cambios
-                  </button>
-                </div>
-              </section>
-            )}
-
-            {selectedAgency && (
-              <section className="stripe-card stack">
-                <h2>Precios especiales por agencia</h2>
-
-                <button type="button" onClick={() => {
-                  setAgencyPrices([
-                    ...agencyPrices,
-                    {
-                      plan_slug: 'starter',
-                      normal_price: 17,
-                      agency_price: 10,
-                      billing_cycle: 'monthly',
-                      enabled: true
-                    }
-                  ])
-                }}>
-                  Agregar precio
-                </button>
-
-                {agencyPrices.map((p, i) => (
-                  <div key={i} className="grid-2">
-                    <select value={p.plan_slug} onChange={e => {
-                      const copy = [...agencyPrices]
-                      copy[i].plan_slug = e.target.value
-                      setAgencyPrices(copy)
-                    }}>
-                      <option value="starter">Starter</option>
-                      <option value="pro">Pro</option>
-                      <option value="business">Business</option>
-                    </select>
-
-                    <input type="number" placeholder="Precio normal" value={p.normal_price} onChange={e => {
-                      const copy = [...agencyPrices]
-                      copy[i].normal_price = Number(e.target.value)
-                      setAgencyPrices(copy)
-                    }} />
-
-                    <input type="number" placeholder="Precio agencia" value={p.agency_price} onChange={e => {
-                      const copy = [...agencyPrices]
-                      copy[i].agency_price = Number(e.target.value)
-                      setAgencyPrices(copy)
-                    }} />
-
-                    <select value={p.billing_cycle} onChange={e => {
-                      const copy = [...agencyPrices]
-                      copy[i].billing_cycle = e.target.value
-                      setAgencyPrices(copy)
-                    }}>
-                      <option value="monthly">Mensual</option>
-                      <option value="yearly">Anual</option>
-                    </select>
-                  </div>
-                ))}
-
-                <button type="button" onClick={saveAgencyPrices}>
-                  Guardar precios especiales
-                </button>
-              </section>
-            )}
-          </div>
-        )}
-
-        {/* ======================== AGENCY ACCESS MODAL ======================== */}
-        {showAgencyAccessModal && agencyAccess && (
-          <div className="modal-backdrop">
-            <div className="modal-card" style={{ maxWidth: 560 }}>
-              <div className="modal-head">
-                <h2>Acceso de Agencia</h2>
-                <button type="button" onClick={() => setShowAgencyAccessModal(false)}>
-                  ×
-                </button>
-              </div>
-
-              <div className="stack">
-                <div className="stripe-card stack">
-                  <div>
-                    <strong>Agencia:</strong> {agencyAccess.agency_name}
-                  </div>
-
-                  <div>
-                    <strong>Login:</strong>
-                    <input
-                      readOnly
-                      value={`${window.location.origin}${agencyAccess.login_url || ''}`}
-                    />
-                  </div>
-
-                  <div>
-                    <strong>Usuario:</strong>
-                    <input readOnly value={agencyAccess.admin_email || ''} />
-                  </div>
-
-                  <div>
-                    <strong>Contraseña temporal:</strong>
-                    <input readOnly value={agencyAccess.temporary_password || ''} />
-                  </div>
-
-                  <div>
-                    <strong>Contrato:</strong>
-                    <input
-                      readOnly
-                      value={`${window.location.origin}${agencyAccess.contract_url || ''}`}
-                    />
-                  </div>
-
-                  {agencyAccess.last_password_reset && (
-                    <div className="muted">
-                      Último reset: {new Date(agencyAccess.last_password_reset).toLocaleString()}
-                    </div>
-                  )}
-                </div>
-
-                <div className="row">
-                  <button type="button" onClick={copyAgencyAccess}>
-                    Copiar acceso
-                  </button>
-
-                  <button
-                    type="button"
-                    className="secondary"
-                    onClick={() => setShowAgencyAccessModal(false)}
-                  >
-                    Cerrar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ======================== REST OF THE APP (PAYMENT LINKS, AGENDA AI, ASSISTANT AI, DASHBOARD, ETC) ======================== */}
-        {/* ======================== PAYMENT LINKS SECTION ======================== */}
-        {tab === 'payment_links' && (
-          <div className="stack gap-lg payment-links-section">
-            <section className="stripe-card stack">
-              <div className="row between">
-                <div>
-                  <h2>Links de Pago</h2>
-                  <p className="muted">Crea cobros en USDT BEP20 y valida pagos manualmente.</p>
-                </div>
-                <button type="button" onClick={loadPaymentLinks}>
-                  <i className="fas fa-sync"></i> Recargar
-                </button>
-              </div>
-
-              <form onSubmit={createPaymentLink} className="grid-2">
-                {me?.role === 'admin' && (
-                  <select
-                    value={paymentLinkForm.client_id}
-                    onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, client_id: e.target.value })}
-                  >
-                    <option value="">Cliente</option>
-                    {clients.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                )}
-
-                <input
-                  placeholder="Concepto"
-                  value={paymentLinkForm.concept}
-                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, concept: e.target.value })}
-                  required
-                />
-
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Monto"
-                  value={paymentLinkForm.amount}
-                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, amount: e.target.value })}
-                  required
-                />
-
-                <select
-                  value={paymentLinkForm.currency}
-                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, currency: e.target.value })}
-                >
-                  <option value="USDT">USDT</option>
-                  <option value="USD">USD</option>
-                  <option value="COP">COP</option>
-                </select>
-
-                <input
-                  placeholder="Nombre del cliente opcional"
-                  value={paymentLinkForm.customer_name}
-                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_name: e.target.value })}
-                />
-
-                <input
-                  placeholder="Email opcional"
-                  value={paymentLinkForm.customer_email}
-                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_email: e.target.value })}
-                />
-
-                <textarea
-                  className="full"
-                  placeholder="Descripción"
-                  value={paymentLinkForm.description}
-                  onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, description: e.target.value })}
-                />
-
-                <button className="full" disabled={busy}>
-                  <i className="fas fa-plus"></i> Crear link de pago
-                </button>
-              </form>
-            </section>
-
-            <section className="stripe-card stack">
-              <h2>Pagos creados</h2>
-
-              {paymentLinksLoading ? (
-                <div className="empty-box">Cargando links...</div>
-              ) : paymentLinks.length === 0 ? (
-                <div className="empty-box">No hay links de pago</div>
-              ) : (
-                <div className="template-list">
-                  {paymentLinks.map(item => (
-                    <div key={item.id} className="template-card stack">
-                      <div className="row between">
-                        <strong>{item.concept}</strong>
-                        <span className="pill">{item.status}</span>
-                      </div>
-
-                      <div className="muted tiny">{item.description || 'Sin descripción'}</div>
-                      <div><strong>Monto:</strong> {item.amount} {item.currency}</div>
-                      <div><strong>Wallet:</strong> {item.wallet_address}</div>
-                      <div><strong>Cliente:</strong> {item.customer_name || 'Sin nombre'}</div>
-                      <div><strong>Hash:</strong> {item.tx_hash || 'Pendiente'}</div>
-
-                      {item.public_url && (
-                        <div className="row">
-                          <input value={item.public_url} readOnly />
-                          <button type="button" onClick={() => copyPaymentLink(item.public_url)}>
-                            Copiar
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="row">
-                        <button type="button" onClick={() => approvePaymentLink(item.id)}>
-                          Aprobar
-                        </button>
-
-                        <button type="button" className="danger" onClick={() => rejectPaymentLink(item.id)}>
-                          Rechazar
-                        </button>
-
-                        {item.public_url && (
-                          <a className="secondary tiny-btn" href={item.public_url} target="_blank" rel="noreferrer">
-                            Abrir
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-          </div>
-        )}
-
-        {/* ======================== AGENDA AI - PREMIUM ULTRA ======================== */}
-        {tab === 'agenda_ai' && (
-          <section className="agenda-premium-dashboard">
-            
-            <div className="agenda-premium-hero">
-              <div className="hero-glow-bg"></div>
-              <div className="hero-content">
-                <div className="hero-icon">
-                  <i className="fas fa-calendar-check"></i>
-                  <div className="hero-pulse"></div>
-                </div>
-                <div className="hero-text">
-                  <h1>Agenda AI</h1>
-                  <p>Gestión inteligente de citas y seguimiento automatizado</p>
-                </div>
-                <div className="hero-stats">
-                  <div className="hero-stat-item">
-                    <span className="stat-value">{agendaMetrics.today || 0}</span>
-                    <span className="stat-label">Hoy</span>
-                  </div>
-                  <div className="hero-stat-divider"></div>
-                  <div className="hero-stat-item">
-                    <span className="stat-value">{agendaMetrics.scheduled || 0}</span>
-                    <span className="stat-label">Pendientes</span>
-                  </div>
-                  <div className="hero-stat-divider"></div>
-                  <div className="hero-stat-item">
-                    <span className="stat-value">{agendaMetrics.completed || 0}</span>
-                    <span className="stat-label">Completadas</span>
-                  </div>
-                </div>
-                <button className="hero-btn-primary" onClick={() => setShowAppointmentModal(true)}>
-                  <i className="fas fa-plus-circle"></i>
-                  <span>Nueva cita</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="agenda-premium-grid">
-              
-              <div className="agenda-calendar-wrapper">
-                <div className="calendar-card-premium">
-                  <div className="calendar-card-header">
-                    <div className="header-left">
-                      <i className="fas fa-calendar-alt"></i>
-                      <h3>Calendario de citas</h3>
-                      <span className="header-badge">Sincronizado</span>
-                    </div>
-                    <div className="header-right">
-                      <button className="icon-btn" onClick={() => loadAgenda()}>
-                        <i className="fas fa-sync-alt"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div className="calendar-premium-container">
-                    <FullCalendar
-                      plugins={[
-                        dayGridPlugin,
-                        timeGridPlugin,
-                        interactionPlugin
-                      ]}
-                      locale="es"
-                      timeZone="America/Bogota"
-                      initialView="timeGridWeek"
-                      editable={true}
-                      selectable={true}
-                      height={650}
-                      headerToolbar={{
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                      }}
-                      buttonText={{
-                        today: 'Hoy',
-                        month: 'Mes',
-                        week: 'Semana',
-                        day: 'Día'
-                      }}
-                      events={appointments.map(a => ({
-                        id: a.id,
-                        title: a.title || a.contact_name || 'Cita',
-                        start: String(a.start_at || '').replace(' ', 'T'),
-                        end: String(a.end_at || '').replace(' ', 'T'),
-                        backgroundColor: a.status === 'confirmed' ? '#10b981' :
-                                        a.status === 'completed' ? '#6366f1' :
-                                        a.status === 'cancelled' ? '#ef4444' : '#7430e2',
-                        borderColor: 'transparent',
-                        extendedProps: a
-                      }))}
-                      eventClick={(info) => {
-                        const ap = info.event.extendedProps
-                        setSelectedAppointment(ap)
-                        setAppointmentForm({
-                          title: ap.title || '',
-                          contact_name: ap.contact_name || '',
-                          contact_phone: ap.contact_phone || '',
-                          contact_email: ap.contact_email || '',
-                          status: ap.status || 'scheduled',
-                          meeting_type: ap.meeting_type || 'call',
-                          meeting_link: ap.meeting_link || '',
-                          location: ap.location || '',
-                          notes: ap.notes || '',
-                          start_at: String(ap.start_at || '').replace(' ', 'T').slice(0, 16),
-                          end_at: String(ap.end_at || '').replace(' ', 'T').slice(0, 16),
-                          timezone: ap.timezone || 'America/Bogota',
-                          lead_score: ap.lead_score || 70
-                        })
-                        setShowAppointmentModal(true)
-                      }}
-                      eventClassNames="calendar-event-premium"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="agenda-side-wrapper">
-                
-                <div className="metrics-premium-row">
-                  <div className="metric-premium-card">
-                    <div className="metric-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
-                      <i className="fas fa-calendar-check"></i>
-                    </div>
-                    <div className="metric-info">
-                      <span className="metric-value">{agendaMetrics.today || 0}</span>
-                      <span className="metric-label">Citas hoy</span>
-                    </div>
-                  </div>
-                  <div className="metric-premium-card">
-                    <div className="metric-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
-                      <i className="fas fa-check-circle"></i>
-                    </div>
-                    <div className="metric-info">
-                      <span className="metric-value">{agendaMetrics.confirmed || 0}</span>
-                      <span className="metric-label">Confirmadas</span>
-                    </div>
-                  </div>
-                  <div className="metric-premium-card">
-                    <div className="metric-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
-                      <i className="fas fa-times-circle"></i>
-                    </div>
-                    <div className="metric-info">
-                      <span className="metric-value">{agendaMetrics.no_show || 0}</span>
-                      <span className="metric-label">No asistieron</span>
-                    </div>
-                  </div>
-                  <div className="metric-premium-card">
-                    <div className="metric-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
-                      <i className="fas fa-chart-line"></i>
-                    </div>
-                    <div className="metric-info">
-                      <span className="metric-value">{Math.round((agendaMetrics.completed / (agendaMetrics.scheduled || 1)) * 100)}%</span>
-                      <span className="metric-label">Efectividad</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pipeline-premium-card">
-                  <div className="pipeline-card-header">
-                    <i className="fas fa-funnel-dollar"></i>
-                    <h3>Pipeline de citas</h3>
-                    <span className="pipeline-count">{appointments.length} total</span>
-                  </div>
-                  <div className="pipeline-kanban">
-                    {[
-                      { status: 'scheduled', label: 'Agendadas', icon: 'fa-clock', color: '#3b82f6', bg: '#eff6ff' },
-                      { status: 'confirmed', label: 'Confirmadas', icon: 'fa-check-circle', color: '#10b981', bg: '#dcfce7' },
-                      { status: 'completed', label: 'Completadas', icon: 'fa-trophy', color: '#8b5cf6', bg: '#f5f3ff' },
-                      { status: 'no_show', label: 'No asistió', icon: 'fa-user-slash', color: '#ef4444', bg: '#fee2e2' },
-                      { status: 'cancelled', label: 'Canceladas', icon: 'fa-ban', color: '#6b7280', bg: '#f3f4f6' }
-                    ].map(column => (
-                      <div key={column.status} className="pipeline-column">
-                        <div className="column-header" style={{ background: column.bg }}>
-                          <i className={`fas ${column.icon}`} style={{ color: column.color }}></i>
-                          <span>{column.label}</span>
-                          <span className="column-count" style={{ background: column.color }}>
-                            {(appointments || []).filter(a => a.status === column.status).length}
-                          </span>
-                        </div>
-                        <div className="column-cards">
-                          {(appointments || [])
-                            .filter(a => a.status === column.status)
-                            .slice(0, 4)
-                            .map(a => (
-                              <div key={a.id} className="pipeline-item" onClick={() => {
-                                setSelectedAppointment(a)
-                                setAppointmentForm({
-                                  title: a.title || '',
-                                  contact_name: a.contact_name || '',
-                                  contact_phone: a.contact_phone || '',
-                                  contact_email: a.contact_email || '',
-                                  status: a.status || 'scheduled',
-                                  meeting_type: a.meeting_type || 'call',
-                                  meeting_link: a.meeting_link || '',
-                                  location: a.location || '',
-                                  notes: a.notes || '',
-                                  start_at: a.start_at?.slice(0,16) || '',
-                                  end_at: a.end_at?.slice(0,16) || '',
-                                  timezone: a.timezone || 'America/Bogota',
-                                  lead_score: a.lead_score || 70
-                                })
-                                setShowAppointmentModal(true)
-                              }}>
-                                <div className="item-title">
-                                  {a.title || a.contact_name || 'Sin título'}
-                                </div>
-
-                                <div className="item-time">
-                                  <i className="fas fa-clock"></i>
-                                  {formatAgendaDateTime(a.start_at)}
-                                </div>
-
-                                {a.contact_name && (
-                                  <div className="item-contact">
-                                    <i className="fas fa-user"></i>
-                                    {a.contact_name}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          {(appointments || []).filter(a => a.status === column.status).length > 4 && (
-                            <div className="column-more">+{Math.abs((appointments || []).filter(a => a.status === column.status).length - 4)} más</div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="agents-premium-card">
-                  <div className="agents-card-header">
-                    <div>
-                      <i className="fas fa-users-gear"></i>
-                      <h3>Agentes de ventas</h3>
-                    </div>
-                    <button className="btn-mini" onClick={createAppointmentAgent}>
-                      <i className="fas fa-plus"></i>
-                      <span>Agregar</span>
-                    </button>
-                  </div>
-                  <div className="agents-list">
-                    <div className="agent-add-form">
-                      <input 
-                        placeholder="Nombre" 
-                        value={agentForm.name}
-                        onChange={e => setAgentForm({...agentForm, name: e.target.value})}
-                      />
-                      <input 
-                        placeholder="Email" 
-                        value={agentForm.email}
-                        onChange={e => setAgentForm({...agentForm, email: e.target.value})}
-                      />
-                      <input 
-                        placeholder="WhatsApp" 
-                        value={agentForm.whatsapp}
-                        onChange={e => setAgentForm({...agentForm, whatsapp: e.target.value})}
-                      />
-                    </div>
-                    {appointmentAgents.map(agent => (
-                      <div key={agent.id} className="agent-item">
-                        <div className="agent-avatar" style={{ background: agent.color || '#7430e2' }}>
-                          {agent.name?.charAt(0) || 'A'}
-                        </div>
-                        <div className="agent-info">
-                          <strong>{agent.name}</strong>
-                          <span>{agent.email}</span>
-                          <small>{agent.whatsapp}</small>
-                        </div>
-                        <div className="agent-role">
-                          <span className="role-badge">{agent.role || 'sales'}</span>
-                        </div>
-                      </div>
-                    ))}
-                    {appointmentAgents.length === 0 && (
-                      <div className="empty-agents">
-                        <i className="fas fa-user-plus"></i>
-                        <p>No hay agentes</p>
-                        <span>Agrega tu equipo de ventas</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {showAppointmentModal && (
-              <div className="modal-premium-overlay">
-                <div className="modal-premium-container">
-                  <div className="modal-premium-header">
-                    <div className="modal-icon">
-                      <i className="fas fa-calendar-plus"></i>
-                    </div>
-                    <div>
-                      <h2>{selectedAppointment ? 'Editar cita' : 'Nueva cita'}</h2>
-                      <p>Completa los detalles de la reunión</p>
-                    </div>
-                    <button className="modal-close" onClick={() => {
-                      setShowAppointmentModal(false)
-                      setSelectedAppointment(null)
-                    }}>
-                      <i className="fas fa-times"></i>
-                    </button>
-                  </div>
-                  <div className="modal-premium-body">
-                    <div className="form-two-columns">
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-tag"></i> Título</label>
-                        <input 
-                          placeholder="Ej: Reunión con cliente" 
-                          value={appointmentForm.title}
-                          onChange={e => setAppointmentForm({...appointmentForm, title: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-user"></i> Contacto</label>
-                        <input 
-                          placeholder="Nombre del cliente" 
-                          value={appointmentForm.contact_name}
-                          onChange={e => setAppointmentForm({...appointmentForm, contact_name: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fab fa-whatsapp"></i> WhatsApp</label>
-                        <input 
-                          placeholder="573000000000" 
-                          value={appointmentForm.contact_phone}
-                          onChange={e => setAppointmentForm({...appointmentForm, contact_phone: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-envelope"></i> Email</label>
-                        <input 
-                          placeholder="cliente@email.com" 
-                          value={appointmentForm.contact_email}
-                          onChange={e => setAppointmentForm({...appointmentForm, contact_email: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-calendar-day"></i> Inicio</label>
-                        <input 
-                          type="datetime-local" 
-                          value={appointmentForm.start_at}
-                          onChange={e => setAppointmentForm({...appointmentForm, start_at: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-calendar-day"></i> Fin</label>
-                        <input 
-                          type="datetime-local" 
-                          value={appointmentForm.end_at}
-                          onChange={e => setAppointmentForm({...appointmentForm, end_at: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-chart-simple"></i> Estado</label>
-                        <select 
-                          value={appointmentForm.status}
-                          onChange={e => setAppointmentForm({...appointmentForm, status: e.target.value})}
-                        >
-                          <option value="scheduled">📅 Agendada</option>
-                          <option value="confirmed">✅ Confirmada</option>
-                          <option value="completed">🏆 Completada</option>
-                          <option value="no_show">❌ No asistió</option>
-                          <option value="cancelled">🚫 Cancelada</option>
-                        </select>
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-video"></i> Tipo reunión</label>
-                        <select 
-                          value={appointmentForm.meeting_type}
-                          onChange={e => setAppointmentForm({...appointmentForm, meeting_type: e.target.value})}
-                        >
-                          <option value="call">📞 Llamada</option>
-                          <option value="zoom">🎥 Zoom</option>
-                          <option value="meet">📧 Google Meet</option>
-                          <option value="presential">🏢 Presencial</option>
-                        </select>
-                      </div>
-                      <div className="input-group-premium full-width">
-                        <label><i className="fas fa-link"></i> Link reunión</label>
-                        <input 
-                          placeholder="https://meet.google.com/..." 
-                          value={appointmentForm.meeting_link}
-                          onChange={e => setAppointmentForm({...appointmentForm, meeting_link: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium full-width">
-                        <label><i className="fas fa-location-dot"></i> Ubicación</label>
-                        <input 
-                          placeholder="Dirección o lugar" 
-                          value={appointmentForm.location}
-                          onChange={e => setAppointmentForm({...appointmentForm, location: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium full-width">
-                        <label><i className="fas fa-pen"></i> Notas</label>
-                        <textarea 
-                          rows={3} 
-                          placeholder="Notas adicionales..." 
-                          value={appointmentForm.notes}
-                          onChange={e => setAppointmentForm({...appointmentForm, notes: e.target.value})}
-                        />
-                      </div>
-                      <div className="input-group-premium">
-                        <label><i className="fas fa-star"></i> Score IA</label>
-                        <input 
-                          type="number" 
-                          min="0" 
-                          max="100"
-                          value={appointmentForm.lead_score}
-                          onChange={e => setAppointmentForm({...appointmentForm, lead_score: Number(e.target.value)})}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="modal-premium-footer">
-                    <button className="btn-cancel" onClick={() => {
-                      setShowAppointmentModal(false)
-                      setSelectedAppointment(null)
-                    }}>
-                      Cancelar
-                    </button>
-                    <button className="btn-save" onClick={createAppointment}>
-                      <i className="fas fa-save"></i>
-                      {selectedAppointment ? 'Actualizar cita' : 'Crear cita'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ======================== ASSISTANT AI ======================== */}
-        {tab === 'assistant' && (
-          <section className="assistant-page stack gap-lg">
-            <div className="assistant-hero stripe-card">
-              <div>
-                <div className="eyebrow">Worktic AI Assistant</div>
-                <h2>Tu copiloto para configurar, vender y automatizar</h2>
-                <p className="muted">
-                  Pregúntame cómo conectar WhatsApp, configurar Facebook, crear landings, publicar en dominio propio, lanzar campañas, usar grupos y conseguir clientes.
-                </p>
-              </div>
-
-              <button type="button" className="secondary" onClick={clearAssistantMessages}>
-                <i className="fas fa-trash"></i> Limpiar chat
-              </button>
-            </div>
-
-            <div className="assistant-layout">
-              <aside className="assistant-suggestions stripe-card">
-                <div className="section-title">
-                  <i className="fas fa-bolt"></i> Preguntas rápidas
-                </div>
-
-                <div className="quick-list">
-                  {assistantQuickQuestions.map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      className="quick-question"
-                      onClick={() => sendAssistantMessage(q)}
-                      disabled={assistantLoading}
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="empty-box">
-                  Este asistente guía al cliente dentro de la plataforma y también le explica estrategia práctica de ventas automáticas.
-                </div>
-              </aside>
-
-              <section className="assistant-chat stripe-card">
-                <div 
-                  className="assistant-messages-container" 
-                  ref={messagesContainerRef}
-                  onScroll={handleScroll}
-                >
-                  {assistantHasMore && (
-                    <button 
-                      className="load-more-btn"
-                      onClick={() => loadAssistantMessages(true)}
-                      disabled={assistantLoadingMore}
-                    >
-                      {assistantLoadingMore ? (
-                        <><i className="fas fa-circle-notch fa-spin"></i> Cargando...</>
-                      ) : (
-                        <><i className="fas fa-arrow-up"></i> Cargar mensajes anteriores</>
-                      )}
-                    </button>
-                  )}
-
-                  <div className="assistant-messages">
-                    {assistantMessages.length === 0 && !assistantLoading && (
-                      <div className="assistant-empty">
-                        <i className="fas fa-comments"></i>
-                        <h3>Hola, soy tu asistente de Worktic AI</h3>
-                        <p>
-                          Puedo ayudarte paso a paso con WhatsApp, Facebook, landings, campañas, grupos, funnels y ventas automáticas.
-                        </p>
-                      </div>
-                    )}
-
-                    {assistantMessages.map((m) => (
-                      <div
-                        key={m.id}
-                        className={m.role === 'user' ? 'assistant-bubble user' : 'assistant-bubble bot'}
-                      >
-                        <div className="assistant-role">
-                          {m.role === 'user' ? 'Tú' : 'Worktic AI'}
-                        </div>
-                        <div className="assistant-text">
-                          {m.content}
-                        </div>
-                      </div>
-                    ))}
-
-                    {assistantLoading && (
-                      <div className="assistant-bubble bot">
-                        <div className="assistant-role">Worktic AI</div>
-                        <div className="assistant-text">
-                          <i className="fas fa-circle-notch fa-spin"></i> Pensando...
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {showScrollButton && (
-                    <button 
-                      className="scroll-to-bottom-btn"
-                      onClick={() => scrollToBottom('smooth')}
-                      title="Ir al final"
-                    >
-                      <i className="fas fa-arrow-down"></i>
-                    </button>
-                  )}
-                </div>
-
-                <form
-                  className="assistant-compose"
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    sendAssistantMessage()
-                  }}
-                >
-                  <textarea
-                    rows={2}
-                    placeholder="Ej: ¿Cómo conecto Facebook y creo mi primera campaña?"
-                    value={assistantInput}
-                    onChange={(e) => setAssistantInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        sendAssistantMessage()
-                      }
-                    }}
-                  />
-
-                  <button type="submit" disabled={assistantLoading || !assistantInput.trim()}>
-                    <i className="fas fa-paper-plane"></i> Enviar
-                  </button>
-                </form>
-              </section>
-            </div>
-          </section>
-        )}
-
-        {/* ======================== DASHBOARD ======================== */}
-        {tab === 'dashboard' && (
-          <section className="stack gap-lg">
-            {!isAdmin && (
-              <div className="stripe-card stack">
-                <div className="row between center">
-                  <div>
-                    <div className="section-title">
-                      <i className="fas fa-gauge-high"></i> Uso del plan
-                    </div>
-                    <p className="muted">Plan actual: <strong>{currentPlan?.name || 'Business'}</strong></p>
-                  </div>
-                  <button type="button" onClick={() => setForcePlanScreen(true)}>
-                    <i className="fas fa-crown"></i>
-                    Mejorar plan
-                  </button>
-                </div>
-
-                <div className="metric-grid">
-                  {[
-                    ['Bots', 'bots'],
-                    ['Usuarios', 'users'],
-                    ['Landings', 'landing_pages'],
-                    ['Plantillas', 'templates'],
-                    ['Posts sociales', 'social_posts_month'],
-                    ['Videos IA', 'ai_videos_month'],
-                    ['Grupos IA', 'group_bots'],
-                    ['Citas IA', 'appointments_month']
-                  ].map(([label, metric]) => {
-                    const used = getUsage(metric)
-                    const limit = getLimit(metric)
-                    const pct = limit > 0 && Number.isFinite(limit)
-                      ? Math.min(100, Math.round((used / limit) * 100))
-                      : 0
-
-                    return (
-                      <div key={metric} className="usage-mini-card">
-                        <div className="row between">
-                          <strong>{label}</strong>
-                          <span>{used}/{limit || 0}</span>
-                        </div>
-                        <div className="usage-bar">
-                          <div style={{ width: `${pct}%` }}></div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
+        {/* ======================== SECCIONES PARA AGENCY_ADMIN ======================== */}
+        {me?.role === 'agency_admin' && activeSection === 'agency-dashboard' && (
+          <section className="stripe-card stack">
+            <h2>Panel de Agencia</h2>
+            <p className="muted">
+              Administra tus clientes, usuarios, licencias y pagos dentro de Worktic AI.
+            </p>
 
             <div className="metric-grid">
-              {[
-                ['Clientes', metrics.clients], ['Bots', metrics.bots], ['Leads', metrics.leads],
-                ['Hot leads', metrics.hot_leads], ['Cerrados', metrics.closed_leads], ['Mensajes 24h', metrics.messages_24h]
-              ].map(([label, v]) => (
-                <div className="stripe-card metric" key={label}>
-                  <div className="metric-label">{label}</div>
-                  <div className="metric-value">{v ?? 0}</div>
-                </div>
-              ))}
-            </div>
-            <div className="stripe-card">
-              <div className="chart-container">
-                <div className="chart">
-                  <div className="chart-title">Leads por etapa</div>
-                  <div className="bar-container">
-                    {leadsByStageGlobal.stages.map((stage, idx) => (
-                      <div key={stage} className="bar-item">
-                        <div className="bar-label">{stage}</div>
-                        <div className="bar-fill" style={{ width: `${Math.min(100, leadsByStageGlobal.counts[idx] * 5)}%`, maxWidth: '100%' }}></div>
-                        <div className="bar-value">{leadsByStageGlobal.counts[idx]}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="chart">
-                  <div className="chart-title">Mensajes últimos 7 días</div>
-                  <div className="bar-container">
-                    {messagesLast7Days.days.map((day, idx) => (
-                      <div key={day} className="bar-item">
-                        <div className="bar-label">{day}</div>
-                        <div className="bar-fill" style={{ width: `${Math.min(100, messagesLast7Days.counts[idx] * 2)}%`, maxWidth: '100%' }}></div>
-                        <div className="bar-value">{messagesLast7Days.counts[idx]}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="metric-card">
+                <span>Clientes</span>
+                <strong>{clients.length}</strong>
+              </div>
+
+              <div className="metric-card">
+                <span>Usuarios</span>
+                <strong>{users.length}</strong>
+              </div>
+
+              <div className="metric-card">
+                <span>Pagos</span>
+                <strong>{paymentLinks.length}</strong>
+              </div>
+
+              <div className="metric-card">
+                <span>Estado</span>
+                <strong>Activa</strong>
               </div>
             </div>
-            <div className="panel-grid">
-              <section className="stripe-card stack">
-                <div className="row between center">
-                  <div className="section-title"><i className="fas fa-plug"></i> Bots activos</div>
-                  <div className="row gap-sm">
-                    <input type="text" placeholder="Buscar bot..." className="search-input" value={searchBot} onChange={e => setSearchBot(e.target.value)} />
-                    <span className="pill connected">{filteredActiveBots.length}</span>
-                  </div>
-                </div>
-                <form onSubmit={createBot} className="row gap-sm">
-                  <input className="grow" value={newBotName} onChange={e => setNewBotName(e.target.value)} placeholder="Nombre del bot" />
-                  <button disabled={busy || !selectedClientId}>Crear bot</button>
-                </form>
-                <div className="list two-col">
-                  {paginatedActiveBots.map(bot => {
-                  const isSelected = selectedBotId === bot.id
+          </section>
+        )}
 
-                  return (
-                    <div
-                      key={bot.id}
-                      className={`bot-card-pro ${isSelected ? 'selected' : ''}`}
-                    >
-                      <div className="bot-card-pro-head">
-                        <div className="bot-icon-pro">
-                          <i className="fas fa-robot"></i>
-                        </div>
+        {me?.role === 'agency_admin' && activeSection === 'agency-clients' && (
+          <section className="stripe-card stack">
+            <h2>Clientes de mi agencia</h2>
+            <p className="muted">
+              Crea empresas cliente. Si eliges Free queda activo; si eliges Starter, Pro o Business debe pagarse licencia.
+            </p>
 
-                        <div className="bot-main-info">
-                          <strong>{bot.name}</strong>
-                          <span>{bot.phone || 'Sin número'}</span>
-                        </div>
+            <form onSubmit={createClient} className="grid-2">
+              <input placeholder="Nombre empresa" value={newClient.name} onChange={(e) => setNewClient({ ...newClient, name: e.target.value })} />
+              <input placeholder="Email" value={newClient.email} onChange={(e) => setNewClient({ ...newClient, email: e.target.value })} />
+              <input placeholder="Teléfono" value={newClient.phone} onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })} />
 
-                        <span className={`pill ${bot.status}`}>
-                          {bot.status}
-                        </span>
-                      </div>
+              <select value={newClient.plan} onChange={(e) => setNewClient({ ...newClient, plan: e.target.value })}>
+                <option value="free">Free</option>
+                <option value="starter">Starter</option>
+                <option value="pro">Pro</option>
+                <option value="business">Business</option>
+              </select>
 
-                      <div className="bot-card-pro-actions">
-                        <button
-                          type="button"
-                          className={isSelected ? 'secondary' : ''}
-                          onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
-                        >
-                          <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
-                          {isSelected ? 'Quitar selección' : 'Seleccionar'}
-                        </button>
+              <button type="submit">Crear cliente</button>
+            </form>
 
-                        <button
-                          type="button"
-                          className="secondary"
-                          onClick={() => renameBot(bot)}
-                        >
-                          <i className="fas fa-pen"></i>
-                          Editar
-                        </button>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Plan</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clients.map((c) => (
+                    <tr key={c.id}>
+                      <td>{c.name}</td>
+                      <td>{c.email}</td>
+                      <td>{c.plan || 'Sin plan'}</td>
+                      <td>{c.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
-                        <button
-                          type="button"
-                          className="secondary"
-                          onClick={() => stopBot(bot.id)}
-                        >
-                          <i className="fas fa-power-off"></i>
-                          Apagar
-                        </button>
+        {me?.role === 'agency_admin' && activeSection === 'agency-users' && (
+          <section className="stripe-card stack">
+            <h2>Usuarios de clientes</h2>
 
-                        <button
-                          type="button"
-                          className="danger"
-                          onClick={() => deleteBot(bot)}
-                        >
-                          <i className="fas fa-trash"></i>
-                          Eliminar
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-                  {paginatedActiveBots.length === 0 && <div className="empty-box">No hay bots activos</div>}
-                </div>
-                <div className="pagination">
-                  <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
-                  <span>Página {botPage}</span>
-                  <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredActiveBots.length}>Siguiente</button>
-                </div>
-              </section>
+            <form onSubmit={createUser} className="grid-2">
+              <select value={newUser.client_id} onChange={(e) => setNewUser({ ...newUser, client_id: e.target.value })}>
+                <option value="">Seleccionar cliente</option>
+                {clients.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
 
-              <section className="stripe-card stack">
-                <div className="row between center">
-                  <div className="section-title"><i className="fas fa-power-off"></i> Bots inactivos</div>
-                  <span className="pill disconnected">{filteredInactiveBots.length}</span>
-                </div>
-                <div className="list two-col">
-                  {paginatedInactiveBots.map(bot => {
-                    const isSelected = selectedBotId === bot.id
+              <input placeholder="Nombre usuario" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+              <input placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+              <input placeholder="Contraseña" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
 
+              <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                <option value="client_admin">Admin Cliente</option>
+                <option value="client_user">Usuario Cliente</option>
+              </select>
+
+              <button type="submit">Crear usuario</button>
+            </form>
+
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Cliente</th>
+                    <th>Rol</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u.id}>
+                      <td>{u.name}</td>
+                      <td>{u.email}</td>
+                      <td>{clients.find(c => c.id === u.client_id)?.name || '-'}</td>
+                      <td>{u.role === 'client_admin' ? 'Admin Cliente' : 'Usuario Cliente'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {me?.role === 'agency_admin' && activeSection === 'agency-licenses' && (
+          <section className="stripe-card stack">
+            <h2>Licencias de clientes</h2>
+            <p className="muted">
+              Visualiza el estado de licencia de cada cliente.
+            </p>
+
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Plan</th>
+                    <th>Estado suscripción</th>
+                    <th>Vence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clients.map((c) => {
+                    const clientSub = pendingSubscriptions.find(s => s.client_id === c.id) || null
                     return (
-                      <div
-                        key={bot.id}
-                        className={`bot-card-pro inactive ${isSelected ? 'selected' : ''}`}
-                      >
-                        <div className="bot-card-pro-head">
-                          <div className="bot-icon-pro inactive">
-                            <i className="fas fa-robot"></i>
-                          </div>
-
-                          <div className="bot-main-info">
-                            <strong>{bot.name}</strong>
-                            <span>{bot.phone || 'Sin número'}</span>
-                          </div>
-
-                          <span className={`pill ${bot.status}`}>
-                            {bot.status}
-                          </span>
-                        </div>
-
-                        <div className="bot-card-pro-actions">
-                          <button
-                            type="button"
-                            className={isSelected ? 'secondary' : ''}
-                            onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
-                          >
-                            <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
-                            {isSelected ? 'Quitar selección' : 'Seleccionar'}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              await api(`/api/bots/${bot.id}/start`, { method: 'POST' })
-                              await loadBots(selectedClientId)
-                              await loadQr(bot.id)
-                              showNotice('Bot encendido')
-                            }}
-                          >
-                            <i className="fas fa-play"></i>
-                            Encender
-                          </button>
-
-                          <button
-                            type="button"
-                            className="secondary"
-                            onClick={() => renameBot(bot)}
-                          >
-                            <i className="fas fa-pen"></i>
-                            Editar
-                          </button>
-
-                          <button
-                            type="button"
-                            className="danger"
-                            onClick={() => deleteBot(bot)}
-                          >
-                            <i className="fas fa-trash"></i>
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
+                      <tr key={c.id}>
+                        <td>{c.name}</td>
+                        <td>{c.plan || 'Sin plan'}</td>
+                        <td>{clientSub ? clientSub.status : (c.status === 'active' ? 'Activo' : 'Inactivo')}</td>
+                        <td>{clientSub?.expires_at ? new Date(clientSub.expires_at).toLocaleDateString() : '-'}</td>
+                      </tr>
                     )
                   })}
-                  {paginatedInactiveBots.length === 0 && <div className="empty-box">No hay bots inactivos</div>}
-                </div>
-                <div className="pagination">
-                  <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
-                  <span>Página {botPage}</span>
-                  <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredInactiveBots.length}>Siguiente</button>
-                </div>
-              </section>
+                </tbody>
+              </table>
             </div>
-            <section className="stripe-card stack">
-              <div className="row between center">
-                <div>
-                  <div className="section-title"><i className="fas fa-microchip"></i> Bot seleccionado</div>
-                  <p className="muted">{selectedBot ? selectedBot.name : 'Selecciona un bot'}</p>
-                </div>
-                {selectedBot && (
-                  <div className="row gap-sm">
-                    {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
-                      <button type="button" onClick={() => stopBot(selectedBot.id)} disabled={busy}>Apagar</button>
-                    ) : (
-                      <button type="button" onClick={startBot} disabled={busy}>Encender</button>
-                    )}
-                    <button type="button" onClick={() => renameBot(selectedBot)} disabled={busy}>Editar</button>
+          </section>
+        )}
+
+        {me?.role === 'agency_admin' && activeSection === 'agency-payments' && (
+          <section className="stripe-card stack">
+            <h2>Pagos de clientes</h2>
+            <p className="muted">
+              Historial de pagos por link de tus clientes.
+            </p>
+
+            <div className="table-wrap" style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', minWidth: '600px' }}>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentLinks.map((p) => {
+                    const client = clients.find(c => c.id === p.client_id)
+                    return (
+                      <tr key={p.id}>
+                        <td>{client?.name || p.client_id || '-'}</td>
+                        <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>{p.concept}</td>
+                        <td><strong>{p.amount} {p.currency || 'USDT'}</strong></td>
+                        <td>
+                          <span className={`pill ${p.status === 'approved' ? 'connected' : p.status === 'rejected' ? 'error' : 'warning'}`}>
+                            {p.status === 'approved' ? '✅ Aprobado' : 
+                             p.status === 'rejected' ? '❌ Rechazado' : 
+                             p.status === 'pending' ? '⏳ Pendiente' : p.status}
+                          </span>
+                        </td>
+                        <td>{p.created_at ? new Date(p.created_at).toLocaleDateString() : '-'}</td>
+                      </tr>
+                    )
+                  })}
+                  {paymentLinks.length === 0 && (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: 'center', padding: '1rem' }}>
+                        No hay pagos registrados.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {me?.role === 'agency_admin' && activeSection === 'agency-branding' && (
+          <section className="stripe-card stack">
+            <h2>Branding Agencia</h2>
+            <p className="muted">
+              Configura la apariencia de la plataforma para tus clientes.
+            </p>
+
+            <div className="grid-2">
+              <input
+                placeholder="Nombre de marca"
+                value={agencyForm.brand_name}
+                onChange={(e) => setAgencyForm({ ...agencyForm, brand_name: e.target.value })}
+              />
+              <input
+                type="color"
+                value={agencyForm.brand_color}
+                onChange={(e) => setAgencyForm({ ...agencyForm, brand_color: e.target.value })}
+              />
+              <input
+                placeholder="Logo URL"
+                value={agencyForm.logo_url}
+                onChange={(e) => setAgencyForm({ ...agencyForm, logo_url: e.target.value })}
+              />
+              <input
+                placeholder="Favicon URL"
+                value={agencyForm.favicon_url}
+                onChange={(e) => setAgencyForm({ ...agencyForm, favicon_url: e.target.value })}
+              />
+              <input
+                placeholder="Login Title"
+                value={agencyForm.login_title}
+                onChange={(e) => setAgencyForm({ ...agencyForm, login_title: e.target.value })}
+              />
+              <input
+                placeholder="Login Subtitle"
+                value={agencyForm.login_subtitle}
+                onChange={(e) => setAgencyForm({ ...agencyForm, login_subtitle: e.target.value })}
+              />
+              <input
+                placeholder="Login Background URL"
+                value={agencyForm.login_background}
+                onChange={(e) => setAgencyForm({ ...agencyForm, login_background: e.target.value })}
+              />
+            </div>
+
+            <button type="button" onClick={updateAgency}>
+              Guardar Branding
+            </button>
+          </section>
+        )}
+
+        {/* ======================== SECCIONES NORMALES (solo si no es agency_admin) ======================== */}
+        {me?.role !== 'agency_admin' && (
+          <>
+            {/* ======================== AGENCIAS SECTION ======================== */}
+            {tab === 'agencies' && (
+              <div className="stack gap-lg">
+                <section className="stripe-card stack">
+                  <div className="row between">
+                    <div>
+                      <h2>Agencias / Partners</h2>
+                      <p className="muted">
+                        Crea agencias dentro de Worktic AI, configura contrato, branding, precios especiales y licencia mensual.
+                      </p>
+                    </div>
+                    <button type="button" onClick={loadAgencies}>
+                      <i className="fas fa-sync"></i> Recargar
+                    </button>
                   </div>
-                )}
-              </div>
-              {selectedBot ? (
-                <>
-                  <div className="status-row"><strong>{selectedBot.name}</strong> <span className={`pill ${selectedBot.status}`}>{selectedBot.status}</span></div>
-                  {qrDataUrlBot ? <img className="qr" src={qrDataUrlBot} alt="QR" /> : <div className="empty-box">Sin QR pendiente</div>}
-                  <div className="metric-grid" style={{ marginTop: '1rem' }}>
-                    <div className="metric"><div className="metric-label">Total leads</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</div></div>
-                    <div className="metric"><div className="metric-label">Conversaciones activas</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</div></div>
-                    <div className="metric"><div className="metric-label">Tasa cierre</div><div className="metric-value">{Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%</div></div>
-                  </div>
-                  <div className="chart" style={{ marginTop: '0.5rem' }}>
-                    <div className="chart-title">Leads por etapa (este bot)</div>
-                    <div className="bar-container">
-                      {botLeadsByStage.stages.map((stage, idx) => (
-                        <div key={stage} className="bar-item">
-                          <div className="bar-label">{stage}</div>
-                          <div className="bar-fill" style={{ width: `${Math.min(100, botLeadsByStage.counts[idx] * 10)}%`, maxWidth: '100%' }}></div>
-                          <div className="bar-value">{botLeadsByStage.counts[idx]}</div>
+
+                  <form onSubmit={createAgency} className="grid-2">
+                    <input placeholder="Nombre agencia" value={agencyForm.name} onChange={e => setAgencyForm({ ...agencyForm, name: e.target.value })} required />
+                    <input placeholder="Email" value={agencyForm.email} onChange={e => setAgencyForm({ ...agencyForm, email: e.target.value })} />
+                    <input placeholder="Teléfono" value={agencyForm.phone} onChange={e => setAgencyForm({ ...agencyForm, phone: e.target.value })} />
+                    <input placeholder="Nombre de marca" value={agencyForm.brand_name} onChange={e => setAgencyForm({ ...agencyForm, brand_name: e.target.value })} />
+                    <input placeholder="Logo URL" value={agencyForm.logo_url} onChange={e => setAgencyForm({ ...agencyForm, logo_url: e.target.value })} />
+                    <input type="color" value={agencyForm.brand_color} onChange={e => setAgencyForm({ ...agencyForm, brand_color: e.target.value })} />
+                    <input placeholder="Subdominio interno opcional" value={agencyForm.subdomain} onChange={e => setAgencyForm({ ...agencyForm, subdomain: e.target.value })} />
+                    <input type="number" placeholder="Valor mensual convenio USDT" value={agencyForm.monthly_fee} onChange={e => setAgencyForm({ ...agencyForm, monthly_fee: e.target.value })} />
+                    <textarea className="full" placeholder="Notas del convenio" value={agencyForm.notes} onChange={e => setAgencyForm({ ...agencyForm, notes: e.target.value })} />
+
+                    <button className="full" type="submit">
+                      <i className="fas fa-plus"></i> Crear agencia
+                    </button>
+                  </form>
+                </section>
+
+                <section className="stripe-card stack">
+                  <h2>Lista de agencias</h2>
+
+                  {agencyLoading ? (
+                    <div className="empty-box">Cargando agencias...</div>
+                  ) : agencies.length === 0 ? (
+                    <div className="empty-box">No hay agencias creadas</div>
+                  ) : (
+                    <div className="template-list">
+                      {agencies.map(a => (
+                        <div key={a.id} className="template-card stack">
+                          <div className="row between">
+                            <strong>{a.name}</strong>
+                            <span className="pill">{a.status}</span>
+                          </div>
+
+                          <div className="muted tiny">{a.email}</div>
+                          <div><strong>Marca:</strong> {a.brand_name || a.name}</div>
+                          <div><strong>Mensualidad:</strong> {a.monthly_fee} USDT</div>
+                          <div><strong>Contrato:</strong> {a.contract_status || 'Sin firmar'}</div>
+                          <div><strong>Vence:</strong> {a.expires_at ? new Date(a.expires_at).toLocaleDateString() : 'Sin activar'}</div>
+
+                          <div className="row wrap">
+                            <button type="button" onClick={() => setSelectedAgency(a)}>
+                              Editar
+                            </button>
+
+                            <button type="button" onClick={() => {
+                              setSelectedAgency(a)
+                              loadAgencyPrices(a.id)
+                            }}>
+                              Precios
+                            </button>
+
+                            <button type="button" onClick={() => createAgencyPaymentLink(a)}>
+                              Link mensual
+                            </button>
+
+                            <button type="button" onClick={() => viewAgencyAccess(a)}>
+                              Ver acceso
+                            </button>
+
+                            <button type="button" onClick={() => regenerateAgencyAccess(a)}>
+                              Nueva contraseña
+                            </button>
+
+                            <a
+                              className="secondary tiny-btn"
+                              href={`/agency-contract/${a.id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Contrato
+                            </a>
+
+                            <button type="button" onClick={() => activateAgency(a.id)}>
+                              Activar
+                            </button>
+
+                            <button type="button" className="danger" onClick={() => suspendAgency(a.id)}>
+                              Suspender
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
+                  )}
+                </section>
+
+                {selectedAgency && (
+                  <section className="stripe-card stack">
+                    <h2>Editar agencia</h2>
+
+                    <div className="grid-2">
+                      <input value={selectedAgency.name || ''} onChange={e => setSelectedAgency({ ...selectedAgency, name: e.target.value })} />
+                      <input value={selectedAgency.email || ''} onChange={e => setSelectedAgency({ ...selectedAgency, email: e.target.value })} />
+                      <input value={selectedAgency.phone || ''} onChange={e => setSelectedAgency({ ...selectedAgency, phone: e.target.value })} />
+                      <input value={selectedAgency.brand_name || ''} onChange={e => setSelectedAgency({ ...selectedAgency, brand_name: e.target.value })} />
+                      <input value={selectedAgency.logo_url || ''} onChange={e => setSelectedAgency({ ...selectedAgency, logo_url: e.target.value })} />
+                      <input type="color" value={selectedAgency.brand_color || '#7430e2'} onChange={e => setSelectedAgency({ ...selectedAgency, brand_color: e.target.value })} />
+                      <input type="number" value={selectedAgency.monthly_fee || ''} onChange={e => setSelectedAgency({ ...selectedAgency, monthly_fee: e.target.value })} />
+                      <select value={selectedAgency.status || 'pending'} onChange={e => setSelectedAgency({ ...selectedAgency, status: e.target.value })}>
+                        <option value="pending">Pendiente</option>
+                        <option value="active">Activa</option>
+                        <option value="expired">Vencida</option>
+                        <option value="suspended">Suspendida</option>
+                      </select>
+
+                      <textarea
+                        className="full"
+                        rows="10"
+                        placeholder="Cuerpo del contrato"
+                        value={selectedAgency.contract_body || ''}
+                        onChange={e => setSelectedAgency({ ...selectedAgency, contract_body: e.target.value })}
+                      />
+
+                      <button className="full" type="button" onClick={updateAgency}>
+                        Guardar cambios
+                      </button>
+                    </div>
+                  </section>
+                )}
+
+                {selectedAgency && (
+                  <section className="stripe-card stack">
+                    <h2>Precios especiales por agencia</h2>
+
+                    <button type="button" onClick={() => {
+                      setAgencyPrices([
+                        ...agencyPrices,
+                        {
+                          plan_slug: 'starter',
+                          normal_price: 17,
+                          agency_price: 10,
+                          billing_cycle: 'monthly',
+                          enabled: true
+                        }
+                      ])
+                    }}>
+                      Agregar precio
+                    </button>
+
+                    {agencyPrices.map((p, i) => (
+                      <div key={i} className="grid-2">
+                        <select value={p.plan_slug} onChange={e => {
+                          const copy = [...agencyPrices]
+                          copy[i].plan_slug = e.target.value
+                          setAgencyPrices(copy)
+                        }}>
+                          <option value="starter">Starter</option>
+                          <option value="pro">Pro</option>
+                          <option value="business">Business</option>
+                        </select>
+
+                        <input type="number" placeholder="Precio normal" value={p.normal_price} onChange={e => {
+                          const copy = [...agencyPrices]
+                          copy[i].normal_price = Number(e.target.value)
+                          setAgencyPrices(copy)
+                        }} />
+
+                        <input type="number" placeholder="Precio agencia" value={p.agency_price} onChange={e => {
+                          const copy = [...agencyPrices]
+                          copy[i].agency_price = Number(e.target.value)
+                          setAgencyPrices(copy)
+                        }} />
+
+                        <select value={p.billing_cycle} onChange={e => {
+                          const copy = [...agencyPrices]
+                          copy[i].billing_cycle = e.target.value
+                          setAgencyPrices(copy)
+                        }}>
+                          <option value="monthly">Mensual</option>
+                          <option value="yearly">Anual</option>
+                        </select>
+                      </div>
+                    ))}
+
+                    <button type="button" onClick={saveAgencyPrices}>
+                      Guardar precios especiales
+                    </button>
+                  </section>
+                )}
+              </div>
+            )}
+
+            {/* ======================== AGENCY ACCESS MODAL ======================== */}
+            {showAgencyAccessModal && agencyAccess && (
+              <div className="modal-backdrop">
+                <div className="modal-card" style={{ maxWidth: 560 }}>
+                  <div className="modal-head">
+                    <h2>Acceso de Agencia</h2>
+                    <button type="button" onClick={() => setShowAgencyAccessModal(false)}>
+                      ×
+                    </button>
                   </div>
-                 {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
+
+                  <div className="stack">
+                    <div className="stripe-card stack">
+                      <div>
+                        <strong>Agencia:</strong> {agencyAccess.agency_name}
+                      </div>
+
+                      <div>
+                        <strong>Login:</strong>
+                        <input
+                          readOnly
+                          value={`${window.location.origin}${agencyAccess.login_url || ''}`}
+                        />
+                      </div>
+
+                      <div>
+                        <strong>Usuario:</strong>
+                        <input readOnly value={agencyAccess.admin_email || ''} />
+                      </div>
+
+                      <div>
+                        <strong>Contraseña temporal:</strong>
+                        <input readOnly value={agencyAccess.temporary_password || ''} />
+                      </div>
+
+                      <div>
+                        <strong>Contrato:</strong>
+                        <input
+                          readOnly
+                          value={`${window.location.origin}${agencyAccess.contract_url || ''}`}
+                        />
+                      </div>
+
+                      {agencyAccess.last_password_reset && (
+                        <div className="muted">
+                          Último reset: {new Date(agencyAccess.last_password_reset).toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="row">
+                      <button type="button" onClick={copyAgencyAccess}>
+                        Copiar acceso
+                      </button>
+
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => setShowAgencyAccessModal(false)}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ======================== PAYMENT LINKS SECTION ======================== */}
+            {tab === 'payment_links' && (
+              <div className="stack gap-lg payment-links-section">
+                <section className="stripe-card stack">
+                  <div className="row between">
+                    <div>
+                      <h2>Links de Pago</h2>
+                      <p className="muted">Crea cobros en USDT BEP20 y valida pagos manualmente.</p>
+                    </div>
+                    <button type="button" onClick={loadPaymentLinks}>
+                      <i className="fas fa-sync"></i> Recargar
+                    </button>
+                  </div>
+
+                  <form onSubmit={createPaymentLink} className="grid-2">
+                    {me?.role === 'admin' && (
+                      <select
+                        value={paymentLinkForm.client_id}
+                        onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, client_id: e.target.value })}
+                      >
+                        <option value="">Cliente</option>
+                        {clients.map(c => (
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    )}
+
+                    <input
+                      placeholder="Concepto"
+                      value={paymentLinkForm.concept}
+                      onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, concept: e.target.value })}
+                      required
+                    />
+
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="Monto"
+                      value={paymentLinkForm.amount}
+                      onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, amount: e.target.value })}
+                      required
+                    />
+
+                    <select
+                      value={paymentLinkForm.currency}
+                      onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, currency: e.target.value })}
+                    >
+                      <option value="USDT">USDT</option>
+                      <option value="USD">USD</option>
+                      <option value="COP">COP</option>
+                    </select>
+
+                    <input
+                      placeholder="Nombre del cliente opcional"
+                      value={paymentLinkForm.customer_name}
+                      onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_name: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Email opcional"
+                      value={paymentLinkForm.customer_email}
+                      onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_email: e.target.value })}
+                    />
+
+                    <textarea
+                      className="full"
+                      placeholder="Descripción"
+                      value={paymentLinkForm.description}
+                      onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, description: e.target.value })}
+                    />
+
+                    <button className="full" disabled={busy}>
+                      <i className="fas fa-plus"></i> Crear link de pago
+                    </button>
+                  </form>
+                </section>
+
+                <section className="stripe-card stack">
+                  <h2>Pagos creados</h2>
+
+                  {paymentLinksLoading ? (
+                    <div className="empty-box">Cargando links...</div>
+                  ) : paymentLinks.length === 0 ? (
+                    <div className="empty-box">No hay links de pago</div>
+                  ) : (
+                    <div className="template-list">
+                      {paymentLinks.map(item => (
+                        <div key={item.id} className="template-card stack">
+                          <div className="row between">
+                            <strong>{item.concept}</strong>
+                            <span className="pill">{item.status}</span>
+                          </div>
+
+                          <div className="muted tiny">{item.description || 'Sin descripción'}</div>
+                          <div><strong>Monto:</strong> {item.amount} {item.currency}</div>
+                          <div><strong>Wallet:</strong> {item.wallet_address}</div>
+                          <div><strong>Cliente:</strong> {item.customer_name || 'Sin nombre'}</div>
+                          <div><strong>Hash:</strong> {item.tx_hash || 'Pendiente'}</div>
+
+                          {item.public_url && (
+                            <div className="row">
+                              <input value={item.public_url} readOnly />
+                              <button type="button" onClick={() => copyPaymentLink(item.public_url)}>
+                                Copiar
+                              </button>
+                            </div>
+                          )}
+
+                          <div className="row">
+                            <button type="button" onClick={() => approvePaymentLink(item.id)}>
+                              Aprobar
+                            </button>
+
+                            <button type="button" className="danger" onClick={() => rejectPaymentLink(item.id)}>
+                              Rechazar
+                            </button>
+
+                            {item.public_url && (
+                              <a className="secondary tiny-btn" href={item.public_url} target="_blank" rel="noreferrer">
+                                Abrir
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </div>
+            )}
+
+            {/* ======================== AGENDA AI - PREMIUM ULTRA ======================== */}
+            {tab === 'agenda_ai' && (
+              <section className="agenda-premium-dashboard">
+                
+                <div className="agenda-premium-hero">
+                  <div className="hero-glow-bg"></div>
+                  <div className="hero-content">
+                    <div className="hero-icon">
+                      <i className="fas fa-calendar-check"></i>
+                      <div className="hero-pulse"></div>
+                    </div>
+                    <div className="hero-text">
+                      <h1>Agenda AI</h1>
+                      <p>Gestión inteligente de citas y seguimiento automatizado</p>
+                    </div>
+                    <div className="hero-stats">
+                      <div className="hero-stat-item">
+                        <span className="stat-value">{agendaMetrics.today || 0}</span>
+                        <span className="stat-label">Hoy</span>
+                      </div>
+                      <div className="hero-stat-divider"></div>
+                      <div className="hero-stat-item">
+                        <span className="stat-value">{agendaMetrics.scheduled || 0}</span>
+                        <span className="stat-label">Pendientes</span>
+                      </div>
+                      <div className="hero-stat-divider"></div>
+                      <div className="hero-stat-item">
+                        <span className="stat-value">{agendaMetrics.completed || 0}</span>
+                        <span className="stat-label">Completadas</span>
+                      </div>
+                    </div>
+                    <button className="hero-btn-primary" onClick={() => setShowAppointmentModal(true)}>
+                      <i className="fas fa-plus-circle"></i>
+                      <span>Nueva cita</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="agenda-premium-grid">
+                  
+                  <div className="agenda-calendar-wrapper">
+                    <div className="calendar-card-premium">
+                      <div className="calendar-card-header">
+                        <div className="header-left">
+                          <i className="fas fa-calendar-alt"></i>
+                          <h3>Calendario de citas</h3>
+                          <span className="header-badge">Sincronizado</span>
+                        </div>
+                        <div className="header-right">
+                          <button className="icon-btn" onClick={() => loadAgenda()}>
+                            <i className="fas fa-sync-alt"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="calendar-premium-container">
+                        <FullCalendar
+                          plugins={[
+                            dayGridPlugin,
+                            timeGridPlugin,
+                            interactionPlugin
+                          ]}
+                          locale="es"
+                          timeZone="America/Bogota"
+                          initialView="timeGridWeek"
+                          editable={true}
+                          selectable={true}
+                          height={650}
+                          headerToolbar={{
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                          }}
+                          buttonText={{
+                            today: 'Hoy',
+                            month: 'Mes',
+                            week: 'Semana',
+                            day: 'Día'
+                          }}
+                          events={appointments.map(a => ({
+                            id: a.id,
+                            title: a.title || a.contact_name || 'Cita',
+                            start: String(a.start_at || '').replace(' ', 'T'),
+                            end: String(a.end_at || '').replace(' ', 'T'),
+                            backgroundColor: a.status === 'confirmed' ? '#10b981' :
+                                            a.status === 'completed' ? '#6366f1' :
+                                            a.status === 'cancelled' ? '#ef4444' : '#7430e2',
+                            borderColor: 'transparent',
+                            extendedProps: a
+                          }))}
+                          eventClick={(info) => {
+                            const ap = info.event.extendedProps
+                            setSelectedAppointment(ap)
+                            setAppointmentForm({
+                              title: ap.title || '',
+                              contact_name: ap.contact_name || '',
+                              contact_phone: ap.contact_phone || '',
+                              contact_email: ap.contact_email || '',
+                              status: ap.status || 'scheduled',
+                              meeting_type: ap.meeting_type || 'call',
+                              meeting_link: ap.meeting_link || '',
+                              location: ap.location || '',
+                              notes: ap.notes || '',
+                              start_at: String(ap.start_at || '').replace(' ', 'T').slice(0, 16),
+                              end_at: String(ap.end_at || '').replace(' ', 'T').slice(0, 16),
+                              timezone: ap.timezone || 'America/Bogota',
+                              lead_score: ap.lead_score || 70
+                            })
+                            setShowAppointmentModal(true)
+                          }}
+                          eventClassNames="calendar-event-premium"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="agenda-side-wrapper">
+                    
+                    <div className="metrics-premium-row">
+                      <div className="metric-premium-card">
+                        <div className="metric-icon" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+                          <i className="fas fa-calendar-check"></i>
+                        </div>
+                        <div className="metric-info">
+                          <span className="metric-value">{agendaMetrics.today || 0}</span>
+                          <span className="metric-label">Citas hoy</span>
+                        </div>
+                      </div>
+                      <div className="metric-premium-card">
+                        <div className="metric-icon" style={{ background: '#dcfce7', color: '#22c55e' }}>
+                          <i className="fas fa-check-circle"></i>
+                        </div>
+                        <div className="metric-info">
+                          <span className="metric-value">{agendaMetrics.confirmed || 0}</span>
+                          <span className="metric-label">Confirmadas</span>
+                        </div>
+                      </div>
+                      <div className="metric-premium-card">
+                        <div className="metric-icon" style={{ background: '#fee2e2', color: '#ef4444' }}>
+                          <i className="fas fa-times-circle"></i>
+                        </div>
+                        <div className="metric-info">
+                          <span className="metric-value">{agendaMetrics.no_show || 0}</span>
+                          <span className="metric-label">No asistieron</span>
+                        </div>
+                      </div>
+                      <div className="metric-premium-card">
+                        <div className="metric-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
+                          <i className="fas fa-chart-line"></i>
+                        </div>
+                        <div className="metric-info">
+                          <span className="metric-value">{Math.round((agendaMetrics.completed / (agendaMetrics.scheduled || 1)) * 100)}%</span>
+                          <span className="metric-label">Efectividad</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pipeline-premium-card">
+                      <div className="pipeline-card-header">
+                        <i className="fas fa-funnel-dollar"></i>
+                        <h3>Pipeline de citas</h3>
+                        <span className="pipeline-count">{appointments.length} total</span>
+                      </div>
+                      <div className="pipeline-kanban">
+                        {[
+                          { status: 'scheduled', label: 'Agendadas', icon: 'fa-clock', color: '#3b82f6', bg: '#eff6ff' },
+                          { status: 'confirmed', label: 'Confirmadas', icon: 'fa-check-circle', color: '#10b981', bg: '#dcfce7' },
+                          { status: 'completed', label: 'Completadas', icon: 'fa-trophy', color: '#8b5cf6', bg: '#f5f3ff' },
+                          { status: 'no_show', label: 'No asistió', icon: 'fa-user-slash', color: '#ef4444', bg: '#fee2e2' },
+                          { status: 'cancelled', label: 'Canceladas', icon: 'fa-ban', color: '#6b7280', bg: '#f3f4f6' }
+                        ].map(column => (
+                          <div key={column.status} className="pipeline-column">
+                            <div className="column-header" style={{ background: column.bg }}>
+                              <i className={`fas ${column.icon}`} style={{ color: column.color }}></i>
+                              <span>{column.label}</span>
+                              <span className="column-count" style={{ background: column.color }}>
+                                {(appointments || []).filter(a => a.status === column.status).length}
+                              </span>
+                            </div>
+                            <div className="column-cards">
+                              {(appointments || [])
+                                .filter(a => a.status === column.status)
+                                .slice(0, 4)
+                                .map(a => (
+                                  <div key={a.id} className="pipeline-item" onClick={() => {
+                                    setSelectedAppointment(a)
+                                    setAppointmentForm({
+                                      title: a.title || '',
+                                      contact_name: a.contact_name || '',
+                                      contact_phone: a.contact_phone || '',
+                                      contact_email: a.contact_email || '',
+                                      status: a.status || 'scheduled',
+                                      meeting_type: a.meeting_type || 'call',
+                                      meeting_link: a.meeting_link || '',
+                                      location: a.location || '',
+                                      notes: a.notes || '',
+                                      start_at: a.start_at?.slice(0,16) || '',
+                                      end_at: a.end_at?.slice(0,16) || '',
+                                      timezone: a.timezone || 'America/Bogota',
+                                      lead_score: a.lead_score || 70
+                                    })
+                                    setShowAppointmentModal(true)
+                                  }}>
+                                    <div className="item-title">
+                                      {a.title || a.contact_name || 'Sin título'}
+                                    </div>
+
+                                    <div className="item-time">
+                                      <i className="fas fa-clock"></i>
+                                      {formatAgendaDateTime(a.start_at)}
+                                    </div>
+
+                                    {a.contact_name && (
+                                      <div className="item-contact">
+                                        <i className="fas fa-user"></i>
+                                        {a.contact_name}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              {(appointments || []).filter(a => a.status === column.status).length > 4 && (
+                                <div className="column-more">+{Math.abs((appointments || []).filter(a => a.status === column.status).length - 4)} más</div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="agents-premium-card">
+                      <div className="agents-card-header">
+                        <div>
+                          <i className="fas fa-users-gear"></i>
+                          <h3>Agentes de ventas</h3>
+                        </div>
+                        <button className="btn-mini" onClick={createAppointmentAgent}>
+                          <i className="fas fa-plus"></i>
+                          <span>Agregar</span>
+                        </button>
+                      </div>
+                      <div className="agents-list">
+                        <div className="agent-add-form">
+                          <input 
+                            placeholder="Nombre" 
+                            value={agentForm.name}
+                            onChange={e => setAgentForm({...agentForm, name: e.target.value})}
+                          />
+                          <input 
+                            placeholder="Email" 
+                            value={agentForm.email}
+                            onChange={e => setAgentForm({...agentForm, email: e.target.value})}
+                          />
+                          <input 
+                            placeholder="WhatsApp" 
+                            value={agentForm.whatsapp}
+                            onChange={e => setAgentForm({...agentForm, whatsapp: e.target.value})}
+                          />
+                        </div>
+                        {appointmentAgents.map(agent => (
+                          <div key={agent.id} className="agent-item">
+                            <div className="agent-avatar" style={{ background: agent.color || '#7430e2' }}>
+                              {agent.name?.charAt(0) || 'A'}
+                            </div>
+                            <div className="agent-info">
+                              <strong>{agent.name}</strong>
+                              <span>{agent.email}</span>
+                              <small>{agent.whatsapp}</small>
+                            </div>
+                            <div className="agent-role">
+                              <span className="role-badge">{agent.role || 'sales'}</span>
+                            </div>
+                          </div>
+                        ))}
+                        {appointmentAgents.length === 0 && (
+                          <div className="empty-agents">
+                            <i className="fas fa-user-plus"></i>
+                            <p>No hay agentes</p>
+                            <span>Agrega tu equipo de ventas</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {showAppointmentModal && (
+                  <div className="modal-premium-overlay">
+                    <div className="modal-premium-container">
+                      <div className="modal-premium-header">
+                        <div className="modal-icon">
+                          <i className="fas fa-calendar-plus"></i>
+                        </div>
+                        <div>
+                          <h2>{selectedAppointment ? 'Editar cita' : 'Nueva cita'}</h2>
+                          <p>Completa los detalles de la reunión</p>
+                        </div>
+                        <button className="modal-close" onClick={() => {
+                          setShowAppointmentModal(false)
+                          setSelectedAppointment(null)
+                        }}>
+                          <i className="fas fa-times"></i>
+                        </button>
+                      </div>
+                      <div className="modal-premium-body">
+                        <div className="form-two-columns">
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-tag"></i> Título</label>
+                            <input 
+                              placeholder="Ej: Reunión con cliente" 
+                              value={appointmentForm.title}
+                              onChange={e => setAppointmentForm({...appointmentForm, title: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-user"></i> Contacto</label>
+                            <input 
+                              placeholder="Nombre del cliente" 
+                              value={appointmentForm.contact_name}
+                              onChange={e => setAppointmentForm({...appointmentForm, contact_name: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fab fa-whatsapp"></i> WhatsApp</label>
+                            <input 
+                              placeholder="573000000000" 
+                              value={appointmentForm.contact_phone}
+                              onChange={e => setAppointmentForm({...appointmentForm, contact_phone: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-envelope"></i> Email</label>
+                            <input 
+                              placeholder="cliente@email.com" 
+                              value={appointmentForm.contact_email}
+                              onChange={e => setAppointmentForm({...appointmentForm, contact_email: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-calendar-day"></i> Inicio</label>
+                            <input 
+                              type="datetime-local" 
+                              value={appointmentForm.start_at}
+                              onChange={e => setAppointmentForm({...appointmentForm, start_at: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-calendar-day"></i> Fin</label>
+                            <input 
+                              type="datetime-local" 
+                              value={appointmentForm.end_at}
+                              onChange={e => setAppointmentForm({...appointmentForm, end_at: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-chart-simple"></i> Estado</label>
+                            <select 
+                              value={appointmentForm.status}
+                              onChange={e => setAppointmentForm({...appointmentForm, status: e.target.value})}
+                            >
+                              <option value="scheduled">📅 Agendada</option>
+                              <option value="confirmed">✅ Confirmada</option>
+                              <option value="completed">🏆 Completada</option>
+                              <option value="no_show">❌ No asistió</option>
+                              <option value="cancelled">🚫 Cancelada</option>
+                            </select>
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-video"></i> Tipo reunión</label>
+                            <select 
+                              value={appointmentForm.meeting_type}
+                              onChange={e => setAppointmentForm({...appointmentForm, meeting_type: e.target.value})}
+                            >
+                              <option value="call">📞 Llamada</option>
+                              <option value="zoom">🎥 Zoom</option>
+                              <option value="meet">📧 Google Meet</option>
+                              <option value="presential">🏢 Presencial</option>
+                            </select>
+                          </div>
+                          <div className="input-group-premium full-width">
+                            <label><i className="fas fa-link"></i> Link reunión</label>
+                            <input 
+                              placeholder="https://meet.google.com/..." 
+                              value={appointmentForm.meeting_link}
+                              onChange={e => setAppointmentForm({...appointmentForm, meeting_link: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium full-width">
+                            <label><i className="fas fa-location-dot"></i> Ubicación</label>
+                            <input 
+                              placeholder="Dirección o lugar" 
+                              value={appointmentForm.location}
+                              onChange={e => setAppointmentForm({...appointmentForm, location: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium full-width">
+                            <label><i className="fas fa-pen"></i> Notas</label>
+                            <textarea 
+                              rows={3} 
+                              placeholder="Notas adicionales..." 
+                              value={appointmentForm.notes}
+                              onChange={e => setAppointmentForm({...appointmentForm, notes: e.target.value})}
+                            />
+                          </div>
+                          <div className="input-group-premium">
+                            <label><i className="fas fa-star"></i> Score IA</label>
+                            <input 
+                              type="number" 
+                              min="0" 
+                              max="100"
+                              value={appointmentForm.lead_score}
+                              onChange={e => setAppointmentForm({...appointmentForm, lead_score: Number(e.target.value)})}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="modal-premium-footer">
+                        <button className="btn-cancel" onClick={() => {
+                          setShowAppointmentModal(false)
+                          setSelectedAppointment(null)
+                        }}>
+                          Cancelar
+                        </button>
+                        <button className="btn-save" onClick={createAppointment}>
+                          <i className="fas fa-save"></i>
+                          {selectedAppointment ? 'Actualizar cita' : 'Crear cita'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* ======================== ASSISTANT AI ======================== */}
+            {tab === 'assistant' && (
+              <section className="assistant-page stack gap-lg">
+                <div className="assistant-hero stripe-card">
+                  <div>
+                    <div className="eyebrow">Worktic AI Assistant</div>
+                    <h2>Tu copiloto para configurar, vender y automatizar</h2>
+                    <p className="muted">
+                      Pregúntame cómo conectar WhatsApp, configurar Facebook, crear landings, publicar en dominio propio, lanzar campañas, usar grupos y conseguir clientes.
+                    </p>
+                  </div>
+
+                  <button type="button" className="secondary" onClick={clearAssistantMessages}>
+                    <i className="fas fa-trash"></i> Limpiar chat
+                  </button>
+                </div>
+
+                <div className="assistant-layout">
+                  <aside className="assistant-suggestions stripe-card">
+                    <div className="section-title">
+                      <i className="fas fa-bolt"></i> Preguntas rápidas
+                    </div>
+
+                    <div className="quick-list">
+                      {assistantQuickQuestions.map((q) => (
+                        <button
+                          key={q}
+                          type="button"
+                          className="quick-question"
+                          onClick={() => sendAssistantMessage(q)}
+                          disabled={assistantLoading}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="empty-box">
+                      Este asistente guía al cliente dentro de la plataforma y también le explica estrategia práctica de ventas automáticas.
+                    </div>
+                  </aside>
+
+                  <section className="assistant-chat stripe-card">
+                    <div 
+                      className="assistant-messages-container" 
+                      ref={messagesContainerRef}
+                      onScroll={handleScroll}
+                    >
+                      {assistantHasMore && (
+                        <button 
+                          className="load-more-btn"
+                          onClick={() => loadAssistantMessages(true)}
+                          disabled={assistantLoadingMore}
+                        >
+                          {assistantLoadingMore ? (
+                            <><i className="fas fa-circle-notch fa-spin"></i> Cargando...</>
+                          ) : (
+                            <><i className="fas fa-arrow-up"></i> Cargar mensajes anteriores</>
+                          )}
+                        </button>
+                      )}
+
+                      <div className="assistant-messages">
+                        {assistantMessages.length === 0 && !assistantLoading && (
+                          <div className="assistant-empty">
+                            <i className="fas fa-comments"></i>
+                            <h3>Hola, soy tu asistente de Worktic AI</h3>
+                            <p>
+                              Puedo ayudarte paso a paso con WhatsApp, Facebook, landings, campañas, grupos, funnels y ventas automáticas.
+                            </p>
+                          </div>
+                        )}
+
+                        {assistantMessages.map((m) => (
+                          <div
+                            key={m.id}
+                            className={m.role === 'user' ? 'assistant-bubble user' : 'assistant-bubble bot'}
+                          >
+                            <div className="assistant-role">
+                              {m.role === 'user' ? 'Tú' : 'Worktic AI'}
+                            </div>
+                            <div className="assistant-text">
+                              {m.content}
+                            </div>
+                          </div>
+                        ))}
+
+                        {assistantLoading && (
+                          <div className="assistant-bubble bot">
+                            <div className="assistant-role">Worktic AI</div>
+                            <div className="assistant-text">
+                              <i className="fas fa-circle-notch fa-spin"></i> Pensando...
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {showScrollButton && (
+                        <button 
+                          className="scroll-to-bottom-btn"
+                          onClick={() => scrollToBottom('smooth')}
+                          title="Ir al final"
+                        >
+                          <i className="fas fa-arrow-down"></i>
+                        </button>
+                      )}
+                    </div>
+
+                    <form
+                      className="assistant-compose"
+                      onSubmit={(e) => {
+                        e.preventDefault()
+                        sendAssistantMessage()
+                      }}
+                    >
+                      <textarea
+                        rows={2}
+                        placeholder="Ej: ¿Cómo conecto Facebook y creo mi primera campaña?"
+                        value={assistantInput}
+                        onChange={(e) => setAssistantInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault()
+                            sendAssistantMessage()
+                          }
+                        }}
+                      />
+
+                      <button type="submit" disabled={assistantLoading || !assistantInput.trim()}>
+                        <i className="fas fa-paper-plane"></i> Enviar
+                      </button>
+                    </form>
+                  </section>
+                </div>
+              </section>
+            )}
+
+            {/* ======================== DASHBOARD ======================== */}
+            {tab === 'dashboard' && (
+              <section className="stack gap-lg">
+                {!isAdmin && (
+                  <div className="stripe-card stack">
+                    <div className="row between center">
+                      <div>
+                        <div className="section-title">
+                          <i className="fas fa-gauge-high"></i> Uso del plan
+                        </div>
+                        <p className="muted">Plan actual: <strong>{currentPlan?.name || 'Business'}</strong></p>
+                      </div>
+                      <button type="button" onClick={() => setForcePlanScreen(true)}>
+                        <i className="fas fa-crown"></i>
+                        Mejorar plan
+                      </button>
+                    </div>
+
+                    <div className="metric-grid">
+                      {[
+                        ['Bots', 'bots'],
+                        ['Usuarios', 'users'],
+                        ['Landings', 'landing_pages'],
+                        ['Plantillas', 'templates'],
+                        ['Posts sociales', 'social_posts_month'],
+                        ['Videos IA', 'ai_videos_month'],
+                        ['Grupos IA', 'group_bots'],
+                        ['Citas IA', 'appointments_month']
+                      ].map(([label, metric]) => {
+                        const used = getUsage(metric)
+                        const limit = getLimit(metric)
+                        const pct = limit > 0 && Number.isFinite(limit)
+                          ? Math.min(100, Math.round((used / limit) * 100))
+                          : 0
+
+                        return (
+                          <div key={metric} className="usage-mini-card">
+                            <div className="row between">
+                              <strong>{label}</strong>
+                              <span>{used}/{limit || 0}</span>
+                            </div>
+                            <div className="usage-bar">
+                              <div style={{ width: `${pct}%` }}></div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="metric-grid">
+                  {[
+                    ['Clientes', metrics.clients], ['Bots', metrics.bots], ['Leads', metrics.leads],
+                    ['Hot leads', metrics.hot_leads], ['Cerrados', metrics.closed_leads], ['Mensajes 24h', metrics.messages_24h]
+                  ].map(([label, v]) => (
+                    <div className="stripe-card metric" key={label}>
+                      <div className="metric-label">{label}</div>
+                      <div className="metric-value">{v ?? 0}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="stripe-card">
+                  <div className="chart-container">
+                    <div className="chart">
+                      <div className="chart-title">Leads por etapa</div>
+                      <div className="bar-container">
+                        {leadsByStageGlobal.stages.map((stage, idx) => (
+                          <div key={stage} className="bar-item">
+                            <div className="bar-label">{stage}</div>
+                            <div className="bar-fill" style={{ width: `${Math.min(100, leadsByStageGlobal.counts[idx] * 5)}%`, maxWidth: '100%' }}></div>
+                            <div className="bar-value">{leadsByStageGlobal.counts[idx]}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="chart">
+                      <div className="chart-title">Mensajes últimos 7 días</div>
+                      <div className="bar-container">
+                        {messagesLast7Days.days.map((day, idx) => (
+                          <div key={day} className="bar-item">
+                            <div className="bar-label">{day}</div>
+                            <div className="bar-fill" style={{ width: `${Math.min(100, messagesLast7Days.counts[idx] * 2)}%`, maxWidth: '100%' }}></div>
+                            <div className="bar-value">{messagesLast7Days.counts[idx]}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="panel-grid">
+                  <section className="stripe-card stack">
+                    <div className="row between center">
+                      <div className="section-title"><i className="fas fa-plug"></i> Bots activos</div>
+                      <div className="row gap-sm">
+                        <input type="text" placeholder="Buscar bot..." className="search-input" value={searchBot} onChange={e => setSearchBot(e.target.value)} />
+                        <span className="pill connected">{filteredActiveBots.length}</span>
+                      </div>
+                    </div>
+                    <form onSubmit={createBot} className="row gap-sm">
+                      <input className="grow" value={newBotName} onChange={e => setNewBotName(e.target.value)} placeholder="Nombre del bot" />
+                      <button disabled={busy || !selectedClientId}>Crear bot</button>
+                    </form>
+                    <div className="list two-col">
+                      {paginatedActiveBots.map(bot => {
+                      const isSelected = selectedBotId === bot.id
+
+                      return (
+                        <div
+                          key={bot.id}
+                          className={`bot-card-pro ${isSelected ? 'selected' : ''}`}
+                        >
+                          <div className="bot-card-pro-head">
+                            <div className="bot-icon-pro">
+                              <i className="fas fa-robot"></i>
+                            </div>
+
+                            <div className="bot-main-info">
+                              <strong>{bot.name}</strong>
+                              <span>{bot.phone || 'Sin número'}</span>
+                            </div>
+
+                            <span className={`pill ${bot.status}`}>
+                              {bot.status}
+                            </span>
+                          </div>
+
+                          <div className="bot-card-pro-actions">
+                            <button
+                              type="button"
+                              className={isSelected ? 'secondary' : ''}
+                              onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
+                            >
+                              <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
+                              {isSelected ? 'Quitar selección' : 'Seleccionar'}
+                            </button>
+
+                            <button
+                              type="button"
+                              className="secondary"
+                              onClick={() => renameBot(bot)}
+                            >
+                              <i className="fas fa-pen"></i>
+                              Editar
+                            </button>
+
+                            <button
+                              type="button"
+                              className="secondary"
+                              onClick={() => stopBot(bot.id)}
+                            >
+                              <i className="fas fa-power-off"></i>
+                              Apagar
+                            </button>
+
+                            <button
+                              type="button"
+                              className="danger"
+                              onClick={() => deleteBot(bot)}
+                            >
+                              <i className="fas fa-trash"></i>
+                              Eliminar
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                      {paginatedActiveBots.length === 0 && <div className="empty-box">No hay bots activos</div>}
+                    </div>
+                    <div className="pagination">
+                      <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
+                      <span>Página {botPage}</span>
+                      <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredActiveBots.length}>Siguiente</button>
+                    </div>
+                  </section>
+
+                  <section className="stripe-card stack">
+                    <div className="row between center">
+                      <div className="section-title"><i className="fas fa-power-off"></i> Bots inactivos</div>
+                      <span className="pill disconnected">{filteredInactiveBots.length}</span>
+                    </div>
+                    <div className="list two-col">
+                      {paginatedInactiveBots.map(bot => {
+                        const isSelected = selectedBotId === bot.id
+
+                        return (
+                          <div
+                            key={bot.id}
+                            className={`bot-card-pro inactive ${isSelected ? 'selected' : ''}`}
+                          >
+                            <div className="bot-card-pro-head">
+                              <div className="bot-icon-pro inactive">
+                                <i className="fas fa-robot"></i>
+                              </div>
+
+                              <div className="bot-main-info">
+                                <strong>{bot.name}</strong>
+                                <span>{bot.phone || 'Sin número'}</span>
+                              </div>
+
+                              <span className={`pill ${bot.status}`}>
+                                {bot.status}
+                              </span>
+                            </div>
+
+                            <div className="bot-card-pro-actions">
+                              <button
+                                type="button"
+                                className={isSelected ? 'secondary' : ''}
+                                onClick={() => setSelectedBotId(isSelected ? '' : bot.id)}
+                              >
+                                <i className={isSelected ? 'fas fa-times-circle' : 'fas fa-check-circle'}></i>
+                                {isSelected ? 'Quitar selección' : 'Seleccionar'}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  await api(`/api/bots/${bot.id}/start`, { method: 'POST' })
+                                  await loadBots(selectedClientId)
+                                  await loadQr(bot.id)
+                                  showNotice('Bot encendido')
+                                }}
+                              >
+                                <i className="fas fa-play"></i>
+                                Encender
+                              </button>
+
+                              <button
+                                type="button"
+                                className="secondary"
+                                onClick={() => renameBot(bot)}
+                              >
+                                <i className="fas fa-pen"></i>
+                                Editar
+                              </button>
+
+                              <button
+                                type="button"
+                                className="danger"
+                                onClick={() => deleteBot(bot)}
+                              >
+                                <i className="fas fa-trash"></i>
+                                Eliminar
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                      {paginatedInactiveBots.length === 0 && <div className="empty-box">No hay bots inactivos</div>}
+                    </div>
+                    <div className="pagination">
+                      <button type="button" onClick={() => setBotPage(p => Math.max(1, p-1))} disabled={botPage === 1}>Anterior</button>
+                      <span>Página {botPage}</span>
+                      <button type="button" onClick={() => setBotPage(p => p+1)} disabled={botPage * pageSize >= filteredInactiveBots.length}>Siguiente</button>
+                    </div>
+                  </section>
+                </div>
+                <section className="stripe-card stack">
+                  <div className="row between center">
+                    <div>
+                      <div className="section-title"><i className="fas fa-microchip"></i> Bot seleccionado</div>
+                      <p className="muted">{selectedBot ? selectedBot.name : 'Selecciona un bot'}</p>
+                    </div>
+                    {selectedBot && (
+                      <div className="row gap-sm">
+                        {selectedBot.status === 'connected' || selectedBot.status === 'waiting_qr' ? (
+                          <button type="button" onClick={() => stopBot(selectedBot.id)} disabled={busy}>Apagar</button>
+                        ) : (
+                          <button type="button" onClick={startBot} disabled={busy}>Encender</button>
+                        )}
+                        <button type="button" onClick={() => renameBot(selectedBot)} disabled={busy}>Editar</button>
+                      </div>
+                    )}
+                  </div>
+                  {selectedBot ? (
+                    <>
+                      <div className="status-row"><strong>{selectedBot.name}</strong> <span className={`pill ${selectedBot.status}`}>{selectedBot.status}</span></div>
+                      {qrDataUrlBot ? <img className="qr" src={qrDataUrlBot} alt="QR" /> : <div className="empty-box">Sin QR pendiente</div>}
+                      <div className="metric-grid" style={{ marginTop: '1rem' }}>
+                        <div className="metric"><div className="metric-label">Total leads</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id).length}</div></div>
+                        <div className="metric"><div className="metric-label">Conversaciones activas</div><div className="metric-value">{leads.filter(l => l.bot_id === selectedBot.id && l.stage !== 'closed').length}</div></div>
+                        <div className="metric"><div className="metric-label">Tasa cierre</div><div className="metric-value">{Math.round((leads.filter(l => l.bot_id === selectedBot.id && l.stage === 'closed').length / (leads.filter(l => l.bot_id === selectedBot.id).length || 1)) * 100)}%</div></div>
+                      </div>
+                      <div className="chart" style={{ marginTop: '0.5rem' }}>
+                        <div className="chart-title">Leads por etapa (este bot)</div>
+                        <div className="bar-container">
+                          {botLeadsByStage.stages.map((stage, idx) => (
+                            <div key={stage} className="bar-item">
+                              <div className="bar-label">{stage}</div>
+                              <div className="bar-fill" style={{ width: `${Math.min(100, botLeadsByStage.counts[idx] * 10)}%`, maxWidth: '100%' }}></div>
+                              <div className="bar-value">{botLeadsByStage.counts[idx]}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                     {/* ======================== AGENDA AI SECTION EN BOT - PREMIUM V2 ======================== */}
 <section className="agenda-premium-v2">
   <div className="agenda-premium-v2-header">
     <div className="header-glow"></div>
@@ -11731,2029 +12031,2030 @@ async function updateUser(e) {
     </div>
   </div>
 </section>
-                </>
-              ) : <div className="empty-box">Selecciona un bot</div>}
-            </section>
-          </section>
-        )}
-
-        {/* ======================== INBOX ======================== */}
-        {tab === 'inbox' && (
-          <section className="inbox-layout">
-            <section className="stripe-card inbox-list">
-              <div className="row between center">
-                <div className="section-title"><i className="fas fa-envelope"></i> Inbox</div>
-                <div className="row gap-sm">
-                  <input type="text" placeholder="Buscar lead..." className="search-input" value={searchLead} onChange={e => setSearchLead(e.target.value)} />
-                  <select value={selectedClientId || ''} onChange={e => setSelectedClientId(e.target.value)}>
-                    <option value="">Cliente</option>
-                    {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
-                  <select value={selectedBotId || ''} onChange={e => setSelectedBotId(e.target.value)}>
-                    <option value="">Todos los bots</option>
-                    {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                  </select>
-                  <button type="button" onClick={() => loadInboxLeads()}>Filtrar</button>
-                </div>
-              </div>
-              <div className="chat-list">
-                {paginatedLeads.map(lead => (
-                  <button key={`${lead.bot_id}-${lead.id}`} className={selectedLeadId === lead.id ? 'chat-item active' : 'chat-item'} onClick={() => setSelectedLeadId(lead.id)} type="button">
-                    <div className="row between"><strong>{lead.display_name || lead.phone}</strong><span className={`pill ${lead.stage}`}>{lead.stage}</span></div>
-                    <div className="muted tiny">{lead.client_name} · {lead.bot_name}</div>
-                    <div className="muted preview">{lead.last_inbound_text}</div>
-                  </button>
-                ))}
-                {paginatedLeads.length === 0 && <div className="empty-box">No hay leads</div>}
-              </div>
-              <div className="pagination">
-                <button type="button" onClick={() => setLeadPage(p => Math.max(1, p-1))} disabled={leadPage === 1}>Anterior</button>
-                <span>Página {leadPage}</span>
-                <button type="button" onClick={() => setLeadPage(p => p+1)} disabled={leadPage * pageSize >= filteredLeads.length}>Siguiente</button>
-              </div>
-            </section>
-
-            <section className="stripe-card inbox-chat">
-              <div className="row between center">
-                <div><div className="section-title">Conversación</div><p className="muted">{selectedLead ? `${selectedLead.client_name} · ${selectedLead.bot_name} · ${selectedLead.phone}` : 'Selecciona un lead'}</p></div>
-                {selectedLead && <button type="button" onClick={() => updateLeadStage(selectedLead)}>Cambiar stage</button>}
-              </div>
-              <div className="messages">
-                {messages.map(m => <div key={m.id} className={m.direction === 'outbound' ? 'bubble outbound' : 'bubble inbound'}><div>{m.content}</div><small>{new Date(m.created_at).toLocaleString()}</small></div>)}
-              </div>
-              <form onSubmit={sendLeadMessage} className="chat-compose">
-                <textarea rows={3} value={chatMessage} onChange={e => setChatMessage(e.target.value)} placeholder="Escribe una respuesta manual..." />
-                <button type="submit">Enviar</button>
-              </form>
-            </section>
-
-            <section className="stripe-card inbox-side">
-              <div className="section-title">Perfil lead</div>
-              {selectedLead ? (
-                <div className="stack">
-                  <div><strong>Cliente</strong><div className="muted">{selectedLead.client_name}</div></div>
-                  <div><strong>Bot</strong><div className="muted">{selectedLead.bot_name}</div></div>
-                  <div><strong>Intent</strong><div className="muted">{selectedLead.last_intent}</div></div>
-                  <div><strong>Resumen</strong><div className="muted">{selectedLead.summary}</div></div>
-                  <div><strong>Tags</strong><div className="muted">{selectedLead.tags || '—'}</div></div>
-                  <div><strong>Follow-ups</strong><div className="muted">{selectedLead.followup_count}</div></div>
-                </div>
-              ) : <div className="empty-box">Selecciona un lead</div>}
-            </section>
-          </section>
-        )}
-
-        {/* ======================== BOTS ======================== */}
-        {tab === 'bots' && (
-          <section className="panel-grid">
-            <section className="stripe-card stack">
-              <div className="row between center"><div className="section-title"><i className="fas fa-cog"></i> Configuración IA</div><select value={selectedBotId || ''} onChange={e => setSelectedBotId(e.target.value)}><option value="">Selecciona un bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select></div>
-              <form onSubmit={saveConfig} className="form-grid">
-                <input value={config.business_name} onChange={e => setConfig({...config, business_name: e.target.value})} placeholder="Nombre negocio" />
-                <input value={config.model} onChange={e => setConfig({...config, model: e.target.value})} placeholder="Modelo" />
-                <input value={config.offer} onChange={e => setConfig({...config, offer: e.target.value})} placeholder="Oferta" />
-                <input value={config.target_audience} onChange={e => setConfig({...config, target_audience: e.target.value})} placeholder="Público objetivo" />
-                <input value={config.tone} onChange={e => setConfig({...config, tone: e.target.value})} placeholder="Tono" />
-                <input value={config.human_handoff_phone} onChange={e => setConfig({...config, human_handoff_phone: e.target.value})} placeholder="Teléfono humano" />
-                <input value={config.cta_button_text} onChange={e => setConfig({...config, cta_button_text: e.target.value})} placeholder="Texto CTA" />
-                <input value={config.cta_link} onChange={e => setConfig({...config, cta_link: e.target.value})} placeholder="Link CTA" />
-                <input type="number" value={config.followup_delay_mins} onChange={e => setConfig({...config, followup_delay_mins: Number(e.target.value)})} placeholder="Minutos follow-up" />
-                <label className="toggle"><input type="checkbox" checked={config.followup_enabled} onChange={e => setConfig({...config, followup_enabled: e.target.checked})} /> Seguimiento automático</label>
-                <select value={config.reply_mode || 'manual'} onChange={e => setConfig({ ...config, reply_mode: e.target.value })}>
-                  <option value="manual">IA (modo libre)</option>
-                  <option value="template_only">Solo plantilla</option>
-                  <option value="template_ai">Plantilla + IA</option>
-                </select>
-                <select value={config.template_id || ''} onChange={e => setConfig({ ...config, template_id: e.target.value })}>
-                  <option value="">Auto (inteligente)</option>
-                  {templates.map(t => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} ({t.stage})
-                    </option>
-                  ))}
-                </select>
-                <textarea className="full" rows={3} value={config.business_description} onChange={e => setConfig({...config, business_description: e.target.value})} placeholder="Descripción negocio" />
-                <textarea className="full" rows={3} value={config.fallback_message} onChange={e => setConfig({...config, fallback_message: e.target.value})} placeholder="Mensaje fallback" />
-                <textarea className="full" rows={7} value={config.system_prompt} onChange={e => setConfig({...config, system_prompt: e.target.value})} placeholder="Prompt del sistema" />
-                <button className="full" disabled={busy || !selectedBotId}>Guardar configuración</button>
-              </form>
-            </section>
-            <section className="stripe-card stack">
-              <div className="section-title"><i className="fas fa-paper-plane"></i> Envío manual</div>
-              <form onSubmit={sendManual} className="stack">
-                <input value={sendNumber} onChange={e => setSendNumber(e.target.value)} placeholder="573001234567" />
-                <textarea rows={6} value={sendMessage} onChange={e => setSendMessage(e.target.value)} />
-                <button disabled={busy || !selectedBotId}>Enviar mensaje</button>
-              </form>
-            </section>
-          </section>
-        )}
-
-        {/* ======================== TEMPLATES ======================== */}
-        {tab === 'templates' && (
-          <section className="panel-grid">
-            <section className="stripe-card stack">
-              <div className="row between center"><div className="section-title"><i className="fas fa-file-alt"></i> Plantillas y prompts</div><input type="text" placeholder="Buscar plantilla..." value={searchTemplate} onChange={e => setSearchTemplate(e.target.value)} className="search-input" /></div>
-              <form onSubmit={createTemplate} className="form-grid">
-                <input value={templateForm.name} onChange={e => setTemplateForm({...templateForm, name: e.target.value})} placeholder="Nombre" />
-                <input value={templateForm.business_type} onChange={e => setTemplateForm({...templateForm, business_type: e.target.value})} placeholder="Tipo negocio" />
-                <select value={templateForm.category} onChange={e => setTemplateForm({...templateForm, category: e.target.value})}><option value="sales">sales</option><option value="support">support</option><option value="followup">followup</option></select>
-                <select value={templateForm.stage} onChange={e => setTemplateForm({...templateForm, stage: e.target.value})}><option>new</option><option>qualified</option><option>interested</option><option>hot</option><option>closed</option></select>
-                <textarea className="full" rows={4} value={templateForm.prompt_snippet} onChange={e => setTemplateForm({...templateForm, prompt_snippet: e.target.value})} placeholder="Snippet de prompt" />
-                <textarea className="full" rows={4} value={templateForm.message_template} onChange={e => setTemplateForm({...templateForm, message_template: e.target.value})} placeholder="Mensaje sugerido" />
-                <button className="full">Guardar plantilla</button>
-              </form>
-            </section>
-            <section className="stripe-card stack">
-              <div className="section-title">Plantillas disponibles</div>
-              <div className="template-list">{paginatedTemplates.map(t => <div key={t.id} className="template-card"><div className="row between"><strong>{t.name}</strong><span className="pill">{t.stage}</span></div><div className="muted tiny">{t.business_type} · {t.category}</div><p>{t.message_template}</p></div>)}</div>
-              <div className="pagination"><button type="button" onClick={() => setTemplatePage(p => Math.max(1, p-1))} disabled={templatePage === 1}>Anterior</button><span>Página {templatePage}</span><button type="button" onClick={() => setTemplatePage(p => p+1)} disabled={templatePage * pageSize >= filteredTemplates.length}>Siguiente</button></div>
-            </section>
-          </section>
-        )}
-
-        {/* ======================== LANDING IA ======================== */}
-        {tab === 'landing' && (
-          <section className="stripe-card stack gap-lg">
-            <div className="row between center">
-              <h3><i className="fas fa-brain"></i> Generador de Landing Pages IA</h3>
-              <button type="button" onClick={resetLandingForm} className="secondary">+ Nueva</button>
-            </div>
-            <select value={selectedBotId} onChange={e => setSelectedBotId(e.target.value)}>
-              <option value="">Selecciona un bot</option>
-              {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-            </select>
-            <div className="form-grid">
-              <input placeholder="Nombre de la landing *" value={landingForm.name} onChange={(e) => setLandingForm({ ...landingForm, name: e.target.value })} />
-              <select value={landingForm.style_preset} onChange={(e) => setLandingForm({ ...landingForm, style_preset: e.target.value })}>
-                <option value="dark_premium">Dark Premium</option>
-                <option value="fintech_conversion">Fintech Conversion</option>
-                <option value="corporate_clean">Corporate Clean</option>
-                <option value="real_estate_luxury">Real Estate Luxury</option>
-                <option value="ecommerce_modern">Ecommerce Modern</option>
-              </select>
-              <input placeholder="URL del logo" value={landingForm.logo_url} onChange={(e) => setLandingForm({ ...landingForm, logo_url: e.target.value })} />
-              <input placeholder="URL del favicon" value={landingForm.favicon_url} onChange={(e) => setLandingForm({ ...landingForm, favicon_url: e.target.value })} />
-              <input placeholder="URL imagen principal" value={landingForm.hero_image_url} onChange={(e) => setLandingForm({ ...landingForm, hero_image_url: e.target.value })} />
-              <input placeholder="URL video de YouTube" value={landingForm.youtube_url} onChange={(e) => setLandingForm({ ...landingForm, youtube_url: e.target.value })} />
-              <input placeholder="Facebook Pixel ID (opcional)" value={landingForm.facebook_pixel_id} onChange={(e) => setLandingForm({ ...landingForm, facebook_pixel_id: e.target.value })} />
-              <input placeholder="Google Analytics ID (opcional)" value={landingForm.google_analytics} onChange={(e) => setLandingForm({ ...landingForm, google_analytics: e.target.value })} />
-              <select value={landingForm.tracking_mode} onChange={(e) => setLandingForm({ ...landingForm, tracking_mode: e.target.value })}>
-                <option value="auto">Tracking automático (mismo dominio)</option>
-                <option value="external">Tracking con URL externa</option>
-              </select>
-              {landingForm.tracking_mode === 'external' && (
-                <input placeholder="URL base del backend tracking (ej: http://localhost:8080 o https://panel.midominio.com)" value={landingForm.tracking_base_url} onChange={(e) => setLandingForm({ ...landingForm, tracking_base_url: e.target.value })} />
-              )}
-              <input type="color" value={landingForm.primary_color} onChange={(e) => setLandingForm({ ...landingForm, primary_color: e.target.value })} />
-              <input type="color" value={landingForm.secondary_color} onChange={(e) => setLandingForm({ ...landingForm, secondary_color: e.target.value })} />
-            </div>
-            <div className="row gap-sm">
-              <label className="toggle"><input type="checkbox" checked={!!landingForm.show_video} onChange={(e) => setLandingForm({ ...landingForm, show_video: e.target.checked })} /> Incluir video principal</label>
-              <label className="toggle"><input type="checkbox" checked={!!landingForm.show_image} onChange={(e) => setLandingForm({ ...landingForm, show_image: e.target.checked })} /> Incluir imagen destacada</label>
-            </div>
-            <textarea rows={5} placeholder="Describe la landing en detalle (producto, beneficios, llamado a la acción...)" value={landingForm.prompt} onChange={(e) => setLandingForm({ ...landingForm, prompt: e.target.value })} />
-            <div className="row gap-sm">
-              <button type="button" onClick={generateLanding} disabled={busy || landingLoading}>{landingLoading ? 'Generando...' : 'Generar con IA'}</button>
-              {editingLandingId && <button type="button" onClick={saveLandingChanges} disabled={busy} className="secondary">Guardar cambios</button>}
-              {landingHTML && <button type="button" onClick={downloadHTML} className="secondary">Descargar HTML</button>}
-            </div>
-            {landingHTML && <iframe id="landing-preview" title="Landing Preview" style={{ width: "100%", height: "600px", border: "1px solid #ccc", borderRadius: "0.75rem" }} srcDoc={landingHTML} />}
-            {landings.length > 0 && (
-              <div>
-                <div className="section-title">Landings guardadas</div>
-                <div className="template-list">
-                  {landings.map((land) => (
-                    <div key={land.id} className="template-card">
-                      <div className="row between"><strong>{land.name}</strong><span className="pill">{land.style_preset || 'default'}</span></div>
-                      <div className="muted tiny">{land.created_at ? new Date(land.created_at).toLocaleString() : 'Sin fecha'}</div>
-                      <div className="muted tiny">Estado: {land.status || 'generated'}</div>
-                      <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                        <button type="button" onClick={() => loadLandingForEdit(land)}>Editar</button>
-                        <button type="button" className="secondary" onClick={() => setLandingHTML(land.html || land.preview_html || '')}>Ver</button>
-                        <button type="button" className="secondary" onClick={() => openPublicLanding(land)}> Abrir pública</button>
-                        <button type="button" className="secondary" onClick={() => copyPublicLandingUrl(land)}> Copiar URL</button>
-                        <button type="button" className="danger" onClick={() => deleteLanding(land.id)}>Eliminar</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ======================== FUNNEL ======================== */}
-        {tab === 'funnel' && (
-          <section className="stack gap-lg">
-            <div className="metric-grid">
-              <div className="stripe-card metric"><div className="metric-label">Visitas landing</div><div className="metric-value">{funnelMetrics.landing_views || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Clicks WhatsApp</div><div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Leads</div><div className="metric-value">{metrics.leads || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Cerrados</div><div className="metric-value">{metrics.closed_leads || 0}</div></div>
-              <div className="stripe-card metric"><div className="metric-label">CTR</div><div className="metric-value">{Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%</div></div>
-              <div className="stripe-card metric"><div className="metric-label">Conversión</div><div className="metric-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</div></div>
-            </div>
-            <div className="stripe-card">
-              <div className="section-title">Embudo de conversión</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1rem' }}>
-                {[
-                  ['Visitas', funnelMetrics.landing_views],
-                  ['Clicks WA', funnelMetrics.whatsapp_clicks],
-                  ['Leads', metrics.leads],
-                  ['Interesados', leads.filter(l => l.stage === 'interested').length],
-                  ['Hot', leads.filter(l => l.stage === 'hot').length],
-                  ['Cerrados', metrics.closed_leads]
-                ].map(([label, val], i) => (
-                  <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#7430e2', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
-                    {label}: {val || 0}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="stripe-card">
-              <div className="chart-title">Leads por etapa</div>
-              <div className="bar-container">
-                {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
-                  const count = leads.filter(l => l.stage === stage).length
-                  return (
-                    <div key={stage} className="bar-item">
-                      <div className="bar-label">{stage}</div>
-                      <div className="bar-fill" style={{ width: `${Math.min(100, count * 10)}%` }}></div>
-                      <div className="bar-value">{count}</div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-            <div className="stripe-card">
-              <div className="row between">
-                <div className="section-title">Leads y conversaciones</div>
-                <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
-              </div>
-              <table className="leads-table">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Stage</th>
-                    <th>Bot</th>
-                    <th>Último mensaje</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredLeads.length > 0 ? (
-                    filteredLeads.map(lead => (
-                      <tr key={lead.id}>
-                        <td>{lead.display_name || '—'}</td>
-                        <td>{lead.phone}</td>
-                        <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
-                        <td>{lead.bot_name}</td>
-                        <td>{lead.last_inbound_text?.slice(0, 40)}</td>
-                        <td>
-                          <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
-                            Ver chat
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
-                        No hay leads
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
-
-        {/* ======================== SOCIAL IA con PremiumGate ======================== */}
-        {tab === 'social' && !canUseFeature('social_ai') && (
-          <PremiumGate
-            title="Social AI requiere un plan superior"
-            description="Genera contenido, publica en redes sociales y automatiza tu presencia con IA."
-            onUpgrade={() => setForcePlanScreen(true)}
-          />
-        )}
-        {tab === 'social' && canUseFeature('social_ai') && (
-          <section className="stack gap-lg">
-            <div className="panel-grid">
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-key"></i> Credenciales Sociales</div>
-                <div className="form-grid">
-                  <input value={socialCredential.page_name} onChange={e => setSocialCredential({ ...socialCredential, page_name: e.target.value })} placeholder="Nombre de la página" />
-                  <input value={socialCredential.page_id} onChange={e => setSocialCredential({ ...socialCredential, page_id: e.target.value })} placeholder="Page ID" />
-                  <input className="full" value={socialCredential.access_token} onChange={e => setSocialCredential({ ...socialCredential, access_token: e.target.value })} placeholder="Page Access Token" />
-                  <input value={socialCredential.ad_account_id} onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })} placeholder="Ad Account ID (opcional)" />
-                  <input value={socialCredential.tiktok_access_token} onChange={e => setSocialCredential({ ...socialCredential, tiktok_access_token: e.target.value })} placeholder="TikTok Access Token" />
-                  <input value={socialCredential.tiktok_open_id} onChange={e => setSocialCredential({ ...socialCredential, tiktok_open_id: e.target.value })} placeholder="TikTok Open ID" />
-                  <label className="toggle"><input type="checkbox" checked={!!socialCredential.enabled} onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })} /> Redes habilitadas</label>
-                </div>
-                <div className="row gap-sm">
-                  <button type="button" onClick={saveSocialCredential}>
-                    Guardar credenciales
-                  </button>
-                  <button type="button" className="secondary" onClick={verifyInstagram}>
-                    <i className="fab fa-instagram"></i> Verificar Instagram
-                  </button>
-                  <button onClick={getInstagramData}>
-                    Obtener datos IG
-                  </button>
-                </div>
-
-                {socialCredential.instagram_connected ? (
-                  <div className="pill success" style={{ marginTop: '0.75rem' }}>
-                    <i className="fab fa-instagram"></i> Instagram conectado: @{socialCredential.instagram_username}
-                  </div>
-                ) : (
-                  <div className="pill warning" style={{ marginTop: '0.75rem' }}>
-                    <i className="fab fa-instagram"></i> Instagram no conectado
-                  </div>
-                )}
-
-                {socialCredential.tiktok_connected ? (
-                  <div className="pill success" style={{ marginTop: '0.5rem' }}>
-                    <i className="fab fa-tiktok"></i> TikTok conectado
-                  </div>
-                ) : (
-                  <div className="pill warning" style={{ marginTop: '0.5rem' }}>
-                    <i className="fab fa-tiktok"></i> TikTok no conectado
-                  </div>
-                )}
-
-                {instagramData && (
-                  <div className="muted tiny" style={{ marginTop: '0.5rem' }}>
-                    <div>👤 @{instagramData.username}</div>
-                    <div>👥 Seguidores: {instagramData.followers_count}</div>
-                    <div>📸 Posts: {instagramData.media_count}</div>
-                  </div>
-                )}
-              </section>
-
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-bullhorn"></i> Configuración campaña</div>
-                <div className="form-grid">
-                  <input value={socialCampaign.name} onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })} placeholder="Nombre de campaña" />
-                  <select value={socialCampaign.objective} onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}>
-                    <option value="whatsapp">Enviar a WhatsApp</option>
-                    <option value="landing">Enviar a Landing</option>
-                    <option value="manual_link">Link manual</option>
-                    <option value="no_link">Sin link</option>
-                  </select>
-                  <select value={socialCampaign.bot_id} onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}><option value="">Selecciona bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
-                  <select value={socialCampaign.landing_id} onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}><option value="">Selecciona landing</option>{landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}</select>
-                  
-                  <select
-                    value={socialMediaType}
-                    onChange={(e) => {
-                      const type = e.target.value
-                      setSocialMediaType(type)
-
-                      if (type === 'text') {
-                      setSocialCampaign(prev => ({
-                        ...prev,
-                        image_mode: 'none',
-                        manual_image_url: '',
-                        video_url: ''
-                      }))
-                        setSelectedSocialVideoURL('')
-                        setSelectedSocialVideoId('')
-                      }
-
-                      if (type === 'image') {
-                      setSocialCampaign(prev => ({
-                        ...prev,
-                        image_mode: 'ai',
-                        video_url: ''
-                      }))
-                        setSelectedSocialVideoURL('')
-                        setSelectedSocialVideoId('')
-                      }
-
-                      if (type === 'video') {
-                        setSocialCampaign(prev => ({
-                          ...prev,
-                          image_mode: 'video',
-                          manual_image_url: selectedSocialVideoURL || prev.manual_image_url,
-                          video_url: selectedSocialVideoURL || prev.video_url || ''
-                        }))
-                      }
-                    }}
-                  >
-                    <option value="image">Imagen</option>
-                    <option value="video">Video AI</option>
-                    <option value="text">Solo texto</option>
-                  </select>
-
-                  {socialMediaType !== 'video' && socialMediaType !== 'text' && (
-                    <>
-                      <select value={socialCampaign.image_mode} onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}>
-                        <option value="ai">Imagen IA</option>
-                        <option value="manual">Imagen manual</option>
-                        <option value="none">Sin imagen</option>
-                      </select>
-                      <input value={socialCampaign.manual_image_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} placeholder="URL imagen manual" />
                     </>
-                  )}
-
-                  {socialMediaType === 'video' && (
-                    <div className="social-video-picker">
-                      <div className="section-title">
-                        <i className="fas fa-video"></i> Seleccionar video de Video AI
-                      </div>
-
-                      <div className="social-video-grid">
-                        {(videoJobs || []).filter(v => v.video_url).map(job => {
-                          const url = resolveMediaURL(job.video_url)
-                          const active = selectedSocialVideoId === job.id
-
-                          return (
-                            <button
-                              key={job.id}
-                              type="button"
-                              className={active ? 'social-video-card active' : 'social-video-card'}
-                              onClick={() => {
-                                setSelectedSocialVideoId(job.id)
-                                setSelectedSocialVideoURL(url)
-                                setSocialCampaign(prev => ({
-                                  ...prev,
-                                  image_mode: 'video',
-                                  manual_image_url: url,
-                                  video_url: url
-                                }))
-                                showNotice('Video seleccionado para Social AI')
-                              }}
-                            >
-                              <video src={url} muted playsInline />
-                              <span>{job.provider === 'upload' ? 'Subido' : 'IA'} · {job.status}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-
-                      {selectedSocialVideoURL && (
-                        <div className="selected-social-video">
-                          <video src={selectedSocialVideoURL} controls playsInline />
-                          <div>
-                            <strong>Video listo para publicación</strong>
-                            <small>{selectedSocialVideoURL}</small>
-                          </div>
-                          <button
-                            className="tiny-btn danger"
-                            onClick={() => {
-                              setSelectedSocialVideoURL('')
-                              setSelectedSocialVideoId('')
-                              setSocialCampaign(prev => ({
-                                ...prev,
-                                image_mode: 'none',
-                                video_url: ''
-                              }))
-                              showNotice('Video removido')
-                            }}
-                          >
-                            Remover video
-                          </button>
-                        </div>
-                      )}
-
-                      <button type="button" className="secondary" onClick={() => setTab('video')}>
-                        Abrir Video AI Studio
-                      </button>
-                    </div>
-                  )}
-
-                  <input value={socialCampaign.manual_link_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })} placeholder="Link manual" />
-                  <input value={socialCampaign.call_to_action} onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })} placeholder="Call to action" />
-                  <select value={socialCampaign.publish_mode} onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}>
-                    <option value="now">Publicar ahora</option><option value="scheduled">Fecha y hora exacta</option><option value="recurring">Repetir cada X minutos</option>
-                  </select>
-                  {socialCampaign.publish_mode === 'scheduled' && <input type="datetime-local" value={socialCampaign.scheduled_at} onChange={e => setSocialCampaign({ ...socialCampaign, scheduled_at: e.target.value })} />}
-                  {socialCampaign.publish_mode === 'recurring' && <input type="number" value={socialCampaign.recurring_minutes} onChange={e => setSocialCampaign({ ...socialCampaign, recurring_minutes: e.target.value })} placeholder="Cada cuántos minutos" />}
-                  <input className="full" value={socialCampaign.days_of_week} onChange={e => setSocialCampaign({ ...socialCampaign, days_of_week: e.target.value })} placeholder="Días de publicación (ej: mon,tue,wed)" />
-                  <textarea className="full" rows={5} value={socialCampaign.prompt} onChange={e => setSocialCampaign({ ...socialCampaign, prompt: e.target.value })} placeholder="Describe la campaña que quieres generar con IA..." />
-                </div>
-                <div className="row gap-sm">
-                  <button type="button" onClick={generateSocial}>Generar contenido IA</button>
-                  <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes('facebook')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms(prev => [...new Set([...prev, 'facebook'])])
-                          } else {
-                            setSelectedPlatforms(prev => prev.filter(p => p !== 'facebook'))
-                          }
-                        }}
-                      />
-                      Facebook
-                    </label>
-
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes('instagram')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms(prev => [...new Set([...prev, 'instagram'])])
-                          } else {
-                            setSelectedPlatforms(prev => prev.filter(p => p !== 'instagram'))
-                          }
-                        }}
-                      />
-                      Instagram
-                    </label>
-
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes('tiktok')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms(prev => [...new Set([...prev, 'tiktok'])])
-                          } else {
-                            setSelectedPlatforms(prev => prev.filter(p => p !== 'tiktok'))
-                          }
-                        }}
-                      />
-                      TikTok
-                    </label>
-
-                    <button type="button" onClick={publishMulti}>
-                      <i className="fas fa-paper-plane"></i> Publicar selección
-                    </button>
-                     <button type="button" className="secondary"
-                    onClick={() => {
-                      if (!selectedPlatforms.length) {
-                        showNotice('Selecciona al menos una red social')
-                        return
-                      }
-                      if (selectedPlatforms.length > 1) {
-                        showNotice('Por ahora programa una red a la vez')
-                        return
-                      }
-                      scheduleSocialPost()
-                    }}
-                  >
-                  <i className="fas fa-calendar"></i>  Programar selección
-                  </button>
-                  </div>
-                 
-                </div>
-              </section>
-            </div>
-
-            <section className="stripe-card stack">
-              <div className="section-title"><i className="fas fa-image"></i> Imagen IA</div>
-              <textarea className="full" rows={3} value={socialImagePrompt} onChange={e => { setSocialImagePrompt(e.target.value); setSocialCampaign(prev => ({ ...prev, image_prompt: e.target.value })) }} placeholder="Describe la imagen que quieres generar para la publicación..." />
-              <div className="row gap-sm">
-                <button type="button" onClick={generateSocialImage} disabled={socialImageLoading}>{socialImageLoading ? 'Generando imagen...' : 'Generar imagen IA'}</button>
-                <label className="secondary" style={{ cursor: 'pointer' }}>{socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}<input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => uploadSocialImage(e.target.files?.[0])} /></label>
-                <button type="button" className="secondary" onClick={() => { setSocialImageURL(''); setSocialImagePrompt(''); setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', image_prompt: '' })) }}>Sin imagen</button>
-              </div>
-              {socialMediaType === 'video' && selectedSocialVideoURL ? (
-                <video
-                  src={selectedSocialVideoURL}
-                  controls
-                  playsInline
-                  muted
-                  style={{
-                    maxWidth: '320px',
-                    width: '100%',
-                    borderRadius: '1rem',
-                    border: '1px solid #e2e8f0',
-                    marginTop: '1rem',
-                    background: '#000',
-                    objectFit: 'cover'
-                  }}
-                />
-              ) : (
-                (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                  <img
-                    src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
-                    alt="Preview social"
-                    style={{
-                      maxWidth: '320px',
-                      width: '100%',
-                      borderRadius: '1rem',
-                      border: '1px solid #e2e8f0',
-                      marginTop: '1rem',
-                      objectFit: 'cover'
-                    }}
-                    onError={(e) => {
-                      e.currentTarget.style.opacity = '0.4'
-                      showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.')
-                    }}
-                  />
-                )
-              )}
-            </section>
-
-            <section className="stripe-card stack">
-              <div className="section-title"><i className="fas fa-eye"></i> Preview de publicación</div>
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '18px', background: '#ffffff', overflow: 'hidden', maxWidth: '640px' }}>
-                <div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                    <div style={{ width: '46px', height: '46px', borderRadius: '9999px', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '18px' }}>{(socialCredential.page_name || selectedClient?.name || 'P').slice(0, 1).toUpperCase()}</div>
-                    <div><div style={{ fontWeight: 700, color: '#0f172a' }}>{socialCredential.page_name || selectedClient?.name || 'Tu página'}</div><div style={{ fontSize: '12px', color: '#64748b' }}>Publicidad · Ahora</div></div>
-                  </div>
-                  <div style={{ whiteSpace: 'pre-line', color: '#0f172a', fontSize: '15px', lineHeight: 1.5 }}>{htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}</div>
-                </div>
-                {socialMediaType === 'image' && (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
-                  <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ width: '100%', maxHeight: '520px', objectFit: 'cover', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
-                )}
-                {socialMediaType === 'video' && selectedSocialVideoURL && (
-                  <video src={selectedSocialVideoURL} controls style={{ width: '100%', maxHeight: '520px', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
-                )}
-                <div style={{ padding: '12px 16px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Destino del clic</div>
-                  <div style={{ fontWeight: 600, color: '#0f172a' }}>
-                    {socialCampaign.objective === 'whatsapp' && 'WhatsApp'}
-                    {socialCampaign.objective === 'landing' && 'Landing page'}
-                    {socialCampaign.objective === 'manual_link' && 'Link manual'}
-                    {socialCampaign.objective === 'none' && 'Sin enlace'}
-                  </div>
-                  <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
-                    {socialCampaign.objective === 'manual_link' ? socialCampaign.manual_link_url || 'Escribe un link manual' : socialCampaign.objective === 'whatsapp' ? 'Abrirá conversación con el bot seleccionado' : socialCampaign.objective === 'landing' ? 'Abrirá la landing seleccionada' : 'La publicación no llevará enlace'}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div className="social-history-full">
-              <section className="stripe-card stack">
-                <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
-                <table>
-                  <thead>
-                    <tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr>
-                  </thead>
-                  <tbody>
-                    {socialPosts.map(post => (
-                      <tr key={post.id}>
-                        <td>{post.platform}</td>
-                        <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
-                        <td>{post.publish_mode}</td>
-                        <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
-                        <td>{(post.content || '').slice(0, 120)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
-              </section>
-            </div>
-          </section>
-        )}
-
-        {/* ======================== VIDEO AI con PremiumGate ======================== */}
-        {tab === 'video' && !canUseFeature('video_ai') && (
-          <PremiumGate
-            title="Video AI requiere un plan superior"
-            description="Genera, edita, sube, recorta y prepara videos para redes con IA."
-            onUpgrade={() => setForcePlanScreen(true)}
-          />
-        )}
-        {tab === 'video' && canUseFeature('video_ai') && (
-          <VideoAIStudio
-            selectedClientId={selectedClientId}
-            videoPrompt={videoPrompt}
-            setVideoPrompt={setVideoPrompt}
-            videoDuration={videoDuration}
-            setVideoDuration={setVideoDuration}
-            videoLoading={videoLoading}
-            generateAIVideo={generateAIVideo}
-            loadAIVideos={loadAIVideos}
-            videoJobs={videoJobs}
-            setVideoJobs={setVideoJobs}
-            refreshAIVideo={refreshAIVideo}
-            addMusicToVideo={addMusicToVideo}
-            addVoiceAndSubtitles={addVoiceAndSubtitles}
-            downloadAIVideo={downloadAIVideo}
-            voiceText={voiceText}
-            setVoiceText={setVoiceText}
-            voiceLanguage={voiceLanguage}
-            setVoiceLanguage={setVoiceLanguage}
-            voiceGender={voiceGender}
-            setVoiceGender={setVoiceGender}
-            enableVoice={enableVoice}
-            setEnableVoice={setEnableVoice}
-            enableSubtitles={enableSubtitles}
-            setEnableSubtitles={setEnableSubtitles}
-            uploadAIVideoFile={uploadAIVideoFile}
-            trimAIVideo={trimAIVideo}
-            exportAIVideoPreset={exportAIVideoPreset}
-            addAnimatedCaptions={addAnimatedCaptions}
-            sendVideoToSocialAI={sendVideoToSocialAI}
-            showNotice={showNotice}
-          />
-        )}
-
-        {/* ======================== ADS IA con PremiumGate ======================== */}
-        {tab === 'ads' && !canUseFeature('ads_ai') && (
-          <PremiumGate
-            title="Ads IA requiere un plan superior"
-            description="Genera campañas publicitarias completas con proyección de ROI, segmentación y creativos."
-            onUpgrade={() => setForcePlanScreen(true)}
-          />
-        )}
-        {tab === 'ads' && canUseFeature('ads_ai') && (
-          <AdsPanel
-            adsForm={adsForm}
-            setAdsForm={setAdsForm}
-            adsResult={adsResult}
-            adsLoading={adsLoading}
-            generateAdsCampaign={generateAdsCampaign}
-            generateAdsEcosystem={generateAdsEcosystem}
-            ecosystemLoading={ecosystemLoading}
-            showNotice={showNotice}
-          />
-        )}
-
-        {/* ======================== GRUPOS con PremiumGate ======================== */}
-        {tab === 'groups' && !canUseFeature('groups_ai') && (
-          <PremiumGate
-            title="Grupos IA requiere un plan superior"
-            description="Administra bots IA para grupos de WhatsApp y descubre comunidades de Facebook para crecimiento."
-            onUpgrade={() => setForcePlanScreen(true)}
-          />
-        )}
-        {tab === 'groups' && canUseFeature('groups_ai') && (
-          <section className="stack gap-lg">
-            <div className="stripe-card">
-              <div className="row between">
-                <div>
-                  <div className="eyebrow">Worktic Groups AI</div>
-                  <h2>Grupos inteligentes</h2>
-                  <p className="muted">
-                    Administra bots IA para grupos de WhatsApp y descubre comunidades de Facebook relacionadas con el negocio.
-                  </p>
-                </div>
-              </div>
-
-              <div className="groups-tabs">
-                <button
-                  type="button"
-                  className={groupsTab === 'whatsapp' ? 'groups-tab active' : 'groups-tab'}
-                  onClick={() => setGroupsTab('whatsapp')}
-                >
-                  <i className="fab fa-whatsapp"></i> WhatsApp Groups AI
-                </button>
-
-                <button
-                  type="button"
-                  className={groupsTab === 'facebook' ? 'groups-tab active' : 'groups-tab'}
-                  onClick={() => setGroupsTab('facebook')}
-                >
-                  <i className="fab fa-facebook"></i> Facebook Discovery
-                </button>
-              </div>
-            </div>
-
-            {groupsTab === 'whatsapp' && (
-              <div className="panel-grid">
-                <section className="stripe-card stack">
-                  <div className="section-title">
-                    <i className="fab fa-whatsapp"></i> Crear bot para grupo
-                  </div>
-
-                  <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createGroupBot() }}>
-                    <input
-                      placeholder="Nombre del bot *"
-                      value={groupBotForm.name}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, name: e.target.value })}
-                    />
-
-                    <input
-                      placeholder="Group JID opcional: 120363xxxxx@g.us"
-                      value={groupBotForm.group_jid}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, group_jid: e.target.value })}
-                    />
-
-                    <input
-                      placeholder="Nombre del negocio"
-                      value={groupBotForm.business_name}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, business_name: e.target.value })}
-                    />
-
-                    <input
-                      placeholder="Oferta principal"
-                      value={groupBotForm.offer}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, offer: e.target.value })}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Descripción del negocio"
-                      value={groupBotForm.business_description}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, business_description: e.target.value })}
-                      rows={2}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Público objetivo"
-                      value={groupBotForm.target_audience}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, target_audience: e.target.value })}
-                      rows={2}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Reglas del grupo"
-                      value={groupBotForm.rules}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, rules: e.target.value })}
-                      rows={3}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Mensaje de bienvenida"
-                      value={groupBotForm.welcome_message}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, welcome_message: e.target.value })}
-                      rows={2}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Prompt IA para administrar el grupo"
-                      value={groupBotForm.system_prompt}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, system_prompt: e.target.value })}
-                      rows={4}
-                    />
-
-                    <label className="check-row">
-                      <input
-                        type="checkbox"
-                        checked={groupBotForm.moderation_enabled}
-                        onChange={(e) => setGroupBotForm({ ...groupBotForm, moderation_enabled: e.target.checked })}
-                      />
-                      Moderación activa
-                    </label>
-
-                    <label className="check-row">
-                      <input
-                        type="checkbox"
-                        checked={groupBotForm.auto_reply_enabled}
-                        onChange={(e) => setGroupBotForm({ ...groupBotForm, auto_reply_enabled: e.target.checked })}
-                      />
-                      Auto respuestas
-                    </label>
-
-                    <label className="check-row">
-                      <input
-                        type="checkbox"
-                        checked={groupBotForm.lead_capture_enabled}
-                        onChange={(e) => setGroupBotForm({ ...groupBotForm, lead_capture_enabled: e.target.checked })}
-                      />
-                      Capturar leads
-                    </label>
-
-                    <input
-                      className="full"
-                      placeholder="Teléfono humano para escalamiento"
-                      value={groupBotForm.human_handoff_phone}
-                      onChange={(e) => setGroupBotForm({ ...groupBotForm, human_handoff_phone: e.target.value })}
-                    />
-
-                    <button type="submit" className="full" disabled={busy}>
-                      <i className="fas fa-plus"></i> Crear bot de grupo
-                    </button>
-                  </form>
+                  ) : <div className="empty-box">Selecciona un bot</div>}
                 </section>
-
-                <section className="stripe-card stack">
-                  <div className="row between">
-                    <div className="section-title">
-                      <i className="fas fa-users"></i> Bots de grupos
-                    </div>
-                    <button type="button" className="secondary tiny-btn" onClick={loadGroupBots}>
-                      Recargar
-                    </button>
-                  </div>
-
-                  <div className="list two-col">
-                    {groupBots.length === 0 && (
-                      <div className="empty-box">Aún no hay bots de grupos.</div>
-                    )}
-
-                    {groupBots.map((bot) => (
-                      <div key={bot.id} className="bot-card">
-                        <div className="row between">
-                          <strong>{bot.name}</strong>
-                          <span className={`pill ${bot.status || 'draft'}`}>{bot.status || 'draft'}</span>
-                        </div>
-
-                        <div className="muted" style={{ marginTop: '.5rem' }}>
-                          Grupo: {bot.group_jid || 'Pendiente por conectar'}
-                        </div>
-
-                        <div className="muted">Oferta: {bot.offer || '—'}</div>
-
-                        <div className="tag-list mini" style={{ marginTop: '.75rem' }}>
-                          {bot.moderation_enabled && <span>Moderación</span>}
-                          {bot.auto_reply_enabled && <span>Auto reply</span>}
-                          {bot.lead_capture_enabled && <span>Leads</span>}
-                        </div>
-
-                        <div className="row" style={{ marginTop: '1rem' }}>
-                          <button type="button" className="tiny-btn" onClick={() => toggleGroupBotStatus(bot)}>
-                            {bot.status === 'active' ? 'Pausar' : 'Activar'}
-                          </button>
-
-                          <button type="button" className="danger tiny-btn" onClick={() => deleteGroupBot(bot.id)}>
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="empty-box">
-                    Para conectar un grupo real: conecta el WhatsApp del bot con QR, agrega ese número al grupo y luego guarda el JID del grupo terminado en <strong>@g.us</strong>.
-                  </div>
-                </section>
-              </div>
+              </section>
             )}
 
-            {groupsTab === 'facebook' && (
-              <div className="panel-grid">
-                {growthSettings && (
-                  <section className="stripe-card stack">
-                    <div className="row between">
-                      <div>
-                        <div className="section-title">
-                          <i className="fas fa-seedling"></i> Facebook Growth AI
-                        </div>
-                        <p className="muted">
-                          Controla cuántos grupos puede intentar trabajar el sistema por día y el modo seguro.
-                        </p>
-                      </div>
-
-                      <button type="button" onClick={saveGrowthSettings}>
-                        Guardar configuración
-                      </button>
+            {/* ======================== INBOX ======================== */}
+            {tab === 'inbox' && (
+              <section className="inbox-layout">
+                <section className="stripe-card inbox-list">
+                  <div className="row between center">
+                    <div className="section-title"><i className="fas fa-envelope"></i> Inbox</div>
+                    <div className="row gap-sm">
+                      <input type="text" placeholder="Buscar lead..." className="search-input" value={searchLead} onChange={e => setSearchLead(e.target.value)} />
+                      <select value={selectedClientId || ''} onChange={e => setSelectedClientId(e.target.value)}>
+                        <option value="">Cliente</option>
+                        {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
+                      <select value={selectedBotId || ''} onChange={e => setSelectedBotId(e.target.value)}>
+                        <option value="">Todos los bots</option>
+                        {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                      </select>
+                      <button type="button" onClick={() => loadInboxLeads()}>Filtrar</button>
                     </div>
-
-                    <div className="form-grid">
-                      <label className="check-row">
-                        <input
-                          type="checkbox"
-                          checked={!!growthSettings.auto_join_enabled}
-                          onChange={(e) => setGrowthSettings({ ...growthSettings, auto_join_enabled: e.target.checked })}
-                        />
-                        Activar programación automática segura
-                      </label>
-
-                      <label className="check-row">
-                        <input
-                          type="checkbox"
-                          checked={!!growthSettings.safe_mode}
-                          onChange={(e) => setGrowthSettings({ ...growthSettings, safe_mode: e.target.checked })}
-                        />
-                        Modo seguro
-                      </label>
-
-                      <input
-                        type="number"
-                        min="1"
-                        max="2"
-                        placeholder="Máx grupos por día"
-                        value={growthSettings.max_joins_per_day || 2}
-                        onChange={(e) => setGrowthSettings({ ...growthSettings, max_joins_per_day: Number(e.target.value) })}
-                      />
-
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="Máx total grupos"
-                        value={growthSettings.max_total_groups || 50}
-                        onChange={(e) => setGrowthSettings({ ...growthSettings, max_total_groups: Number(e.target.value) })}
-                      />
-
-                      <input
-                        type="number"
-                        min="60"
-                        placeholder="Delay mínimo minutos"
-                        value={growthSettings.min_delay_minutes || 120}
-                        onChange={(e) => setGrowthSettings({ ...growthSettings, min_delay_minutes: Number(e.target.value) })}
-                      />
-
-                      <input
-                        type="number"
-                        min="60"
-                        placeholder="Delay máximo minutos"
-                        value={growthSettings.max_delay_minutes || 360}
-                        onChange={(e) => setGrowthSettings({ ...growthSettings, max_delay_minutes: Number(e.target.value) })}
-                      />
-
-                      <input
-                        placeholder="Horario permitido"
-                        value={growthSettings.allowed_hours || '08:00-20:00'}
-                        onChange={(e) => setGrowthSettings({ ...growthSettings, allowed_hours: e.target.value })}
-                      />
-
-                      <input
-                        placeholder="Timezone"
-                        value={growthSettings.timezone || 'America/Bogota'}
-                        onChange={(e) => setGrowthSettings({ ...growthSettings, timezone: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="empty-box">
-                      Recomendado: máximo 1 o 2 grupos al día, delays largos y siempre revisar reglas del grupo antes de participar.
-                    </div>
-                  </section>
-                )}
-
-                <section className="stripe-card stack">
-                  <div className="section-title">
-                    <i className="fab fa-facebook"></i> Discovery IA de grupos
                   </div>
-
-                  <form className="form-grid" onSubmit={(e) => { e.preventDefault(); discoverFacebookGroups() }}>
-                    <input
-                      placeholder="Producto o servicio *"
-                      value={facebookDiscoveryForm.product}
-                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, product: e.target.value })}
-                    />
-
-                    <input
-                      placeholder="Nombre del negocio"
-                      value={facebookDiscoveryForm.business_name}
-                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, business_name: e.target.value })}
-                    />
-
-                    <input
-                      placeholder="País / mercado"
-                      value={facebookDiscoveryForm.country}
-                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, country: e.target.value })}
-                    />
-
-                    <input
-                      placeholder="Nicho"
-                      value={facebookDiscoveryForm.niche}
-                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, niche: e.target.value })}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Oferta principal"
-                      value={facebookDiscoveryForm.offer}
-                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, offer: e.target.value })}
-                      rows={2}
-                    />
-
-                    <textarea
-                      className="full"
-                      placeholder="Público objetivo"
-                      value={facebookDiscoveryForm.target_audience}
-                      onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, target_audience: e.target.value })}
-                      rows={2}
-                    />
-
-                    <button type="submit" className="full" disabled={facebookDiscoverLoading}>
-                      {facebookDiscoverLoading ? (
-                        <>
-                          <i className="fas fa-circle-notch fa-spin"></i> Buscando grupos con IA...
-                        </>
-                      ) : (
-                        <>
-                          <i className="fas fa-magnifying-glass"></i> Buscar grupos IA
-                        </>
-                      )}
-                    </button>
-                  </form>
-
-                  {facebookDiscovery && (
-                    <div className="stack" style={{ marginTop: '1rem' }}>
-                      <div className="ads-pro-card">
-                        <h3>Keywords sugeridas</h3>
-                        <div className="tag-list">
-                          {(facebookDiscovery.search_keywords || []).map((k, i) => <span key={i}>{k}</span>)}
-                        </div>
-                      </div>
-
-                      <div className="ads-pro-card">
-                        <h3>Estrategia segura</h3>
-                        <p>{facebookDiscovery.strategy}</p>
-                      </div>
-
-                      {(facebookDiscovery.warnings || []).length > 0 && (
-                        <div className="reality-warning-card">
-                          <h3>Advertencias</h3>
-                          <ul>
-                            {facebookDiscovery.warnings.map((w, i) => <li key={i}>{w}</li>)}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div className="chat-list">
+                    {paginatedLeads.map(lead => (
+                      <button key={`${lead.bot_id}-${lead.id}`} className={selectedLeadId === lead.id ? 'chat-item active' : 'chat-item'} onClick={() => setSelectedLeadId(lead.id)} type="button">
+                        <div className="row between"><strong>{lead.display_name || lead.phone}</strong><span className={`pill ${lead.stage}`}>{lead.stage}</span></div>
+                        <div className="muted tiny">{lead.client_name} · {lead.bot_name}</div>
+                        <div className="muted preview">{lead.last_inbound_text}</div>
+                      </button>
+                    ))}
+                    {paginatedLeads.length === 0 && <div className="empty-box">No hay leads</div>}
+                  </div>
+                  <div className="pagination">
+                    <button type="button" onClick={() => setLeadPage(p => Math.max(1, p-1))} disabled={leadPage === 1}>Anterior</button>
+                    <span>Página {leadPage}</span>
+                    <button type="button" onClick={() => setLeadPage(p => p+1)} disabled={leadPage * pageSize >= filteredLeads.length}>Siguiente</button>
+                  </div>
                 </section>
 
-                <section className="stripe-card stack">
-                  <div className="row between">
-                    <div className="section-title">
-                      <i className="fas fa-bullseye"></i> Grupos recomendados
-                    </div>
-                    <button type="button" className="secondary tiny-btn" onClick={loadFacebookTargets}>
-                      Recargar
-                    </button>
+                <section className="stripe-card inbox-chat">
+                  <div className="row between center">
+                    <div><div className="section-title">Conversación</div><p className="muted">{selectedLead ? `${selectedLead.client_name} · ${selectedLead.bot_name} · ${selectedLead.phone}` : 'Selecciona un lead'}</p></div>
+                    {selectedLead && <button type="button" onClick={() => updateLeadStage(selectedLead)}>Cambiar stage</button>}
                   </div>
+                  <div className="messages">
+                    {messages.map(m => <div key={m.id} className={m.direction === 'outbound' ? 'bubble outbound' : 'bubble inbound'}><div>{m.content}</div><small>{new Date(m.created_at).toLocaleString()}</small></div>)}
+                  </div>
+                  <form onSubmit={sendLeadMessage} className="chat-compose">
+                    <textarea rows={3} value={chatMessage} onChange={e => setChatMessage(e.target.value)} placeholder="Escribe una respuesta manual..." />
+                    <button type="submit">Enviar</button>
+                  </form>
+                </section>
 
-                  {facebookDiscovery?.groups?.length > 0 && (
-                    <div className="list two-col">
-                      {facebookDiscovery.groups.map((g, i) => (
-                        <div className="bot-card" key={i}>
-                          <div className="row between">
-                            <strong>{g.name}</strong>
-                            <span className="pill hot">{g.relevance_score || 70}/100</span>
+                <section className="stripe-card inbox-side">
+                  <div className="section-title">Perfil lead</div>
+                  {selectedLead ? (
+                    <div className="stack">
+                      <div><strong>Cliente</strong><div className="muted">{selectedLead.client_name}</div></div>
+                      <div><strong>Bot</strong><div className="muted">{selectedLead.bot_name}</div></div>
+                      <div><strong>Intent</strong><div className="muted">{selectedLead.last_intent}</div></div>
+                      <div><strong>Resumen</strong><div className="muted">{selectedLead.summary}</div></div>
+                      <div><strong>Tags</strong><div className="muted">{selectedLead.tags || '—'}</div></div>
+                      <div><strong>Follow-ups</strong><div className="muted">{selectedLead.followup_count}</div></div>
+                    </div>
+                  ) : <div className="empty-box">Selecciona un lead</div>}
+                </section>
+              </section>
+            )}
+
+            {/* ======================== BOTS ======================== */}
+            {tab === 'bots' && (
+              <section className="panel-grid">
+                <section className="stripe-card stack">
+                  <div className="row between center"><div className="section-title"><i className="fas fa-cog"></i> Configuración IA</div><select value={selectedBotId || ''} onChange={e => setSelectedBotId(e.target.value)}><option value="">Selecciona un bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select></div>
+                  <form onSubmit={saveConfig} className="form-grid">
+                    <input value={config.business_name} onChange={e => setConfig({...config, business_name: e.target.value})} placeholder="Nombre negocio" />
+                    <input value={config.model} onChange={e => setConfig({...config, model: e.target.value})} placeholder="Modelo" />
+                    <input value={config.offer} onChange={e => setConfig({...config, offer: e.target.value})} placeholder="Oferta" />
+                    <input value={config.target_audience} onChange={e => setConfig({...config, target_audience: e.target.value})} placeholder="Público objetivo" />
+                    <input value={config.tone} onChange={e => setConfig({...config, tone: e.target.value})} placeholder="Tono" />
+                    <input value={config.human_handoff_phone} onChange={e => setConfig({...config, human_handoff_phone: e.target.value})} placeholder="Teléfono humano" />
+                    <input value={config.cta_button_text} onChange={e => setConfig({...config, cta_button_text: e.target.value})} placeholder="Texto CTA" />
+                    <input value={config.cta_link} onChange={e => setConfig({...config, cta_link: e.target.value})} placeholder="Link CTA" />
+                    <input type="number" value={config.followup_delay_mins} onChange={e => setConfig({...config, followup_delay_mins: Number(e.target.value)})} placeholder="Minutos follow-up" />
+                    <label className="toggle"><input type="checkbox" checked={config.followup_enabled} onChange={e => setConfig({...config, followup_enabled: e.target.checked})} /> Seguimiento automático</label>
+                    <select value={config.reply_mode || 'manual'} onChange={e => setConfig({ ...config, reply_mode: e.target.value })}>
+                      <option value="manual">IA (modo libre)</option>
+                      <option value="template_only">Solo plantilla</option>
+                      <option value="template_ai">Plantilla + IA</option>
+                    </select>
+                    <select value={config.template_id || ''} onChange={e => setConfig({ ...config, template_id: e.target.value })}>
+                      <option value="">Auto (inteligente)</option>
+                      {templates.map(t => (
+                        <option key={t.id} value={t.id}>
+                          {t.name} ({t.stage})
+                        </option>
+                      ))}
+                    </select>
+                    <textarea className="full" rows={3} value={config.business_description} onChange={e => setConfig({...config, business_description: e.target.value})} placeholder="Descripción negocio" />
+                    <textarea className="full" rows={3} value={config.fallback_message} onChange={e => setConfig({...config, fallback_message: e.target.value})} placeholder="Mensaje fallback" />
+                    <textarea className="full" rows={7} value={config.system_prompt} onChange={e => setConfig({...config, system_prompt: e.target.value})} placeholder="Prompt del sistema" />
+                    <button className="full" disabled={busy || !selectedBotId}>Guardar configuración</button>
+                  </form>
+                </section>
+                <section className="stripe-card stack">
+                  <div className="section-title"><i className="fas fa-paper-plane"></i> Envío manual</div>
+                  <form onSubmit={sendManual} className="stack">
+                    <input value={sendNumber} onChange={e => setSendNumber(e.target.value)} placeholder="573001234567" />
+                    <textarea rows={6} value={sendMessage} onChange={e => setSendMessage(e.target.value)} />
+                    <button disabled={busy || !selectedBotId}>Enviar mensaje</button>
+                  </form>
+                </section>
+              </section>
+            )}
+
+            {/* ======================== TEMPLATES ======================== */}
+            {tab === 'templates' && (
+              <section className="panel-grid">
+                <section className="stripe-card stack">
+                  <div className="row between center"><div className="section-title"><i className="fas fa-file-alt"></i> Plantillas y prompts</div><input type="text" placeholder="Buscar plantilla..." value={searchTemplate} onChange={e => setSearchTemplate(e.target.value)} className="search-input" /></div>
+                  <form onSubmit={createTemplate} className="form-grid">
+                    <input value={templateForm.name} onChange={e => setTemplateForm({...templateForm, name: e.target.value})} placeholder="Nombre" />
+                    <input value={templateForm.business_type} onChange={e => setTemplateForm({...templateForm, business_type: e.target.value})} placeholder="Tipo negocio" />
+                    <select value={templateForm.category} onChange={e => setTemplateForm({...templateForm, category: e.target.value})}><option value="sales">sales</option><option value="support">support</option><option value="followup">followup</option></select>
+                    <select value={templateForm.stage} onChange={e => setTemplateForm({...templateForm, stage: e.target.value})}><option>new</option><option>qualified</option><option>interested</option><option>hot</option><option>closed</option></select>
+                    <textarea className="full" rows={4} value={templateForm.prompt_snippet} onChange={e => setTemplateForm({...templateForm, prompt_snippet: e.target.value})} placeholder="Snippet de prompt" />
+                    <textarea className="full" rows={4} value={templateForm.message_template} onChange={e => setTemplateForm({...templateForm, message_template: e.target.value})} placeholder="Mensaje sugerido" />
+                    <button className="full">Guardar plantilla</button>
+                  </form>
+                </section>
+                <section className="stripe-card stack">
+                  <div className="section-title">Plantillas disponibles</div>
+                  <div className="template-list">{paginatedTemplates.map(t => <div key={t.id} className="template-card"><div className="row between"><strong>{t.name}</strong><span className="pill">{t.stage}</span></div><div className="muted tiny">{t.business_type} · {t.category}</div><p>{t.message_template}</p></div>)}</div>
+                  <div className="pagination"><button type="button" onClick={() => setTemplatePage(p => Math.max(1, p-1))} disabled={templatePage === 1}>Anterior</button><span>Página {templatePage}</span><button type="button" onClick={() => setTemplatePage(p => p+1)} disabled={templatePage * pageSize >= filteredTemplates.length}>Siguiente</button></div>
+                </section>
+              </section>
+            )}
+
+            {/* ======================== LANDING IA ======================== */}
+            {tab === 'landing' && (
+              <section className="stripe-card stack gap-lg">
+                <div className="row between center">
+                  <h3><i className="fas fa-brain"></i> Generador de Landing Pages IA</h3>
+                  <button type="button" onClick={resetLandingForm} className="secondary">+ Nueva</button>
+                </div>
+                <select value={selectedBotId} onChange={e => setSelectedBotId(e.target.value)}>
+                  <option value="">Selecciona un bot</option>
+                  {bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                </select>
+                <div className="form-grid">
+                  <input placeholder="Nombre de la landing *" value={landingForm.name} onChange={(e) => setLandingForm({ ...landingForm, name: e.target.value })} />
+                  <select value={landingForm.style_preset} onChange={(e) => setLandingForm({ ...landingForm, style_preset: e.target.value })}>
+                    <option value="dark_premium">Dark Premium</option>
+                    <option value="fintech_conversion">Fintech Conversion</option>
+                    <option value="corporate_clean">Corporate Clean</option>
+                    <option value="real_estate_luxury">Real Estate Luxury</option>
+                    <option value="ecommerce_modern">Ecommerce Modern</option>
+                  </select>
+                  <input placeholder="URL del logo" value={landingForm.logo_url} onChange={(e) => setLandingForm({ ...landingForm, logo_url: e.target.value })} />
+                  <input placeholder="URL del favicon" value={landingForm.favicon_url} onChange={(e) => setLandingForm({ ...landingForm, favicon_url: e.target.value })} />
+                  <input placeholder="URL imagen principal" value={landingForm.hero_image_url} onChange={(e) => setLandingForm({ ...landingForm, hero_image_url: e.target.value })} />
+                  <input placeholder="URL video de YouTube" value={landingForm.youtube_url} onChange={(e) => setLandingForm({ ...landingForm, youtube_url: e.target.value })} />
+                  <input placeholder="Facebook Pixel ID (opcional)" value={landingForm.facebook_pixel_id} onChange={(e) => setLandingForm({ ...landingForm, facebook_pixel_id: e.target.value })} />
+                  <input placeholder="Google Analytics ID (opcional)" value={landingForm.google_analytics} onChange={(e) => setLandingForm({ ...landingForm, google_analytics: e.target.value })} />
+                  <select value={landingForm.tracking_mode} onChange={(e) => setLandingForm({ ...landingForm, tracking_mode: e.target.value })}>
+                    <option value="auto">Tracking automático (mismo dominio)</option>
+                    <option value="external">Tracking con URL externa</option>
+                  </select>
+                  {landingForm.tracking_mode === 'external' && (
+                    <input placeholder="URL base del backend tracking (ej: http://localhost:8080 o https://panel.midominio.com)" value={landingForm.tracking_base_url} onChange={(e) => setLandingForm({ ...landingForm, tracking_base_url: e.target.value })} />
+                  )}
+                  <input type="color" value={landingForm.primary_color} onChange={(e) => setLandingForm({ ...landingForm, primary_color: e.target.value })} />
+                  <input type="color" value={landingForm.secondary_color} onChange={(e) => setLandingForm({ ...landingForm, secondary_color: e.target.value })} />
+                </div>
+                <div className="row gap-sm">
+                  <label className="toggle"><input type="checkbox" checked={!!landingForm.show_video} onChange={(e) => setLandingForm({ ...landingForm, show_video: e.target.checked })} /> Incluir video principal</label>
+                  <label className="toggle"><input type="checkbox" checked={!!landingForm.show_image} onChange={(e) => setLandingForm({ ...landingForm, show_image: e.target.checked })} /> Incluir imagen destacada</label>
+                </div>
+                <textarea rows={5} placeholder="Describe la landing en detalle (producto, beneficios, llamado a la acción...)" value={landingForm.prompt} onChange={(e) => setLandingForm({ ...landingForm, prompt: e.target.value })} />
+                <div className="row gap-sm">
+                  <button type="button" onClick={generateLanding} disabled={busy || landingLoading}>{landingLoading ? 'Generando...' : 'Generar con IA'}</button>
+                  {editingLandingId && <button type="button" onClick={saveLandingChanges} disabled={busy} className="secondary">Guardar cambios</button>}
+                  {landingHTML && <button type="button" onClick={downloadHTML} className="secondary">Descargar HTML</button>}
+                </div>
+                {landingHTML && <iframe id="landing-preview" title="Landing Preview" style={{ width: "100%", height: "600px", border: "1px solid #ccc", borderRadius: "0.75rem" }} srcDoc={landingHTML} />}
+                {landings.length > 0 && (
+                  <div>
+                    <div className="section-title">Landings guardadas</div>
+                    <div className="template-list">
+                      {landings.map((land) => (
+                        <div key={land.id} className="template-card">
+                          <div className="row between"><strong>{land.name}</strong><span className="pill">{land.style_preset || 'default'}</span></div>
+                          <div className="muted tiny">{land.created_at ? new Date(land.created_at).toLocaleString() : 'Sin fecha'}</div>
+                          <div className="muted tiny">Estado: {land.status || 'generated'}</div>
+                          <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+                            <button type="button" onClick={() => loadLandingForEdit(land)}>Editar</button>
+                            <button type="button" className="secondary" onClick={() => setLandingHTML(land.html || land.preview_html || '')}>Ver</button>
+                            <button type="button" className="secondary" onClick={() => openPublicLanding(land)}> Abrir pública</button>
+                            <button type="button" className="secondary" onClick={() => copyPublicLandingUrl(land)}> Copiar URL</button>
+                            <button type="button" className="danger" onClick={() => deleteLanding(land.id)}>Eliminar</button>
                           </div>
-                          <div className="muted">{g.niche || g.category}</div>
-                          <p style={{ marginTop: '.5rem' }}>{g.notes}</p>
-                          <small>{g.rules_summary}</small>
-                          <button type="button" style={{ marginTop: '.75rem' }} onClick={() => saveRecommendedFacebookGroup(g)}>
-                            Guardar recomendado
-                          </button>
                         </div>
                       ))}
                     </div>
-                  )}
-
-                  <div className="section-title" style={{ marginTop: '1rem' }}>
-                    Grupos guardados
                   </div>
+                )}
+              </section>
+            )}
 
-                  <div className="list two-col">
-                    {facebookTargets.length === 0 && (
-                      <div className="empty-box">Aún no hay grupos guardados.</div>
+            {/* ======================== FUNNEL ======================== */}
+            {tab === 'funnel' && (
+              <section className="stack gap-lg">
+                <div className="metric-grid">
+                  <div className="stripe-card metric"><div className="metric-label">Visitas landing</div><div className="metric-value">{funnelMetrics.landing_views || 0}</div></div>
+                  <div className="stripe-card metric"><div className="metric-label">Clicks WhatsApp</div><div className="metric-value">{funnelMetrics.whatsapp_clicks || 0}</div></div>
+                  <div className="stripe-card metric"><div className="metric-label">Leads</div><div className="metric-value">{metrics.leads || 0}</div></div>
+                  <div className="stripe-card metric"><div className="metric-label">Cerrados</div><div className="metric-value">{metrics.closed_leads || 0}</div></div>
+                  <div className="stripe-card metric"><div className="metric-label">CTR</div><div className="metric-value">{Math.round(((funnelMetrics.whatsapp_clicks || 0) / (funnelMetrics.landing_views || 1)) * 100)}%</div></div>
+                  <div className="stripe-card metric"><div className="metric-label">Conversión</div><div className="metric-value">{Math.round((metrics.closed_leads || 0) / (metrics.leads || 1) * 100)}%</div></div>
+                </div>
+                <div className="stripe-card">
+                  <div className="section-title">Embudo de conversión</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '1rem' }}>
+                    {[
+                      ['Visitas', funnelMetrics.landing_views],
+                      ['Clicks WA', funnelMetrics.whatsapp_clicks],
+                      ['Leads', metrics.leads],
+                      ['Interesados', leads.filter(l => l.stage === 'interested').length],
+                      ['Hot', leads.filter(l => l.stage === 'hot').length],
+                      ['Cerrados', metrics.closed_leads]
+                    ].map(([label, val], i) => (
+                      <div key={label} style={{ width: `${100 - i * 10}%`, margin: '0 auto', background: '#7430e2', color: 'white', padding: '10px', borderRadius: '10px', textAlign: 'center', fontWeight: '600' }}>
+                        {label}: {val || 0}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="stripe-card">
+                  <div className="chart-title">Leads por etapa</div>
+                  <div className="bar-container">
+                    {['new', 'qualified', 'interested', 'hot', 'closed'].map(stage => {
+                      const count = leads.filter(l => l.stage === stage).length
+                      return (
+                        <div key={stage} className="bar-item">
+                          <div className="bar-label">{stage}</div>
+                          <div className="bar-fill" style={{ width: `${Math.min(100, count * 10)}%` }}></div>
+                          <div className="bar-value">{count}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className="stripe-card">
+                  <div className="row between">
+                    <div className="section-title">Leads y conversaciones</div>
+                    <input className="search-input" placeholder="Buscar lead..." value={searchLead} onChange={e => setSearchLead(e.target.value)} />
+                  </div>
+                  <table className="leads-table">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Stage</th>
+                        <th>Bot</th>
+                        <th>Último mensaje</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredLeads.length > 0 ? (
+                        filteredLeads.map(lead => (
+                          <tr key={lead.id}>
+                            <td>{lead.display_name || '—'}</td>
+                            <td>{lead.phone}</td>
+                            <td><span className={`pill ${lead.stage}`}>{lead.stage}</span></td>
+                            <td>{lead.bot_name}</td>
+                            <td>{lead.last_inbound_text?.slice(0, 40)}</td>
+                            <td>
+                              <button type="button" onClick={() => setSelectedLeadId(lead.id)}>
+                                Ver chat
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                            No hay leads
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* ======================== SOCIAL IA con PremiumGate ======================== */}
+            {tab === 'social' && !canUseFeature('social_ai') && (
+              <PremiumGate
+                title="Social AI requiere un plan superior"
+                description="Genera contenido, publica en redes sociales y automatiza tu presencia con IA."
+                onUpgrade={() => setForcePlanScreen(true)}
+              />
+            )}
+            {tab === 'social' && canUseFeature('social_ai') && (
+              <section className="stack gap-lg">
+                <div className="panel-grid">
+                  <section className="stripe-card stack">
+                    <div className="section-title"><i className="fas fa-key"></i> Credenciales Sociales</div>
+                    <div className="form-grid">
+                      <input value={socialCredential.page_name} onChange={e => setSocialCredential({ ...socialCredential, page_name: e.target.value })} placeholder="Nombre de la página" />
+                      <input value={socialCredential.page_id} onChange={e => setSocialCredential({ ...socialCredential, page_id: e.target.value })} placeholder="Page ID" />
+                      <input className="full" value={socialCredential.access_token} onChange={e => setSocialCredential({ ...socialCredential, access_token: e.target.value })} placeholder="Page Access Token" />
+                      <input value={socialCredential.ad_account_id} onChange={e => setSocialCredential({ ...socialCredential, ad_account_id: e.target.value })} placeholder="Ad Account ID (opcional)" />
+                      <input value={socialCredential.tiktok_access_token} onChange={e => setSocialCredential({ ...socialCredential, tiktok_access_token: e.target.value })} placeholder="TikTok Access Token" />
+                      <input value={socialCredential.tiktok_open_id} onChange={e => setSocialCredential({ ...socialCredential, tiktok_open_id: e.target.value })} placeholder="TikTok Open ID" />
+                      <label className="toggle"><input type="checkbox" checked={!!socialCredential.enabled} onChange={e => setSocialCredential({ ...socialCredential, enabled: e.target.checked })} /> Redes habilitadas</label>
+                    </div>
+                    <div className="row gap-sm">
+                      <button type="button" onClick={saveSocialCredential}>
+                        Guardar credenciales
+                      </button>
+                      <button type="button" className="secondary" onClick={verifyInstagram}>
+                        <i className="fab fa-instagram"></i> Verificar Instagram
+                      </button>
+                      <button onClick={getInstagramData}>
+                        Obtener datos IG
+                      </button>
+                    </div>
+
+                    {socialCredential.instagram_connected ? (
+                      <div className="pill success" style={{ marginTop: '0.75rem' }}>
+                        <i className="fab fa-instagram"></i> Instagram conectado: @{socialCredential.instagram_username}
+                      </div>
+                    ) : (
+                      <div className="pill warning" style={{ marginTop: '0.75rem' }}>
+                        <i className="fab fa-instagram"></i> Instagram no conectado
+                      </div>
                     )}
 
-                    {facebookTargets.map((g) => (
-                      <div className="bot-card" key={g.id}>
-                        <div className="row between">
-                          <strong>{g.name}</strong>
-                          <span className="pill interested">{g.relevance_score || 0}/100</span>
-                        </div>
-                        <div className="muted">{g.niche || g.category || 'Sin nicho'}</div>
-                        <div className="muted">Miembros: {g.members_count || 'Estimado pendiente'}</div>
-                        <p style={{ marginTop: '.5rem' }}>{g.notes}</p>
-                        <small>{g.join_status || 'pending_manual_join'}</small>
-                        <div className="row" style={{ marginTop: '1rem' }}>
-                          {g.url && (
-                            <a href={g.url} target="_blank" rel="noreferrer">
-                              <button type="button" className="tiny-btn">
-                                <i className="fas fa-eye"></i> Ver grupo
+                    {socialCredential.tiktok_connected ? (
+                      <div className="pill success" style={{ marginTop: '0.5rem' }}>
+                        <i className="fab fa-tiktok"></i> TikTok conectado
+                      </div>
+                    ) : (
+                      <div className="pill warning" style={{ marginTop: '0.5rem' }}>
+                        <i className="fab fa-tiktok"></i> TikTok no conectado
+                      </div>
+                    )}
+
+                    {instagramData && (
+                      <div className="muted tiny" style={{ marginTop: '0.5rem' }}>
+                        <div>👤 @{instagramData.username}</div>
+                        <div>👥 Seguidores: {instagramData.followers_count}</div>
+                        <div>📸 Posts: {instagramData.media_count}</div>
+                      </div>
+                    )}
+                  </section>
+
+                  <section className="stripe-card stack">
+                    <div className="section-title"><i className="fas fa-bullhorn"></i> Configuración campaña</div>
+                    <div className="form-grid">
+                      <input value={socialCampaign.name} onChange={e => setSocialCampaign({ ...socialCampaign, name: e.target.value })} placeholder="Nombre de campaña" />
+                      <select value={socialCampaign.objective} onChange={e => setSocialCampaign({ ...socialCampaign, objective: e.target.value })}>
+                        <option value="whatsapp">Enviar a WhatsApp</option>
+                        <option value="landing">Enviar a Landing</option>
+                        <option value="manual_link">Link manual</option>
+                        <option value="no_link">Sin link</option>
+                      </select>
+                      <select value={socialCampaign.bot_id} onChange={e => setSocialCampaign({ ...socialCampaign, bot_id: e.target.value })}><option value="">Selecciona bot</option>{bots.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
+                      <select value={socialCampaign.landing_id} onChange={e => setSocialCampaign({ ...socialCampaign, landing_id: e.target.value })}><option value="">Selecciona landing</option>{landings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}</select>
+                      
+                      <select
+                        value={socialMediaType}
+                        onChange={(e) => {
+                          const type = e.target.value
+                          setSocialMediaType(type)
+
+                          if (type === 'text') {
+                          setSocialCampaign(prev => ({
+                            ...prev,
+                            image_mode: 'none',
+                            manual_image_url: '',
+                            video_url: ''
+                          }))
+                            setSelectedSocialVideoURL('')
+                            setSelectedSocialVideoId('')
+                          }
+
+                          if (type === 'image') {
+                          setSocialCampaign(prev => ({
+                            ...prev,
+                            image_mode: 'ai',
+                            video_url: ''
+                          }))
+                            setSelectedSocialVideoURL('')
+                            setSelectedSocialVideoId('')
+                          }
+
+                          if (type === 'video') {
+                            setSocialCampaign(prev => ({
+                              ...prev,
+                              image_mode: 'video',
+                              manual_image_url: selectedSocialVideoURL || prev.manual_image_url,
+                              video_url: selectedSocialVideoURL || prev.video_url || ''
+                            }))
+                          }
+                        }}
+                      >
+                        <option value="image">Imagen</option>
+                        <option value="video">Video AI</option>
+                        <option value="text">Solo texto</option>
+                      </select>
+
+                      {socialMediaType !== 'video' && socialMediaType !== 'text' && (
+                        <>
+                          <select value={socialCampaign.image_mode} onChange={e => setSocialCampaign({ ...socialCampaign, image_mode: e.target.value })}>
+                            <option value="ai">Imagen IA</option>
+                            <option value="manual">Imagen manual</option>
+                            <option value="none">Sin imagen</option>
+                          </select>
+                          <input value={socialCampaign.manual_image_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_image_url: e.target.value })} placeholder="URL imagen manual" />
+                        </>
+                      )}
+
+                      {socialMediaType === 'video' && (
+                        <div className="social-video-picker">
+                          <div className="section-title">
+                            <i className="fas fa-video"></i> Seleccionar video de Video AI
+                          </div>
+
+                          <div className="social-video-grid">
+                            {(videoJobs || []).filter(v => v.video_url).map(job => {
+                              const url = resolveMediaURL(job.video_url)
+                              const active = selectedSocialVideoId === job.id
+
+                              return (
+                                <button
+                                  key={job.id}
+                                  type="button"
+                                  className={active ? 'social-video-card active' : 'social-video-card'}
+                                  onClick={() => {
+                                    setSelectedSocialVideoId(job.id)
+                                    setSelectedSocialVideoURL(url)
+                                    setSocialCampaign(prev => ({
+                                      ...prev,
+                                      image_mode: 'video',
+                                      manual_image_url: url,
+                                      video_url: url
+                                    }))
+                                    showNotice('Video seleccionado para Social AI')
+                                  }}
+                                >
+                                  <video src={url} muted playsInline />
+                                  <span>{job.provider === 'upload' ? 'Subido' : 'IA'} · {job.status}</span>
+                                </button>
+                              )
+                            })}
+                          </div>
+
+                          {selectedSocialVideoURL && (
+                            <div className="selected-social-video">
+                              <video src={selectedSocialVideoURL} controls playsInline />
+                              <div>
+                                <strong>Video listo para publicación</strong>
+                                <small>{selectedSocialVideoURL}</small>
+                              </div>
+                              <button
+                                className="tiny-btn danger"
+                                onClick={() => {
+                                  setSelectedSocialVideoURL('')
+                                  setSelectedSocialVideoId('')
+                                  setSocialCampaign(prev => ({
+                                    ...prev,
+                                    image_mode: 'none',
+                                    video_url: ''
+                                  }))
+                                  showNotice('Video removido')
+                                }}
+                              >
+                                Remover video
                               </button>
-                            </a>
+                            </div>
                           )}
-                          <button type="button" className="tiny-btn" onClick={() => requestFacebookJoin(g, 'manual')}>
-                            <i className="fas fa-hand-pointer"></i> Unirme manual
+
+                          <button type="button" className="secondary" onClick={() => setTab('video')}>
+                            Abrir Video AI Studio
                           </button>
-                          <button type="button" className="tiny-btn" onClick={() => requestFacebookJoin(g, 'auto')}>
-                            <i className="fas fa-clock"></i> Programar
+                        </div>
+                      )}
+
+                      <input value={socialCampaign.manual_link_url} onChange={e => setSocialCampaign({ ...socialCampaign, manual_link_url: e.target.value })} placeholder="Link manual" />
+                      <input value={socialCampaign.call_to_action} onChange={e => setSocialCampaign({ ...socialCampaign, call_to_action: e.target.value })} placeholder="Call to action" />
+                      <select value={socialCampaign.publish_mode} onChange={e => setSocialCampaign({ ...socialCampaign, publish_mode: e.target.value })}>
+                        <option value="now">Publicar ahora</option><option value="scheduled">Fecha y hora exacta</option><option value="recurring">Repetir cada X minutos</option>
+                      </select>
+                      {socialCampaign.publish_mode === 'scheduled' && <input type="datetime-local" value={socialCampaign.scheduled_at} onChange={e => setSocialCampaign({ ...socialCampaign, scheduled_at: e.target.value })} />}
+                      {socialCampaign.publish_mode === 'recurring' && <input type="number" value={socialCampaign.recurring_minutes} onChange={e => setSocialCampaign({ ...socialCampaign, recurring_minutes: e.target.value })} placeholder="Cada cuántos minutos" />}
+                      <input className="full" value={socialCampaign.days_of_week} onChange={e => setSocialCampaign({ ...socialCampaign, days_of_week: e.target.value })} placeholder="Días de publicación (ej: mon,tue,wed)" />
+                      <textarea className="full" rows={5} value={socialCampaign.prompt} onChange={e => setSocialCampaign({ ...socialCampaign, prompt: e.target.value })} placeholder="Describe la campaña que quieres generar con IA..." />
+                    </div>
+                    <div className="row gap-sm">
+                      <button type="button" onClick={generateSocial}>Generar contenido IA</button>
+                      <div className="row gap-sm" style={{ marginTop: '0.75rem' }}>
+                        <label className="toggle">
+                          <input
+                            type="checkbox"
+                            checked={selectedPlatforms.includes('facebook')}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedPlatforms(prev => [...new Set([...prev, 'facebook'])])
+                              } else {
+                                setSelectedPlatforms(prev => prev.filter(p => p !== 'facebook'))
+                              }
+                            }}
+                          />
+                          Facebook
+                        </label>
+
+                        <label className="toggle">
+                          <input
+                            type="checkbox"
+                            checked={selectedPlatforms.includes('instagram')}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedPlatforms(prev => [...new Set([...prev, 'instagram'])])
+                              } else {
+                                setSelectedPlatforms(prev => prev.filter(p => p !== 'instagram'))
+                              }
+                            }}
+                          />
+                          Instagram
+                        </label>
+
+                        <label className="toggle">
+                          <input
+                            type="checkbox"
+                            checked={selectedPlatforms.includes('tiktok')}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedPlatforms(prev => [...new Set([...prev, 'tiktok'])])
+                              } else {
+                                setSelectedPlatforms(prev => prev.filter(p => p !== 'tiktok'))
+                              }
+                            }}
+                          />
+                          TikTok
+                        </label>
+
+                        <button type="button" onClick={publishMulti}>
+                          <i className="fas fa-paper-plane"></i> Publicar selección
+                        </button>
+                         <button type="button" className="secondary"
+                        onClick={() => {
+                          if (!selectedPlatforms.length) {
+                            showNotice('Selecciona al menos una red social')
+                            return
+                          }
+                          if (selectedPlatforms.length > 1) {
+                            showNotice('Por ahora programa una red a la vez')
+                            return
+                          }
+                          scheduleSocialPost()
+                        }}
+                      >
+                      <i className="fas fa-calendar"></i>  Programar selección
+                      </button>
+                      </div>
+                     
+                    </div>
+                  </section>
+                </div>
+
+                <section className="stripe-card stack">
+                  <div className="section-title"><i className="fas fa-image"></i> Imagen IA</div>
+                  <textarea className="full" rows={3} value={socialImagePrompt} onChange={e => { setSocialImagePrompt(e.target.value); setSocialCampaign(prev => ({ ...prev, image_prompt: e.target.value })) }} placeholder="Describe la imagen que quieres generar para la publicación..." />
+                  <div className="row gap-sm">
+                    <button type="button" onClick={generateSocialImage} disabled={socialImageLoading}>{socialImageLoading ? 'Generando imagen...' : 'Generar imagen IA'}</button>
+                    <label className="secondary" style={{ cursor: 'pointer' }}>{socialUploadLoading ? 'Subiendo...' : 'Subir imagen manual'}<input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => uploadSocialImage(e.target.files?.[0])} /></label>
+                    <button type="button" className="secondary" onClick={() => { setSocialImageURL(''); setSocialImagePrompt(''); setSocialCampaign(prev => ({ ...prev, image_mode: 'none', manual_image_url: '', image_prompt: '' })) }}>Sin imagen</button>
+                  </div>
+                  {socialMediaType === 'video' && selectedSocialVideoURL ? (
+                    <video
+                      src={selectedSocialVideoURL}
+                      controls
+                      playsInline
+                      muted
+                      style={{
+                        maxWidth: '320px',
+                        width: '100%',
+                        borderRadius: '1rem',
+                        border: '1px solid #e2e8f0',
+                        marginTop: '1rem',
+                        background: '#000',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  ) : (
+                    (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
+                      <img
+                        src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)}
+                        alt="Preview social"
+                        style={{
+                          maxWidth: '320px',
+                          width: '100%',
+                          borderRadius: '1rem',
+                          border: '1px solid #e2e8f0',
+                          marginTop: '1rem',
+                          objectFit: 'cover'
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.style.opacity = '0.4'
+                          showNotice('No se pudo cargar el preview de la imagen. Revisa PUBLIC_BASE_URL o la ruta del backend.')
+                        }}
+                      />
+                    )
+                  )}
+                </section>
+
+                <section className="stripe-card stack">
+                  <div className="section-title"><i className="fas fa-eye"></i> Preview de publicación</div>
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '18px', background: '#ffffff', overflow: 'hidden', maxWidth: '640px' }}>
+                    <div style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+                        <div style={{ width: '46px', height: '46px', borderRadius: '9999px', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '18px' }}>{(socialCredential.page_name || selectedClient?.name || 'P').slice(0, 1).toUpperCase()}</div>
+                        <div><div style={{ fontWeight: 700, color: '#0f172a' }}>{socialCredential.page_name || selectedClient?.name || 'Tu página'}</div><div style={{ fontSize: '12px', color: '#64748b' }}>Publicidad · Ahora</div></div>
+                      </div>
+                      <div style={{ whiteSpace: 'pre-line', color: '#0f172a', fontSize: '15px', lineHeight: 1.5 }}>{htmlToPlainText(socialContent) || 'Aquí verás cómo quedará el copy de la publicación.'}</div>
+                    </div>
+                    {socialMediaType === 'image' && (socialImageURL || socialCampaign.manual_image_url) && socialCampaign.image_mode !== 'none' && (
+                      <img src={resolveMediaURL(socialImageURL || socialCampaign.manual_image_url)} alt="Preview social" style={{ width: '100%', maxHeight: '520px', objectFit: 'cover', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
+                    )}
+                    {socialMediaType === 'video' && selectedSocialVideoURL && (
+                      <video src={selectedSocialVideoURL} controls style={{ width: '100%', maxHeight: '520px', display: 'block', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }} />
+                    )}
+                    <div style={{ padding: '12px 16px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Destino del clic</div>
+                      <div style={{ fontWeight: 600, color: '#0f172a' }}>
+                        {socialCampaign.objective === 'whatsapp' && 'WhatsApp'}
+                        {socialCampaign.objective === 'landing' && 'Landing page'}
+                        {socialCampaign.objective === 'manual_link' && 'Link manual'}
+                        {socialCampaign.objective === 'none' && 'Sin enlace'}
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
+                        {socialCampaign.objective === 'manual_link' ? socialCampaign.manual_link_url || 'Escribe un link manual' : socialCampaign.objective === 'whatsapp' ? 'Abrirá conversación con el bot seleccionado' : socialCampaign.objective === 'landing' ? 'Abrirá la landing seleccionada' : 'La publicación no llevará enlace'}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="social-history-full">
+                  <section className="stripe-card stack">
+                    <div className="section-title"><i className="fas fa-history"></i> Historial de publicaciones</div>
+                    <table>
+                      <thead>
+                        <tr><th>Plataforma</th><th>Estado</th><th>Modo</th><th>Fecha</th><th>Contenido</th></tr>
+                      </thead>
+                      <tbody>
+                        {socialPosts.map(post => (
+                          <tr key={post.id}>
+                            <td>{post.platform}</td>
+                            <td><span className={`pill ${post.status === 'published' ? 'connected' : post.status === 'error' ? 'error' : 'new'}`}>{post.status}</span></td>
+                            <td>{post.publish_mode}</td>
+                            <td>{post.created_at ? new Date(post.created_at).toLocaleString() : '—'}</td>
+                            <td>{(post.content || '').slice(0, 120)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {socialPosts.length === 0 && <div className="empty-box">No hay publicaciones todavía</div>}
+                  </section>
+                </div>
+              </section>
+            )}
+
+            {/* ======================== VIDEO AI con PremiumGate ======================== */}
+            {tab === 'video' && !canUseFeature('video_ai') && (
+              <PremiumGate
+                title="Video AI requiere un plan superior"
+                description="Genera, edita, sube, recorta y prepara videos para redes con IA."
+                onUpgrade={() => setForcePlanScreen(true)}
+              />
+            )}
+            {tab === 'video' && canUseFeature('video_ai') && (
+              <VideoAIStudio
+                selectedClientId={selectedClientId}
+                videoPrompt={videoPrompt}
+                setVideoPrompt={setVideoPrompt}
+                videoDuration={videoDuration}
+                setVideoDuration={setVideoDuration}
+                videoLoading={videoLoading}
+                generateAIVideo={generateAIVideo}
+                loadAIVideos={loadAIVideos}
+                videoJobs={videoJobs}
+                setVideoJobs={setVideoJobs}
+                refreshAIVideo={refreshAIVideo}
+                addMusicToVideo={addMusicToVideo}
+                addVoiceAndSubtitles={addVoiceAndSubtitles}
+                downloadAIVideo={downloadAIVideo}
+                voiceText={voiceText}
+                setVoiceText={setVoiceText}
+                voiceLanguage={voiceLanguage}
+                setVoiceLanguage={setVoiceLanguage}
+                voiceGender={voiceGender}
+                setVoiceGender={setVoiceGender}
+                enableVoice={enableVoice}
+                setEnableVoice={setEnableVoice}
+                enableSubtitles={enableSubtitles}
+                setEnableSubtitles={setEnableSubtitles}
+                uploadAIVideoFile={uploadAIVideoFile}
+                trimAIVideo={trimAIVideo}
+                exportAIVideoPreset={exportAIVideoPreset}
+                addAnimatedCaptions={addAnimatedCaptions}
+                sendVideoToSocialAI={sendVideoToSocialAI}
+                showNotice={showNotice}
+              />
+            )}
+
+            {/* ======================== ADS IA con PremiumGate ======================== */}
+            {tab === 'ads' && !canUseFeature('ads_ai') && (
+              <PremiumGate
+                title="Ads IA requiere un plan superior"
+                description="Genera campañas publicitarias completas con proyección de ROI, segmentación y creativos."
+                onUpgrade={() => setForcePlanScreen(true)}
+              />
+            )}
+            {tab === 'ads' && canUseFeature('ads_ai') && (
+              <AdsPanel
+                adsForm={adsForm}
+                setAdsForm={setAdsForm}
+                adsResult={adsResult}
+                adsLoading={adsLoading}
+                generateAdsCampaign={generateAdsCampaign}
+                generateAdsEcosystem={generateAdsEcosystem}
+                ecosystemLoading={ecosystemLoading}
+                showNotice={showNotice}
+              />
+            )}
+
+            {/* ======================== GRUPOS con PremiumGate ======================== */}
+            {tab === 'groups' && !canUseFeature('groups_ai') && (
+              <PremiumGate
+                title="Grupos IA requiere un plan superior"
+                description="Administra bots IA para grupos de WhatsApp y descubre comunidades de Facebook para crecimiento."
+                onUpgrade={() => setForcePlanScreen(true)}
+              />
+            )}
+            {tab === 'groups' && canUseFeature('groups_ai') && (
+              <section className="stack gap-lg">
+                <div className="stripe-card">
+                  <div className="row between">
+                    <div>
+                      <div className="eyebrow">Worktic Groups AI</div>
+                      <h2>Grupos inteligentes</h2>
+                      <p className="muted">
+                        Administra bots IA para grupos de WhatsApp y descubre comunidades de Facebook relacionadas con el negocio.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="groups-tabs">
+                    <button
+                      type="button"
+                      className={groupsTab === 'whatsapp' ? 'groups-tab active' : 'groups-tab'}
+                      onClick={() => setGroupsTab('whatsapp')}
+                    >
+                      <i className="fab fa-whatsapp"></i> WhatsApp Groups AI
+                    </button>
+
+                    <button
+                      type="button"
+                      className={groupsTab === 'facebook' ? 'groups-tab active' : 'groups-tab'}
+                      onClick={() => setGroupsTab('facebook')}
+                    >
+                      <i className="fab fa-facebook"></i> Facebook Discovery
+                    </button>
+                  </div>
+                </div>
+
+                {groupsTab === 'whatsapp' && (
+                  <div className="panel-grid">
+                    <section className="stripe-card stack">
+                      <div className="section-title">
+                        <i className="fab fa-whatsapp"></i> Crear bot para grupo
+                      </div>
+
+                      <form className="form-grid" onSubmit={(e) => { e.preventDefault(); createGroupBot() }}>
+                        <input
+                          placeholder="Nombre del bot *"
+                          value={groupBotForm.name}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, name: e.target.value })}
+                        />
+
+                        <input
+                          placeholder="Group JID opcional: 120363xxxxx@g.us"
+                          value={groupBotForm.group_jid}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, group_jid: e.target.value })}
+                        />
+
+                        <input
+                          placeholder="Nombre del negocio"
+                          value={groupBotForm.business_name}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, business_name: e.target.value })}
+                        />
+
+                        <input
+                          placeholder="Oferta principal"
+                          value={groupBotForm.offer}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, offer: e.target.value })}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Descripción del negocio"
+                          value={groupBotForm.business_description}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, business_description: e.target.value })}
+                          rows={2}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Público objetivo"
+                          value={groupBotForm.target_audience}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, target_audience: e.target.value })}
+                          rows={2}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Reglas del grupo"
+                          value={groupBotForm.rules}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, rules: e.target.value })}
+                          rows={3}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Mensaje de bienvenida"
+                          value={groupBotForm.welcome_message}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, welcome_message: e.target.value })}
+                          rows={2}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Prompt IA para administrar el grupo"
+                          value={groupBotForm.system_prompt}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, system_prompt: e.target.value })}
+                          rows={4}
+                        />
+
+                        <label className="check-row">
+                          <input
+                            type="checkbox"
+                            checked={groupBotForm.moderation_enabled}
+                            onChange={(e) => setGroupBotForm({ ...groupBotForm, moderation_enabled: e.target.checked })}
+                          />
+                          Moderación activa
+                        </label>
+
+                        <label className="check-row">
+                          <input
+                            type="checkbox"
+                            checked={groupBotForm.auto_reply_enabled}
+                            onChange={(e) => setGroupBotForm({ ...groupBotForm, auto_reply_enabled: e.target.checked })}
+                          />
+                          Auto respuestas
+                        </label>
+
+                        <label className="check-row">
+                          <input
+                            type="checkbox"
+                            checked={groupBotForm.lead_capture_enabled}
+                            onChange={(e) => setGroupBotForm({ ...groupBotForm, lead_capture_enabled: e.target.checked })}
+                          />
+                          Capturar leads
+                        </label>
+
+                        <input
+                          className="full"
+                          placeholder="Teléfono humano para escalamiento"
+                          value={groupBotForm.human_handoff_phone}
+                          onChange={(e) => setGroupBotForm({ ...groupBotForm, human_handoff_phone: e.target.value })}
+                        />
+
+                        <button type="submit" className="full" disabled={busy}>
+                          <i className="fas fa-plus"></i> Crear bot de grupo
+                        </button>
+                      </form>
+                    </section>
+
+                    <section className="stripe-card stack">
+                      <div className="row between">
+                        <div className="section-title">
+                          <i className="fas fa-users"></i> Bots de grupos
+                        </div>
+                        <button type="button" className="secondary tiny-btn" onClick={loadGroupBots}>
+                          Recargar
+                        </button>
+                      </div>
+
+                      <div className="list two-col">
+                        {groupBots.length === 0 && (
+                          <div className="empty-box">Aún no hay bots de grupos.</div>
+                        )}
+
+                        {groupBots.map((bot) => (
+                          <div key={bot.id} className="bot-card">
+                            <div className="row between">
+                              <strong>{bot.name}</strong>
+                              <span className={`pill ${bot.status || 'draft'}`}>{bot.status || 'draft'}</span>
+                            </div>
+
+                            <div className="muted" style={{ marginTop: '.5rem' }}>
+                              Grupo: {bot.group_jid || 'Pendiente por conectar'}
+                            </div>
+
+                            <div className="muted">Oferta: {bot.offer || '—'}</div>
+
+                            <div className="tag-list mini" style={{ marginTop: '.75rem' }}>
+                              {bot.moderation_enabled && <span>Moderación</span>}
+                              {bot.auto_reply_enabled && <span>Auto reply</span>}
+                              {bot.lead_capture_enabled && <span>Leads</span>}
+                            </div>
+
+                            <div className="row" style={{ marginTop: '1rem' }}>
+                              <button type="button" className="tiny-btn" onClick={() => toggleGroupBotStatus(bot)}>
+                                {bot.status === 'active' ? 'Pausar' : 'Activar'}
+                              </button>
+
+                              <button type="button" className="danger tiny-btn" onClick={() => deleteGroupBot(bot.id)}>
+                                Eliminar
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="empty-box">
+                        Para conectar un grupo real: conecta el WhatsApp del bot con QR, agrega ese número al grupo y luego guarda el JID del grupo terminado en <strong>@g.us</strong>.
+                      </div>
+                    </section>
+                  </div>
+                )}
+
+                {groupsTab === 'facebook' && (
+                  <div className="panel-grid">
+                    {growthSettings && (
+                      <section className="stripe-card stack">
+                        <div className="row between">
+                          <div>
+                            <div className="section-title">
+                              <i className="fas fa-seedling"></i> Facebook Growth AI
+                            </div>
+                            <p className="muted">
+                              Controla cuántos grupos puede intentar trabajar el sistema por día y el modo seguro.
+                            </p>
+                          </div>
+
+                          <button type="button" onClick={saveGrowthSettings}>
+                            Guardar configuración
                           </button>
-                          <button type="button" className="tiny-btn" onClick={() => markFacebookJoined(g)}>
-                            <i className="fas fa-check"></i> Ya estoy unido
+                        </div>
+
+                        <div className="form-grid">
+                          <label className="check-row">
+                            <input
+                              type="checkbox"
+                              checked={!!growthSettings.auto_join_enabled}
+                              onChange={(e) => setGrowthSettings({ ...growthSettings, auto_join_enabled: e.target.checked })}
+                            />
+                            Activar programación automática segura
+                          </label>
+
+                          <label className="check-row">
+                            <input
+                              type="checkbox"
+                              checked={!!growthSettings.safe_mode}
+                              onChange={(e) => setGrowthSettings({ ...growthSettings, safe_mode: e.target.checked })}
+                            />
+                            Modo seguro
+                          </label>
+
+                          <input
+                            type="number"
+                            min="1"
+                            max="2"
+                            placeholder="Máx grupos por día"
+                            value={growthSettings.max_joins_per_day || 2}
+                            onChange={(e) => setGrowthSettings({ ...growthSettings, max_joins_per_day: Number(e.target.value) })}
+                          />
+
+                          <input
+                            type="number"
+                            min="1"
+                            placeholder="Máx total grupos"
+                            value={growthSettings.max_total_groups || 50}
+                            onChange={(e) => setGrowthSettings({ ...growthSettings, max_total_groups: Number(e.target.value) })}
+                          />
+
+                          <input
+                            type="number"
+                            min="60"
+                            placeholder="Delay mínimo minutos"
+                            value={growthSettings.min_delay_minutes || 120}
+                            onChange={(e) => setGrowthSettings({ ...growthSettings, min_delay_minutes: Number(e.target.value) })}
+                          />
+
+                          <input
+                            type="number"
+                            min="60"
+                            placeholder="Delay máximo minutos"
+                            value={growthSettings.max_delay_minutes || 360}
+                            onChange={(e) => setGrowthSettings({ ...growthSettings, max_delay_minutes: Number(e.target.value) })}
+                          />
+
+                          <input
+                            placeholder="Horario permitido"
+                            value={growthSettings.allowed_hours || '08:00-20:00'}
+                            onChange={(e) => setGrowthSettings({ ...growthSettings, allowed_hours: e.target.value })}
+                          />
+
+                          <input
+                            placeholder="Timezone"
+                            value={growthSettings.timezone || 'America/Bogota'}
+                            onChange={(e) => setGrowthSettings({ ...growthSettings, timezone: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="empty-box">
+                          Recomendado: máximo 1 o 2 grupos al día, delays largos y siempre revisar reglas del grupo antes de participar.
+                        </div>
+                      </section>
+                    )}
+
+                    <section className="stripe-card stack">
+                      <div className="section-title">
+                        <i className="fab fa-facebook"></i> Discovery IA de grupos
+                      </div>
+
+                      <form className="form-grid" onSubmit={(e) => { e.preventDefault(); discoverFacebookGroups() }}>
+                        <input
+                          placeholder="Producto o servicio *"
+                          value={facebookDiscoveryForm.product}
+                          onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, product: e.target.value })}
+                        />
+
+                        <input
+                          placeholder="Nombre del negocio"
+                          value={facebookDiscoveryForm.business_name}
+                          onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, business_name: e.target.value })}
+                        />
+
+                        <input
+                          placeholder="País / mercado"
+                          value={facebookDiscoveryForm.country}
+                          onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, country: e.target.value })}
+                        />
+
+                        <input
+                          placeholder="Nicho"
+                          value={facebookDiscoveryForm.niche}
+                          onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, niche: e.target.value })}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Oferta principal"
+                          value={facebookDiscoveryForm.offer}
+                          onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, offer: e.target.value })}
+                          rows={2}
+                        />
+
+                        <textarea
+                          className="full"
+                          placeholder="Público objetivo"
+                          value={facebookDiscoveryForm.target_audience}
+                          onChange={(e) => setFacebookDiscoveryForm({ ...facebookDiscoveryForm, target_audience: e.target.value })}
+                          rows={2}
+                        />
+
+                        <button type="submit" className="full" disabled={facebookDiscoverLoading}>
+                          {facebookDiscoverLoading ? (
+                            <>
+                              <i className="fas fa-circle-notch fa-spin"></i> Buscando grupos con IA...
+                            </>
+                          ) : (
+                            <>
+                              <i className="fas fa-magnifying-glass"></i> Buscar grupos IA
+                            </>
+                          )}
+                        </button>
+                      </form>
+
+                      {facebookDiscovery && (
+                        <div className="stack" style={{ marginTop: '1rem' }}>
+                          <div className="ads-pro-card">
+                            <h3>Keywords sugeridas</h3>
+                            <div className="tag-list">
+                              {(facebookDiscovery.search_keywords || []).map((k, i) => <span key={i}>{k}</span>)}
+                            </div>
+                          </div>
+
+                          <div className="ads-pro-card">
+                            <h3>Estrategia segura</h3>
+                            <p>{facebookDiscovery.strategy}</p>
+                          </div>
+
+                          {(facebookDiscovery.warnings || []).length > 0 && (
+                            <div className="reality-warning-card">
+                              <h3>Advertencias</h3>
+                              <ul>
+                                {facebookDiscovery.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </section>
+
+                    <section className="stripe-card stack">
+                      <div className="row between">
+                        <div className="section-title">
+                          <i className="fas fa-bullseye"></i> Grupos recomendados
+                        </div>
+                        <button type="button" className="secondary tiny-btn" onClick={loadFacebookTargets}>
+                          Recargar
+                        </button>
+                      </div>
+
+                      {facebookDiscovery?.groups?.length > 0 && (
+                        <div className="list two-col">
+                          {facebookDiscovery.groups.map((g, i) => (
+                            <div className="bot-card" key={i}>
+                              <div className="row between">
+                                <strong>{g.name}</strong>
+                                <span className="pill hot">{g.relevance_score || 70}/100</span>
+                              </div>
+                              <div className="muted">{g.niche || g.category}</div>
+                              <p style={{ marginTop: '.5rem' }}>{g.notes}</p>
+                              <small>{g.rules_summary}</small>
+                              <button type="button" style={{ marginTop: '.75rem' }} onClick={() => saveRecommendedFacebookGroup(g)}>
+                                Guardar recomendado
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="section-title" style={{ marginTop: '1rem' }}>
+                        Grupos guardados
+                      </div>
+
+                      <div className="list two-col">
+                        {facebookTargets.length === 0 && (
+                          <div className="empty-box">Aún no hay grupos guardados.</div>
+                        )}
+
+                        {facebookTargets.map((g) => (
+                          <div className="bot-card" key={g.id}>
+                            <div className="row between">
+                              <strong>{g.name}</strong>
+                              <span className="pill interested">{g.relevance_score || 0}/100</span>
+                            </div>
+                            <div className="muted">{g.niche || g.category || 'Sin nicho'}</div>
+                            <div className="muted">Miembros: {g.members_count || 'Estimado pendiente'}</div>
+                            <p style={{ marginTop: '.5rem' }}>{g.notes}</p>
+                            <small>{g.join_status || 'pending_manual_join'}</small>
+                            <div className="row" style={{ marginTop: '1rem' }}>
+                              {g.url && (
+                                <a href={g.url} target="_blank" rel="noreferrer">
+                                  <button type="button" className="tiny-btn">
+                                    <i className="fas fa-eye"></i> Ver grupo
+                                  </button>
+                                </a>
+                              )}
+                              <button type="button" className="tiny-btn" onClick={() => requestFacebookJoin(g, 'manual')}>
+                                <i className="fas fa-hand-pointer"></i> Unirme manual
+                              </button>
+                              <button type="button" className="tiny-btn" onClick={() => requestFacebookJoin(g, 'auto')}>
+                                <i className="fas fa-clock"></i> Programar
+                              </button>
+                              <button type="button" className="tiny-btn" onClick={() => markFacebookJoined(g)}>
+                                <i className="fas fa-check"></i> Ya estoy unido
+                              </button>
+                              <button type="button" className="danger tiny-btn" onClick={() => deleteFacebookTarget(g.id)}>
+                                Eliminar
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+
+                    <section className="stripe-card stack">
+                      <div className="row between">
+                        <div className="section-title">
+                          <i className="fas fa-list-check"></i> Cola de unión
+                        </div>
+                        <button type="button" className="secondary tiny-btn" onClick={loadJoinQueue}>
+                          Recargar
+                        </button>
+                      </div>
+
+                      <div className="list two-col">
+                        {joinQueue.length === 0 && (
+                          <div className="empty-box">No hay acciones en cola.</div>
+                        )}
+
+                        {joinQueue.map((item) => (
+                          <div key={item.id} className="bot-card">
+                            <div className="row between">
+                              <strong>{item.group_name || 'Grupo'}</strong>
+                              <span className={`pill ${item.status}`}>{item.status}</span>
+                            </div>
+
+                            <div className="muted">
+                              Programado: {item.scheduled_for ? new Date(item.scheduled_for).toLocaleString() : 'Manual / sin fecha'}
+                            </div>
+
+                            <p style={{ marginTop: '.5rem' }}>{item.notes}</p>
+
+                            {item.group_url && (
+                              <a href={item.group_url} target="_blank" rel="noreferrer">
+                                <button type="button" className="tiny-btn">
+                                  Ver grupo
+                                </button>
+                              </a>
+                            )}
+
+                            <button type="button" className="secondary tiny-btn" onClick={() => pauseQueueItem(item)}>
+                              Pausar
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+
+                    <section className="stripe-card stack">
+                      <div className="row between">
+                        <div className="section-title">
+                          <i className="fas fa-clock-rotate-left"></i> Actividad
+                        </div>
+                        <button type="button" className="secondary tiny-btn" onClick={() => loadFacebookLogs()}>
+                          Recargar
+                        </button>
+                      </div>
+
+                      <div className="stack gap-sm">
+                        {facebookLogs.length === 0 && (
+                          <div className="empty-box">Sin actividad todavía.</div>
+                        )}
+
+                        {facebookLogs.map((log) => (
+                          <div key={log.id} className="bot-card">
+                            <div className="row between">
+                              <strong>{log.action_type}</strong>
+                              <span className={`pill ${log.status}`}>{log.status}</span>
+                            </div>
+                            <p>{log.message}</p>
+                            <small>{new Date(log.created_at).toLocaleString()}</small>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* ======================== CLIENTS (admin only) ======================== */}
+            {tab === 'clients' && me.role === 'admin' && (
+              <section className="panel-grid">
+                <section className="stripe-card stack"><div className="section-title"><i className="fas fa-building"></i> Nuevo cliente</div><form onSubmit={createClient} className="form-grid"><input value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} placeholder="Nombre" /><input value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} placeholder="Email" /><input value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} placeholder="Teléfono" /><input value={newClient.plan} onChange={e => setNewClient({...newClient, plan: e.target.value})} placeholder="Plan" /><button className="full" disabled={busy}>Crear cliente</button></form></section>
+                <section className="stripe-card stack">
+                  <div className="row between center"><div className="section-title">Clientes</div><input type="text" placeholder="Buscar cliente..." value={searchClient} onChange={e => setSearchClient(e.target.value)} className="search-input" /></div>
+                  <div className="template-list">
+                    {paginatedClients.map(c => (
+                      <div
+                        key={c.id}
+                        className={selectedClientId === c.id ? 'template-card active-outline' : 'template-card'}
+                        onClick={() => setSelectedClientId(c.id)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div className="row between">
+                          <i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#7430e2' }}></i>
+                          <strong>{c.name}</strong>
+                          <span className="pill">{c.plan}</span>
+                        </div>
+
+                        <div className="muted" style={{ color: '#1e293b' }}>
+                          {c.email}
+                        </div>
+
+                        <div className="row" style={{ marginTop: '1rem' }}>
+                          <button
+                            className="secondary tiny-btn"
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setEditingClient(c)
+                            }}
+                          >
+                            <i className="fas fa-pen"></i>
+                            Editar
                           </button>
-                          <button type="button" className="danger tiny-btn" onClick={() => deleteFacebookTarget(g.id)}>
+
+                          <button
+                            className="danger tiny-btn"
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setClientToDelete(c)
+                              setShowDeleteClientModal(true)
+                            }}
+                          >
+                            <i className="fas fa-trash"></i>
                             Eliminar
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
+                  <div className="pagination"><button type="button" onClick={() => setClientPage(p => Math.max(1, p-1))} disabled={clientPage === 1}>Anterior</button><span>Página {clientPage}</span><button type="button" onClick={() => setClientPage(p => p+1)} disabled={clientPage * pageSize >= filteredClients.length}>Siguiente</button></div>
+                </section>
+              </section>
+            )}
+
+            {/* ======================== USERS (admin only) ======================== */}
+            {tab === 'users' && me.role === 'admin' && (
+              <section className="panel-grid">
+                <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">
+                  {me.role === 'admin' && <select value={newUser.client_id || selectedClientId} onChange={e => setNewUser({...newUser, client_id: e.target.value})}><option value="">Cliente</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>}
+                  <input value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} placeholder="Nombre" />
+                  <input value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} placeholder="Email" />
+                  <input type="password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} placeholder="Password" />
+                  <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}><option value="client_admin">client_admin</option><option value="client_user">client_user</option>{me.role === 'admin' && <option value="admin">admin</option>}</select>
+                  <button className="full" disabled={busy}>Crear usuario</button>
+                </form></section>
+                <section className="stripe-card stack">
+                <div className="row between center">
+                  <div className="section-title">Usuarios</div>
+
+                  <div className="row">
+                    <select
+                      value={userClientFilter}
+                      onChange={(e) => {
+                        setUserClientFilter(e.target.value)
+                        setUserPage(1)
+                      }}
+                      className="search-input"
+                    >
+                      <option value="">Todos los usuarios</option>
+                      {clients.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="text"
+                      placeholder="Buscar usuario..."
+                      value={searchUser}
+                      onChange={e => setSearchUser(e.target.value)}
+                      className="search-input"
+                    />
+                  </div>
+                </div>
+                  <div className="template-list">
+                  {paginatedUsers.map(u => (
+                    <div key={u.id} className="template-card">
+
+                      <div className="row between">
+                        <strong>{u.name}</strong>
+                        <span className="pill">{u.role}</span>
+                      </div>
+
+                      <div className="muted tiny">
+                        {u.email}
+                      </div>
+
+                      <div className="row" style={{ marginTop: '1rem' }}>
+                        <button
+                          className="secondary tiny-btn"
+                          type="button"
+                          onClick={() => setEditingUser(u)}
+                        >
+                          <i className="fas fa-pen"></i>
+                          Editar
+                        </button>
+
+                        {me.id !== u.id && (
+                          <button
+                            className="danger tiny-btn"
+                            type="button"
+                            onClick={() => {
+                              setUserToDelete(u)
+                              setShowDeleteUserModal(true)
+                            }}
+                          >
+                            <i className="fas fa-trash"></i>
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+                  <div className="pagination"><button type="button" onClick={() => setUserPage(p => Math.max(1, p-1))} disabled={userPage === 1}>Anterior</button><span>Página {userPage}</span><button type="button" onClick={() => setUserPage(p => p+1)} disabled={userPage * pageSize >= filteredUsers.length}>Siguiente</button></div>
+                </section>
+              </section>
+            )}
+
+            {/* ======================== PLANS ======================== */}
+            {tab === 'plans' && me.role === 'admin' && (
+              <section className="panel-grid">
+
+                <section className="stripe-card stack">
+                  <div className="section-title">
+                    <i className="fas fa-crown"></i>
+                    Nuevo plan
+                  </div>
+
+                  <form onSubmit={createPlan} className="form-grid">
+
+                    <input
+                      placeholder="Nombre"
+                      value={newPlan.name}
+                      onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Slug"
+                      value={newPlan.slug}
+                      onChange={(e) => setNewPlan({ ...newPlan, slug: e.target.value })}
+                    />
+
+                    <input
+                      placeholder="Precio mensual"
+                      type="number"
+                      value={newPlan.price_monthly}
+                      onChange={(e) => setNewPlan({ ...newPlan, price_monthly: Number(e.target.value) })}
+                    />
+
+                    <input
+                      placeholder="Precio anual"
+                      type="number"
+                      value={newPlan.price_yearly}
+                      onChange={(e) => setNewPlan({ ...newPlan, price_yearly: Number(e.target.value) })}
+                    />
+
+                    <input
+                      placeholder="Grace days"
+                      type="number"
+                      value={newPlan.grace_days}
+                      onChange={(e) => setNewPlan({ ...newPlan, grace_days: Number(e.target.value) })}
+                    />
+
+                    <textarea
+                      rows={6}
+                      placeholder="Features JSON"
+                      value={newPlan.features}
+                      onChange={(e) => setNewPlan({ ...newPlan, features: e.target.value })}
+                    />
+
+                    <textarea
+                      rows={10}
+                      placeholder="Permissions JSON"
+                      value={newPlan.permissions}
+                      onChange={(e) => setNewPlan({ ...newPlan, permissions: e.target.value })}
+                    />
+
+                    <textarea
+                      rows={10}
+                      placeholder="Limits JSON"
+                      value={newPlan.limits}
+                      onChange={(e) => setNewPlan({ ...newPlan, limits: e.target.value })}
+                    />
+
+                    <label className="row">
+                      <input
+                        type="checkbox"
+                        checked={newPlan.is_free}
+                        onChange={(e) => setNewPlan({ ...newPlan, is_free: e.target.checked })}
+                      />
+                      Plan gratuito
+                    </label>
+
+                    <label className="row">
+                      <input
+                        type="checkbox"
+                        checked={newPlan.is_active}
+                        onChange={(e) => setNewPlan({ ...newPlan, is_active: e.target.checked })}
+                      />
+                      Activo
+                    </label>
+
+                    <button className="full">
+                      Crear plan
+                    </button>
+
+                  </form>
                 </section>
 
                 <section className="stripe-card stack">
-                  <div className="row between">
-                    <div className="section-title">
-                      <i className="fas fa-list-check"></i> Cola de unión
-                    </div>
-                    <button type="button" className="secondary tiny-btn" onClick={loadJoinQueue}>
-                      Recargar
-                    </button>
+
+                  <div className="section-title">
+                    Planes
                   </div>
 
-                  <div className="list two-col">
-                    {joinQueue.length === 0 && (
-                      <div className="empty-box">No hay acciones en cola.</div>
-                    )}
+                  <div className="template-list">
 
-                    {joinQueue.map((item) => (
-                      <div key={item.id} className="bot-card">
+                    {plans.map(plan => (
+
+                      <div key={plan.id} className="template-card">
+
                         <div className="row between">
-                          <strong>{item.group_name || 'Grupo'}</strong>
-                          <span className={`pill ${item.status}`}>{item.status}</span>
+                          <strong>{plan.name}</strong>
+
+                          <span className="pill">
+                            ${plan.price_monthly}/mes
+                          </span>
                         </div>
 
-                        <div className="muted">
-                          Programado: {item.scheduled_for ? new Date(item.scheduled_for).toLocaleString() : 'Manual / sin fecha'}
+                        <div className="muted tiny">
+                          {plan.description}
                         </div>
 
-                        <p style={{ marginTop: '.5rem' }}>{item.notes}</p>
+                        <div className="row" style={{ marginTop: '1rem' }}>
 
-                        {item.group_url && (
-                          <a href={item.group_url} target="_blank" rel="noreferrer">
-                            <button type="button" className="tiny-btn">
-                              Ver grupo
-                            </button>
-                          </a>
-                        )}
+                          <button
+                            className="secondary tiny-btn"
+                            onClick={() => setEditingPlan(plan)}
+                          >
+                            <i className="fas fa-pen"></i>
+                            Editar
+                          </button>
 
-                        <button type="button" className="secondary tiny-btn" onClick={() => pauseQueueItem(item)}>
-                          Pausar
+                          <button
+                            className="danger tiny-btn"
+                            onClick={() => {
+                              setPlanToDelete(plan)
+                              setShowDeletePlanModal(true)
+                            }}
+                          >
+                            <i className="fas fa-trash"></i>
+                            Eliminar
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    ))}
+
+                  </div>
+
+                </section>
+
+              </section>
+            )}
+
+            {/* ======================== BILLING (admin only) ======================== */}
+            {tab === 'billing' && me.role === 'admin' && (
+              <div className="stack gap-lg">
+                {/* Configuración de billing existente */}
+                <div className="stripe-card stack">
+                  <h2>Configuración de billing</h2>
+                  <input
+                    type="text"
+                    placeholder="Wallet USDT BEP20"
+                    value={billingConfig.usdt_bep20_wallet}
+                    onChange={(e) => setBillingConfig({ ...billingConfig, usdt_bep20_wallet: e.target.value })}
+                  />
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={billingConfig.card_payments_enabled}
+                      onChange={(e) => setBillingConfig({ ...billingConfig, card_payments_enabled: e.target.checked })}
+                    />
+                    Próximamente habilitar tarjeta
+                  </label>
+                  <button type="button" onClick={saveBillingConfig}>Guardar billing</button>
+                </div>
+
+                {/* Suscripciones pendientes existentes */}
+                <div className="stripe-card stack">
+                  <div className="row between">
+                    <h2>Pagos pendientes de suscripciones</h2>
+                    <button type="button" onClick={loadPendingSubscriptions}>Recargar</button>
+                  </div>
+
+                  {pendingSubscriptions.length === 0 ? (
+                    <div className="empty-box">No hay pagos pendientes de suscripciones</div>
+                  ) : (
+                    pendingSubscriptions.map((sub) => (
+                      <div key={sub.id} className="bot-card stack">
+                        <div><strong>Cliente:</strong> {sub.client_name || sub.client_id}</div>
+                        <div><strong>Plan:</strong> {sub.plan_slug}</div>
+                        <div><strong>Ciclo:</strong> {sub.billing_cycle}</div>
+                        <div><strong>Monto:</strong> ${sub.amount}</div>
+                        <div><strong>Hash:</strong> {sub.tx_hash || 'Sin hash'}</div>
+                        <button type="button" onClick={() => approveSubscription(sub.id)}>
+                          Aprobar
                         </button>
                       </div>
-                    ))}
-                  </div>
-                </section>
+                    ))
+                  )}
+                </div>
 
+                {/* NUEVA SECCIÓN: Pagos por Link */}
                 <section className="stripe-card stack">
                   <div className="row between">
-                    <div className="section-title">
-                      <i className="fas fa-clock-rotate-left"></i> Actividad
+                    <div>
+                      <h2>Pagos por Link</h2>
+                      <p className="muted">Pagos normales, pagos de agencias y pagos de licencias de clientes de agencia.</p>
                     </div>
-                    <button type="button" className="secondary tiny-btn" onClick={() => loadFacebookLogs()}>
-                      Recargar
+
+                    <button type="button" onClick={loadPaymentLinks}>
+                      <i className="fas fa-sync-alt"></i> Recargar links
                     </button>
                   </div>
 
-                  <div className="stack gap-sm">
-                    {facebookLogs.length === 0 && (
-                      <div className="empty-box">Sin actividad todavía.</div>
-                    )}
+                  {paymentLinksLoading ? (
+                    <div className="loader">Cargando pagos por link...</div>
+                  ) : paymentLinks.length === 0 ? (
+                    <div className="empty-box">No hay pagos por link todavía.</div>
+                  ) : (
+                    <div className="table-wrap" style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', minWidth: '800px' }}>
+                        <thead>
+                          <tr>
+                            <th>Concepto</th>
+                            <th>Tipo</th>
+                            <th>Agencia</th>
+                            <th>Cliente</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Hash</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
 
-                    {facebookLogs.map((log) => (
-                      <div key={log.id} className="bot-card">
-                        <div className="row between">
-                          <strong>{log.action_type}</strong>
-                          <span className={`pill ${log.status}`}>{log.status}</span>
-                        </div>
-                        <p>{log.message}</p>
-                        <small>{new Date(log.created_at).toLocaleString()}</small>
-                      </div>
-                    ))}
-                  </div>
+                        <tbody>
+                          {paymentLinks.map((p) => (
+                            <tr key={p.id}>
+                              <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>
+                                {p.concept}
+                              </td>
+
+                              <td>
+                                {p.payment_scope === 'agency_license'
+                                  ? '🏢 Licencia Agencia'
+                                  : p.payment_scope === 'client_license'
+                                    ? '👥 Licencia Cliente Agencia'
+                                    : '💳 Pago Cliente'}
+                              </td>
+
+                              <td style={{ fontSize: '0.8rem' }}>
+                                {p.agency_id ? (
+                                  <span className="pill info" style={{ background: '#e0e7ff', color: '#4338ca' }}>
+                                    {p.agency_id.slice(0, 8)}
+                                  </span>
+                                ) : '-'}
+                              </td>
+
+                              <td style={{ fontSize: '0.8rem' }}>
+                                {p.client_id || p.target_client_id || '-'}
+                              </td>
+
+                              <td>
+                                <strong>{p.amount} {p.currency || 'USDT'}</strong>
+                              </td>
+
+                              <td>
+                                <span className={`pill ${p.status === 'approved' ? 'connected' : p.status === 'rejected' ? 'error' : 'warning'}`}>
+                                  {p.status === 'approved' ? '✅ Aprobado' : 
+                                   p.status === 'rejected' ? '❌ Rechazado' : 
+                                   p.status === 'pending' ? '⏳ Pendiente' : p.status}
+                                </span>
+                              </td>
+
+                              <td style={{ maxWidth: '180px', wordBreak: 'break-all', fontSize: '0.7rem' }}>
+                                {p.tx_hash || '-'}
+                              </td>
+
+                              <td>
+                                <div className="row" style={{ gap: '0.3rem', flexWrap: 'wrap' }}>
+                                  {p.public_url && (
+                                    <button
+                                      type="button"
+                                      className="tiny-btn"
+                                      onClick={() => copyPaymentLink(p.public_url)}
+                                      style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                                    >
+                                      <i className="fas fa-copy"></i> Copiar
+                                    </button>
+                                  )}
+
+                                  {p.status !== 'approved' && (
+                                    <button
+                                      type="button"
+                                      className="tiny-btn"
+                                      onClick={() => approvePaymentLink(p.id)}
+                                      style={{ background: '#10b981', padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                                    >
+                                      <i className="fas fa-check"></i> Aprobar
+                                    </button>
+                                  )}
+
+                                  {p.status !== 'rejected' && p.status !== 'approved' && (
+                                    <button
+                                      type="button"
+                                      className="tiny-btn danger"
+                                      onClick={() => rejectPaymentLink(p.id)}
+                                      style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                                    >
+                                      <i className="fas fa-times"></i> Rechazar
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </section>
               </div>
             )}
-          </section>
-        )}
 
-        {/* ======================== CLIENTS (admin only) ======================== */}
-        {tab === 'clients' && me.role === 'admin' && (
-          <section className="panel-grid">
-            <section className="stripe-card stack"><div className="section-title"><i className="fas fa-building"></i> Nuevo cliente</div><form onSubmit={createClient} className="form-grid"><input value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} placeholder="Nombre" /><input value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} placeholder="Email" /><input value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} placeholder="Teléfono" /><input value={newClient.plan} onChange={e => setNewClient({...newClient, plan: e.target.value})} placeholder="Plan" /><button className="full" disabled={busy}>Crear cliente</button></form></section>
-            <section className="stripe-card stack">
-              <div className="row between center"><div className="section-title">Clientes</div><input type="text" placeholder="Buscar cliente..." value={searchClient} onChange={e => setSearchClient(e.target.value)} className="search-input" /></div>
-              <div className="template-list">
-                {paginatedClients.map(c => (
-                  <div
-                    key={c.id}
-                    className={selectedClientId === c.id ? 'template-card active-outline' : 'template-card'}
-                    onClick={() => setSelectedClientId(c.id)}
-                    style={{ cursor: 'pointer' }}
+            {editingClient && (
+              <div className="modal-overlay">
+                <form onSubmit={updateClient} className="modal-card-pro stack">
+                  <h2>Editar cliente</h2>
+
+                  <input
+                    value={editingClient.name || ''}
+                    onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })}
+                    placeholder="Nombre"
+                  />
+
+                  <input
+                    value={editingClient.email || ''}
+                    onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })}
+                    placeholder="Email"
+                  />
+
+                  <input
+                    value={editingClient.phone || ''}
+                    onChange={(e) => setEditingClient({ ...editingClient, phone: e.target.value })}
+                    placeholder="Teléfono"
+                  />
+
+                  <input
+                    value={editingClient.plan || ''}
+                    onChange={(e) => setEditingClient({ ...editingClient, plan: e.target.value })}
+                    placeholder="Plan"
+                  />
+
+                  <select
+                    value={editingClient.status || 'active'}
+                    onChange={(e) => setEditingClient({ ...editingClient, status: e.target.value })}
                   >
-                    <div className="row between">
-                      <i className="fas fa-user-circle" style={{ fontSize: '1.2rem', color: '#7430e2' }}></i>
-                      <strong>{c.name}</strong>
-                      <span className="pill">{c.plan}</span>
-                    </div>
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                    <option value="suspended">Suspendido</option>
+                  </select>
 
-                    <div className="muted" style={{ color: '#1e293b' }}>
-                      {c.email}
-                    </div>
-
-                    <div className="row" style={{ marginTop: '1rem' }}>
-                      <button
-                        className="secondary tiny-btn"
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setEditingClient(c)
-                        }}
-                      >
-                        <i className="fas fa-pen"></i>
-                        Editar
-                      </button>
-
-                      <button
-                        className="danger tiny-btn"
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setClientToDelete(c)
-                          setShowDeleteClientModal(true)
-                        }}
-                      >
-                        <i className="fas fa-trash"></i>
-                        Eliminar
-                      </button>
-                    </div>
+                  <div className="row">
+                    <button type="submit" disabled={busy}>Guardar cambios</button>
+                    <button type="button" className="secondary" onClick={() => setEditingClient(null)}>
+                      Cancelar
+                    </button>
                   </div>
-                ))}
+                </form>
               </div>
-              <div className="pagination"><button type="button" onClick={() => setClientPage(p => Math.max(1, p-1))} disabled={clientPage === 1}>Anterior</button><span>Página {clientPage}</span><button type="button" onClick={() => setClientPage(p => p+1)} disabled={clientPage * pageSize >= filteredClients.length}>Siguiente</button></div>
-            </section>
-          </section>
-        )}
+            )}
 
-        {/* ======================== USERS (admin only) ======================== */}
-        {tab === 'users' && me.role === 'admin' && (
-          <section className="panel-grid">
-            <section className="stripe-card stack"><div className="section-title"><i className="fas fa-user-plus"></i> Nuevo usuario</div><form onSubmit={createUser} className="form-grid">
-              {me.role === 'admin' && <select value={newUser.client_id || selectedClientId} onChange={e => setNewUser({...newUser, client_id: e.target.value})}><option value="">Cliente</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>}
-              <input value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} placeholder="Nombre" />
-              <input value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} placeholder="Email" />
-              <input type="password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} placeholder="Password" />
-              <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}><option value="client_admin">client_admin</option><option value="client_user">client_user</option>{me.role === 'admin' && <option value="admin">admin</option>}</select>
-              <button className="full" disabled={busy}>Crear usuario</button>
-            </form></section>
-            <section className="stripe-card stack">
-            <div className="row between center">
-              <div className="section-title">Usuarios</div>
+            {editingUser && (
+              <div className="modal-overlay">
+                <form onSubmit={updateUser} className="modal-card-pro stack">
+                  <h2>Editar usuario</h2>
 
-              <div className="row">
-                <select
-                  value={userClientFilter}
-                  onChange={(e) => {
-                    setUserClientFilter(e.target.value)
-                    setUserPage(1)
-                  }}
-                  className="search-input"
-                >
-                  <option value="">Todos los usuarios</option>
-                  {clients.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                  <select
+                    value={editingUser.client_id || ''}
+                    onChange={(e) => setEditingUser({ ...editingUser, client_id: e.target.value })}
+                  >
+                    <option value="">Cliente</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
 
-                <input
-                  type="text"
-                  placeholder="Buscar usuario..."
-                  value={searchUser}
-                  onChange={e => setSearchUser(e.target.value)}
-                  className="search-input"
-                />
+                  <input
+                    value={editingUser.name || ''}
+                    onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                    placeholder="Nombre"
+                  />
+
+                  <input
+                    value={editingUser.email || ''}
+                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                    placeholder="Email"
+                  />
+
+                  <input
+                    type="password"
+                    value={editingUser.password || ''}
+                    onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+                    placeholder="Nueva contraseña opcional"
+                  />
+
+                  <select
+                    value={editingUser.role || 'client_user'}
+                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+                  >
+                    <option value="client_admin">client_admin</option>
+                    <option value="client_user">client_user</option>
+                    <option value="admin">admin</option>
+                  </select>
+
+                  <select
+                    value={editingUser.status || 'active'}
+                    onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
+                  >
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                    <option value="suspended">Suspendido</option>
+                  </select>
+
+                  <div className="row">
+                    <button type="submit" disabled={busy}>Guardar cambios</button>
+                    <button type="button" className="secondary" onClick={() => setEditingUser(null)}>
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
               </div>
-            </div>
-              <div className="template-list">
-              {paginatedUsers.map(u => (
-                <div key={u.id} className="template-card">
+            )}
 
-                  <div className="row between">
-                    <strong>{u.name}</strong>
-                    <span className="pill">{u.role}</span>
+            {showDeleteClientModal && clientToDelete && (
+              <div className="modal-overlay">
+                <div className="modal-card-pro stack">
+                  <h2 style={{ color: '#dc2626' }}>⚠️ Eliminar cliente</h2>
+
+                  <p>
+                    Vas a eliminar permanentemente el cliente <strong>{clientToDelete.name}</strong>.
+                  </p>
+
+                  <div className="modal-danger-box">
+                    Esto eliminará usuarios, bots, landings, campañas, videos IA, publicaciones, logs, grupos y todo el ecosistema asociado.
                   </div>
 
-                  <div className="muted tiny">
-                    {u.email}
-                  </div>
+                  <input
+                    type="text"
+                    placeholder="Escribe ELIMINAR"
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  />
 
-                  <div className="row" style={{ marginTop: '1rem' }}>
+                  <div className="row">
                     <button
-                      className="secondary tiny-btn"
                       type="button"
-                      onClick={() => setEditingUser(u)}
+                      className="danger"
+                      onClick={() => deleteClient(clientToDelete.id)}
                     >
-                      <i className="fas fa-pen"></i>
-                      Editar
+                      Eliminar definitivamente
                     </button>
 
-                    {me.id !== u.id && (
-                      <button
-                        className="danger tiny-btn"
-                        type="button"
-                        onClick={() => {
-                          setUserToDelete(u)
-                          setShowDeleteUserModal(true)
-                        }}
-                      >
-                        <i className="fas fa-trash"></i>
-                        Eliminar
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        setShowDeleteClientModal(false)
+                        setClientToDelete(null)
+                        setDeleteConfirmText('')
+                      }}
+                    >
+                      Cancelar
+                    </button>
                   </div>
-
                 </div>
-              ))}
-            </div>
-              <div className="pagination"><button type="button" onClick={() => setUserPage(p => Math.max(1, p-1))} disabled={userPage === 1}>Anterior</button><span>Página {userPage}</span><button type="button" onClick={() => setUserPage(p => p+1)} disabled={userPage * pageSize >= filteredUsers.length}>Siguiente</button></div>
-            </section>
-          </section>
-        )}
-
-        {/* ======================== PLANS ======================== */}
-        {tab === 'plans' && me.role === 'admin' && (
-          <section className="panel-grid">
-
-            <section className="stripe-card stack">
-              <div className="section-title">
-                <i className="fas fa-crown"></i>
-                Nuevo plan
               </div>
+            )}
 
-              <form onSubmit={createPlan} className="form-grid">
+            {showDeleteUserModal && userToDelete && (
+              <div className="modal-overlay">
+                <div className="modal-card-pro stack">
+                  <h2>Eliminar usuario</h2>
 
-                <input
-                  placeholder="Nombre"
-                  value={newPlan.name}
-                  onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
-                />
+                  <p>
+                    ¿Seguro que deseas eliminar el usuario <strong>{userToDelete.name}</strong>?
+                  </p>
 
-                <input
-                  placeholder="Slug"
-                  value={newPlan.slug}
-                  onChange={(e) => setNewPlan({ ...newPlan, slug: e.target.value })}
-                />
+                  <div className="row">
+                    <button
+                      type="button"
+                      className="danger"
+                      onClick={() => deleteUser(userToDelete.id)}
+                    >
+                      Eliminar
+                    </button>
 
-                <input
-                  placeholder="Precio mensual"
-                  type="number"
-                  value={newPlan.price_monthly}
-                  onChange={(e) => setNewPlan({ ...newPlan, price_monthly: Number(e.target.value) })}
-                />
-
-                <input
-                  placeholder="Precio anual"
-                  type="number"
-                  value={newPlan.price_yearly}
-                  onChange={(e) => setNewPlan({ ...newPlan, price_yearly: Number(e.target.value) })}
-                />
-
-                <input
-                  placeholder="Grace days"
-                  type="number"
-                  value={newPlan.grace_days}
-                  onChange={(e) => setNewPlan({ ...newPlan, grace_days: Number(e.target.value) })}
-                />
-
-                <textarea
-                  rows={6}
-                  placeholder="Features JSON"
-                  value={newPlan.features}
-                  onChange={(e) => setNewPlan({ ...newPlan, features: e.target.value })}
-                />
-
-                <textarea
-                  rows={10}
-                  placeholder="Permissions JSON"
-                  value={newPlan.permissions}
-                  onChange={(e) => setNewPlan({ ...newPlan, permissions: e.target.value })}
-                />
-
-                <textarea
-                  rows={10}
-                  placeholder="Limits JSON"
-                  value={newPlan.limits}
-                  onChange={(e) => setNewPlan({ ...newPlan, limits: e.target.value })}
-                />
-
-                <label className="row">
-                  <input
-                    type="checkbox"
-                    checked={newPlan.is_free}
-                    onChange={(e) => setNewPlan({ ...newPlan, is_free: e.target.checked })}
-                  />
-                  Plan gratuito
-                </label>
-
-                <label className="row">
-                  <input
-                    type="checkbox"
-                    checked={newPlan.is_active}
-                    onChange={(e) => setNewPlan({ ...newPlan, is_active: e.target.checked })}
-                  />
-                  Activo
-                </label>
-
-                <button className="full">
-                  Crear plan
-                </button>
-
-              </form>
-            </section>
-
-            <section className="stripe-card stack">
-
-              <div className="section-title">
-                Planes
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        setShowDeleteUserModal(false)
+                        setUserToDelete(null)
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
               </div>
+            )}
 
-              <div className="template-list">
+            {/* MODAL EDITAR PLAN */}
+            {editingPlan && (
+              <div className="modal-overlay">
+                <form onSubmit={updatePlan} className="modal-card-pro stack">
+                  <h2>Editar plan</h2>
 
-                {plans.map(plan => (
+                  <input
+                    value={editingPlan.name || ''}
+                    onChange={(e) => setEditingPlan({
+                      ...editingPlan,
+                      name: e.target.value
+                    })}
+                  />
 
-                  <div key={plan.id} className="template-card">
+                  <input
+                    value={editingPlan.slug || ''}
+                    onChange={(e) => setEditingPlan({
+                      ...editingPlan,
+                      slug: e.target.value
+                    })}
+                  />
 
-                    <div className="row between">
-                      <strong>{plan.name}</strong>
+                  <textarea
+                    rows={6}
+                    value={editingPlan.features || '[]'}
+                    onChange={(e) => setEditingPlan({
+                      ...editingPlan,
+                      features: e.target.value
+                    })}
+                  />
 
-                      <span className="pill">
-                        ${plan.price_monthly}/mes
-                      </span>
-                    </div>
+                  <textarea
+                    rows={10}
+                    value={editingPlan.permissions || '{}'}
+                    onChange={(e) => setEditingPlan({
+                      ...editingPlan,
+                      permissions: e.target.value
+                    })}
+                  />
 
-                    <div className="muted tiny">
-                      {plan.description}
-                    </div>
+                  <textarea
+                    rows={10}
+                    value={editingPlan.limits || '{}'}
+                    onChange={(e) => setEditingPlan({
+                      ...editingPlan,
+                      limits: e.target.value
+                    })}
+                  />
 
-                    <div className="row" style={{ marginTop: '1rem' }}>
+                  <div className="row">
+                    <button type="submit">
+                      Guardar
+                    </button>
 
-                      <button
-                        className="secondary tiny-btn"
-                        onClick={() => setEditingPlan(plan)}
-                      >
-                        <i className="fas fa-pen"></i>
-                        Editar
-                      </button>
-
-                      <button
-                        className="danger tiny-btn"
-                        onClick={() => {
-                          setPlanToDelete(plan)
-                          setShowDeletePlanModal(true)
-                        }}
-                      >
-                        <i className="fas fa-trash"></i>
-                        Eliminar
-                      </button>
-
-                    </div>
-
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => setEditingPlan(null)}
+                    >
+                      Cancelar
+                    </button>
                   </div>
 
-                ))}
-
+                </form>
               </div>
+            )}
 
-            </section>
+            {/* MODAL ELIMINAR PLAN */}
+            {showDeletePlanModal && planToDelete && (
+              <div className="modal-overlay">
+                <div className="modal-card-pro stack">
+                  <h2>Eliminar plan</h2>
 
-          </section>
-        )}
+                  <p>
+                    ¿Seguro que deseas eliminar el plan:
+                    <strong> {planToDelete.name}</strong>?
+                  </p>
 
-        {/* ======================== BILLING (admin only) ======================== */}
-        {/* ======================== BILLING (admin only) ======================== */}
-{tab === 'billing' && me.role === 'admin' && (
-  <div className="stack gap-lg">
-    {/* Configuración de billing existente */}
-    <div className="stripe-card stack">
-      <h2>Configuración de billing</h2>
-      <input
-        type="text"
-        placeholder="Wallet USDT BEP20"
-        value={billingConfig.usdt_bep20_wallet}
-        onChange={(e) => setBillingConfig({ ...billingConfig, usdt_bep20_wallet: e.target.value })}
-      />
-      <label className="toggle">
-        <input
-          type="checkbox"
-          checked={billingConfig.card_payments_enabled}
-          onChange={(e) => setBillingConfig({ ...billingConfig, card_payments_enabled: e.target.checked })}
-        />
-        Próximamente habilitar tarjeta
-      </label>
-      <button type="button" onClick={saveBillingConfig}>Guardar billing</button>
-    </div>
+                  <div className="row">
+                    <button
+                      className="danger"
+                      onClick={() => deletePlan(planToDelete.id)}
+                    >
+                      Eliminar
+                    </button>
 
-    {/* Suscripciones pendientes existentes */}
-    <div className="stripe-card stack">
-      <div className="row between">
-        <h2>Pagos pendientes de suscripciones</h2>
-        <button type="button" onClick={loadPendingSubscriptions}>Recargar</button>
-      </div>
-
-      {pendingSubscriptions.length === 0 ? (
-        <div className="empty-box">No hay pagos pendientes de suscripciones</div>
-      ) : (
-        pendingSubscriptions.map((sub) => (
-          <div key={sub.id} className="bot-card stack">
-            <div><strong>Cliente:</strong> {sub.client_name || sub.client_id}</div>
-            <div><strong>Plan:</strong> {sub.plan_slug}</div>
-            <div><strong>Ciclo:</strong> {sub.billing_cycle}</div>
-            <div><strong>Monto:</strong> ${sub.amount}</div>
-            <div><strong>Hash:</strong> {sub.tx_hash || 'Sin hash'}</div>
-            <button type="button" onClick={() => approveSubscription(sub.id)}>
-              Aprobar
-            </button>
-          </div>
-        ))
-      )}
-    </div>
-
-    {/* NUEVA SECCIÓN: Pagos por Link */}
-    <section className="stripe-card stack">
-      <div className="row between">
-        <div>
-          <h2>Pagos por Link</h2>
-          <p className="muted">Pagos normales, pagos de agencias y pagos de licencias de clientes de agencia.</p>
-        </div>
-
-        <button type="button" onClick={loadPaymentLinks}>
-          <i className="fas fa-sync-alt"></i> Recargar links
-        </button>
-      </div>
-
-      {paymentLinksLoading ? (
-        <div className="loader">Cargando pagos por link...</div>
-      ) : paymentLinks.length === 0 ? (
-        <div className="empty-box">No hay pagos por link todavía.</div>
-      ) : (
-        <div className="table-wrap" style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', minWidth: '800px' }}>
-            <thead>
-              <tr>
-                <th>Concepto</th>
-                <th>Tipo</th>
-                <th>Agencia</th>
-                <th>Cliente</th>
-                <th>Monto</th>
-                <th>Estado</th>
-                <th>Hash</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {paymentLinks.map((p) => (
-                <tr key={p.id}>
-                  <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>
-                    {p.concept}
-                  </td>
-
-                  <td>
-                    {p.payment_scope === 'agency_license'
-                      ? '🏢 Licencia Agencia'
-                      : p.payment_scope === 'client_license'
-                        ? '👥 Licencia Cliente Agencia'
-                        : '💳 Pago Cliente'}
-                  </td>
-
-                  <td style={{ fontSize: '0.8rem' }}>
-                    {p.agency_id ? (
-                      <span className="pill info" style={{ background: '#e0e7ff', color: '#4338ca' }}>
-                        {p.agency_id.slice(0, 8)}
-                      </span>
-                    ) : '-'}
-                  </td>
-
-                  <td style={{ fontSize: '0.8rem' }}>
-                    {p.client_id || p.target_client_id || '-'}
-                  </td>
-
-                  <td>
-                    <strong>{p.amount} {p.currency || 'USDT'}</strong>
-                  </td>
-
-                  <td>
-                    <span className={`pill ${p.status === 'approved' ? 'connected' : p.status === 'rejected' ? 'error' : 'warning'}`}>
-                      {p.status === 'approved' ? '✅ Aprobado' : 
-                       p.status === 'rejected' ? '❌ Rechazado' : 
-                       p.status === 'pending' ? '⏳ Pendiente' : p.status}
-                    </span>
-                  </td>
-
-                  <td style={{ maxWidth: '180px', wordBreak: 'break-all', fontSize: '0.7rem' }}>
-                    {p.tx_hash || '-'}
-                  </td>
-
-                  <td>
-                    <div className="row" style={{ gap: '0.3rem', flexWrap: 'wrap' }}>
-                      {p.public_url && (
-                        <button
-                          type="button"
-                          className="tiny-btn"
-                          onClick={() => copyPaymentLink(p.public_url)}
-                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
-                        >
-                          <i className="fas fa-copy"></i> Copiar
-                        </button>
-                      )}
-
-                      {p.status !== 'approved' && (
-                        <button
-                          type="button"
-                          className="tiny-btn"
-                          onClick={() => approvePaymentLink(p.id)}
-                          style={{ background: '#10b981', padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
-                        >
-                          <i className="fas fa-check"></i> Aprobar
-                        </button>
-                      )}
-
-                      {p.status !== 'rejected' && p.status !== 'approved' && (
-                        <button
-                          type="button"
-                          className="tiny-btn danger"
-                          onClick={() => rejectPaymentLink(p.id)}
-                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
-                        >
-                          <i className="fas fa-times"></i> Rechazar
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </section>
-  </div>
-)}
-
-        {editingClient && (
-  <div className="modal-overlay">
-    <form onSubmit={updateClient} className="modal-card-pro stack">
-      <h2>Editar cliente</h2>
-
-      <input
-        value={editingClient.name || ''}
-        onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })}
-        placeholder="Nombre"
-      />
-
-      <input
-        value={editingClient.email || ''}
-        onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })}
-        placeholder="Email"
-      />
-
-      <input
-        value={editingClient.phone || ''}
-        onChange={(e) => setEditingClient({ ...editingClient, phone: e.target.value })}
-        placeholder="Teléfono"
-      />
-
-      <input
-        value={editingClient.plan || ''}
-        onChange={(e) => setEditingClient({ ...editingClient, plan: e.target.value })}
-        placeholder="Plan"
-      />
-
-      <select
-        value={editingClient.status || 'active'}
-        onChange={(e) => setEditingClient({ ...editingClient, status: e.target.value })}
-      >
-        <option value="active">Activo</option>
-        <option value="inactive">Inactivo</option>
-        <option value="suspended">Suspendido</option>
-      </select>
-
-      <div className="row">
-        <button type="submit" disabled={busy}>Guardar cambios</button>
-        <button type="button" className="secondary" onClick={() => setEditingClient(null)}>
-          Cancelar
-        </button>
-      </div>
-    </form>
-  </div>
-)}
-
-{editingUser && (
-  <div className="modal-overlay">
-    <form onSubmit={updateUser} className="modal-card-pro stack">
-      <h2>Editar usuario</h2>
-
-      <select
-        value={editingUser.client_id || ''}
-        onChange={(e) => setEditingUser({ ...editingUser, client_id: e.target.value })}
-      >
-        <option value="">Cliente</option>
-        {clients.map(c => (
-          <option key={c.id} value={c.id}>{c.name}</option>
-        ))}
-      </select>
-
-      <input
-        value={editingUser.name || ''}
-        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-        placeholder="Nombre"
-      />
-
-      <input
-        value={editingUser.email || ''}
-        onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-        placeholder="Email"
-      />
-
-      <input
-        type="password"
-        value={editingUser.password || ''}
-        onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
-        placeholder="Nueva contraseña opcional"
-      />
-
-      <select
-        value={editingUser.role || 'client_user'}
-        onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-      >
-        <option value="client_admin">client_admin</option>
-        <option value="client_user">client_user</option>
-        <option value="admin">admin</option>
-      </select>
-
-      <select
-        value={editingUser.status || 'active'}
-        onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
-      >
-        <option value="active">Activo</option>
-        <option value="inactive">Inactivo</option>
-        <option value="suspended">Suspendido</option>
-      </select>
-
-      <div className="row">
-        <button type="submit" disabled={busy}>Guardar cambios</button>
-        <button type="button" className="secondary" onClick={() => setEditingUser(null)}>
-          Cancelar
-        </button>
-      </div>
-    </form>
-  </div>
-)}
-
-{showDeleteClientModal && clientToDelete && (
-  <div className="modal-overlay">
-    <div className="modal-card-pro stack">
-      <h2 style={{ color: '#dc2626' }}>⚠️ Eliminar cliente</h2>
-
-      <p>
-        Vas a eliminar permanentemente el cliente <strong>{clientToDelete.name}</strong>.
-      </p>
-
-      <div className="modal-danger-box">
-        Esto eliminará usuarios, bots, landings, campañas, videos IA, publicaciones, logs, grupos y todo el ecosistema asociado.
-      </div>
-
-      <input
-        type="text"
-        placeholder="Escribe ELIMINAR"
-        value={deleteConfirmText}
-        onChange={(e) => setDeleteConfirmText(e.target.value)}
-      />
-
-      <div className="row">
-        <button
-          type="button"
-          className="danger"
-          onClick={() => deleteClient(clientToDelete.id)}
-        >
-          Eliminar definitivamente
-        </button>
-
-        <button
-          type="button"
-          className="secondary"
-          onClick={() => {
-            setShowDeleteClientModal(false)
-            setClientToDelete(null)
-            setDeleteConfirmText('')
-          }}
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-{showDeleteUserModal && userToDelete && (
-  <div className="modal-overlay">
-    <div className="modal-card-pro stack">
-      <h2>Eliminar usuario</h2>
-
-      <p>
-        ¿Seguro que deseas eliminar el usuario <strong>{userToDelete.name}</strong>?
-      </p>
-
-      <div className="row">
-        <button
-          type="button"
-          className="danger"
-          onClick={() => deleteUser(userToDelete.id)}
-        >
-          Eliminar
-        </button>
-
-        <button
-          type="button"
-          className="secondary"
-          onClick={() => {
-            setShowDeleteUserModal(false)
-            setUserToDelete(null)
-          }}
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-        {/* MODAL EDITAR PLAN */}
-        {editingPlan && (
-          <div className="modal-overlay">
-            <form onSubmit={updatePlan} className="modal-card-pro stack">
-              <h2>Editar plan</h2>
-
-              <input
-                value={editingPlan.name || ''}
-                onChange={(e) => setEditingPlan({
-                  ...editingPlan,
-                  name: e.target.value
-                })}
-              />
-
-              <input
-                value={editingPlan.slug || ''}
-                onChange={(e) => setEditingPlan({
-                  ...editingPlan,
-                  slug: e.target.value
-                })}
-              />
-
-              <textarea
-                rows={6}
-                value={editingPlan.features || '[]'}
-                onChange={(e) => setEditingPlan({
-                  ...editingPlan,
-                  features: e.target.value
-                })}
-              />
-
-              <textarea
-                rows={10}
-                value={editingPlan.permissions || '{}'}
-                onChange={(e) => setEditingPlan({
-                  ...editingPlan,
-                  permissions: e.target.value
-                })}
-              />
-
-              <textarea
-                rows={10}
-                value={editingPlan.limits || '{}'}
-                onChange={(e) => setEditingPlan({
-                  ...editingPlan,
-                  limits: e.target.value
-                })}
-              />
-
-              <div className="row">
-                <button type="submit">
-                  Guardar
-                </button>
-
-                <button
-                  type="button"
-                  className="secondary"
-                  onClick={() => setEditingPlan(null)}
-                >
-                  Cancelar
-                </button>
+                    <button
+                      className="secondary"
+                      onClick={() => {
+                        setShowDeletePlanModal(false)
+                        setPlanToDelete(null)
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
               </div>
-
-            </form>
-          </div>
-        )}
-
-        {/* MODAL ELIMINAR PLAN */}
-        {showDeletePlanModal && planToDelete && (
-          <div className="modal-overlay">
-            <div className="modal-card-pro stack">
-              <h2>Eliminar plan</h2>
-
-              <p>
-                ¿Seguro que deseas eliminar el plan:
-                <strong> {planToDelete.name}</strong>?
-              </p>
-
-              <div className="row">
-                <button
-                  className="danger"
-                  onClick={() => deletePlan(planToDelete.id)}
-                >
-                  Eliminar
-                </button>
-
-                <button
-                  className="secondary"
-                  onClick={() => {
-                    setShowDeletePlanModal(false)
-                    setPlanToDelete(null)
-                  }}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </div>
+            )}
+          </>
         )}
       </main>
     </div>
