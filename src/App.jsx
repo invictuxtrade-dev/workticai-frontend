@@ -9901,11 +9901,7 @@ async function updateUser(e) {
             style={{ marginTop: '.75rem' }}
           >
             <i className="fas fa-crown"></i>
-            {isAdmin
-  ? 'ADMIN'
-  : me?.role === 'agency_admin'
-    ? 'AGENCIA'
-    : activePlanSlug}
+            {isAdmin ? 'ADMIN' : activePlanSlug}
           </div>
         </div>
 
