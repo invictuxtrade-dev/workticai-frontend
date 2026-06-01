@@ -235,7 +235,7 @@ function LoginScreen({ onAuth, agencyBranding }) {
           method: 'POST',
           body: JSON.stringify({ email: form.email, password: form.password })
         })
-        if (!['client_admin', 'client_user', 'client'].includes(data.user.role)) {
+        if (!['client_admin', 'client_user', 'client', 'agency_admin'].includes(data.user.role)) {
           setError('Este usuario no tiene acceso como cliente')
           setLoading(false)
           return
