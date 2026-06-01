@@ -7091,6 +7091,7 @@ useEffect(() => {
       })
 
       await navigator.clipboard.writeText(item.public_url)
+      await loadPaymentLinks()
       showNotice('Link mensual de agencia creado y copiado')
     } catch (err) {
       showNotice(err.message || 'No se pudo crear link de agencia')
@@ -7098,30 +7099,34 @@ useEffect(() => {
   }
 
   // ======================== PAYMENT LINKS FUNCTIONS ========================
-  async function loadPaymentLinks() {
-    try {
-      setPaymentLinksLoading(true)
+async function loadPaymentLinks() {
+  try {
+    setPaymentLinksLoading(true)
 
-      let url = '/api/payment-links'
+    let url = '/api/payment-links'
 
-    // Solo filtrar por cliente si NO estoy en módulo de agencias/link de pago general
+    // En Billing y Agencias el admin debe ver TODOS los pagos:
+    // pagos normales, pagos de agencia y pagos de licencias de clientes de agencia.
+    const mustShowAllPayments =
+      me?.role === 'admin' &&
+      ['billing', 'payment-links', 'agencies'].includes(activeSection)
+
     if (
       me?.role === 'admin' &&
       selectedClientId &&
-      activeSection !== 'payment-links' &&
-      activeSection !== 'agencies'
+      !mustShowAllPayments
     ) {
       url += `?client_id=${encodeURIComponent(selectedClientId)}`
     }
 
-      const data = await api(url)
-      setPaymentLinks(Array.isArray(data) ? data : [])
-    } catch (err) {
-      showNotice(err.message || 'No se pudieron cargar los links de pago')
-    } finally {
-      setPaymentLinksLoading(false)
-    }
+    const data = await api(url)
+    setPaymentLinks(Array.isArray(data) ? data : [])
+  } catch (err) {
+    showNotice(err.message || 'No se pudieron cargar los links de pago')
+  } finally {
+    setPaymentLinksLoading(false)
   }
+}
 
   async function createPaymentLink(e) {
     e.preventDefault()
@@ -13262,52 +13267,175 @@ async function updateUser(e) {
         )}
 
         {/* ======================== BILLING (admin only) ======================== */}
-        {tab === 'billing' && me.role === 'admin' && (
-          <div className="stack gap-lg">
-            <div className="stripe-card stack">
-              <h2>Configuración de billing</h2>
-              <input
-                type="text"
-                placeholder="Wallet USDT BEP20"
-                value={billingConfig.usdt_bep20_wallet}
-                onChange={(e) => setBillingConfig({ ...billingConfig, usdt_bep20_wallet: e.target.value })}
-              />
-              <label className="toggle">
-                <input
-                  type="checkbox"
-                  checked={billingConfig.card_payments_enabled}
-                  onChange={(e) => setBillingConfig({ ...billingConfig, card_payments_enabled: e.target.checked })}
-                />
-                Próximamente habilitar tarjeta
-              </label>
-              <button type="button" onClick={saveBillingConfig}>Guardar billing</button>
-            </div>
+        {/* ======================== BILLING (admin only) ======================== */}
+{tab === 'billing' && me.role === 'admin' && (
+  <div className="stack gap-lg">
+    {/* Configuración de billing existente */}
+    <div className="stripe-card stack">
+      <h2>Configuración de billing</h2>
+      <input
+        type="text"
+        placeholder="Wallet USDT BEP20"
+        value={billingConfig.usdt_bep20_wallet}
+        onChange={(e) => setBillingConfig({ ...billingConfig, usdt_bep20_wallet: e.target.value })}
+      />
+      <label className="toggle">
+        <input
+          type="checkbox"
+          checked={billingConfig.card_payments_enabled}
+          onChange={(e) => setBillingConfig({ ...billingConfig, card_payments_enabled: e.target.checked })}
+        />
+        Próximamente habilitar tarjeta
+      </label>
+      <button type="button" onClick={saveBillingConfig}>Guardar billing</button>
+    </div>
 
-            <div className="stripe-card stack">
-              <div className="row between">
-                <h2>Pagos pendientes</h2>
-                <button type="button" onClick={loadPendingSubscriptions}>Recargar</button>
-              </div>
+    {/* Suscripciones pendientes existentes */}
+    <div className="stripe-card stack">
+      <div className="row between">
+        <h2>Pagos pendientes de suscripciones</h2>
+        <button type="button" onClick={loadPendingSubscriptions}>Recargar</button>
+      </div>
 
-              {pendingSubscriptions.length === 0 ? (
-                <div className="empty-box">No hay pagos pendientes</div>
-              ) : (
-                pendingSubscriptions.map((sub) => (
-                  <div key={sub.id} className="bot-card stack">
-                    <div><strong>Cliente:</strong> {sub.client_name || sub.client_id}</div>
-                    <div><strong>Plan:</strong> {sub.plan_slug}</div>
-                    <div><strong>Ciclo:</strong> {sub.billing_cycle}</div>
-                    <div><strong>Monto:</strong> ${sub.amount}</div>
-                    <div><strong>Hash:</strong> {sub.tx_hash || 'Sin hash'}</div>
-                    <button type="button" onClick={() => approveSubscription(sub.id)}>
-                      Aprobar
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
+      {pendingSubscriptions.length === 0 ? (
+        <div className="empty-box">No hay pagos pendientes de suscripciones</div>
+      ) : (
+        pendingSubscriptions.map((sub) => (
+          <div key={sub.id} className="bot-card stack">
+            <div><strong>Cliente:</strong> {sub.client_name || sub.client_id}</div>
+            <div><strong>Plan:</strong> {sub.plan_slug}</div>
+            <div><strong>Ciclo:</strong> {sub.billing_cycle}</div>
+            <div><strong>Monto:</strong> ${sub.amount}</div>
+            <div><strong>Hash:</strong> {sub.tx_hash || 'Sin hash'}</div>
+            <button type="button" onClick={() => approveSubscription(sub.id)}>
+              Aprobar
+            </button>
           </div>
-        )}
+        ))
+      )}
+    </div>
+
+    {/* NUEVA SECCIÓN: Pagos por Link */}
+    <section className="stripe-card stack">
+      <div className="row between">
+        <div>
+          <h2>Pagos por Link</h2>
+          <p className="muted">Pagos normales, pagos de agencias y pagos de licencias de clientes de agencia.</p>
+        </div>
+
+        <button type="button" onClick={loadPaymentLinks}>
+          <i className="fas fa-sync-alt"></i> Recargar links
+        </button>
+      </div>
+
+      {paymentLinksLoading ? (
+        <div className="loader">Cargando pagos por link...</div>
+      ) : paymentLinks.length === 0 ? (
+        <div className="empty-box">No hay pagos por link todavía.</div>
+      ) : (
+        <div className="table-wrap" style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: '800px' }}>
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th>Tipo</th>
+                <th>Agencia</th>
+                <th>Cliente</th>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Hash</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {paymentLinks.map((p) => (
+                <tr key={p.id}>
+                  <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>
+                    {p.concept}
+                  </td>
+
+                  <td>
+                    {p.payment_scope === 'agency_license'
+                      ? '🏢 Licencia Agencia'
+                      : p.payment_scope === 'client_license'
+                        ? '👥 Licencia Cliente Agencia'
+                        : '💳 Pago Cliente'}
+                  </td>
+
+                  <td style={{ fontSize: '0.8rem' }}>
+                    {p.agency_id ? (
+                      <span className="pill info" style={{ background: '#e0e7ff', color: '#4338ca' }}>
+                        {p.agency_id.slice(0, 8)}
+                      </span>
+                    ) : '-'}
+                  </td>
+
+                  <td style={{ fontSize: '0.8rem' }}>
+                    {p.client_id || p.target_client_id || '-'}
+                  </td>
+
+                  <td>
+                    <strong>{p.amount} {p.currency || 'USDT'}</strong>
+                  </td>
+
+                  <td>
+                    <span className={`pill ${p.status === 'approved' ? 'connected' : p.status === 'rejected' ? 'error' : 'warning'}`}>
+                      {p.status === 'approved' ? '✅ Aprobado' : 
+                       p.status === 'rejected' ? '❌ Rechazado' : 
+                       p.status === 'pending' ? '⏳ Pendiente' : p.status}
+                    </span>
+                  </td>
+
+                  <td style={{ maxWidth: '180px', wordBreak: 'break-all', fontSize: '0.7rem' }}>
+                    {p.tx_hash || '-'}
+                  </td>
+
+                  <td>
+                    <div className="row" style={{ gap: '0.3rem', flexWrap: 'wrap' }}>
+                      {p.public_url && (
+                        <button
+                          type="button"
+                          className="tiny-btn"
+                          onClick={() => copyPaymentLink(p.public_url)}
+                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                        >
+                          <i className="fas fa-copy"></i> Copiar
+                        </button>
+                      )}
+
+                      {p.status !== 'approved' && (
+                        <button
+                          type="button"
+                          className="tiny-btn"
+                          onClick={() => approvePaymentLink(p.id)}
+                          style={{ background: '#10b981', padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                        >
+                          <i className="fas fa-check"></i> Aprobar
+                        </button>
+                      )}
+
+                      {p.status !== 'rejected' && p.status !== 'approved' && (
+                        <button
+                          type="button"
+                          className="tiny-btn danger"
+                          onClick={() => rejectPaymentLink(p.id)}
+                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                        >
+                          <i className="fas fa-times"></i> Rechazar
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  </div>
+)}
 
         {editingClient && (
   <div className="modal-overlay">
