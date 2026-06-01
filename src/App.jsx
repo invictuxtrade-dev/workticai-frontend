@@ -9888,14 +9888,24 @@ async function updateUser(e) {
         <div className="user-profile">
           <div className="user-avatar"><i className="fas fa-user-circle"></i></div>
           <div className="user-name">{me.name}</div>
-          <div className="user-role">{me.role === 'admin' ? 'Administrador' : 'Cliente'}</div>
+          <div className="user-role">
+          {me.role === 'admin'
+            ? 'Administrador'
+            : me.role === 'agency_admin'
+              ? 'Agencia'
+              : 'Cliente'}
+        </div>
           <div className="user-email">{me.email}</div>
           <div
             className={`plan-badge-pro ${isFreePlan ? 'plan-badge-free' : ''}`}
             style={{ marginTop: '.75rem' }}
           >
             <i className="fas fa-crown"></i>
-            {isAdmin ? 'ADMIN' : activePlanSlug}
+            {isAdmin
+  ? 'ADMIN'
+  : me?.role === 'agency_admin'
+    ? 'AGENCIA'
+    : activePlanSlug}
           </div>
         </div>
 
