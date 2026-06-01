@@ -1839,6 +1839,7 @@ useEffect(() => {
           align-items: center;
           gap: 0.75rem;
           font-size: 0.9rem;
+          }
 
           .agency-menu-group {
           margin-top: 1rem;
@@ -1858,7 +1859,7 @@ useEffect(() => {
           padding-left: 1.8rem;
           opacity: .95;
         }
-        }
+        
 
         .menu-item i {
           width: 1.25rem;
