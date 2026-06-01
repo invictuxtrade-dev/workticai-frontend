@@ -1499,6 +1499,67 @@ export default function App() {
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
   const [activeSection, setActiveSection] = useState('social-ai')
 
+  // ======================== AGENCY ACCESS MODAL ========================
+  const [agencyAccess, setAgencyAccess] = useState(null)
+  const [showAgencyAccessModal, setShowAgencyAccessModal] = useState(false)
+
+  async function viewAgencyAccess(agency) {
+    try {
+      const data = await api(`/api/agencies/${agency.id}/access`)
+      setAgencyAccess(data)
+      setShowAgencyAccessModal(true)
+    } catch (err) {
+      showNotice(err.message || 'No se pudo cargar el acceso de la agencia')
+    }
+  }
+
+  async function regenerateAgencyAccess(agency) {
+    if (!confirm('¿Seguro que deseas generar una nueva contraseña para esta agencia? La contraseña anterior dejará de funcionar.')) {
+      return
+    }
+
+    try {
+      const data = await api(`/api/agencies/${agency.id}/regenerate-access`, {
+        method: 'POST'
+      })
+
+      setAgencyAccess({
+        agency_id: data.agency?.id,
+        agency_name: data.agency?.name,
+        admin_name: data.agency_admin?.name,
+        admin_email: data.agency_admin?.email,
+        temporary_password: data.temporary_password,
+        login_url: data.login_url,
+        contract_url: data.contract_url,
+        last_password_reset: new Date().toISOString()
+      })
+
+      setShowAgencyAccessModal(true)
+      showNotice('Nueva contraseña generada correctamente')
+      loadAgencies()
+    } catch (err) {
+      showNotice(err.message || 'No se pudo regenerar el acceso')
+    }
+  }
+
+  function copyAgencyAccess() {
+    if (!agencyAccess) return
+
+    const text = `
+Acceso Agencia Worktic AI
+
+Agencia: ${agencyAccess.agency_name || ''}
+URL: ${window.location.origin}${agencyAccess.login_url || ''}
+Usuario: ${agencyAccess.admin_email || ''}
+Contraseña temporal: ${agencyAccess.temporary_password || ''}
+
+Contrato: ${window.location.origin}${agencyAccess.contract_url || ''}
+`.trim()
+
+    navigator.clipboard.writeText(text)
+    showNotice('Acceso copiado')
+  }
+
   async function loadAgencyBySlug(slug) {
   try {
     if (!slug) return
@@ -6377,6 +6438,44 @@ useEffect(() => {
         .wrap {
           flex-wrap: wrap;
         }
+
+        /* Modal Backdrop Styles */
+        .modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.72);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+          padding: 1rem;
+        }
+
+        .modal-card {
+          width: 100%;
+          max-width: 560px;
+          background: white;
+          border-radius: 1.25rem;
+          padding: 1.5rem;
+          box-shadow: 0 30px 90px rgba(0,0,0,.25);
+        }
+
+        .modal-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        }
+
+        .modal-head button {
+          width: 36px;
+          height: 36px;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          background: #f1f5f9;
+          font-size: 1.3rem;
+        }
       `
       document.head.appendChild(style)
     }
@@ -9969,6 +10068,14 @@ async function updateUser(e) {
                           Link mensual
                         </button>
 
+                        <button type="button" onClick={() => viewAgencyAccess(a)}>
+                          Ver acceso
+                        </button>
+
+                        <button type="button" onClick={() => regenerateAgencyAccess(a)}>
+                          Nueva contraseña
+                        </button>
+
                         <a
                           className="secondary tiny-btn"
                           href={`/agency-contract/${a.id}`}
@@ -10088,6 +10195,75 @@ async function updateUser(e) {
           </div>
         )}
 
+        {/* ======================== AGENCY ACCESS MODAL ======================== */}
+        {showAgencyAccessModal && agencyAccess && (
+          <div className="modal-backdrop">
+            <div className="modal-card" style={{ maxWidth: 560 }}>
+              <div className="modal-head">
+                <h2>Acceso de Agencia</h2>
+                <button type="button" onClick={() => setShowAgencyAccessModal(false)}>
+                  ×
+                </button>
+              </div>
+
+              <div className="stack">
+                <div className="stripe-card stack">
+                  <div>
+                    <strong>Agencia:</strong> {agencyAccess.agency_name}
+                  </div>
+
+                  <div>
+                    <strong>Login:</strong>
+                    <input
+                      readOnly
+                      value={`${window.location.origin}${agencyAccess.login_url || ''}`}
+                    />
+                  </div>
+
+                  <div>
+                    <strong>Usuario:</strong>
+                    <input readOnly value={agencyAccess.admin_email || ''} />
+                  </div>
+
+                  <div>
+                    <strong>Contraseña temporal:</strong>
+                    <input readOnly value={agencyAccess.temporary_password || ''} />
+                  </div>
+
+                  <div>
+                    <strong>Contrato:</strong>
+                    <input
+                      readOnly
+                      value={`${window.location.origin}${agencyAccess.contract_url || ''}`}
+                    />
+                  </div>
+
+                  {agencyAccess.last_password_reset && (
+                    <div className="muted">
+                      Último reset: {new Date(agencyAccess.last_password_reset).toLocaleString()}
+                    </div>
+                  )}
+                </div>
+
+                <div className="row">
+                  <button type="button" onClick={copyAgencyAccess}>
+                    Copiar acceso
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => setShowAgencyAccessModal(false)}
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======================== REST OF THE APP (PAYMENT LINKS, AGENDA AI, ASSISTANT AI, DASHBOARD, ETC) ======================== */}
         {/* ======================== PAYMENT LINKS SECTION ======================== */}
         {tab === 'payment_links' && (
           <div className="stack gap-lg payment-links-section">
