@@ -6855,10 +6855,15 @@ useEffect(() => {
   const selectedLead = useMemo(() => leads.find((x) => x.id === selectedLeadId), [leads, selectedLeadId])
 
   // ======================== PERMISOS Y PLANES ========================
-  const currentPlan = useMemo(() => {
-    const slug = subscription?.plan_slug || me?.plan || 'free'
-    return plans.find(p => p.slug === slug) || null
-  }, [plans, subscription, me])
+ const currentPlan = useMemo(() => {
+  let slug = subscription?.plan_slug || me?.plan || 'free'
+
+  if (me?.role === 'agency_admin') {
+    slug = me?.plan || agencyBranding?.plan_equivalent || 'business'
+  }
+
+  return plans.find(p => p.slug === slug) || null
+}, [plans, subscription, me, agencyBranding])
 
   const planPermissions = useMemo(() => {
     try {
@@ -10992,7 +10997,7 @@ async function updateUser(e) {
                     <div className="section-title">
                       <i className="fas fa-gauge-high"></i> Uso del plan
                     </div>
-                    <p className="muted">Plan actual: <strong>{currentPlan?.name || activePlanSlug}</strong></p>
+                    <p className="muted">Plan actual: <strong>{currentPlan?.name || 'Business'}</strong></p>
                   </div>
                   <button type="button" onClick={() => setForcePlanScreen(true)}>
                     <i className="fas fa-crown"></i>
