@@ -6857,7 +6857,13 @@ useEffect(() => {
   const pageSize = 5
 
   // Nuevo cliente, nuevo usuario, nuevo bot
-  const [newClient, setNewClient] = useState({ name: '', email: '', phone: '', plan: 'pro' })
+  const [newClient, setNewClient] = useState({
+  name: '',
+  email: '',
+  phone: '',
+  plan: 'pro',
+  password: ''
+})
   const [newUser, setNewUser] = useState({ client_id: '', name: '', email: '', password: '', role: 'client_admin' })
   const [newBotName, setNewBotName] = useState('')
 
@@ -9570,7 +9576,7 @@ console.table(
     } catch (err) { setMessages([]) }
   }
 
-  async function createClient(e) {
+async function createClient(e) {
   e.preventDefault()
   setBusy(true)
 
@@ -9580,25 +9586,37 @@ console.table(
       body: JSON.stringify(newClient)
     })
 
-    setNewClient({ name: '', email: '', phone: '', plan: 'pro' })
+    const createdClient = created.client || created
+
+    setNewClient({
+      name: '',
+      email: '',
+      phone: '',
+      plan: 'pro',
+      password: ''
+    })
 
     await loadClients()
+    await loadUsers()
 
     if (me?.role === 'agency_admin') {
       setAgencyClients(prev => {
-        const exists = prev.some(c => c.id === created.id)
-        return exists ? prev : [...prev, created].filter(c => c.id !== me.client_id)
+        const exists = prev.some(c => c.id === createdClient.id)
+        return exists ? prev : [...prev, createdClient].filter(c => c.id !== me.client_id)
       })
 
       setNewUser(prev => ({
         ...prev,
-        client_id: created.id
+        client_id: createdClient.id
       }))
-    } else if (created?.id) {
-      setSelectedClientId(created.id)
-    }
 
-    showNotice('Cliente creado')
+      showNotice(
+        `Cliente creado pendiente de licencia. Usuario: ${created.user?.email || createdClient.email} | Clave: ${created.temporary_password}`
+      )
+    } else if (createdClient?.id) {
+      setSelectedClientId(createdClient.id)
+      showNotice('Cliente creado')
+    }
   } catch (err) {
     showNotice(err.message || 'Error')
   } finally {
@@ -10354,19 +10372,25 @@ async function updateUser(e) {
             </p>
 
             <form onSubmit={createClient} className="grid-2">
-              <input placeholder="Nombre empresa" value={newClient.name} onChange={(e) => setNewClient({ ...newClient, name: e.target.value })} />
-              <input placeholder="Email" value={newClient.email} onChange={(e) => setNewClient({ ...newClient, email: e.target.value })} />
-              <input placeholder="Teléfono" value={newClient.phone} onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })} />
+  <input placeholder="Nombre empresa" value={newClient.name} onChange={(e) => setNewClient({ ...newClient, name: e.target.value })} />
+  <input placeholder="Email" value={newClient.email} onChange={(e) => setNewClient({ ...newClient, email: e.target.value })} />
+  <input placeholder="Teléfono" value={newClient.phone} onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })} />
+  
+  <input
+    type="text"
+    placeholder="Contraseña de acceso (opcional)"
+    value={newClient.password || ''}
+    onChange={(e) => setNewClient({ ...newClient, password: e.target.value })}
+  />
 
-              <select value={newClient.plan} onChange={(e) => setNewClient({ ...newClient, plan: e.target.value })}>
-                <option value="free">Free</option>
-                <option value="starter">Starter</option>
-                <option value="pro">Pro</option>
-                <option value="business">Business</option>
-              </select>
+  <select value={newClient.plan} onChange={(e) => setNewClient({ ...newClient, plan: e.target.value })}>
+    <option value="starter">Starter</option>
+    <option value="pro">Pro</option>
+    <option value="business">Business</option>
+  </select>
 
-              <button type="submit">Crear cliente</button>
-            </form>
+  <button type="submit">Crear cliente</button>
+</form>
 
             <div className="table-wrap">
               <table>
