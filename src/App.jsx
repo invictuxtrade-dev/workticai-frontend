@@ -7129,9 +7129,9 @@ useEffect(() => {
   }
 
 
-  async function createClientLicenseLink(client, planSlug) {
+async function createClientLicenseLink(client, planSlug) {
   try {
-    const link = await api('/api/payment-links', {
+    const item = await api('/api/payment-links', {
       method: 'POST',
       body: JSON.stringify({
         target_client_id: client.id,
@@ -7139,15 +7139,17 @@ useEffect(() => {
         payment_scope: 'client_license',
         customer_name: client.name,
         customer_email: client.email,
-        customer_phone: client.phone
+        customer_phone: client.phone,
+        payment_method: 'usdt_bep20'
       })
     })
 
-    showNotice('Link de licencia creado')
-    window.open(link.public_url || link.publicUrl || `/pay/${link.id}`, '_blank')
+    await navigator.clipboard.writeText(item.public_url || `${window.location.origin}/pay/${item.id}`)
     await loadPaymentLinks()
+
+    showNotice(`Link ${planSlug} creado y copiado`)
   } catch (err) {
-    showNotice(err.message || 'No se pudo crear el link')
+    showNotice(err.message || 'No se pudo crear link de licencia')
   }
 }
 
@@ -10455,40 +10457,57 @@ async function updateUser(e) {
           </section>
         )}
 
-        {me?.role === 'agency_admin' && activeSection === 'agency-licenses' && (
-          <section className="stripe-card stack">
-            <h2>Licencias de clientes</h2>
-            <p className="muted">
-              Visualiza el estado de licencia de cada cliente.
-            </p>
+       {me?.role === 'agency_admin' && activeSection === 'agency-licenses' && (
+  <section className="stripe-card stack">
+    <h2>Licencias de clientes</h2>
+    <p className="muted">
+      Compra licencias para activar los clientes creados por tu agencia. El valor se toma del convenio configurado por Worktic AI.
+    </p>
 
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Cliente</th>
-                    <th>Plan</th>
-                    <th>Estado suscripción</th>
-                    <th>Vence</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {agencyClients.map((c) => {
-                    const clientSub = pendingSubscriptions.find(s => s.client_id === c.id) || null
-                    return (
-                      <tr key={c.id}>
-                        <td>{c.name}</td>
-                        <td>{c.plan || 'Sin plan'}</td>
-                        <td>{clientSub ? clientSub.status : (c.status === 'active' ? 'Activo' : 'Inactivo')}</td>
-                        <td>{clientSub?.expires_at ? new Date(clientSub.expires_at).toLocaleDateString() : '-'}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
+    <div className="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Plan actual</th>
+            <th>Comprar licencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {agencyClients.map((c) => (
+            <tr key={c.id}>
+              <td>{c.name}</td>
+              <td>{c.email}</td>
+              <td>{c.status || 'pending_license'}</td>
+              <td>{c.plan || 'Sin plan'}</td>
+              <td style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+                <button type="button" onClick={() => createClientLicenseLink(c, 'starter')}>
+                  Starter
+                </button>
+                <button type="button" onClick={() => createClientLicenseLink(c, 'pro')}>
+                  Pro
+                </button>
+                <button type="button" onClick={() => createClientLicenseLink(c, 'business')}>
+                  Business
+                </button>
+               </td>
+             </tr>
+          ))}
+
+          {agencyClients.length === 0 && (
+            <tr>
+              <td colSpan="5" className="muted">
+                Aún no tienes clientes creados.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}
 
         {me?.role === 'agency_admin' && activeSection === 'agency-payments' && (
           <section className="stripe-card stack">
