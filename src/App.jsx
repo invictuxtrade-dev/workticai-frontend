@@ -7048,7 +7048,7 @@ useEffect(() => {
 
       setSelectedAgency(item)
       await loadAgencies()
-      showNotice('Agencia creada correctamente')
+      showNotice('Agencia creada en estado pendiente. Debe firmar contrato y pagar la licencia.')
     } catch (err) {
       showNotice(err.message || 'No se pudo crear la agencia')
     }
@@ -7105,28 +7105,38 @@ useEffect(() => {
     showNotice('Precios especiales guardados')
   }
 
-  async function createAgencyPaymentLink(agency) {
-    try {
-      const item = await api('/api/payment-links', {
-        method: 'POST',
-        body: JSON.stringify({
-          agency_id: agency.id,
-          payment_scope: 'agency_license',
-          concept: `Licencia mensual Agencia - ${agency.name}`,
-          description: `Pago mensual de licencia agencia Worktic AI para ${agency.name}`,
-          amount: Number(agency.monthly_fee || 0),
-          currency: 'USDT',
-          payment_method: 'usdt_bep20'
-        })
-      })
+ async function createAgencyPaymentLink(agency) {
+  try {
+    const amount = Number(agency.monthly_fee || 0)
 
-      await navigator.clipboard.writeText(item.public_url)
-      await loadPaymentLinks()
-      showNotice('Link mensual de agencia creado y copiado')
-    } catch (err) {
-      showNotice(err.message || 'No se pudo crear link de agencia')
+    if (amount <= 0) {
+      showNotice('Configura primero la mensualidad de la agencia')
+      return
     }
+
+    const item = await api('/api/payment-links', {
+      method: 'POST',
+      body: JSON.stringify({
+        agency_id: agency.id,
+        payment_scope: 'agency_license',
+        concept: `Licencia mensual Agencia - ${agency.name}`,
+        description: `Pago mensual de licencia agencia Worktic AI para ${agency.name}`,
+        amount,
+        currency: 'USDT',
+        payment_method: 'usdt_bep20',
+        customer_name: agency.name,
+        customer_email: agency.email,
+        customer_phone: agency.phone
+      })
+    })
+
+    await navigator.clipboard.writeText(item.public_url || `${window.location.origin}/pay/${item.id}`)
+    await loadPaymentLinks()
+    showNotice('Link mensual de agencia creado y copiado')
+  } catch (err) {
+    showNotice(err.message || 'No se pudo crear link de agencia')
   }
+}
 
 
 async function createClientLicenseLink(client, planSlug) {
@@ -7163,16 +7173,16 @@ async function loadPaymentLinks() {
     // En Billing y Agencias el admin debe ver TODOS los pagos:
     // pagos normales, pagos de agencia y pagos de licencias de clientes de agencia.
     const mustShowAllPayments =
-      me?.role === 'admin' &&
-      ['billing', 'payment-links', 'agencies'].includes(activeSection)
+    me?.role === 'admin' &&
+    ['billing', 'payment_links', 'agencies'].includes(tab)
 
     if (
-      me?.role === 'admin' &&
-      selectedClientId &&
-      !mustShowAllPayments
-    ) {
-      url += `?client_id=${encodeURIComponent(selectedClientId)}`
-    }
+  me?.role === 'admin' &&
+  selectedClientId &&
+  !mustShowAllPayments
+  ) {
+    url += `?client_id=${encodeURIComponent(selectedClientId)}`
+  }
 
     const data = await api(url)
     setPaymentLinks(Array.isArray(data) ? data : [])
@@ -10529,7 +10539,9 @@ async function updateUser(e) {
                 </thead>
                 <tbody>
                   {paymentLinks.map((p) => {
-                    const client = agencyClients.find(c => c.id === p.client_id)
+                    const client = agencyClients.find(c =>
+                      c.id === (p.target_client_id || p.client_id)
+                    )
                     return (
                       <tr key={p.id}>
                         <td>{client?.name || p.client_id || '-'}</td>
