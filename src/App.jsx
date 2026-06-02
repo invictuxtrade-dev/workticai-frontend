@@ -9397,51 +9397,95 @@ async function createAppointmentAgent() {
     }
   }
 
-  async function loadClients() {
-    if (forcePlanScreen) return
-    try {
-      if (me?.role === 'admin') {
-        const data = await api('/api/clients')
-        setClients(data)
-        // Separar clientes de agencia
-        if (me?.role === 'agency_admin') {
-          setAgencyClients((Array.isArray(data) ? data : []).filter(c => c.id !== me.client_id))
-        }
-        const cid = selectedClientId || data[0]?.id || ''
-        setSelectedClientId(cid)
-        if (cid) await loadBots(cid)
-      } else {
-        const cid = me.client_id
-        setSelectedClientId(cid)
-        setClients([{
-          id: cid,
-          name: 'Mi cuenta',
-          plan: subscription?.plan_slug || '',
-          status: subscription?.status || 'pending'
-        }])
-        if (cid) await loadBots(cid)
-      }
-    } catch (err) { 
-      console.error(err)
-      if (err.status === 402) setForcePlanScreen(true)
+ async function loadClients() {
+  if (forcePlanScreen) return
+
+  try {
+    if (me?.role === 'admin') {
+      const data = await api('/api/clients')
+      setClients(data)
+
+      const cid = selectedClientId || data[0]?.id || ''
+      setSelectedClientId(cid)
+
+      if (cid) await loadBots(cid)
+      return
     }
+
+    if (me?.role === 'agency_admin') {
+      const data = await api('/api/clients')
+      const list = Array.isArray(data) ? data : []
+
+      setClients(list)
+
+      const agencyOnly = list.filter(c => c.id !== me.client_id)
+      setAgencyClients(agencyOnly)
+
+      setSelectedClientId(me.client_id)
+
+      if (me.client_id) await loadBots(me.client_id)
+      return
+    }
+
+    const cid = me.client_id
+    setSelectedClientId(cid)
+
+    setClients([{
+      id: cid,
+      name: 'Mi cuenta',
+      plan: subscription?.plan_slug || '',
+      status: subscription?.status || 'pending'
+    }])
+
+    if (cid) await loadBots(cid)
+  } catch (err) {
+    console.error(err)
+    if (err.status === 402) setForcePlanScreen(true)
   }
+}
 
   async function loadUsers() {
-    if (forcePlanScreen) return
-    try {
-      const path = me?.role === 'admin' ? '/api/users' : `/api/users?client_id=${me?.client_id || ''}`
-      const data = await api(path)
-      setUsers(data)
-      // Separar usuarios de agencia
-      if (me?.role === 'agency_admin') {
-        setAgencyUsers((Array.isArray(data) ? data : []).filter(u => u.id !== me.id))
-      }
-    } catch (err) { 
-      console.error(err)
-      if (err.status === 402) setForcePlanScreen(true)
+  if (forcePlanScreen) return
+
+  try {
+    if (me?.role === 'admin') {
+      const data = await api('/api/users')
+      setUsers(Array.isArray(data) ? data : [])
+      return
     }
+
+    if (me?.role === 'agency_admin') {
+      const clientsData = await api('/api/clients')
+      const clientList = Array.isArray(clientsData) ? clientsData : []
+
+      const agencyOnlyClients = clientList.filter(c => c.id !== me.client_id)
+      setAgencyClients(agencyOnlyClients)
+
+      let allUsers = []
+
+      for (const c of agencyOnlyClients) {
+        try {
+          const usersData = await api(`/api/users?client_id=${encodeURIComponent(c.id)}`)
+          if (Array.isArray(usersData)) {
+            allUsers = [...allUsers, ...usersData]
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
+      setAgencyUsers(allUsers.filter(u => u.id !== me.id))
+      setUsers(allUsers)
+      return
+    }
+
+    const data = await api(`/api/users?client_id=${me?.client_id || ''}`)
+    setUsers(Array.isArray(data) ? data : [])
+  } catch (err) {
+    console.error(err)
+    if (err.status === 402) setForcePlanScreen(true)
   }
+}
 
   async function loadBots(clientId) {
     if (forcePlanScreen) return
@@ -9550,7 +9594,7 @@ async function createAppointmentAgent() {
   }
 }
 
-  async function createUser(e) {
+ async function createUser(e) {
   e.preventDefault()
 
   if (me?.role !== 'agency_admin') {
@@ -9563,23 +9607,36 @@ async function createAppointmentAgent() {
   }
 
   setBusy(true)
-    try {
-      await api('/api/users', { method: 'POST', body: JSON.stringify({ ...newUser, client_id: me?.role === 'agency_admin' ? newUser.client_id : (newUser.client_id || selectedClientId) }) })
-      setNewUser({ client_id: selectedClientId, name: '', email: '', password: '', role: 'client_admin' })
-      await loadUsers()
-      // Refrescar usuarios de agencia si es necesario
-      if (me?.role === 'agency_admin') {
-        const refreshedUsers = await api('/api/users')
-        setAgencyUsers(
-          Array.isArray(refreshedUsers)
-            ? refreshedUsers.filter(u => u.id !== me.id)
-            : []
-        )
-      }
-      showNotice('Usuario creado')
-    } catch (err) { showNotice(err.message || 'Error') }
-    finally { setBusy(false) }
+
+  try {
+    await api('/api/users', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...newUser,
+        client_id:
+          me?.role === 'agency_admin'
+            ? newUser.client_id
+            : (newUser.client_id || selectedClientId)
+      })
+    })
+
+    setNewUser({
+      client_id: me?.role === 'agency_admin' ? '' : selectedClientId,
+      name: '',
+      email: '',
+      password: '',
+      role: 'client_admin'
+    })
+
+    await loadUsers()
+
+    showNotice('Usuario creado')
+  } catch (err) {
+    showNotice(err.message || 'Error')
+  } finally {
+    setBusy(false)
   }
+}
 
   async function updateClient(e) {
   e.preventDefault()
