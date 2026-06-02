@@ -9416,7 +9416,13 @@ async function createAppointmentAgent() {
       const data = await api('/api/clients')
       const list = Array.isArray(data) ? data : []
       console.log('ME AGENCY:', me.agency_id, me)
-console.log('CLIENTES API:', list)
+console.table(
+  list.map(c => ({
+    id: c.id,
+    name: c.name,
+    agency_id: c.agency_id
+  }))
+)
 
       const agencyOnly = list.filter(c =>
         c.agency_id === me.agency_id &&
