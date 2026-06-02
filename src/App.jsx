@@ -9551,9 +9551,18 @@ async function createAppointmentAgent() {
 }
 
   async function createUser(e) {
-    e.preventDefault()
+  e.preventDefault()
+
+  if (me?.role !== 'agency_admin') {
     if (!requireLimit('users', 'usuarios')) return
-    setBusy(true)
+  }
+
+  if (me?.role === 'agency_admin' && !newUser.client_id) {
+    showNotice('Selecciona el cliente al que pertenece este usuario')
+    return
+  }
+
+  setBusy(true)
     try {
       await api('/api/users', { method: 'POST', body: JSON.stringify({ ...newUser, client_id: me?.role === 'agency_admin' ? newUser.client_id : (newUser.client_id || selectedClientId) }) })
       setNewUser({ client_id: selectedClientId, name: '', email: '', password: '', role: 'client_admin' })
