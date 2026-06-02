@@ -7128,6 +7128,29 @@ useEffect(() => {
     }
   }
 
+
+  async function createClientLicenseLink(client, planSlug) {
+  try {
+    const link = await api('/api/payment-links', {
+      method: 'POST',
+      body: JSON.stringify({
+        target_client_id: client.id,
+        plan_slug: planSlug,
+        payment_scope: 'client_license',
+        customer_name: client.name,
+        customer_email: client.email,
+        customer_phone: client.phone
+      })
+    })
+
+    showNotice('Link de licencia creado')
+    window.open(link.public_url || link.publicUrl || `/pay/${link.id}`, '_blank')
+    await loadPaymentLinks()
+  } catch (err) {
+    showNotice(err.message || 'No se pudo crear el link')
+  }
+}
+
   // ======================== PAYMENT LINKS FUNCTIONS ========================
 async function loadPaymentLinks() {
   try {
@@ -10127,83 +10150,49 @@ async function updateUser(e) {
       />
     </button>
 
-    {agencyMenuOpen && (
-      <div className="agency-submenu">
+   {agencyMenuOpen && (
+  <div className="agency-submenu">
+    <button
+      className={activeSection === 'agency-dashboard' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setActiveSection('agency-dashboard')}
+    >
+      <i className="fas fa-chart-line"></i>
+      Panel Agencia
+    </button>
 
-        <button
-          className={
-            activeSection === 'agency-dashboard'
-              ? 'menu-item active'
-              : 'menu-item'
-          }
-          onClick={() => setActiveSection('agency-dashboard')}
-        >
-          <i className="fas fa-chart-line"></i>
-          Panel Agencia
-        </button>
+    <button
+      className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setActiveSection('agency-clients')}
+    >
+      <i className="fas fa-building-user"></i>
+      Clientes
+    </button>
 
-        <button
-          className={
-            activeSection === 'agency-clients'
-              ? 'menu-item active'
-              : 'menu-item'
-          }
-          onClick={() => setActiveSection('agency-clients')}
-        >
-          <i className="fas fa-building-user"></i>
-          Clientes
-        </button>
+    <button
+      className={activeSection === 'agency-licenses' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setActiveSection('agency-licenses')}
+    >
+      <i className="fas fa-key"></i>
+      Licencias
+    </button>
 
-        <button
-          className={
-            activeSection === 'agency-users'
-              ? 'menu-item active'
-              : 'menu-item'
-          }
-          onClick={() => setActiveSection('agency-users')}
-        >
-          <i className="fas fa-users"></i>
-          Usuarios
-        </button>
+    <button
+      className={activeSection === 'agency-payments' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setActiveSection('agency-payments')}
+    >
+      <i className="fas fa-credit-card"></i>
+      Pagos
+    </button>
 
-        <button
-          className={
-            activeSection === 'agency-licenses'
-              ? 'menu-item active'
-              : 'menu-item'
-          }
-          onClick={() => setActiveSection('agency-licenses')}
-        >
-          <i className="fas fa-key"></i>
-          Licencias
-        </button>
-
-        <button
-          className={
-            activeSection === 'agency-payments'
-              ? 'menu-item active'
-              : 'menu-item'
-          }
-          onClick={() => setActiveSection('agency-payments')}
-        >
-          <i className="fas fa-credit-card"></i>
-          Pagos
-        </button>
-
-        <button
-          className={
-            activeSection === 'agency-branding'
-              ? 'menu-item active'
-              : 'menu-item'
-          }
-          onClick={() => setActiveSection('agency-branding')}
-        >
-          <i className="fas fa-palette"></i>
-          Branding
-        </button>
-
-      </div>
-    )}
+    <button
+      className={activeSection === 'agency-branding' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setActiveSection('agency-branding')}
+    >
+      <i className="fas fa-palette"></i>
+      Branding
+    </button>
+  </div>
+)}
   </div>
 )}
 
@@ -10393,27 +10382,27 @@ async function updateUser(e) {
 </form>
 
             <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Cliente</th>
-                    <th>Email</th>
-                    <th>Plan</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {agencyClients.map((c) => (
-                    <tr key={c.id}>
-                      <td>{c.name}</td>
-                      <td>{c.email}</td>
-                      <td>{c.plan || 'Sin plan'}</td>
-                      <td>{c.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Email</th>
+        <th>Plan</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {agencyClients.map((c) => (
+        <tr key={c.id}>
+          <td>{c.name}</td>
+          <td>{c.email}</td>
+          <td>{c.plan || 'Sin plan'}</td>
+          <td>{c.status}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
           </section>
         )}
 
