@@ -9416,9 +9416,10 @@ async function createAppointmentAgent() {
       const data = await api('/api/clients')
       const list = Array.isArray(data) ? data : []
 
-      setClients(list)
-
-      const agencyOnly = list.filter(c => c.id !== me.client_id)
+      const agencyOnly = list.filter(c =>
+        c.agency_id === me.agency_id &&
+        c.id !== me.client_id
+      )
       setAgencyClients(agencyOnly)
 
       setSelectedClientId(me.client_id)
@@ -9458,7 +9459,10 @@ async function createAppointmentAgent() {
       const clientsData = await api('/api/clients')
       const clientList = Array.isArray(clientsData) ? clientsData : []
 
-      const agencyOnlyClients = clientList.filter(c => c.id !== me.client_id)
+      const agencyOnlyClients = clientList.filter(c =>
+        c.agency_id === me.agency_id &&
+        c.id !== me.client_id
+      )
       setAgencyClients(agencyOnlyClients)
 
       let allUsers = []
