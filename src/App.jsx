@@ -1503,6 +1503,10 @@ export default function App() {
   const [agencyAccess, setAgencyAccess] = useState(null)
   const [showAgencyAccessModal, setShowAgencyAccessModal] = useState(false)
 
+  // NUEVOS STATES PARA SEPARAR CLIENTES/USUARIOS DE AGENCIA
+  const [agencyClients, setAgencyClients] = useState([])
+  const [agencyUsers, setAgencyUsers] = useState([])
+
   async function viewAgencyAccess(agency) {
     try {
       const data = await api(`/api/agencies/${agency.id}/access`)
@@ -9399,6 +9403,10 @@ async function createAppointmentAgent() {
       if (me?.role === 'admin') {
         const data = await api('/api/clients')
         setClients(data)
+        // Separar clientes de agencia
+        if (me?.role === 'agency_admin') {
+          setAgencyClients((Array.isArray(data) ? data : []).filter(c => c.id !== me.client_id))
+        }
         const cid = selectedClientId || data[0]?.id || ''
         setSelectedClientId(cid)
         if (cid) await loadBots(cid)
@@ -9425,6 +9433,10 @@ async function createAppointmentAgent() {
       const path = me?.role === 'admin' ? '/api/users' : `/api/users?client_id=${me?.client_id || ''}`
       const data = await api(path)
       setUsers(data)
+      // Separar usuarios de agencia
+      if (me?.role === 'agency_admin') {
+        setAgencyUsers((Array.isArray(data) ? data : []).filter(u => u.id !== me.id))
+      }
     } catch (err) { 
       console.error(err)
       if (err.status === 402) setForcePlanScreen(true)
@@ -9503,26 +9515,58 @@ async function createAppointmentAgent() {
   }
 
   async function createClient(e) {
-    e.preventDefault()
-    setBusy(true)
-    try {
-      const created = await api('/api/clients', { method: 'POST', body: JSON.stringify(newClient) })
-      setNewClient({ name: '', email: '', phone: '', plan: 'pro' })
-      await loadClients()
-      if (created?.id) setSelectedClientId(created.id)
-      showNotice('Cliente creado')
-    } catch (err) { showNotice(err.message || 'Error') }
-    finally { setBusy(false) }
+  e.preventDefault()
+  setBusy(true)
+
+  try {
+    const created = await api('/api/clients', {
+      method: 'POST',
+      body: JSON.stringify(newClient)
+    })
+
+    setNewClient({ name: '', email: '', phone: '', plan: 'pro' })
+
+    await loadClients()
+
+    if (me?.role === 'agency_admin') {
+      setAgencyClients(prev => {
+        const exists = prev.some(c => c.id === created.id)
+        return exists ? prev : [...prev, created].filter(c => c.id !== me.client_id)
+      })
+
+      setNewUser(prev => ({
+        ...prev,
+        client_id: created.id
+      }))
+    } else if (created?.id) {
+      setSelectedClientId(created.id)
+    }
+
+    showNotice('Cliente creado')
+  } catch (err) {
+    showNotice(err.message || 'Error')
+  } finally {
+    setBusy(false)
   }
+}
 
   async function createUser(e) {
     e.preventDefault()
     if (!requireLimit('users', 'usuarios')) return
     setBusy(true)
     try {
-      await api('/api/users', { method: 'POST', body: JSON.stringify({ ...newUser, client_id: newUser.client_id || selectedClientId }) })
+      await api('/api/users', { method: 'POST', body: JSON.stringify({ ...newUser, client_id: me?.role === 'agency_admin' ? newUser.client_id : (newUser.client_id || selectedClientId) }) })
       setNewUser({ client_id: selectedClientId, name: '', email: '', password: '', role: 'client_admin' })
       await loadUsers()
+      // Refrescar usuarios de agencia si es necesario
+      if (me?.role === 'agency_admin') {
+        const refreshedUsers = await api('/api/users')
+        setAgencyUsers(
+          Array.isArray(refreshedUsers)
+            ? refreshedUsers.filter(u => u.id !== me.id)
+            : []
+        )
+      }
       showNotice('Usuario creado')
     } catch (err) { showNotice(err.message || 'Error') }
     finally { setBusy(false) }
@@ -9842,6 +9886,9 @@ async function updateUser(e) {
   }
 
   // ========== PANEL PRINCIPAL ==========
+  // Constante para evitar que se mezcle agencia con Dashboard normal
+  const isAgencySection = String(activeSection || '').startsWith('agency-')
+
   return (
     <div className="app-shell">
       {landingLoading && (
@@ -10065,6 +10112,7 @@ async function updateUser(e) {
 )}
 
           {/* MENÚS NORMALES (solo si no es agency_admin) */}
+          {!isAgencySection && (
             <>
               <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
                 <i className="fas fa-tachometer-alt"></i> Dashboard
@@ -10160,7 +10208,7 @@ async function updateUser(e) {
                 </>
               )}
             </>
-          
+          )}
         </nav>
         <button className="secondary" onClick={logout} type="button">
           <i className="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -10171,7 +10219,12 @@ async function updateUser(e) {
         <header className="topbar stripe-card">
           <div>
             <div className="eyebrow">Cuenta activa</div>
-            <h2>{selectedClient?.name || 'Sin cliente seleccionado'}</h2>
+            {/* Título superior corregido para agencia */}
+            <h2>
+              {me?.role === 'agency_admin'
+                ? (agencyBranding?.name || agencyBranding?.brand_name || 'Panel de Agencia')
+                : (selectedClient?.name || 'Sin cliente seleccionado')}
+            </h2>
           </div>
           <div className="top-actions">
             {me.role === 'admin' && (
@@ -10194,12 +10247,12 @@ async function updateUser(e) {
             <div className="metric-grid">
               <div className="metric-card">
                 <span>Clientes</span>
-                <strong>{clients.length}</strong>
+                <strong>{agencyClients.length}</strong>
               </div>
 
               <div className="metric-card">
                 <span>Usuarios</span>
-                <strong>{users.length}</strong>
+                <strong>{agencyUsers.length}</strong>
               </div>
 
               <div className="metric-card">
@@ -10248,7 +10301,7 @@ async function updateUser(e) {
                   </tr>
                 </thead>
                 <tbody>
-                  {clients.map((c) => (
+                  {agencyClients.map((c) => (
                     <tr key={c.id}>
                       <td>{c.name}</td>
                       <td>{c.email}</td>
@@ -10269,7 +10322,7 @@ async function updateUser(e) {
             <form onSubmit={createUser} className="grid-2">
               <select value={newUser.client_id} onChange={(e) => setNewUser({ ...newUser, client_id: e.target.value })}>
                 <option value="">Seleccionar cliente</option>
-                {clients.map((c) => (
+                {agencyClients.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
@@ -10297,11 +10350,11 @@ async function updateUser(e) {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((u) => (
+                  {agencyUsers.map((u) => (
                     <tr key={u.id}>
                       <td>{u.name}</td>
                       <td>{u.email}</td>
-                      <td>{clients.find(c => c.id === u.client_id)?.name || '-'}</td>
+                      <td>{agencyClients.find(c => c.id === u.client_id)?.name || '-'}</td>
                       <td>{u.role === 'client_admin' ? 'Admin Cliente' : 'Usuario Cliente'}</td>
                     </tr>
                   ))}
@@ -10329,7 +10382,7 @@ async function updateUser(e) {
                   </tr>
                 </thead>
                 <tbody>
-                  {clients.map((c) => {
+                  {agencyClients.map((c) => {
                     const clientSub = pendingSubscriptions.find(s => s.client_id === c.id) || null
                     return (
                       <tr key={c.id}>
@@ -10366,7 +10419,7 @@ async function updateUser(e) {
                 </thead>
                 <tbody>
                   {paymentLinks.map((p) => {
-                    const client = clients.find(c => c.id === p.client_id)
+                    const client = agencyClients.find(c => c.id === p.client_id)
                     return (
                       <tr key={p.id}>
                         <td>{client?.name || p.client_id || '-'}</td>
@@ -10448,6 +10501,7 @@ async function updateUser(e) {
         )}
 
         {/* ======================== SECCIONES NORMALES (solo si no es agency_admin) ======================== */}
+        {!isAgencySection && (
           <>
             {/* ======================== AGENCIAS SECTION ======================== */}
             {tab === 'agencies' && (
@@ -13110,8 +13164,7 @@ async function updateUser(e) {
                             Modo seguro
                           </label>
 
-                          <input
-                            type="number"
+                          <input                            type="number"
                             min="1"
                             max="2"
                             placeholder="Máx grupos por día"
@@ -14147,7 +14200,7 @@ async function updateUser(e) {
               </div>
             )}
           </>
-        
+        )}
       </main>
     </div>
     
