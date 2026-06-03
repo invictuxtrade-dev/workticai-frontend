@@ -6496,6 +6496,23 @@ useEffect(() => {
           background: rgba(255, 255, 255, 0.1);
           margin: 0.75rem 0;
         }
+          
+      .metric-card .metric-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .metric-card .metric-header i {
+        font-size: 1.2rem;
+      }
+
+      .metric-card .metric-header span {
+        font-size: 0.8rem;
+        color: #64748b;
+      }
 
         .modal-head button {
           width: 36px;
@@ -10392,34 +10409,46 @@ async function updateUser(e) {
 
         {/* ======================== SECCIONES PARA AGENCY_ADMIN ======================== */}
         {me?.role === 'agency_admin' && activeSection === 'agency-dashboard' && (
-          <section className="stripe-card stack">
-            <h2>Panel de Agencia</h2>
-            <p className="muted">
-              Administra tus clientes, usuarios, licencias y pagos dentro de Worktic AI.
-            </p>
+         <section className="stripe-card stack">
+  <h2>Panel de Agencia</h2>
+  <p className="muted">
+    Administra tus clientes, usuarios, licencias y pagos dentro de Worktic AI.
+  </p>
 
-            <div className="metric-grid">
-              <div className="metric-card">
-                <span><i className="fas fa-building"></i> Clientes</span>
-                <strong>{agencyClients.length}</strong>
-              </div>
+  <div className="metric-grid">
+    <div className="metric-card">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', marginBottom: '0.5rem' }}>
+        <i className="fas fa-building"></i>
+        <span>Clientes</span>
+      </div>
+      <strong>{agencyClients.length}</strong>
+    </div>
 
-              <div className="metric-card">
-                <span>Usuarios</span>
-                <strong>{agencyUsers.length}</strong>
-              </div>
+    <div className="metric-card">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', marginBottom: '0.5rem' }}>
+        <i className="fas fa-users"></i>
+        <span>Usuarios</span>
+      </div>
+      <strong>{agencyUsers.length}</strong>
+    </div>
 
-              <div className="metric-card">
-                <span>Pagos</span>
-                <strong>{paymentLinks.length}</strong>
-              </div>
+    <div className="metric-card">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', marginBottom: '0.5rem' }}>
+        <i className="fas fa-credit-card"></i>
+        <span>Pagos</span>
+      </div>
+      <strong>{paymentLinks.length}</strong>
+    </div>
 
-              <div className="metric-card">
-                <span>Estado</span>
-                <strong>Activa</strong>
-              </div>
-            </div>
-          </section>
+    <div className="metric-card">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', marginBottom: '0.5rem' }}>
+        <i className="fas fa-check-circle" style={{ color: '#10b981' }}></i>
+        <span>Estado</span>
+      </div>
+      <strong>Activa</strong>
+    </div>
+  </div>
+</section>
         )}
 
         {me?.role === 'agency_admin' && activeSection === 'agency-clients' && (
