@@ -10129,14 +10129,12 @@ if (
   >
     <div>
       <strong>Plan actual:</strong>{' '}
-      {me?.role === 'agency_admin'
-        ? 'Business'
-        : (subscription?.plan_slug || 'Sin plan')}
+      {activePlanSlug || subscription?.plan_slug || 'Sin plan'}
     </div>
 
     <div className="muted" style={{ color: '#fff' }}>
       Estado:{' '}
-      {me?.role === 'agency_admin'
+      {me?.agency_id && me?.role === 'client_user'
         ? 'activo'
         : (subscription?.status || 'pendiente')}
     </div>
