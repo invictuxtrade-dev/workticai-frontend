@@ -10400,7 +10400,7 @@ async function updateUser(e) {
 
             <div className="metric-grid">
               <div className="metric-card">
-                <span>Clientes</span>
+                <span><i className="fas fa-building"></i> Clientes</span>
                 <strong>{agencyClients.length}</strong>
               </div>
 
