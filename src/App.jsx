@@ -6491,6 +6491,12 @@ useEffect(() => {
           margin-bottom: 1rem;
         }
 
+        .menu-divider {
+          height: 1px;
+          background: rgba(255, 255, 255, 0.1);
+          margin: 0.75rem 0;
+        }
+
         .modal-head button {
           width: 36px;
           height: 36px;
@@ -10139,174 +10145,225 @@ async function updateUser(e) {
 )}
 
         <nav className="menu">
-          {/* MENÚS PARA AGENCY_ADMIN */}
-          {me?.role === 'agency_admin' && (
-  <div className="agency-menu-group">
+  {/* ======================== MENÚ PARA AGENCY_ADMIN ======================== */}
+  {me?.role === 'agency_admin' && (
+    <>
+      <div className="agency-menu-group">
+        <button
+          type="button"
+          className="menu-item"
+          onClick={() => setAgencyMenuOpen(!agencyMenuOpen)}
+        >
+          <i className="fas fa-building"></i>
+          <span style={{ flex: 1 }}>Agencia Partner</span>
+          <i className={`fas ${agencyMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'}`} />
+        </button>
+
+        {agencyMenuOpen && (
+          <div className="agency-submenu">
+            <button
+              className={activeSection === 'agency-dashboard' ? 'menu-item active' : 'menu-item'}
+              onClick={() => setActiveSection('agency-dashboard')}
+            >
+              <i className="fas fa-chart-line"></i>
+              Panel Agencia
+            </button>
+
+            <button
+              className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'}
+              onClick={() => setActiveSection('agency-clients')}
+            >
+              <i className="fas fa-building-user"></i>
+              Clientes
+            </button>
+
+            <button
+              className={activeSection === 'agency-licenses' ? 'menu-item active' : 'menu-item'}
+              onClick={() => setActiveSection('agency-licenses')}
+            >
+              <i className="fas fa-key"></i>
+              Licencias
+            </button>
+
+            <button
+              className={activeSection === 'agency-payments' ? 'menu-item active' : 'menu-item'}
+              onClick={() => setActiveSection('agency-payments')}
+            >
+              <i className="fas fa-credit-card"></i>
+              Pagos
+            </button>
+
+            <button
+              className={activeSection === 'agency-branding' ? 'menu-item active' : 'menu-item'}
+              onClick={() => setActiveSection('agency-branding')}
+            >
+              <i className="fas fa-palette"></i>
+              Branding
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="menu-divider"></div>
+    </>
+  )}
+
+  {/* ======================== MENÚ NORMAL (visible para TODOS los roles, incluyendo agency_admin) ======================== */}
+  <>
     <button
+      className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('dashboard')}
       type="button"
-      className="menu-item"
-      onClick={() => setAgencyMenuOpen(!agencyMenuOpen)}
     >
-      <i className="fas fa-building"></i>
-
-      <span style={{ flex: 1 }}>
-        Agencia Partner
-      </span>
-
-      <i
-        className={`fas ${
-          agencyMenuOpen
-            ? 'fa-chevron-down'
-            : 'fa-chevron-right'
-        }`}
-      />
-    </button>
-
-   {agencyMenuOpen && (
-  <div className="agency-submenu">
-    <button
-      className={activeSection === 'agency-dashboard' ? 'menu-item active' : 'menu-item'}
-      onClick={() => setActiveSection('agency-dashboard')}
-    >
-      <i className="fas fa-chart-line"></i>
-      Panel Agencia
+      <i className="fas fa-tachometer-alt"></i> Dashboard
     </button>
 
     <button
-      className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'}
-      onClick={() => setActiveSection('agency-clients')}
+      className={tab === 'inbox' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('inbox')}
+      type="button"
     >
-      <i className="fas fa-building-user"></i>
-      Clientes
+      <i className="fas fa-inbox"></i> Inbox
     </button>
 
     <button
-      className={activeSection === 'agency-licenses' ? 'menu-item active' : 'menu-item'}
-      onClick={() => setActiveSection('agency-licenses')}
+      className={tab === 'bots' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('bots')}
+      type="button"
     >
-      <i className="fas fa-key"></i>
-      Licencias
+      <i className="fas fa-robot"></i> Bots
     </button>
 
     <button
-      className={activeSection === 'agency-payments' ? 'menu-item active' : 'menu-item'}
-      onClick={() => setActiveSection('agency-payments')}
+      className={tab === 'templates' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('templates')}
+      type="button"
     >
-      <i className="fas fa-credit-card"></i>
-      Pagos
+      <i className="fas fa-file-alt"></i> Plantillas
     </button>
 
     <button
-      className={activeSection === 'agency-branding' ? 'menu-item active' : 'menu-item'}
-      onClick={() => setActiveSection('agency-branding')}
+      className={tab === 'landing' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('landing')}
+      type="button"
     >
-      <i className="fas fa-palette"></i>
-      Branding
+      <i className="fas fa-brain"></i> Landing IA
     </button>
-  </div>
-)}
-  </div>
-)}
 
-          {/* MENÚS NORMALES (solo si no es agency_admin) */}
-          {!isAgencySection && (
-            <>
-              <button className={tab === 'dashboard' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('dashboard')} type="button">
-                <i className="fas fa-tachometer-alt"></i> Dashboard
-              </button>
-              <button className={tab === 'inbox' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('inbox')} type="button">
-                <i className="fas fa-inbox"></i> Inbox
-              </button>
-              <button className={tab === 'bots' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('bots')} type="button">
-                <i className="fas fa-robot"></i> Bots
-              </button>
-              <button className={tab === 'templates' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('templates')} type="button">
-                <i className="fas fa-file-alt"></i> Plantillas
-              </button>
-              <button className={tab === 'landing' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('landing')} type="button">
-                <i className="fas fa-brain"></i> Landing IA
-              </button>
-              <button className={tab === 'funnel' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('funnel')} type="button">
-                <i className="fas fa-filter"></i> Funnel
-              </button>
-               <button
-                className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
-                onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
-                type="button"
-              >
-                <i className="fas fa-calendar-check"></i> Agenda AI
-              </button>
-              <button
-                className={`${tab === 'social' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('social_ai') ? 'locked' : ''}`}
-                onClick={() => canUseFeature('social_ai') ? setTab('social') : setForcePlanScreen(true)}
-                type="button"
-              >
-                <i className="fas fa-share-nodes"></i> Social AI
-              </button>
-              <button
-                className={`${tab === 'video' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('video_ai') ? 'locked' : ''}`}
-                onClick={() => canUseFeature('video_ai') ? setTab('video') : setForcePlanScreen(true)}
-                type="button"
-              >
-                <i className="fas fa-video"></i> Video AI
-              </button>
-              <button
-                className={`${tab === 'ads' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('ads_ai') ? 'locked' : ''}`}
-                onClick={() => canUseFeature('ads_ai') ? setTab('ads') : setForcePlanScreen(true)}
-                type="button"
-              >
-                <i className="fas fa-chart-line"></i> Ads IA
-              </button>
-              <button
-                className={`${tab === 'groups' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('groups_ai') ? 'locked' : ''}`}
-                onClick={() => canUseFeature('groups_ai') ? setTab('groups') : setForcePlanScreen(true)}
-                type="button"
-              >
-                <i className="fas fa-users"></i> Grupos
-              </button>
-              <button
-                className={tab === 'assistant' ? 'menu-item active' : 'menu-item'}
-                onClick={() => setTab('assistant')}
-                type="button"
-              >
-                <i className="fas fa-robot"></i> Asistente AI
-              </button>
-              {me.role === 'admin' && (
-                <>
-                  <button
-                    className={tab === 'agencies' ? 'menu-item active' : 'menu-item'}
-                    onClick={() => setTab('agencies')}
-                    type="button"
-                  >
-                    <i className="fas fa-handshake"></i> Agencias
-                  </button>
-                  <button className={tab === 'clients' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('clients')} type="button">
-                    <i className="fas fa-building"></i> Clientes
-                  </button>
-                  <button className={tab === 'users' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('users')} type="button">
-                    <i className="fas fa-users"></i> Usuarios
-                  </button>
-                  <button className={tab === 'plans' ? 'menu-item active' : 'menu-item'} onClick={() => setTab('plans')} type="button">
-                    <i className="fas fa-crown"></i> Planes SaaS
-                  </button>
-                  <button className={tab === 'billing' ? 'menu-item active' : 'menu-item'} onClick={() => { setTab('billing'); loadPendingSubscriptions(); }} type="button">
-                    <i className="fas fa-credit-card"></i> Billing
-                  </button>
-                  <button
-                    className={tab === 'payment_links' ? 'menu-item active' : 'menu-item'}
-                    onClick={() => {
-                      setTab('payment_links')
-                      loadPaymentLinks()
-                    }}
-                    type="button"
-                  >
-                    <i className="fas fa-link"></i> Link de Pago
-                  </button>
-                </>
-              )}
-            </>
-          )}
-        </nav>
+    <button
+      className={tab === 'funnel' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('funnel')}
+      type="button"
+    >
+      <i className="fas fa-filter"></i> Funnel
+    </button>
+
+    <button
+      className={`${tab === 'agenda_ai' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('agenda_ai') ? 'locked' : ''}`}
+      onClick={() => canUseFeature('agenda_ai') ? setTab('agenda_ai') : setForcePlanScreen(true)}
+      type="button"
+    >
+      <i className="fas fa-calendar-check"></i> Agenda AI
+    </button>
+
+    <button
+      className={`${tab === 'social' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('social_ai') ? 'locked' : ''}`}
+      onClick={() => canUseFeature('social_ai') ? setTab('social') : setForcePlanScreen(true)}
+      type="button"
+    >
+      <i className="fas fa-share-nodes"></i> Social AI
+    </button>
+
+    <button
+      className={`${tab === 'video' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('video_ai') ? 'locked' : ''}`}
+      onClick={() => canUseFeature('video_ai') ? setTab('video') : setForcePlanScreen(true)}
+      type="button"
+    >
+      <i className="fas fa-video"></i> Video AI
+    </button>
+
+    <button
+      className={`${tab === 'ads' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('ads_ai') ? 'locked' : ''}`}
+      onClick={() => canUseFeature('ads_ai') ? setTab('ads') : setForcePlanScreen(true)}
+      type="button"
+    >
+      <i className="fas fa-chart-line"></i> Ads IA
+    </button>
+
+    <button
+      className={`${tab === 'groups' ? 'menu-item active' : 'menu-item'} ${!canUseFeature('groups_ai') ? 'locked' : ''}`}
+      onClick={() => canUseFeature('groups_ai') ? setTab('groups') : setForcePlanScreen(true)}
+      type="button"
+    >
+      <i className="fas fa-users"></i> Grupos
+    </button>
+
+    <button
+      className={tab === 'assistant' ? 'menu-item active' : 'menu-item'}
+      onClick={() => setTab('assistant')}
+      type="button"
+    >
+      <i className="fas fa-robot"></i> Asistente AI
+    </button>
+
+    {me.role === 'admin' && (
+      <>
+        <button
+          className={tab === 'agencies' ? 'menu-item active' : 'menu-item'}
+          onClick={() => setTab('agencies')}
+          type="button"
+        >
+          <i className="fas fa-handshake"></i> Agencias
+        </button>
+
+        <button
+          className={tab === 'clients' ? 'menu-item active' : 'menu-item'}
+          onClick={() => setTab('clients')}
+          type="button"
+        >
+          <i className="fas fa-building"></i> Clientes
+        </button>
+
+        <button
+          className={tab === 'users' ? 'menu-item active' : 'menu-item'}
+          onClick={() => setTab('users')}
+          type="button"
+        >
+          <i className="fas fa-users"></i> Usuarios
+        </button>
+
+        <button
+          className={tab === 'plans' ? 'menu-item active' : 'menu-item'}
+          onClick={() => setTab('plans')}
+          type="button"
+        >
+          <i className="fas fa-crown"></i> Planes SaaS
+        </button>
+
+        <button
+          className={tab === 'billing' ? 'menu-item active' : 'menu-item'}
+          onClick={() => {
+            setTab('billing')
+            loadPendingSubscriptions()
+          }}
+          type="button"
+        >
+          <i className="fas fa-credit-card"></i> Billing
+        </button>
+
+        <button
+          className={tab === 'payment_links' ? 'menu-item active' : 'menu-item'}
+          onClick={() => {
+            setTab('payment_links')
+            loadPaymentLinks()
+          }}
+          type="button"
+        >
+          <i className="fas fa-link"></i> Link de Pago
+        </button>
+      </>
+    )}
+  </>
+</nav>
         <button className="secondary" onClick={logout} type="button">
           <i className="fas fa-sign-out-alt"></i> Cerrar sesión
         </button>
