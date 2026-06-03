@@ -56,7 +56,11 @@ export async function api(path, options = {}) {
     }
 
     if (!res.ok) {
-      if (isAuthExpired(res, data)) {
+      const isLoginRequest =
+        path.includes('/api/auth/login') ||
+        path.includes('/api/auth/register-client')
+
+      if (!isLoginRequest && isAuthExpired(res, data)) {
         clearSession()
 
         if (!sessionExpiredEmitted) {
@@ -70,12 +74,19 @@ export async function api(path, options = {}) {
         throw err
       }
 
-      const err = new Error(
-        data?.error ||
-        data?.message ||
-        data?.raw ||
-        'Error de API'
-      )
+        let msg =
+      data?.error ||
+      data?.message ||
+      data?.raw ||
+      'Error de API'
+
+    if (isLoginRequest && (res.status === 401 || res.status === 403)) {
+      msg = msg.includes('invalid')
+        ? 'Correo o contraseña incorrectos.'
+        : msg
+    }
+
+const err = new Error(msg)
       err.status = res.status
       err.data = data
       throw err
