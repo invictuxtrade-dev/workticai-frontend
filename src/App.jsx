@@ -1497,7 +1497,7 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [busy, setBusy] = useState(false)
   const [forcePlanScreen, setForcePlanScreen] = useState(false)
-  const [activeSection, setActiveSection] = useState('social-ai') // NUEVO: estado para controlar secciones de agencia
+  const [activeSection, setActiveSection] = useState('') // NUEVO: estado para controlar secciones de agencia
   const [agencyMenuOpen, setAgencyMenuOpen] = useState(false)
   // ======================== AGENCY ACCESS MODAL ========================
   const [agencyAccess, setAgencyAccess] = useState(null)
@@ -10139,15 +10139,12 @@ if (
         : (subscription?.status || 'pendiente')}
     </div>
 
-    {me?.role !== 'agency_admin' && (
-      <button
-        type="button"
-        onClick={() => setForcePlanScreen(true)}
-        style={{ marginTop: '0.75rem' }}
-      >
-        Mejorar plan
-      </button>
-    )}
+    {!(me?.role === 'client_user' && me?.agency_id) && (
+  <button type="button" onClick={() => setForcePlanScreen(true)}>
+    <i className="fas fa-crown"></i>
+    Mejorar plan
+  </button>
+)}
   </div>
 )}
 
