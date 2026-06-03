@@ -6529,7 +6529,11 @@ useEffect(() => {
     setActiveSection('')
     setToast(null)
 
-    window.history.replaceState({}, '', '/')
+    const currentPath = window.location.pathname
+
+    if (!currentPath.startsWith('/a/')) {
+      window.history.replaceState({}, '', '/')
+    }
   }
 
   window.addEventListener('wsos:session-expired', onExpired)
@@ -10021,13 +10025,26 @@ async function updateUser(e) {
     } catch (err) { showNotice(err.message || 'Error') }
   }
 
-  async function logout() {
-    setToken('')
-    setMe(null)
-    setForcePlanScreen(false)
-    setShowInvoice(false)
-    setSelectedPlan(null)
+ async function logout() {
+  setToken('')
+  localStorage.removeItem('wsos_token')
+
+  setMe(null)
+  setForcePlanScreen(false)
+  setShowInvoice(false)
+  setSelectedPlan(null)
+  setSelectedPlanSlug('')
+  setSubscription(null)
+  setPaymentTxHash('')
+  setPaymentQR('')
+  setActiveSection('')
+
+  const currentPath = window.location.pathname
+
+  if (!currentPath.startsWith('/a/')) {
+    window.history.replaceState({}, '', '/')
   }
+}
 
   // ========== RENDER PRINCIPAL ==========
   // Verificar rutas públicas primero
@@ -10472,12 +10489,12 @@ if (
           <section className="stripe-card stack">
             <h2>Panel de Agencia</h2>
             <p className="muted">
-              Administra tus clientes, usuarios, licencias y pagos dentro de Worktic AI.
+              Administra tus usuarios, licencias y pagos dentro de Worktic AI.
             </p>
 
             <div className="metric-grid">
               <div className="metric-card">
-                <span><i className="fas fa-building"></i> Clientes</span>
+                <span><i className="fas fa-building"></i> Usuarios</span>
                 <strong>{agencyClients.length}</strong>
               </div>
 
@@ -10501,9 +10518,9 @@ if (
 
         {me?.role === 'agency_admin' && activeSection === 'agency-clients' && (
           <section className="stripe-card stack">
-            <h2>Clientes de mi agencia</h2>
+            <h2>Usuarios de mi agencia</h2>
             <p className="muted">
-              Crea empresas cliente. Si eliges Free queda activo; si eliges Starter, Pro o Business debe pagarse licencia.
+              Crea usuarios. Si eliges Free queda activo; si eliges Starter, Pro o Business debe pagarse licencia.
             </p>
 
             <form onSubmit={createClient} className="grid-2">
@@ -10531,7 +10548,7 @@ if (
   <table>
     <thead>
       <tr>
-        <th>Cliente</th>
+        <th>Usuario</th>
         <th>Email</th>
         <th>Plan</th>
         <th>Estado</th>
