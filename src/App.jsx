@@ -10133,15 +10133,18 @@ if (
     </div>
 
     <div className="muted" style={{ color: '#fff' }}>
-      Estado:{' '}
-      {me?.agency_id && me?.role === 'client_user'
-        ? 'activo'
-        : (subscription?.status || 'pendiente')}
-    </div>
+    Estado:{' '}
+    {(me?.role === 'agency_admin' || (me?.role === 'client_user' && me?.agency_id))
+      ? 'activo'
+      : (subscription?.status || 'pendiente')}
+  </div>
 
-    {!(me?.role === 'client_user' && me?.agency_id) && (
-  <button type="button" onClick={() => setForcePlanScreen(true)}>
-    <i className="fas fa-crown"></i>
+  {me?.role !== 'agency_admin' && !(me?.role === 'client_user' && me?.agency_id) && (
+  <button
+    type="button"
+    onClick={() => setForcePlanScreen(true)}
+    style={{ marginTop: '0.75rem' }}
+  >
     Mejorar plan
   </button>
 )}
