@@ -8024,24 +8024,44 @@ async function createAppointmentAgent() {
     }
   }
 
-  async function loadCurrentSubscription() {
-    if (forcePlanScreen) return
-    try {
-      const data = await api('/api/subscriptions/current')
-      setSubscription(data || null)
-      if (me && me.role !== 'admin') {
-        if (!data || data.status !== 'active') {
-          setForcePlanScreen(true)
-        } else {
-          setForcePlanScreen(false)
-        }
-      }
-    } catch (err) {
-      console.error(err)
-      if (err.status === 402 && err.message === 'plan_required') setForcePlanScreen(true)
-      setSubscription(null)
+async function loadCurrentSubscription() {
+  try {
+    const data = await api('/api/subscriptions/current')
+    setSubscription(data || null)
+
+    if (!me || me.role === 'admin') return
+
+    const isAgencyClientUser =
+      me.role === 'client_user' && !!me.agency_id
+
+    if (me.role === 'agency_admin' || isAgencyClientUser) {
+      setForcePlanScreen(false)
+      return
     }
+
+    if (!data || data.status !== 'active') {
+      setForcePlanScreen(true)
+    } else {
+      setForcePlanScreen(false)
+    }
+  } catch (err) {
+    console.error(err)
+
+    const isAgencyClientUser =
+      me?.role === 'client_user' && !!me?.agency_id
+
+    if (me?.role === 'agency_admin' || isAgencyClientUser) {
+      setForcePlanScreen(false)
+      return
+    }
+
+    if (err.status === 402 || err.message === 'plan_required') {
+      setForcePlanScreen(true)
+    }
+
+    setSubscription(null)
   }
+}
 
   async function loadBillingConfig() {
     try {
@@ -8064,40 +8084,51 @@ async function createAppointmentAgent() {
     }
   }
 
-  async function selectPlan(planSlug) {
-    try {
-      const sub = await api('/api/subscriptions/select', {
-        method: 'POST',
-        body: JSON.stringify({
-          plan_slug: planSlug,
-          billing_cycle: billingCycle
-        })
+async function selectPlan(planSlug) {
+  try {
+    setBusy(true)
+
+    const sub = await api('/api/subscriptions/select', {
+      method: 'POST',
+      body: JSON.stringify({
+        plan_slug: planSlug,
+        billing_cycle: billingCycle
       })
-      setSubscription(sub)
+    })
 
-      if (planSlug === 'free') {
-        setForcePlanScreen(false)
-        await bootstrap()
-        await loadInitial()
-        showNotice('Plan Free activado')
-        return
-      }
+    setSubscription(sub)
 
-      setSelectedPlanSlug(planSlug)
-      const selected = plans.find(p => p.slug === planSlug)
-      setSelectedPlan(selected)
-      setShowInvoice(true)
-      if (sub.wallet_address) {
-        QRCode.toDataURL(sub.wallet_address, { margin: 1, width: 220 }, (err, url) => {
-          if (!err) setPaymentQR(url)
-          else setPaymentQR('')
-        })
-      }
-      showNotice('Plan seleccionado. Completa el pago en la factura.')
-    } catch (err) {
-      showNotice(err.message || 'Error seleccionando plan')
+    if (planSlug === 'free') {
+      setForcePlanScreen(false)
+      setShowInvoice(false)
+      setSelectedPlan(null)
+      await loadInitial()
+      showNotice('Plan Free activado')
+      return
     }
+
+    const selected = plans.find(p => p.slug === planSlug)
+    setSelectedPlanSlug(planSlug)
+    setSelectedPlan(selected || null)
+    setShowInvoice(true)
+
+    if (sub?.wallet_address) {
+      QRCode.toDataURL(sub.wallet_address, { margin: 1, width: 220 }, (err, url) => {
+        setPaymentQR(err ? '' : url)
+      })
+    } else {
+      setPaymentQR('')
+    }
+
+    showNotice('Plan seleccionado. Completa el pago en la factura.')
+  } catch (err) {
+    console.error('selectPlan error:', err)
+    alert(err.message || 'Error seleccionando plan')
+    showNotice(err.message || 'Error seleccionando plan')
+  } finally {
+    setBusy(false)
   }
+}
 
   async function submitPlanPayment() {
     if (!subscription?.id) {
@@ -9973,32 +10004,33 @@ async function updateUser(e) {
  if (!me) return (
   <LoginScreen
     agencyBranding={agencyBranding}
-    onAuth={(user) => {
-      if (
-      agencyBranding?.id &&
-      user.role !== 'admin' &&
-      user.agency_id !== agencyBranding.id
-    ) {
-      setToken('')
-      alert('Este usuario no pertenece a esta agencia.')
-      return
-    }
+   onAuth={(user) => {
+  if (
+    agencyBranding?.id &&
+    user.role !== 'admin' &&
+    user.agency_id &&
+    user.agency_id !== agencyBranding.id
+  ) {
+    setToken('')
+    alert('Este usuario no pertenece a esta agencia.')
+    return
+  }
 
-      setMe(user)
+  setMe(user)
 
-      const isAgencyClientUser =
-        user.role === 'client_user' && !!user.agency_id
+  const isAgencyClientUser =
+    user.role === 'client_user' && !!user.agency_id
 
-      if (
-        user.role !== 'admin' &&
-        user.role !== 'agency_admin' &&
-        !isAgencyClientUser
-      ) {
-        setForcePlanScreen(true)
-      } else {
-        setForcePlanScreen(false)
-      }
-    }}
+  if (
+    user.role !== 'admin' &&
+    user.role !== 'agency_admin' &&
+    !isAgencyClientUser
+  ) {
+    setForcePlanScreen(true)
+  } else {
+    setForcePlanScreen(false)
+  }
+}}
   />
 )
 
