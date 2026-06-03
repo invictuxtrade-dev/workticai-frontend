@@ -7095,6 +7095,27 @@ useEffect(() => {
     showNotice('Agencia suspendida')
   }
 
+  async function deleteAgency(id) {
+  if (!confirm('¿Seguro que deseas eliminar esta agencia? Esta acción no se puede deshacer.')) {
+    return
+  }
+
+  try {
+    await api(`/api/agencies/${id}`, {
+      method: 'DELETE'
+    })
+
+    if (selectedAgency?.id === id) {
+      setSelectedAgency(null)
+    }
+
+    await loadAgencies()
+    showNotice('Agencia eliminada correctamente')
+  } catch (err) {
+    showNotice(err.message || 'No se pudo eliminar la agencia')
+  }
+}
+
   async function loadAgencyPrices(id) {
     const data = await api(`/api/agencies/${id}/prices`)
     setAgencyPrices(Array.isArray(data) ? data : [])
@@ -10816,6 +10837,14 @@ if (
                             <button type="button" className="danger" onClick={() => suspendAgency(a.id)}>
                               Suspender
                             </button>
+
+                            <button
+                            type="button"
+                            className="danger"
+                            onClick={() => deleteAgency(a.id)}
+                          >
+                            Eliminar
+                          </button>
                           </div>
                         </div>
                       ))}
