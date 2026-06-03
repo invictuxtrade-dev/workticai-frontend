@@ -10530,7 +10530,7 @@ if (
   
   <input
     type="text"
-    placeholder="Contraseña de acceso (opcional)"
+    placeholder="Contraseña de acceso"
     value={newClient.password || ''}
     onChange={(e) => setNewClient({ ...newClient, password: e.target.value })}
   />
@@ -10799,7 +10799,7 @@ if (
                     <input placeholder="Nombre de marca" value={agencyForm.brand_name} onChange={e => setAgencyForm({ ...agencyForm, brand_name: e.target.value })} />
                     <input placeholder="Logo URL" value={agencyForm.logo_url} onChange={e => setAgencyForm({ ...agencyForm, logo_url: e.target.value })} />
                     <input type="color" value={agencyForm.brand_color} onChange={e => setAgencyForm({ ...agencyForm, brand_color: e.target.value })} />
-                    <input placeholder="Subdominio interno opcional" value={agencyForm.subdomain} onChange={e => setAgencyForm({ ...agencyForm, subdomain: e.target.value })} />
+                    <input placeholder="Subdominio interno" value={agencyForm.subdomain} onChange={e => setAgencyForm({ ...agencyForm, subdomain: e.target.value })} />
                     <input type="number" placeholder="Valor mensual convenio USDT" value={agencyForm.monthly_fee} onChange={e => setAgencyForm({ ...agencyForm, monthly_fee: e.target.value })} />
                     <textarea className="full" placeholder="Notas del convenio" value={agencyForm.notes} onChange={e => setAgencyForm({ ...agencyForm, notes: e.target.value })} />
 
@@ -11103,13 +11103,13 @@ if (
                     </select>
 
                     <input
-                      placeholder="Nombre del cliente opcional"
+                      placeholder="Nombre del cliente"
                       value={paymentLinkForm.customer_name}
                       onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_name: e.target.value })}
                     />
 
                     <input
-                      placeholder="Email opcional"
+                      placeholder="Email"
                       value={paymentLinkForm.customer_email}
                       onChange={(e) => setPaymentLinkForm({ ...paymentLinkForm, customer_email: e.target.value })}
                     />
@@ -14272,7 +14272,7 @@ if (
                     type="password"
                     value={editingUser.password || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
-                    placeholder="Nueva contraseña opcional"
+                    placeholder="Nueva contraseña"
                   />
 
                   <select
