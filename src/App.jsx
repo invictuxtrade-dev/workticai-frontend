@@ -203,6 +203,7 @@ function LoginScreen({ onAuth, agencyBranding }) {
     setError('')
     setCaptchaError('')
     setLoading(true)
+    localStorage.removeItem('wsos_token')
 
     if (form.access_role === 'client' && mode === 'register') {
       const userAnswer = parseInt(captchaUserInput, 10)
@@ -6512,15 +6513,31 @@ useEffect(() => {
   }, [])
 
   useEffect(() => {
-    const onExpired = () => {
-      setToken('')
-      setMe(null)
-    }
-    window.addEventListener('wsos:session-expired', onExpired)
-    return () => {
-      window.removeEventListener('wsos:session-expired', onExpired)
-    }
-  }, [])
+  const onExpired = () => {
+    setToken('')
+    localStorage.removeItem('wsos_token')
+
+    setMe(null)
+    setForcePlanScreen(false)
+    setSubscription(null)
+    setSelectedPlan(null)
+    setSelectedPlanSlug('')
+    setShowInvoice(false)
+    setPaymentTxHash('')
+    setPaymentQR('')
+    setTab('dashboard')
+    setActiveSection('')
+    setToast(null)
+
+    window.history.replaceState({}, '', '/')
+  }
+
+  window.addEventListener('wsos:session-expired', onExpired)
+
+  return () => {
+    window.removeEventListener('wsos:session-expired', onExpired)
+  }
+}, [])
 
   // ======================== AGENCY BRANDING EFFECT ========================
   useEffect(() => {
