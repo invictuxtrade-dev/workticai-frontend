@@ -9985,42 +9985,51 @@ async function updateUser(e) {
     }
 
       setMe(user)
-      setMe(user)
+
+      const isAgencyClientUser =
+        user.role === 'client_user' && !!user.agency_id
 
       if (
         user.role !== 'admin' &&
-        user.role !== 'agency_admin'
+        user.role !== 'agency_admin' &&
+        !isAgencyClientUser
       ) {
         setForcePlanScreen(true)
+      } else {
+        setForcePlanScreen(false)
       }
     }}
   />
 )
 
-    if (
-    forcePlanScreen &&
-    me.role !== 'admin' &&
-    me.role !== 'agency_admin'
-    ) {
-    return (
-      <PlanGate
-        plans={plans}
-        billingCycle={billingCycle}
-        setBillingCycle={setBillingCycle}
-        selectPlan={selectPlan}
-        showInvoice={showInvoice}
-        selectedPlan={selectedPlan}
-        subscription={subscription}
-        paymentTxHash={paymentTxHash}
-        setPaymentTxHash={setPaymentTxHash}
-        submitPlanPayment={submitPlanPayment}
-        cancelInvoice={cancelInvoice}
-        paymentQR={paymentQR}
-        me={me}
-        onLogout={logout}
-      />
-    )
-  }
+  const isAgencyClientUser =
+  me?.role === 'client_user' && !!me?.agency_id
+
+if (
+  forcePlanScreen &&
+  me.role !== 'admin' &&
+  me.role !== 'agency_admin' &&
+  !isAgencyClientUser
+) {
+  return (
+    <PlanGate
+      plans={plans}
+      billingCycle={billingCycle}
+      setBillingCycle={setBillingCycle}
+      selectPlan={selectPlan}
+      showInvoice={showInvoice}
+      selectedPlan={selectedPlan}
+      subscription={subscription}
+      paymentTxHash={paymentTxHash}
+      setPaymentTxHash={setPaymentTxHash}
+      submitPlanPayment={submitPlanPayment}
+      cancelInvoice={cancelInvoice}
+      paymentQR={paymentQR}
+      me={me}
+      onLogout={logout}
+    />
+  )
+}
 
   // ========== PANEL PRINCIPAL ==========
   // Constante para evitar que se mezcle agencia con Dashboard normal
