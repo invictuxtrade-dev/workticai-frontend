@@ -10173,7 +10173,7 @@ async function updateUser(e) {
               className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'}
               onClick={() => setActiveSection('agency-clients')}
             >
-              <i className="fas fa-building-user"></i>
+              <i className="fas fa-building"></i>
               Clientes
             </button>
 
@@ -10400,13 +10400,8 @@ async function updateUser(e) {
 
             <div className="metric-grid">
               <div className="metric-card">
-                <button
-  className={activeSection === 'agency-clients' ? 'menu-item active' : 'menu-item'}
-  onClick={() => setActiveSection('agency-clients')}
->
-  <i className="fas fa-users"></i>
-  Clientes
-</button>
+                <span><i className="fas fa-building"></i> Clientes</span>
+                <strong>{agencyClients.length}</strong>
               </div>
 
               <div className="metric-card">
