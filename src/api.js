@@ -18,8 +18,9 @@ function isAuthExpired(res, data) {
 
   return (
     res.status === 401 ||
-    res.status === 403 ||
     msg.includes('token expired') ||
+    msg.includes('invalid token') ||
+    msg.includes('expired token') ||
     msg.includes('unauthorized')
   )
 }
