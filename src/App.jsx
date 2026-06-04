@@ -6912,35 +6912,45 @@ useEffect(() => {
   const selectedLead = useMemo(() => leads.find((x) => x.id === selectedLeadId), [leads, selectedLeadId])
 
   // ======================== PERMISOS Y PLANES ========================
- const currentPlan = useMemo(() => {
-  let slug = subscription?.plan_slug || me?.plan || 'free'
+const isAdmin = me?.role === 'admin'
+const isAgencyAdmin = me?.role === 'agency_admin'
+const isAgencyClient = me?.role === 'client_user' && !!me?.agency_id
 
-  if (me?.role === 'agency_admin') {
-    slug = me?.plan || agencyBranding?.plan_equivalent || 'business'
+const activePlanSlug = useMemo(() => {
+  if (isAdmin) return 'business'
+
+  if (isAgencyAdmin) {
+    return me?.plan || agencyBranding?.plan_equivalent || 'business'
   }
 
-  return plans.find(p => p.slug === slug) || null
-}, [plans, subscription, me, agencyBranding])
+  if (isAgencyClient) {
+    return me?.plan || 'free'
+  }
 
-  const planPermissions = useMemo(() => {
-    try {
-      return JSON.parse(currentPlan?.permissions || '{}')
-    } catch {
-      return {}
-    }
-  }, [currentPlan])
+  return subscription?.plan_slug || me?.plan || 'free'
+}, [isAdmin, isAgencyAdmin, isAgencyClient, me, agencyBranding, subscription])
 
-  const planLimits = useMemo(() => {
-    try {
-      return JSON.parse(currentPlan?.limits || '{}')
-    } catch {
-      return {}
-    }
-  }, [currentPlan])
+const currentPlan = useMemo(() => {
+  return plans.find(p => p.slug === activePlanSlug) || null
+}, [plans, activePlanSlug])
 
-  const isAdmin = me?.role === 'admin'
-  const activePlanSlug = subscription?.plan_slug || me?.plan || 'free'
-  const isFreePlan = activePlanSlug === 'free'
+const planPermissions = useMemo(() => {
+  try {
+    return JSON.parse(currentPlan?.permissions || '{}')
+  } catch {
+    return {}
+  }
+}, [currentPlan])
+
+const planLimits = useMemo(() => {
+  try {
+    return JSON.parse(currentPlan?.limits || '{}')
+  } catch {
+    return {}
+  }
+}, [currentPlan])
+
+const isFreePlan = activePlanSlug === 'free'
 
   const activeBots = useMemo(
     () => bots.filter((b) => b.status === 'connected' || b.status === 'waiting_qr'),
@@ -8068,31 +8078,33 @@ async function createAppointmentAgent() {
 
 async function loadCurrentSubscription() {
   try {
-    const data = await api('/api/subscriptions/current')
-    setSubscription(data || null)
+    if (!me) return
 
-    if (!me || me.role === 'admin') return
+    const isAgencyUser =
+      me.role === 'agency_admin' ||
+      (me.role === 'client_user' && !!me.agency_id)
 
-    const isAgencyClientUser =
-      me.role === 'client_user' && !!me.agency_id
-
-    if (me.role === 'agency_admin' || isAgencyClientUser) {
+    if (isAgencyUser) {
+      setSubscription(null)
       setForcePlanScreen(false)
       return
     }
 
-    if (!data || data.status !== 'active') {
-      setForcePlanScreen(true)
-    } else {
-      setForcePlanScreen(false)
+    const data = await api('/api/subscriptions/current')
+    setSubscription(data || null)
+
+    if (me.role !== 'admin') {
+      setForcePlanScreen(!data || data.status !== 'active')
     }
   } catch (err) {
     console.error(err)
 
-    const isAgencyClientUser =
-      me?.role === 'client_user' && !!me?.agency_id
+    const isAgencyUser =
+      me?.role === 'agency_admin' ||
+      (me?.role === 'client_user' && !!me?.agency_id)
 
-    if (me?.role === 'agency_admin' || isAgencyClientUser) {
+    if (isAgencyUser) {
+      setSubscription(null)
       setForcePlanScreen(false)
       return
     }
