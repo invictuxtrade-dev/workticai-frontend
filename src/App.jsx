@@ -6977,6 +6977,15 @@ const currentPlan = useMemo(() => {
   return null
 }, [plans, activePlanSlug])
 
+useEffect(() => {
+  console.log("===== DEBUG PLAN =====")
+  console.log("activePlanSlug:", activePlanSlug)
+  console.log("plans:", plans)
+  console.log("currentPlan:", currentPlan)
+  console.log("me:", me)
+  console.log("agencyBranding:", agencyBranding)
+}, [activePlanSlug, plans, currentPlan, me, agencyBranding])
+
 const planPermissions = useMemo(() => {
   try {
     if (typeof currentPlan?.permissions === 'object') return currentPlan.permissions || {}
