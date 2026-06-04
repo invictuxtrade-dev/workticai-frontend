@@ -6911,7 +6911,13 @@ useEffect(() => {
   const selectedBot = useMemo(() => bots.find((x) => x.id === selectedBotId), [bots, selectedBotId])
   const selectedLead = useMemo(() => leads.find((x) => x.id === selectedLeadId), [leads, selectedLeadId])
 
-  // ======================== PERMISOS Y PLANES ========================
+// ======================== PERMISOS Y PLANES ========================
+const normalizePlanSlug = (v) =>
+  String(v || '')
+    .trim()
+    .toLowerCase()
+    .replace('bussiness', 'business')
+
 const isAdmin = me?.role === 'admin'
 const isAgencyAdmin = me?.role === 'agency_admin'
 const isAgencyClient = me?.role === 'client_user' && !!me?.agency_id
@@ -6920,22 +6926,60 @@ const activePlanSlug = useMemo(() => {
   if (isAdmin) return 'business'
 
   if (isAgencyAdmin) {
-    return me?.plan || agencyBranding?.plan_equivalent || 'business'
+    return normalizePlanSlug(me?.plan || agencyBranding?.plan_equivalent || 'business')
   }
 
   if (isAgencyClient) {
-    return me?.plan || 'free'
+    return normalizePlanSlug(me?.plan || 'free')
   }
 
-  return subscription?.plan_slug || me?.plan || 'free'
+  return normalizePlanSlug(subscription?.plan_slug || me?.plan || 'free')
 }, [isAdmin, isAgencyAdmin, isAgencyClient, me, agencyBranding, subscription])
 
 const currentPlan = useMemo(() => {
-  return plans.find(p => p.slug === activePlanSlug) || null
+  const found = plans.find(p => normalizePlanSlug(p.slug) === activePlanSlug)
+
+  if (found) return found
+
+  if (activePlanSlug === 'business') {
+    return {
+      name: 'Business',
+      slug: 'business',
+      permissions: JSON.stringify({
+        whatsapp_ai: true,
+        landings: true,
+        funnels: true,
+        social_ai: true,
+        video_ai: true,
+        ads_ai: true,
+        groups_ai: true,
+        assistant_ai: true,
+        academy_ai: true,
+        marketplace: true,
+        agenda_ai: true
+      }),
+      limits: JSON.stringify({
+        bots: 20,
+        users: 1,
+        landing_pages: 20,
+        funnels: 999,
+        templates: 999,
+        social_posts_month: 60,
+        ai_images_month: 12,
+        ai_videos_month: 3,
+        ads_campaigns_month: 999999,
+        group_bots: 999,
+        appointments_month: 999
+      })
+    }
+  }
+
+  return null
 }, [plans, activePlanSlug])
 
 const planPermissions = useMemo(() => {
   try {
+    if (typeof currentPlan?.permissions === 'object') return currentPlan.permissions || {}
     return JSON.parse(currentPlan?.permissions || '{}')
   } catch {
     return {}
@@ -6944,6 +6988,7 @@ const planPermissions = useMemo(() => {
 
 const planLimits = useMemo(() => {
   try {
+    if (typeof currentPlan?.limits === 'object') return currentPlan.limits || {}
     return JSON.parse(currentPlan?.limits || '{}')
   } catch {
     return {}
