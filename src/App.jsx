@@ -6977,14 +6977,23 @@ const currentPlan = useMemo(() => {
   return null
 }, [plans, activePlanSlug])
 
-useEffect(() => {
-  console.log("===== DEBUG PLAN =====")
-  console.log("activePlanSlug:", activePlanSlug)
-  console.log("plans:", plans)
-  console.log("currentPlan:", currentPlan)
-  console.log("me:", me)
-  console.log("agencyBranding:", agencyBranding)
-}, [activePlanSlug, plans, currentPlan, me, agencyBranding])
+console.log("activePlanSlug:", activePlanSlug)
+
+console.log("plans:", plans)
+
+console.log(
+  "slugs:",
+  plans.map(p => p.slug)
+)
+
+console.log(
+  "found:",
+  plans.find(
+    p => normalizePlanSlug(p.slug) === activePlanSlug
+  )
+)
+
+
 
 const planPermissions = useMemo(() => {
   try {
@@ -7003,6 +7012,8 @@ const planLimits = useMemo(() => {
     return {}
   }
 }, [currentPlan])
+
+console.log("planLimits:", planLimits)
 
 const isFreePlan = activePlanSlug === 'free'
 
