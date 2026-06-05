@@ -7013,6 +7013,10 @@ const planLimits = useMemo(() => {
   }
 }, [currentPlan])
 
+console.log("CURRENT PLAN:", currentPlan)
+console.log("LIMITS RAW:", currentPlan?.limits)
+console.log("LIMITS TYPE:", typeof currentPlan?.limits)
+
 console.log("planLimits:", planLimits)
 
 const isFreePlan = activePlanSlug === 'free'
