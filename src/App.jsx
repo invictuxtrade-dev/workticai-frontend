@@ -6997,18 +6997,44 @@ console.log(
 
 const planPermissions = useMemo(() => {
   try {
-    if (typeof currentPlan?.permissions === 'object') return currentPlan.permissions || {}
-    return JSON.parse(currentPlan?.permissions || '{}')
-  } catch {
+    if (!currentPlan?.permissions) return {}
+
+    if (typeof currentPlan.permissions === 'object') {
+      return currentPlan.permissions
+    }
+
+    let raw = String(currentPlan.permissions).trim()
+
+    raw = raw.replace(/\r/g, '').replace(/\n/g, '')
+
+    return JSON.parse(raw)
+  } catch (err) {
+    console.error('ERROR PARSE PERMISSIONS:', err)
     return {}
   }
 }, [currentPlan])
 
 const planLimits = useMemo(() => {
   try {
-    if (typeof currentPlan?.limits === 'object') return currentPlan.limits || {}
-    return JSON.parse(currentPlan?.limits || '{}')
-  } catch {
+    if (!currentPlan?.limits) return {}
+
+    if (typeof currentPlan.limits === 'object') {
+      return currentPlan.limits
+    }
+
+    let raw = String(currentPlan.limits).trim()
+
+    // limpia saltos de línea raros
+    raw = raw.replace(/\r/g, '').replace(/\n/g, '')
+
+    const parsed = JSON.parse(raw)
+
+    console.log('PLAN LIMITS PARSED:', parsed)
+
+    return parsed || {}
+  } catch (err) {
+    console.error('ERROR PARSE LIMITS:', err)
+    console.error('RAW LIMITS:', currentPlan?.limits)
     return {}
   }
 }, [currentPlan])
